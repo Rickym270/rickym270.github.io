@@ -9,7 +9,7 @@ html{
 .v-center{
     display: flex;
     /* 1/4 size of #homeBanner */
-    padding-top:12.5%;
+    padding-top:15vh;
     /* Align Horizontally */
     justify-content: center;
 }
@@ -76,6 +76,3 @@ html{
 #push18{height: 18vh;}
 #push19{height: 19vh;}
 #push20{height: 20vh;}
-.secondPLine{
-    
-}
