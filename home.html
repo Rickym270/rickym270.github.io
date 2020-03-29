@@ -8,28 +8,15 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         
         <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            jQuery(function(){
+                jQuery('#menu_links > .col-4 > a').one("click", function(){
+                    console.log("Loading page");
+                })
+            })
+        </script>
     </head>
     <body>
-        <div id="header-section">
-            <div class="navbar center">
-                <div class="onepx-spacer" ></div>
-                <div class="container" >
-                    <div class="row" id ="menu_links">
-                        <div class = "col-4">
-                            <a class="menu-item" href = "#home" data-url="home.html">Home</a>
-                        </div>
-                        <div class = "col-4">
-                            <a class="menu-item" href = "#">Projects</a>
-                        </div>
-                        <div class = "col-4">
-                            <a class="menu-item" href = "#">Tuts</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container" id="content">
-            <!-- Load content here -->
-        </div>
+        <h1>This is index.html</h1>
     </body>
 </html>
