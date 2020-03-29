@@ -1,0 +1,34 @@
+html{
+    background-color: #ced6e0;
+}
+#content{
+    background-color: white;
+}
+#header-section{
+    border-bottom: 1px solid gray;
+}
+
+#header-section > .navbar{
+    height: 5vh;
+}
+
+.navbar > .container > .row{
+    width:100vw;
+}
+
+.navbar a{
+    color: black;   
+}
+.navbar a:hover{
+    text-decoration: none;
+    color: #747d8c;   
+}
+
+.onepx-spacer{
+    height: .4vh;
+}
+.center{
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
