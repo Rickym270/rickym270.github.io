@@ -1,6 +1,18 @@
 html{
     background-color: #ced6e0;
 }
+.center{
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+.v-center{
+    display: flex;
+    /* 1/4 size of #homeBanner */
+    padding-top:12.5%;
+    /* Align Horizontally */
+    justify-content: center;
+}
 #content{
     background-color: white;
 }
@@ -11,6 +23,17 @@ html{
 #header-section > .navbar{
     height: 5vh;
 }
+
+#homeBanner{
+    height: 50vh;
+    background-color: black;
+}
+
+#homeBannerContent{
+    color:white;
+}
+
+.indent{text-indent:10px}
 
 .navbar > .container > .row{
     width:100vw;
@@ -27,8 +50,24 @@ html{
 .onepx-spacer{
     height: .4vh;
 }
-.center{
-    text-align: center;
-    display: block;
-    margin: 0 auto;
-}
+
+#push1{height: 1vh;}
+#push2{height: 2vh;}
+#push3{height: 3vh;}
+#push4{height: 4vh;}
+#push5{height: 5vh;}
+#push6{height: 6vh;}
+#push7{height: 7vh;}
+#push8{height: 8vh;}
+#push9{height: 9vh;}
+#push10{height: 10vh;}
+#push11{height: 11vh;}
+#push12{height: 12vh;}
+#push13{height: 13vh;}
+#push14{height: 14vh;}
+#push15{height: 15vh;}
+#push16{height: 16vh;}
+#push17{height: 17vh;}
+#push18{height: 18vh;}
+#push19{height: 19vh;}
+#push20{height: 20vh;}
