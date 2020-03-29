@@ -16,6 +16,11 @@ html{
 #content{
     background-color: white;
 }
+
+.fpLine{
+    margin-bottom: 0;
+}
+
 #header-section{
     border-bottom: 1px solid gray;
 }
@@ -33,7 +38,7 @@ html{
     color:white;
 }
 
-.indent{text-indent:10px}
+.indent{text-indent:2.5vw}
 
 .navbar > .container > .row{
     width:100vw;
@@ -71,3 +76,6 @@ html{
 #push18{height: 18vh;}
 #push19{height: 19vh;}
 #push20{height: 20vh;}
+.secondPLine{
+    
+}
