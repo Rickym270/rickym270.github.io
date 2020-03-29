@@ -9,10 +9,11 @@ $(document).ready(function(){
             url: sectionUrl,
             type: callMethod,
             cache: false,
+            timeout : 100000,
+            dataType: 'html',
             data: {
                 'html': dataHTML
             },
-            dataType: 'html',
             success: function(htmlReturned) {
                 $("#content").html(htmlReturned);
                 console.log("Executed Once.");
