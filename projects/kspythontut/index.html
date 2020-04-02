@@ -1,6 +1,38 @@
 ---
 layout: default
 ---
+<h2>3: Conditionals</h2>
+<i>If this is true, then this happens/is true.</i>
+<h3>Small intro</h3>
+    <p>Conditionals are a control structure. Control structures are used to change the flow of the code to executee
+        instructions.</p>
+
+<h3>The <b><i>if/else</i></b> statements</h3>
+    {% highlight python %}
+        if <condition>:
+            <instruction>
+    {% endhighlight %}
+    </br>
+    <p>The <b><i>if</i></b> statement is one of the simplest control structures. Assuming <b><condition></b> is a valid condition, if the <b><condition></b>
+    evaluates to true, then <b><instruction></b> executes. If <b><condition></b> evaluates to false, <b><instruction></b> is skipped over and doesn't
+    execute <i>if else condition isn't specified</i></p>
+    <p>The <i>else</i> statement is used with the <i>if</i> statement. Else is used to tell the code what to do if the <b><condition></b> is False.</p>
+
+<h3>Examples</h3>
+    <p>{% highlight python %}
+        x = 5               //This is known as a variable. If you need help understanding this, please let me know.
+
+        if x < 10:          //Evaluates to True because 5 is less than 10.
+            print("True")       // This executes
+
+        if x > 10:         // Evaluates to False. 5 is NOT greater than 10.
+            print("False")      // This is skipped over and never executes
+
+        if x == 5:         // Evaluates as True. 5 is equal to 5.
+            print("True")       //This executes
+    {% end highlight %</p>}
+</br>
+--------------------------------------------------------------------------------------------------------------------
 
 <h2>2: Hello World!</h2>
 <i>Extremely short but remember, this is an intro still</i>
