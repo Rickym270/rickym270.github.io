@@ -7,27 +7,38 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         
-        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript" src="js/SPAHack.js"></script>
     </head>
     <body>
-        <div id="header-section">
-            <div class="navbar center">
-                <div class="onepx-spacer" ></div>
-                <div class="container" >
-                    <div class="row" id ="menu_links">
-                        <div class = "col-4">
-                            <a class="menu-item" href = "#home" data-url="home.html">Home</a>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="index.html">RM</a>
+            <div class="center">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Projects
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item nav-link" href="#ProjComplete" data-url="pages/projects.html">Complete</a>
+                            
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item nav-link" href="#ProjInProgress" data-url="pages/projects.html#inprogress">In Progress</a>
+                            <a class="dropdown-item nav-link" href="#ProjComingSoon" data-url="pages/projects.html#comingsoon">Coming Soon</a>
                         </div>
-                        <div class = "col-4">
-                            <a class="menu-item" href = "#">Projects</a>
-                        </div>
-                        <div class = "col-4">
-                            <a class="menu-item" href = "#">Tuts</a>
-                        </div>
-                    </div>
-                </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#docs" data-url="pages/docs.html">Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tutorials" data-url="pages/tutorials.html">Tutorials</a>
+                    </li>
+                </ul>
             </div>
-        </div>
+        </nav>
         <div id="content">
             <!-- Load content here -->
         </div>

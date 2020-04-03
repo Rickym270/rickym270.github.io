@@ -2,20 +2,15 @@ html{
     background-color: #ced6e0;
 }
 .center{
-    text-align: center;
+    text-align: center !important;
     display: block;
     margin: 0 auto;
 }
-.v-center{
-    display: flex;
-    /* 1/4 size of #homeBanner */
-    padding-top:15vh;
-    /* Align Horizontally */
-    justify-content: center;
-}
+
 #content{
     background-color: white;
 }
+
 
 .fpLine{
     margin-bottom: 0;
@@ -40,16 +35,11 @@ html{
 
 .indent{text-indent:2.5vw}
 
-.navbar > .container > .row{
-    width:100vw;
+.nav-item{
+    padding-right: 10vw !important;
 }
-
-.navbar a{
-    color: black;   
-}
-.navbar a:hover{
-    text-decoration: none;
-    color: #747d8c;   
+.dropdown.nav-item:hover{
+    display:block;
 }
 
 .onepx-spacer{
@@ -76,3 +66,11 @@ html{
 #push18{height: 18vh;}
 #push19{height: 19vh;}
 #push20{height: 20vh;}
+
+.v-center{
+    display: flex;
+    /* 1/4 size of #homeBanner */
+    padding-top:17.5vh;
+    /* Align Horizontally */
+    justify-content: center;
+}
