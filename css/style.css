@@ -1,16 +1,27 @@
 html{
     background-color: #ced6e0;
 }
+body { padding-top: 50px; }
+
 .center{
     text-align: center !important;
     display: block;
     margin: 0 auto;
 }
 
+//NOTE: Add a white background to the body
 #content{
     background-color: white;
 }
 
+.dropdown:hover>.dropdown-menu {
+  display: block;
+}
+
+.dropdown>.dropdown-toggle:active {
+  /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+}
 
 .fpLine{
     margin-bottom: 0;
@@ -18,10 +29,6 @@ html{
 
 #header-section{
     border-bottom: 1px solid gray;
-}
-
-#header-section > .navbar{
-    height: 5vh;
 }
 
 #homeBanner{
