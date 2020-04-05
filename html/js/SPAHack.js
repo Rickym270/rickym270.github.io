@@ -3,7 +3,7 @@ $(document).ready(function(){
     
     // Defaut load
     if(location_name == "index.html" || location_name == ""){
-        jQuery("#content").load("pages/home.html");
+        jQuery("#content").load("html/pages/home.html");
     }
     
     // Navbar Links

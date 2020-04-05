@@ -8,6 +8,7 @@ class GEN_ERROR(Exception):
 class GenHTML(object):
     j2 = __import__('jinja2')
     def __init__(self):
+        print("Name: {}".format(__name__))
         self.HTMLName = None
         self.JVARS = None
         self.TEMPLATE_PATH = None
@@ -22,7 +23,7 @@ class GenHTML(object):
 
     def set_template_path(self, template_path=None):
         if not template_path:
-            self.TEMPLATE_PATH = "/Users/rmartinez/Documents/Dev/GitHub/rickym270.github.io/templates/"
+            self.TEMPLATE_PATH = "../templates/"
         else:
             self.TEMPLATE_PATH = template_path
 
@@ -35,7 +36,7 @@ class GenHTML(object):
         self.JVARS = {HTMLTitle}
 
     def get_jEnvironment(self):
-        return self.j2.Environment(loader=self.j2.FileSystemLoader(searchpath=self.TEMPLATE_PATH))
+        return self.j2.Environment(loader=self.j2.PackageLoader("rickym270.github.io", "templates"))
 
     def gen_html(self, html_title):
         self.set_HTMLTitle(html_title)

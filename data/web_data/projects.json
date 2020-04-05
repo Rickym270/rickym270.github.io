@@ -1,0 +1,26 @@
+{
+    "Error Checker": {
+        "title"         :   "Error Checker",
+        "description"   :   "Automated the process of morning error checks on scripts. It was time-consuming to check many scripts logs to determine if any errors occured. This script automates that process by looking at all logs and grabbing the information, then submitting the errors to a database to use the data for other applications.",
+        "img"           :   "N/A",
+        "github"        :   "https://github.com/Rickym270/ErrorChecker"
+    },
+    "Connectivity Monitor": {
+        "title"         :   "Connectivity Monitor",
+        "description"   :   "Created to replace a paid program that monitors all of a Network's Hosts. The script performs PING, TCP and UDP tests. The multiprocessing module is used to introduce multiprocessesing to perform connectivity tests on multiple hosts, quickly. This reduces the runtime of the program. Currently it runs on a crontab at an interval",
+        "img"           :   "N/A",
+        "github"        :   "https://github.com/Rickym270/ConnectivityMonitor"
+    },
+    "CR-IPLookup": {
+        "title"         :   "CR-IPLookup",
+        "description"   :   "Project developed to find what service groups and IP address is registered to. Acquiring the data (back-end), parsing and creating of dynamic front-end developed to as a tool used through various teams to aid the US Network Services team.",
+        "img"           :   "N/A",
+        "github"        :   "https://github.com/Rickym270/CR-IPLookup"
+    },
+    "F5 Diffs": {
+        "title"         :   "F5 Diffs",
+        "description"   :   "Monitors F5 devices to get various forms of data for that VIP. The tool also performs a 'diff' to illustrate VIP's who's state changed (Offline, Online)",
+        "img"           :   "N/A",
+        "github"        :   "https://github.com/Rickym270/F5Diffs"
+    }
+}
