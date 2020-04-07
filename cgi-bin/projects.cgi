@@ -18,8 +18,16 @@ debug_list = []
 timestamp = datetime.now()
 debug_list.append(timestamp)
 
+from github import Github
+username = ""
+pwd = ""
+
+g = Github(username, pwd)
+
+for repo in g.get_user().get_repos():
+    print(repo.name)
 # Start
-template = templates.get_template(TEMPLATE)
-with open("../pages/{}".format(GEN_HTMLNAME), "w+") as f:
-    f.write(template.render(debug_list=debug_list, timestamp=timestamp))
+#template = templates.get_template(TEMPLATE)
+#with open("../pages/{}".format(GEN_HTMLNAME), "w+") as f:
+#    f.write(template.render(debug_list=debug_list, timestamp=timestamp))
 
