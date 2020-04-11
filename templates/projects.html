@@ -1,15 +1,42 @@
-Content-Type: text/html
-
 <!DOCTYPE html PUBLIC   "-//W3C//DTD XHTML 1.0 Transitional//EN"
                         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="htttp://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
         <title>IP Services Search Tool</title>
-        <link rel="stylesheet" href="../REPORTS/css/bootstrap4.0.min.css" />
+       
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
     </head>
-    <body>
-            {{ debug_list }}
+    <body id="fullBody">
+        <div class="container">
+            <div id="push3"></div>
+            <h3>Github Projects</h3>
+            <div id="push1"></div>
+            {% for repo in repo_list %}
+                <div class="row">
+                        <p class="font-weight-bold">{{ repo['name'] }}</p>
+                </div> 
+                <div class="row">
+                    <div class="container">
+                        <div class="row">
+                            <div class="container">
+                            <div class="col-8">
+                                <p>{{ repo['description'] }}</p>
+                                <a href="{{ repo['url'] }}">Github repo</a>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div id="push3"></div>
+            <div id="push1"></div>
+            {% endfor  %}
+        </div>
     </body>
 </html>

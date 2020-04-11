@@ -14,16 +14,22 @@ GEN_HTMLNAME = "projects_test.html"
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=TEMPLATE_PATH))
 print("Content-Type: text/html\r\n\r\n")
 
+git_user, git_oass = "", ""
 debug_list = []
 repo_list = []
 timestamp = datetime.now()
 debug_list.append(timestamp)
 
 from github import Github
-username = ""
-pwd = ""
+with open("../etc/githubcred.conf", 'r') as f:
+    for ind, line in enumerate(f.readlines()):
+        line = line.strip()
+        if ind == 0:
+            git_user = line
+        if ind == 1:
+            git_pass = line
 
-g = Github(username, pwd)
+g = Github(git_user, git_pass)
 
 for repo in g.get_user().get_repos():
     repo_list.append({
@@ -31,10 +37,9 @@ for repo in g.get_user().get_repos():
         'description'   :   repo.description,
         'url'           :   repo.html_url});
 
-from pprint import pprint
-pprint(repo_list)
 # Start
-#template = templates.get_template(TEMPLATE)
-#with open("../pages/{}".format(GEN_HTMLNAME), "w+") as f:
-#    f.write(template.render(debug_list=debug_list, timestamp=timestamp))
+template = templates.get_template(TEMPLATE)
+#template.render(debug_list=debug_list, timestamp=timestamp, repo_list=repo_list)
+with open("../html/pages/{}".format(GEN_HTMLNAME), "w+") as f:
+    f.write(template.render(debug_list=debug_list, timestamp=timestamp, repo_list=repo_list))
 

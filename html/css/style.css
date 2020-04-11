@@ -14,6 +14,8 @@ body { padding-top: 50px; }
     background-color: white;
 }
 
+.divider{border-bottom: 1px solid #6C7A89;}
+
 .dropdown:hover>.dropdown-menu {
   display: block;
 }
@@ -22,7 +24,9 @@ body { padding-top: 50px; }
   /*Without this, clicking will make it sticky*/
     pointer-events: none;
 }
-
+#fullBody{
+    height: 100%;
+}
 .fpLine{
     margin-bottom: 0;
 }
