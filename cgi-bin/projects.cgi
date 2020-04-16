@@ -10,6 +10,7 @@ cgitb.enable()
 TEMPLATE_PATH = "../templates/"
 TEMPLATE = "projects.html"
 GEN_HTMLNAME = "projects_test.html"
+JSONPATH = "../data/ProjectClassification.json"
 
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=TEMPLATE_PATH))
 print("Content-Type: text/html\r\n\r\n")
@@ -17,6 +18,7 @@ print("Content-Type: text/html\r\n\r\n")
 git_user, git_oass = "", ""
 debug_list = []
 repo_list = []
+classifiedJSON = {}
 timestamp = datetime.now()
 debug_list.append(timestamp)
 
@@ -36,6 +38,12 @@ for repo in g.get_user().get_repos():
         'name'          :   repo.name,
         'description'   :   repo.description,
         'url'           :   repo.html_url});
+
+import json
+with open(JSONPATH, 'r') as f:
+    classifiedJSON =  json.load(f)
+
+print(classifiedJSON)
 
 # Start
 template = templates.get_template(TEMPLATE)
