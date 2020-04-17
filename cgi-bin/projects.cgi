@@ -9,7 +9,7 @@ cgitb.enable()
 
 TEMPLATE_PATH = "../templates/"
 TEMPLATE = "projects.html"
-GEN_HTMLNAME = "projects_test.html"
+GEN_HTMLNAME = "projects.html"
 JSONPATH = "../data/ProjectClassification.json"
 
 templates = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=TEMPLATE_PATH))
