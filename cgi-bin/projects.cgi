@@ -17,7 +17,7 @@ print("Content-Type: text/html\r\n\r\n")
 
 git_user, git_oass = "", ""
 debug_list = []
-repo_list = []
+repo_list = {}
 classifiedJSON = {}
 timestamp = datetime.now()
 debug_list.append(timestamp)
@@ -34,20 +34,19 @@ with open("../etc/githubcred.conf", 'r') as f:
 g = Github(git_user, git_pass)
 
 for repo in g.get_user().get_repos():
-    repo_list.append({
-        'name'          :   repo.name,
-        'description'   :   repo.description,
-        'url'           :   repo.html_url});
+    repo_list[repo.name] = {    'name'          :   repo.name,
+                                'description'   :   repo.description,
+                                'url'           :   repo.html_url};
 
 import json
 with open(JSONPATH, 'r') as f:
     classifiedJSON =  json.load(f)
-
-print(classifiedJSON)
+from pprint import pprint
+pprint(repo_list)
 
 # Start
 template = templates.get_template(TEMPLATE)
 #template.render(debug_list=debug_list, timestamp=timestamp, repo_list=repo_list)
 with open("../html/pages/{}".format(GEN_HTMLNAME), "w+") as f:
-    f.write(template.render(debug_list=debug_list, timestamp=timestamp, repo_list=repo_list))
+    f.write(template.render(debug_list=debug_list, timestamp=timestamp, repo_list=repo_list, classJSON = classifiedJSON))
 

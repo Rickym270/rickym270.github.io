@@ -19,18 +19,24 @@
             <h3>Projects</h3>
             <div id="push1"></div>
             <p>Home to my current edeavors. What's Ricky up to?</p>
-            <div class="container">
-            {% for repo in repo_list %}
+
+            <div id="push2"></div>
+            <p class="text-muted" style="font-size:20px; margin-bottom:0px;">In Progress</p>
+            <div class="divider text-muted"></div>
+            <div id="push3"></div>
+            {% for repo in classJSON["In Progress"]  %}
                 <div class="row">
-                        <p class="font-weight-bold">{{ repo['name'] }}</p>
+                    <div class="container">
+                        <p class="font-weight-bold">{{ repo }}</p>
+                    </div>
                 </div> 
                 <div class="row">
                     <div class="container">
                         <div class="row">
                             <div class="container">
                             <div class="col-8">
-                                <p>{{ repo['description'] }}</p>
-                                <a href="{{ repo['url'] }}">Github repo</a>
+                                <p>{{ repo_list[repo]['description'] }}</p>
+                                <a href="{{ repo_list[repo]['url'] }}">Github repo</a>
                             </div>
                             </div>
                         </div>
@@ -39,7 +45,59 @@
             <div id="push3"></div>
             <div id="push1"></div>
             {% endfor  %}
-            </div>
+
+            <div id="push2"></div>
+            <p class="text-muted" style="font-size:20px; margin-bottom:0px;">Completed</p>
+            <div class="divider text-muted"></div>
+            <div id="push3"></div>
+            {% for repo in classJSON["Completed"]  %}
+                <div class="row">
+                    <div class="container">
+                        <p class="font-weight-bold">{{ repo }}</p>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="container">
+                        <div class="row">
+                            <div class="container">
+                            <div class="col-8">
+                                <p>{{ repo_list[repo]['description'] }}</p>
+                                <a href="{{ repo_list[repo]['url'] }}">Github repo</a>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div id="push3"></div>
+            <div id="push1"></div>
+            {% endfor  %}
+
+            <div id="push2"></div>
+            <p class="text-muted" style="font-size:20px; margin-bottom:0px;">Ideas</p>
+            <div class="divider text-muted"></div>
+            <div id="push3"></div>
+            {% for repo in classJSON["Ideas"]  %}
+                <div class="row">
+                    <div class="container">
+                        <p class="font-weight-bold">{{ repo }}</p>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="container">
+                        <div class="row">
+                            <div class="container">
+                            <div class="col-8">
+                                <p>{{ repo_list[repo]['description'] }}</p>
+                                <a href="{{ repo_list[repo]['url'] }}">Github repo</a>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div id="push3"></div>
+            <div id="push1"></div>
+            {% endfor  %}
+
         </div>
     </body>
 </html>
