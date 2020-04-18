@@ -20,7 +20,6 @@ debug_list = []
 repo_list = {}
 classifiedJSON = {}
 timestamp = datetime.now()
-debug_list.append(timestamp)
 
 from github import Github
 with open("../etc/githubcred.conf", 'r') as f:

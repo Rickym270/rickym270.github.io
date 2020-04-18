@@ -25,54 +25,40 @@
                 <p class="text-muted" style="font-size:20px; margin-bottom:0px;">In Progress</p>
                 <div class="divider text-muted"></div>
                 <div id="push3"></div>
-                {% for repo in classJSON["In Progress"]  %}
                     <div class="row">
-                        <div class="container">
-                            <p class="font-weight-bold">{{ repo }}</p>
-                        </div>
-                    </div> 
-                    <div class="row">
-                        <div class="container">
-                            <div class="row">
-                                <div class="container">
-                                    <div class="col-8">
-                                        <p>{{ repo_list[repo]['description'] }}</p>
-                                        <a href="{{ repo_list[repo]['url'] }}">Github repo</a>
-                                    </div>
-                                </div>
+                {% for repo in classJSON["In Progress"] %}
+                        <div class="col-3">
+                        <div class="card" style="width: 17rem;">
+                            <img src="..." class="card-img-top center" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ repo }}</h5>
+                                <p class="card-text">{{ repo_list[repo]['description'] }}</p>
+                                <a href="{{ repo_list[repo]['url'] }}" class="card-link">See on GitHub</a>
                             </div>
                         </div>
                     </div>
-                <div id="push3"></div>
-                <div id="push1"></div>
+                <div id="push4"></div>
                 {% endfor  %}
             </div>
 
             <div id="ProjComplete">
                 <div id="push2"></div>
-                <p class="text-muted" style="font-size:20px; margin-bottom:0px;">Completed</p>
+                <p class="text-muted" style="font-size:20px; margin-bottom:0px;">Complete</p>
                 <div class="divider text-muted"></div>
                 <div id="push3"></div>
-                {% for repo in classJSON["Completed"]  %}
-                    <div class="row">
-                        <div class="container">
-                            <p class="font-weight-bold">{{ repo }}</p>
-                        </div>
-                    </div> 
-                    <div class="row">
-                        <div class="container">
-                            <div class="row">
-                                <div class="container">
-                                    <div class="col-8">
-                                        <p>{{ repo_list[repo]['description'] }}</p>
-                                        <a href="{{ repo_list[repo]['url'] }}">Github repo</a>
-                                    </div>
-                                </div>
+                <div class="row">
+                {% for repo in classJSON["Completed"] %}
+                    <div class="col-3">
+                        <div class="card" style="width: 17rem; margin-bottom:1vh;">
+                            <img src="..." class="card-img-top center" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ repo }}</h5>
+                                <p class="card-text">{{ repo_list[repo]['description'] }}</p>
+                                <a href="{{ repo_list[repo]['url'] }}" class="card-link">See on GitHub</a>
                             </div>
                         </div>
                     </div>
-                    <div id="push3"></div>
-                    <div id="push1"></div>
+                	<div id="push4"></div>
                 {% endfor  %}
             </div>
 
@@ -81,29 +67,23 @@
                 <p class="text-muted" style="font-size:20px; margin-bottom:0px;">Ideas</p>
                 <div class="divider text-muted"></div>
                 <div id="push3"></div>
-                {% for repo in classJSON["Ideas"]  %}
-                    <div class="row">
-                        <div class="container">
-                            <p class="font-weight-bold">{{ repo }}</p>
-                        </div>
-                    </div> 
-                    <div class="row">
-                        <div class="container">
-                            <div class="row">
-                                <div class="container">
-                                    <div class="col-8">
-                                    <p>{{ repo_list[repo]['description'] }}</p>
-                                    <a href="{{ repo_list[repo]['url'] }}">Github repo</a>
-                                </div>
+                <div class="row">
+                {% for repo in classJSON["Ideas"] %}
+                    <div class="col-3">
+                        <div class="card" style="width: 17rem;">
+                            <img src="..." class="card-img-top center" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ repo }}</h5>
+                                <p class="card-text">{{ repo_list[repo]['description'] }}</p>
+                                <a href="{{ repo_list[repo]['url'] }}" class="card-link">See on GitHub</a>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="push3"></div>
-                <div id="push1"></div>
+                	<div id="push4"></div>
                 {% endfor  %}
             </div>
 
+			<div id="push6"></div>
         </div>
     </body>
 </html>
