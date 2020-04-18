@@ -40,8 +40,8 @@ for repo in g.get_user().get_repos():
 import json
 with open(JSONPATH, 'r') as f:
     classifiedJSON =  json.load(f)
-from pprint import pprint
-pprint(repo_list)
+
+print("Done.\n\n\n")
 
 # Start
 template = templates.get_template(TEMPLATE)
