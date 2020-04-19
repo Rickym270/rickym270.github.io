@@ -1,21 +1,60 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" href="../html//css/style.css">
-        
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        
-    </head>
-    <body>
-        <div class="row">
-            <div class="col-12">
-                <div class="container">
-                    This is the docs page
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org//TR/xhtml1/DTD/xhtml1-transitional-dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Expires" content="-1"/>
 
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+      
+    <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../html/css/style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  </head>
+  <body style="height:100vh">
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $.ajaxSetup({
+          cache: false
+        });
+        $('#FAQLinks div.list-group a').click(function(e){
+          // handles switching what link is active
+          console.log(this);
+          $('#FAQLinks a').removeClass('active');
+          $(this).addClass('active');
+          e.preventDefault();       // Prevents default re-direct of the anchor tag
+        });
+        $("div.list-group a").on('click',function(e){
+          e.preventDefault();
+          var attr = $(this).attr('href');
+          if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
+            $('#FAQMain').load(attr);
+          }
+        });
+      });
+    </script>
+    <div id="FAQ">
+    <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2 right-divider divider-height" id="FAQLinks" style="max-height:100vh;">
+      <h3>Notes</h3>
+    
+      <div id="push1"></div>
+      <div class="list-group">
+        <!-- TO add more FAQ Articles: 
+          ADD:    <a class="list-group-item list-group-item-action" href="<LINK>"><NAME></a>
+        -->
+        <a class="list-group-item list-group-item-action" href="../data/FAQPages/test.html">Test HTML</a>
+      </div>
+    </div>
+    
+    <div class="col-xs-8 col-sm-8 col-md-9 col-lg-10">
+      <div id="push3"></div>
+      <div class="container" id="FAQMain">
+        <h4>Click any FAQ to get started!</h4> 
+      </div>
+    </div>
+    </div>
+    <div id="push5"></div>
+  </body>
+</html>
