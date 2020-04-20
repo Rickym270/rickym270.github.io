@@ -28,8 +28,8 @@
                     <div class="row">
                 {% for repo in classJSON["In Progress"] %}
                         <div class="col-3">
-                        <div class="card" style="width: 14vw;">
-                            <img src="..." class="card-img-top center" alt="...">
+                        <div class="card" style="width: 14vw;padding-top:1vh;">
+                            <img src="../imgs/{{ repo }}.png" class="card-img-top center" alt="..." style="width: 75%;">
                             <div class="card-body">
                                 <h5 class="card-title">{{ repo }}</h5>
                                 <p class="card-text">{{ repo_list[repo]['description'] }}</p>
@@ -49,8 +49,8 @@
                 <div class="row">
                 {% for repo in classJSON["Completed"] %}
                     <div class="col-3">
-                        <div class="card" style="width: 14vw; margin-bottom:1vh;">
-                            <img src="..." class="card-img-top center" alt="...">
+                        <div class="card" style="width: 14vw; margin-bottom:1vh;padding-top:1vh;">
+                            <img src="../imgs/{{ repo }}.png" class="card-img-top center" alt="..." style="width:75%">
                             <div class="card-body">
                                 <h5 class="card-title">{{ repo }}</h5>
                                 <p class="card-text">{{ repo_list[repo]['description'] }}</p>
@@ -70,8 +70,8 @@
                 <div class="row">
                 {% for repo in classJSON["Ideas"] %}
                     <div class="col-3">
-                        <div class="card" style="width: 14vw;">
-                            <img src="..." class="card-img-top center" alt="...">
+                        <div class="card" style="width: 14vw;padding-top:1vh;">
+                            <img src="../imgs/{{ repo }}.png" class="card-img-top center" alt="..." style="width:75%">
                             <div class="card-body">
                                 <h5 class="card-title">{{ repo }}</h5>
                                 <p class="card-text">{{ repo_list[repo]['description'] }}</p>
