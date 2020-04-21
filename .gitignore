@@ -2,3 +2,4 @@
 *.conf
 /etc/
 /myvenv/
+.DS_Store
