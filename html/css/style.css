@@ -2,6 +2,8 @@ html{
     background-color: #ced6e0;
 }
 
+body{ padding-top:50px; }
+
 .center{
     text-align: center !important;
     display: block;
@@ -11,7 +13,6 @@ html{
 //NOTE: Add a white background to the body
 #content{
     background-color: white;
-    padding-top: 50px !important; 
 }
 
 .divider{border-bottom: 1px solid #6C7A89;}
