@@ -11,7 +11,7 @@ html{
 //NOTE: Add a white background to the body
 #content{
     background-color: white;
-    padding-top: 50px; 
+    padding-top: 50px !important; 
 }
 
 .divider{border-bottom: 1px solid #6C7A89;}
