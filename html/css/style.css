@@ -31,6 +31,13 @@ body{ padding-top:50px; }
 #FAQBody{
     padding-top: 0px;
 }
+#FAQLinks a:hover{cursor: pointer;}
+#FAQLinks a:first-child,#ToolsLinks a:first-child{border-top: 0px;}
+#FAQLinks a,#ToolsLinks a{
+  border-right: 0px;
+  border-left: 0px;
+  font-size:1.35vh;
+}
 .fpLine{
     margin-bottom: 0;
 }
@@ -43,7 +50,6 @@ body{ padding-top:50px; }
     height: 50vh;
     background-color: black;
 }
-
 #homeBannerContent{
     color:white;
 }
