@@ -10,7 +10,6 @@ $(document).ready(function(){
     jQuery(function(){
         jQuery("a.nav-link").click(function(){            
             var sectionUrl = $(this).attr("data-url");
-                console.log(sectionUrl);
             jQuery("#content").load(sectionUrl, function(){
                 console.log("Loaded " + sectionUrl);
             })
