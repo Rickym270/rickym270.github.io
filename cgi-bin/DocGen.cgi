@@ -24,16 +24,19 @@ for pagename in os.listdir(FAQPAGES_PATH):
     content = ""
    
     with open("{}{}".format(FAQPAGES_PATH, pagename)) as f:
-        lines = f.readlines()
-        for line in lines:
-            section_key = line.split(":")[0].strip()
-            content = line.split(":")[1].strip()
-            if section_key == "title":
-                title = content
-                print("TITLE: {}".format(content))
-            if section_key == "body":
-                file_content = content
-                print("CONTENT: {}".format(content))
+        if pagename.split(".")[1] == "txt":
+            lines = f.readlines()
+            for line in lines:
+                section_key = line.split(":")[0].strip()
+                content = line.split(":")[1].strip()
+                if section_key == "title":
+                    title = content
+                    print("TITLE: {}".format(content))
+                if section_key == "body":
+                    file_content = content
+                    print("CONTENT: {}".format(content))
+        else:
+            print("Invalid filetype")
     
     # Start
     template = templates.get_template(TEMPLATE)
