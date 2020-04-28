@@ -1,2 +1,2 @@
 title: TEST
-body: Samantha
+body: This is a test to see if the generation worked
