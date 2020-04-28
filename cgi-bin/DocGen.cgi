@@ -37,6 +37,7 @@ for pagename in os.listdir(FAQPAGES_PATH):
                     print("CONTENT: {}".format(content))
         else:
             print("Invalid filetype")
+            continue
     
     # Start
     template = templates.get_template(TEMPLATE)
