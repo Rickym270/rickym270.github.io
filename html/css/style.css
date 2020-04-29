@@ -56,6 +56,10 @@ body{ padding-top:50px; }
 
 .indent{text-indent:2.5vw}
 
+#main{
+    margin-top:50px !important;
+}
+
 .nav-item{
     padding-right: 10vw !important;
 }
