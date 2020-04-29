@@ -25,12 +25,19 @@ body{ padding-top:50px; }
   /*Without this, clicking will make it sticky*/
     pointer-events: none;
 }
+
+.dropdown.nav-item:hover{
+    display:block;
+}
+
 #fullBody{
     height: 100%;
 }
+
 #FAQBody{
     padding-top: 0px;
 }
+
 #FAQLinks a:hover{cursor: pointer;}
 #FAQLinks a:first-child,#ToolsLinks a:first-child{border-top: 0px;}
 #FAQLinks a,#ToolsLinks a{
@@ -38,6 +45,7 @@ body{ padding-top:50px; }
   border-left: 0px;
   font-size:1.35vh;
 }
+
 .fpLine{
     margin-bottom: 0;
 }
@@ -50,6 +58,7 @@ body{ padding-top:50px; }
     height: 45vh;
     background-color: black;
 }
+
 #homeBannerContent{
     color:white;
 }
@@ -66,9 +75,8 @@ body{ padding-top:50px; }
 .nav-item{
     padding-right: 10vw !important;
 }
-.dropdown.nav-item:hover{
-    display:block;
-}
+
+.nobr{ white-space: nowrap; }
 
 .onepx-spacer{
     height: .4vh;
