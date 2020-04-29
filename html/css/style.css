@@ -54,7 +54,10 @@ body{ padding-top:50px; }
     color:white;
 }
 
-.indent{text-indent:2.5vw}
+.indent{
+    text-indent:2.5vw;
+    margin-bottom:0px;
+}
 
 #main{
     margin-top:50px !important;
