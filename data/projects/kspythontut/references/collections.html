@@ -3,13 +3,70 @@ layout: default
 ---
 <h2><u>Collections</u></h2>
     <i>This is a reference to collections. This includes lists, dictionaries, sets and tuple data types.</i>
+    <p>It is important to choose the correct
+        data type (collection type) that is going to be used. Every different type of collection has different rules and the use of
+        the correct type can increase efficiency and even security.</p>
 </br>
 <h3>Lists</h3>
     <p>Lists are a type of data structure in python. Lists are a collection of items/members (words, characters, numbers, objects etc.)</p>
-    
+    <p>In Python, lists are defined by square brackets.</p>
+
     {% highlight python %}
     sample_list = ['a', 'b', 'c', 1, 2, 3]
     {% endhighlight %}
 
-    <p>Lists are a collection of members. This collection has an order and that order can be modified. Lists also allow for duplicate members.
-    In Python, lists are defined by square brackets.</p>
+
+    <h4>A few things to note about lists:</h4>
+    - The list collection has an order and that order can be modified. 
+    - Lists allow for duplicate members.
+    
+    <h4>Accessing items</h4>
+        <p>An item is referenced in a list through it's index.</p>
+        </br>
+        <b>Example</b>
+        <p>Say we want to access (get) member 'a' within the list. We refer to it by it's index. 
+            
+        {% highlight python %}
+        sample_list = ['a', 'b', 'c', 1, 2, 3]
+            
+        //Print 'a'
+        print(sample_list[0])       // Index of 'a' is 0.
+        //Print 'b'
+        print(sample_list[1])       // Index of 'b' is 1.
+        //Print 'c'
+        print(sample_list[2])       // Index of 'c' is 2.
+        //Print '1'
+        print(sample_list[3])       // Index of '1' is 3.
+        //Print '2'
+        print(sample_list[4])       // Index of '2' is 4.
+        //Print '3'
+        print(sample_list[5])       // Index of '3' is 5.
+        {% endhighlight %"
+    
+    <h4>Negative Indexes</h4>
+        <p>It is possible to have a negative index. When a list member is referenced by negative index, the member at the end
+            is obtained. Negative indexing refers to its members from right to left.</p>
+
+        {% highlight python %}
+        sample_list = ['a', 'b', 'c', 1, 2, 3]
+
+        //Print '3'
+        print(sample_list[-1])
+
+        //Print '2'
+        print(sample_list[-2])
+
+        //Print '1'
+        print(sample_list[-3])
+
+        //Print 'c'
+        print(sample_list[-4])
+
+        //Print 'b'
+        print(sample_list[-5])
+
+        //Print 'a'
+        print(sample_list[-6])
+        {% endhighlight %}
+            
+            
