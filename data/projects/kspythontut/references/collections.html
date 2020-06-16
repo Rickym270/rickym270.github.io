@@ -11,9 +11,9 @@ layout: default
     <p>Lists are a type of data structure in python. Lists are a collection of items/members (words, characters, numbers, objects etc.)</p>
     <p>In Python, lists are defined by square brackets.</p>
 
-    {% highlight python %}
+    {% highlight python %}{% raw %}
     sample_list = ['a', 'b', 'c', 1, 2, 3]
-    {% endhighlight %}
+    {% endraw %}{% endhighlight %}
 
 
     <h4>A few things to note about lists:</h4>
@@ -26,7 +26,7 @@ layout: default
         <b>Example</b>
         <p>Say we want to access (get) member 'a' within the list. We refer to it by it's index. 
             
-        {% highlight python %}
+        {% highlight python %}{% raw %}
         sample_list = ['a', 'b', 'c', 1, 2, 3]
             
         //Print 'a'
@@ -41,13 +41,13 @@ layout: default
         print(sample_list[4])       // Index of '2' is 4.
         //Print '3'
         print(sample_list[5])       // Index of '3' is 5.
-        {% endhighlight %"
+        {% endraw %}{% endhighlight %"
     
     <h4>Negative Indexes</h4>
         <p>It is possible to have a negative index. When a list member is referenced by negative index, the member at the end
             is obtained. Negative indexing refers to its members from right to left.</p>
 
-        {% highlight python %}
+        {% highlight python %}{% raw %}
         sample_list = ['a', 'b', 'c', 1, 2, 3]
 
         //Print '3'
@@ -67,6 +67,4 @@ layout: default
 
         //Print 'a'
         print(sample_list[-6])
-        {% endhighlight %}
-            
-            
+        {% endraw %}{% endhighlight %}
