@@ -1,0 +1,25 @@
+<pycode>
+import subprocess as sub
+
+add_cmd = "diff -y {} {} | grep '>' | wc -l"
+add_counter = sub.Popen(add_cmd, stdout= sub.PIPE, stderr=sub.PIPE, shell=True)
+
+To get the output:
+output_a, errors_a = add_counter.communicate()
+</pycode>
+
+====================================================== Using Paramiko ===========================================
+
+<pycode>
+import paramiko as pm
+
+client = pm.SSHClient()
+client.load_system_host_keys()
+client.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
+client.set_missing_host_key_policy(AllowAllKeys())
+client.connect(deviceip, username=user, password=passwd)
+chan = client.invoke_shell()
+chan.send('\003')
+client.exec_command("clish")
+stdin, stdout, stderr = client.exec_command("clish -c 'show route static'")
+</pycode>
