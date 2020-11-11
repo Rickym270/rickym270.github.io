@@ -1,5 +1,6 @@
 *.sw*
 *.conf
+*.pyc*
 /etc/
 /myvenv/
 .DS_Store
