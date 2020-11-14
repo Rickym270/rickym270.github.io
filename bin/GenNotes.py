@@ -23,4 +23,10 @@ dest = args[1].split("=")[1]
 if not path.exists(src):
     raise UnknownPath("Src Path {} is not a real/valid location".format(src))
 if not path.exists(dest):
-    raise UnknownPath("Out Path {} is not a real/valid location".format(dest))
+    new_filename = dest.split("/")[-1] if "/" in dest else dest
+    if ".txt" in new_filename:
+        import os
+        os.system("touch {}".format(dest))
+        print("Created {}".format(dest))
+    else:
+        raise UnknownPath("Out Path {} is not a real/valid location".format(dest))
