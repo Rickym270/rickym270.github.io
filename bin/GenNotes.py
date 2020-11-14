@@ -3,6 +3,8 @@ import sys
 import os.path
 from os import path
 
+sys.path.append("../lib")
+from ConvertTo import ConvertTo
 
 sys.path.append("exceptions")
 from Exceptions import InvalidCommandFormat
@@ -20,13 +22,17 @@ if ('--src_file' in args and '--out_file' not in args) or ('--out_file' in args 
 #TODO: Does the path exist?
 src = args[0].split("=")[1]
 dest = args[1].split("=")[1]
-if not path.exists(src):
+if path.exists(src):
+    with open(src, "r") as f:
+        lines = f.readlines()
+        ConvertTo(1)
+        #print("Lines: {}".format(lines))
+else:
     raise UnknownPath("Src Path {} is not a real/valid location".format(src))
 if not path.exists(dest):
     new_filename = dest.split("/")[-1] if "/" in dest else dest
-    if ".txt" in new_filename:
-        import os
-        os.system("touch {}".format(dest))
-        print("Created {}".format(dest))
-    else:
+    try:
+        with open(dest, "w+") as f:
+            f.write("Currently Testing this.")
+    except Exception:
         raise UnknownPath("Out Path {} is not a real/valid location".format(dest))

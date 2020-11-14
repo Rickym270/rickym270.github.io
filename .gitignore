@@ -4,3 +4,4 @@
 /etc/
 /myvenv/
 .DS_Store
+.vscode

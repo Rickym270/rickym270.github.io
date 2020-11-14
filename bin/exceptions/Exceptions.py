@@ -6,3 +6,6 @@ class InvalidCommandFormat(Exception):
 
 class UnknownPath(Exception):
     pass
+
+class InvalidFileObject(Exception):
+    pass

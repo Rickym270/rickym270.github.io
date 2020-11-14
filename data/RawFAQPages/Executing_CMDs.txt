@@ -4,7 +4,7 @@ import subprocess as sub
 add_cmd = "diff -y {} {} | grep '>' | wc -l"
 add_counter = sub.Popen(add_cmd, stdout= sub.PIPE, stderr=sub.PIPE, shell=True)
 
-To get the output:
+#To get the output:
 output_a, errors_a = add_counter.communicate()
 </pycode>
 
