@@ -54,6 +54,7 @@ body{
 #footer{
     position: absolute;
     bottom: 0;
+    width: 100vw;
 }
 .fpLine{
     margin-bottom: 0;
