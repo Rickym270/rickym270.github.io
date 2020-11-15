@@ -25,7 +25,7 @@ dest = args[1].split("=")[1]
 if path.exists(src):
     with open(src, "r") as f:
         lines = f.readlines()
-        ConvertTo(1)
+        ConvertTo(f)
         #print("Lines: {}".format(lines))
 else:
     raise UnknownPath("Src Path {} is not a real/valid location".format(src))
