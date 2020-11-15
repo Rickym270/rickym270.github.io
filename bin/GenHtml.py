@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/python3
 class GEN_ERROR(Exception):
     def __init__(self, message):
         self.message =  message
