@@ -9,23 +9,31 @@ from Exceptions import InvalidFileObject
 
 class ConvertTo(object):
     def __init__(self, fobj):
-	# TODO: Check if a file object passed
+        self.TEMPLATE = "../templates/doc.html"
+        self.TEMPLATE_DIR = "../templates/"
+        # TODO: Check if a file object passed
         import io
         if type(fobj) == io.TextIOWrapper:
             pass
         else:
             raise InvalidFileObject("Expected io.TextIOWrapper but received {}".format(type(fobj)))
-	
-	self.lines = getLines(fobj)
+        
+        self.lines = fobj.readlines()
 
-    def __getLines(self, f):
-	return f.readlines()
+    def html(self):
+        '''
+            Convert self.lines to HTML
+        '''
+        print("cvt.html running. Self.lines: {}".format(self.lines))
+        pycode_start = False
+        title = self.lines[0]
+        for i in range(len(self.lines)):
+            # NOTE: Define if python code has started
+            if '<pycode>' in self.lines[i]:
+                pycode_start = True
+            if '</pycode>' in self.lines[i] and pycode_start:
+                pycode_start = False
 
-    def getLines(self, f):
-	return __getLines(f)
+        print("Title: {}".format(title))
 
-    def html(awlf):
-	'''
-	    Convert self.lines to HTML
-	'''
-       
+

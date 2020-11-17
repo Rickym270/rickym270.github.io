@@ -1,4 +1,12 @@
 #!/usr/bin/python3
+'''
+    Generate HTML based on the file given. Essentially building my own parser
+
+    Usage: 
+        ./GenNotes.py --src_file=<path> --dest_file=<path>
+    Notes:
+        - v0.5 Generating from my notes, later I want to incorporate GenHtml.py
+'''
 import sys
 import os.path
 from os import path
@@ -10,29 +18,46 @@ sys.path.append("exceptions")
 from Exceptions import InvalidCommandFormat
 from Exceptions import UnknownPath
 
+#NOTE: Initialize
+options = []
+specifiers = []
+
+#NOTE: Is the proper command executed?
 args = sys.argv[1:]
 print("Arguments: {}".format(args))
+if not args or len(args)<3:
+    raise InvalidCommandFormat('type="<Docs|Projects>", src_file=<path> and dest_file=<path> options needed')
 
-if not args or len(args)<2:
-    raise InvalidCommandFormat('src_file=<path> and out_file=<path> options needed')
+#NOTE: Extract options and specifiers
+for arg in args:
+    option, specifier = arg.split("=")
+    options.append(option)
+    specifiers.append(specifier)
 
-if ('--src_file' in args and '--out_file' not in args) or ('--out_file' in args and '--src_file' not in args):
-    raise InvalidCommandFormat('src_file and out_file needed together')
+#NOTE: Executed correctly?
+if 'type' not in options or 'src_file' not in options or 'dest_file' not in options:
+    raise InvalidCommandFormat('type, src_file and out_file needed together')
 
-#TODO: Does the path exist?
-src = args[0].split("=")[1]
-dest = args[1].split("=")[1]
+#TODO: Does the SOURCE path exist?
+type = specifiers[0]
+src = specifiers[1]
+dest = specifiers[2]
+lines = []
 if path.exists(src):
     with open(src, "r") as f:
-        lines = f.readlines()
-        ConvertTo(f)
+        cvt = ConvertTo(f)
+        cvt.html()
         #print("Lines: {}".format(lines))
 else:
     raise UnknownPath("Src Path {} is not a real/valid location".format(src))
-if not path.exists(dest):
-    new_filename = dest.split("/")[-1] if "/" in dest else dest
-    try:
-        with open(dest, "w+") as f:
-            f.write("Currently Testing this.")
-    except Exception:
-        raise UnknownPath("Out Path {} is not a real/valid location".format(dest))
+
+#NOTE: If DESTINATION path specified doesn't exist, create it.
+#      Run with open with w+ specifier
+new_filename = dest.split("/")[-1] if "/" in dest else dest
+try:
+    with open(dest, "w+") as f:
+        f.write("Currently Testing this.")
+except Exception as e:
+    raise UnknownPath("Unable to write at dest path {}:\n\t{}".format(dest, e))
+
+

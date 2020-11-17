@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+'''
+    Class created to generate HTML
+'''
 class GEN_ERROR(Exception):
     def __init__(self, message):
         self.message =  message

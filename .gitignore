@@ -1,7 +1,7 @@
 *.sw*
 *.conf
 *.pyc*
-/etc/
+/etc/*
 /myvenv/
 .DS_Store
 .vscode

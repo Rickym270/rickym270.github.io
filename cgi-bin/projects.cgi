@@ -1,5 +1,7 @@
-#!/usr/local/bin/python3
-
+#!/usr/bin/python3
+'''
+    Generates a new version of the projects page based on information received from Github API
+'''
 import jinja2
 import cgi
 import cgitb
@@ -24,13 +26,12 @@ timestamp = datetime.now()
 from github import Github
 with open("../etc/githubcred.conf", 'r') as f:
     for ind, line in enumerate(f.readlines()):
-        line = line.strip()
-        if ind == 0:
-            git_user = line
-        if ind == 1:
-            git_pass = line
+        apikey = line.strip()
 
-g = Github(git_user, git_pass)
+if apikey:
+    g = Github(apikey)
+else:
+    print("API Key is not present")
 
 for repo in g.get_user().get_repos():
     repo_list[repo.name] = {    'name'          :   repo.name,
