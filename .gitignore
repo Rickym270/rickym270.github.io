@@ -1,6 +1,9 @@
 *.sw*
 *.conf
 *.pyc*
+/env
+/env.backup
+/env/*
 /etc/*
 /myvenv/
 .DS_Store
