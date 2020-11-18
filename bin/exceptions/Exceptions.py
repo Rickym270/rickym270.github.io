@@ -7,5 +7,8 @@ class InvalidCommandFormat(Exception):
 class UnknownPath(Exception):
     pass
 
+class InvalidDocType(Exception):
+    pass
+
 class InvalidFileObject(Exception):
     pass

@@ -21,6 +21,7 @@ from Exceptions import UnknownPath
 #NOTE: Initialize
 options = []
 specifiers = []
+generated_html = ""
 
 #NOTE: Is the proper command executed?
 args = sys.argv[1:]
@@ -36,27 +37,27 @@ for arg in args:
 
 #NOTE: Executed correctly?
 if 'type' not in options or 'src_file' not in options or 'dest_file' not in options:
-    raise InvalidCommandFormat('type, src_file and out_file needed together')
+    raise InvalidCommandFormat('type, src_file and dest_file needed together')
 
 #TODO: Does the SOURCE path exist?
 type = specifiers[0]
+print("TYPE: {}".format(type))
 src = specifiers[1]
 dest = specifiers[2]
 lines = []
 if path.exists(src):
     with open(src, "r") as f:
-        cvt = ConvertTo(f)
-        cvt.html()
+        cvt = ConvertTo(type,f)
+        generated_html = cvt.html()
         #print("Lines: {}".format(lines))
 else:
     raise UnknownPath("Src Path {} is not a real/valid location".format(src))
 
 #NOTE: If DESTINATION path specified doesn't exist, create it.
 #      Run with open with w+ specifier
-new_filename = dest.split("/")[-1] if "/" in dest else dest
 try:
     with open(dest, "w+") as f:
-        f.write("Currently Testing this.")
+        f.write(generated_html)
 except Exception as e:
     raise UnknownPath("Unable to write at dest path {}:\n\t{}".format(dest, e))
 
