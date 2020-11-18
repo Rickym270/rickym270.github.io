@@ -19,72 +19,57 @@
             <div class="row">
                     <div class="col-12">
                         
-                        <p></br></p>
                         
-                        <p><pre></p>
                         
-                        <p><code>import subprocess as sub
-</code></p>
+                        <pre>
                         
-                        <p><code></br></code></p>
+                        <code>import subprocess as sub</code>
                         
-                        <p><code>add_cmd = "diff -y {} {} | grep '>' | wc -l"
-</code></p>
+                        <code></code>
                         
-                        <p><code>add_counter = sub.Popen(add_cmd, stdout= sub.PIPE, stderr=sub.PIPE, shell=True)
-</code></p>
+                        <code>add_cmd = "diff -y {} {} | grep '>' | wc -l"</code>
                         
-                        <p><code></br></code></p>
+                        <code>add_counter = sub.Popen(add_cmd, stdout= sub.PIPE, stderr=sub.PIPE, shell=True)</code>
                         
-                        <p><code>#To get the output:
-</code></p>
+                        <code></code>
                         
-                        <p><code>output_a, errors_a = add_counter.communicate()
-</code></p>
+                        <code>#To get the output:</code>
                         
-                        <p></pre></p>
+                        <code>output_a, errors_a = add_counter.communicate()</code>
                         
-                        <p></br></p>
+                        </pre>
                         
-                        <p><div class='divider'></div></p>
                         
-                        <p></br></p>
                         
-                        <p><pre></p>
+                        <div class='divider'></div>
                         
-                        <p><code>import paramiko as pm
-</code></p>
                         
-                        <p><code></br></code></p>
                         
-                        <p><code>client = pm.SSHClient()
-</code></p>
+                        <pre>
                         
-                        <p><code>client.load_system_host_keys()
-</code></p>
+                        <code>import paramiko as pm</code>
                         
-                        <p><code>client.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
-</code></p>
+                        <code></code>
                         
-                        <p><code>client.set_missing_host_key_policy(AllowAllKeys())
-</code></p>
+                        <code>client = pm.SSHClient()</code>
                         
-                        <p><code>client.connect(deviceip, username=user, password=passwd)
-</code></p>
+                        <code>client.load_system_host_keys()</code>
                         
-                        <p><code>chan = client.invoke_shell()
-</code></p>
+                        <code>client.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))</code>
                         
-                        <p><code>chan.send('\003')
-</code></p>
+                        <code>client.set_missing_host_key_policy(AllowAllKeys())</code>
                         
-                        <p><code>client.exec_command("clish")
-</code></p>
+                        <code>client.connect(deviceip, username=user, password=passwd)</code>
                         
-                        <p><code>stdin, stdout, stderr = client.exec_command("clish -c 'show route static'")
-</code></p>
+                        <code>chan = client.invoke_shell()</code>
                         
-                        <p></pre></p>
+                        <code>chan.send('\003')</code>
+                        
+                        <code>client.exec_command("clish")</code>
+                        
+                        <code>stdin, stdout, stderr = client.exec_command("clish -c 'show route static'")</code>
+                        
+                        </pre>
                         
                     </div>
             </div>
