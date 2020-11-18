@@ -18,7 +18,9 @@
             </div>
             <div class="row">
                     <div class="col-12">
-                        <p>{{ content }}</p>
+                        {% for line in content %}
+                        <p>{{ line }}</p>
+                        {% endfor %}
                     </div>
             </div>
         </div>

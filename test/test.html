@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Executing commands in Bash</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        <p></br></p>
+                        
+                        <p><pre></p>
+                        
+                        <p><code>import subprocess as sub
+</code></p>
+                        
+                        <p><code></br></code></p>
+                        
+                        <p><code>add_cmd = "diff -y {} {} | grep '>' | wc -l"
+</code></p>
+                        
+                        <p><code>add_counter = sub.Popen(add_cmd, stdout= sub.PIPE, stderr=sub.PIPE, shell=True)
+</code></p>
+                        
+                        <p><code></br></code></p>
+                        
+                        <p><code>#To get the output:
+</code></p>
+                        
+                        <p><code>output_a, errors_a = add_counter.communicate()
+</code></p>
+                        
+                        <p></pre></p>
+                        
+                        <p></br></p>
+                        
+                        <p><div class='divider'></div></p>
+                        
+                        <p></br></p>
+                        
+                        <p><pre></p>
+                        
+                        <p><code>import paramiko as pm
+</code></p>
+                        
+                        <p><code></br></code></p>
+                        
+                        <p><code>client = pm.SSHClient()
+</code></p>
+                        
+                        <p><code>client.load_system_host_keys()
+</code></p>
+                        
+                        <p><code>client.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
+</code></p>
+                        
+                        <p><code>client.set_missing_host_key_policy(AllowAllKeys())
+</code></p>
+                        
+                        <p><code>client.connect(deviceip, username=user, password=passwd)
+</code></p>
+                        
+                        <p><code>chan = client.invoke_shell()
+</code></p>
+                        
+                        <p><code>chan.send('\003')
+</code></p>
+                        
+                        <p><code>client.exec_command("clish")
+</code></p>
+                        
+                        <p><code>stdin, stdout, stderr = client.exec_command("clish -c 'show route static'")
+</code></p>
+                        
+                        <p></pre></p>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>

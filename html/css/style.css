@@ -74,11 +74,6 @@ body{
     color:white;
 }
 
-.indent{
-    text-indent:2.5vw;
-    margin-bottom:0px;
-}
-
 #main{
     width: 100vw;
     margin-top:50px !important;
@@ -86,6 +81,12 @@ body{
 
 .nav-item{
     padding-right: 10vw !important;
+}
+
+/* Spacers */
+.indent{
+    text-indent:2.5vw;
+    margin-bottom:0px;
 }
 
 .nobr{ white-space: nowrap; }
@@ -115,6 +116,25 @@ body{
 .push19{height: 19vh;}
 .push20{height: 20vh;}
 
+/* Code block styles */
+pre{counter-reset: line;}
+code{counter-increment: line;}
+code:before{ 
+    content: counter(line);
+    /* Avoid line number selecting */
+    -webkit-user-select: none;
+}
+
+.pycode{
+    background-color: #2c3e50;
+    width: 100%;
+    padding: 1%;
+    
+    font-family: "Lucida Console", Courier, monospace;
+    color: white;
+}
+
+/* Positioners */
 .v-center{
     display: flex;
     /* 1/4 size of #homeBanner */
