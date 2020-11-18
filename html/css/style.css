@@ -21,7 +21,7 @@ body{
     background-color: white;
 }
 
-.divider{border-bottom: 1px solid #6C7A89;}
+.divider{border-top: 1px solid #6C7A89;}
 
 .dropdown:hover>.dropdown-menu {
   display: block;
@@ -127,7 +127,9 @@ pre{
     color: white;
 }
 
-code{ counter-increment: line; }
+code{ 
+    counter-increment: line; 
+}
 
 code:before{
     content: counter(line);
@@ -135,6 +137,8 @@ code:before{
     border-right: 1px solid white;
     /* Avoid line number selecting */
     -webkit-user-select: none;
+    
+    margin-right: 2%;
 }
 
 /* Positioners */

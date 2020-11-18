@@ -49,7 +49,9 @@ class ConvertTo(object):
             if body[i] == "\n": body[i] = "</br>"
             #NOTE: Interpret '=====' as a divider
             if "=====" in body[i]:
-                body[i] = "<div class='divider'></div>"
+                body[i] = """<div class='divider'></div></br>
+                                <h4>{}</h4>""".format(body[i].strip("=").strip())
+                
 
             if pycode_start:
                 body[i] = "<code>{}</code>".format(body[i])
