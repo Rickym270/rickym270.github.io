@@ -1,0 +1,7 @@
+Enable access controls of certain CGI pages for python
+
+<pycode>
+import cgi_include as ci
+
+ci.validate_user(ci.PRIV_P_SYSADM)
+</pycode>
