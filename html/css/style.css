@@ -134,7 +134,7 @@ code{
 
 code:before{
     content: counter(line);
-    padding: 2%;
+    padding: 1%;
     border-right: 1px solid white;
     /* Avoid line number selecting */
     -webkit-user-select: none;
