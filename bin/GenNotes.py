@@ -4,6 +4,9 @@
 
     Usage: 
         ./GenNotes.py --src_file=<path> --dest_file=<path>
+
+    Generated pages are saved to the path specified by dest_file
+
     Notes:
         - v0.5 Generating from my notes, later I want to incorporate GenHtml.py
 '''
@@ -49,7 +52,6 @@ if path.exists(src):
     with open(src, "r") as f:
         cvt = ConvertTo(type,f)
         generated_html = cvt.html()
-        #print("Lines: {}".format(lines))
 else:
     raise UnknownPath("Src Path {} is not a real/valid location".format(src))
 
