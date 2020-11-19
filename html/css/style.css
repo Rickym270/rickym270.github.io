@@ -131,16 +131,17 @@ pre{
 
 code{ 
     counter-increment: line; 
+    line-height: 0;
 }
 
 code:before{
     content: counter(line);
-    padding: 2%;
+    padding: 1.5%;
     border-right: 1px solid white;
     /* Avoid line number selecting */
     -webkit-user-select: none;
     
-    margin-right: 2%;
+    margin-right: 1.5%;
 }
 
 /* Positioners */
