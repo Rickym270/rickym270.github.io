@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Using Jinja</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        
+                        
+                        <div class='divider'></div></br>
+                                <h4>In CGI</h4>
+                        
+                        <pre>
+                        
+                        <code>#!<PYTHON PATH></code>
+                        
+                        <code></code>
+                        
+                        <code>import jinja2</code>
+                        
+                        <code>import cgi</code>
+                        
+                        <code>import cgitb</code>
+                        
+                        <code>from datetime import datetime</code>
+                        
+                        <code></code>
+                        
+                        <code>cgitb.enable()</code>
+                        
+                        <code></code>
+                        
+                        <code>TEMPLATE_PATH = "<TEMPLATE DIR>"</code>
+                        
+                        <code>TEMPLATE = "<TEMPLATE NAME>"</code>
+                        
+                        <code></code>
+                        
+                        <code>templates = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=TEMPLATE_PATH))</code>
+                        
+                        <code>print("Content-Type: text/html\r\n\r\n")</code>
+                        
+                        <code></code>
+                        
+                        <code>debug_list = []</code>
+                        
+                        <code>timestamp = datetime.now()</code>
+                        
+                        <code></code>
+                        
+                        <code># Start</code>
+                        
+                        <code>template = templates.get_template(TEMPLATE)</code>
+                        
+                        <code>print(template.render(debug_list=debug_list, timestamp=timestamp))</code>
+                        
+                        </pre>
+                        
+                        
+                        
+                        <div class='divider'></div></br>
+                                <h4>In HTML</h4>
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>Content-Type: text/html</code>
+                        
+                        <code></code>
+                        
+                        <code><!DOCTYPE html PUBLIC  "-//W3C//DTD XHTML 1.0 Transitional//EN"</code>
+                        
+                        <code>"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></code>
+                        
+                        <code><html xmlns="htttp://www.w3.org/1999/xhtml"></code>
+                        
+                        <code><head></code>
+                        
+                        <code><meta http-equiv="Content-Type" content="text/html; charset=gb2312" /></code>
+                        
+                        <code><title>IP Services Search Tool</title></code>
+                        
+                        <code><link rel="stylesheet" href="../REPORTS/css/bootstrap4.0.min.css" /></code>
+                        
+                        <code><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script></code>
+                        
+                        <code></head></code>
+                        
+                        <code><body></code>
+                        
+                        <code></body></code>
+                        
+                        <code></html></code>
+                        
+                        </pre>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>

@@ -1,0 +1,45 @@
+Using Jinja
+
+====================================================== In CGI ========================================================
+<pycode>
+#!<PYTHON PATH>
+
+import jinja2
+import cgi
+import cgitb
+from datetime import datetime
+
+cgitb.enable()
+
+TEMPLATE_PATH = "<TEMPLATE DIR>"
+TEMPLATE = "<TEMPLATE NAME>"
+
+templates = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=TEMPLATE_PATH))
+print("Content-Type: text/html\r\n\r\n")
+
+debug_list = []
+timestamp = datetime.now()
+
+# Start
+template = templates.get_template(TEMPLATE)
+print(template.render(debug_list=debug_list, timestamp=timestamp))
+</pycode>
+
+====================================================== In HTML ========================================================
+
+<pycode>
+Content-Type: text/html
+
+<!DOCTYPE html PUBLIC  "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="htttp://www.w3.org/1999/xhtml">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+      <title>IP Services Search Tool</title>
+      <link rel="stylesheet" href="../REPORTS/css/bootstrap4.0.min.css" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
+</pycode>
