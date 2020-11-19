@@ -46,11 +46,12 @@ body{
 
 #FAQLinks a:hover{cursor: pointer;}
 #FAQLinks a:first-child{border-top: 0px; }
-#FAQLinks a,#ToolsLinks a{
-  border-right: 0px;
-  border-left: 0px;
-  font-size:1.35vh;
-  border-bottom: 1px solid rgba(0,0,0,.125) !important;
+#FAQLinks a{
+    border-right: 0px;
+    border-left: 0px;
+    font-size:1.35vh;
+    margin-bottom: inherit;
+    border-bottom: 1px solid rgba(0,0,0,.125) !important;
 }
 #footer{
     position: absolute;
