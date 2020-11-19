@@ -136,7 +136,9 @@ code{
 
 code:before{
     content: counter(line);
+    
     padding: 1.5%;
+    /* Bordering for line numbers */
     border-right: 1px solid white;
     /* Avoid line number selecting */
     -webkit-user-select: none;

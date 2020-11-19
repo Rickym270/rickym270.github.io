@@ -46,6 +46,7 @@ class ConvertTo(object):
         for i in range(len(body)):
             #NOTE: Strips whitepsace from each line
             body[i] = body[i].strip()
+
             if body[i] == "\n": body[i] = "</br>"
             #NOTE: Interpret '=====' as a divider
             if "=====" in body[i]:
@@ -64,7 +65,9 @@ class ConvertTo(object):
                 pycode_start = False
                 #NOTE: Replace <pycode> with <pre>
                 body[i] = "</pre>"
-        
+
+            #TODO: Add HTML Support
+
         return template.render(title=title, content=body)
 
 
