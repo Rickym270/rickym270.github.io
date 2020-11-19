@@ -45,7 +45,7 @@ body{
 }
 
 #FAQLinks a:hover{cursor: pointer;}
-#FAQLinks a:first-child{border-top: 0px}
+#FAQLinks a:first-child{border-top: 0px; }
 #FAQLinks a,#ToolsLinks a{
   border-right: 0px;
   border-left: 0px;
