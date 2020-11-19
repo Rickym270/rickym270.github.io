@@ -50,7 +50,7 @@ body{
   border-right: 0px;
   border-left: 0px;
   font-size:1.35vh;
-  border-bottom: 1px solid rgba(0,0,0,.125);
+  border-bottom: 1px solid rgba(0,0,0,.125) !important;
 }
 #footer{
     position: absolute;
