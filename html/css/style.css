@@ -53,7 +53,7 @@ body{
   border-bottom: 1px solid rgba(0,0,0,.125) !important;
 }
 #footer{
-    position: relative;
+    position: absolute;
     bottom: 0;
     width: 100vw;
 }
@@ -134,7 +134,7 @@ code{
 
 code:before{
     content: counter(line);
-    padding: 1%;
+    padding: 2%;
     border-right: 1px solid white;
     /* Avoid line number selecting */
     -webkit-user-select: none;
