@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 '''
     Generates a new version of the projects page based on information received from Github API
+    NOTE: PersonalPage env should be activated before running this.
 '''
 import jinja2
 import cgi
