@@ -53,7 +53,7 @@ body{
   border-bottom: 1px solid rgba(0,0,0,.125) !important;
 }
 #footer{
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100vw;
 }
