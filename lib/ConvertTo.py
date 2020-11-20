@@ -46,6 +46,7 @@ class ConvertTo(object):
         for i in range(len(body)):
             #NOTE: Strips whitepsace from end of each line
             body[i] = body[i].rstrip()
+            body[i] = body[i].replace(" ", "&nbsp;")
 
             if body[i] == "\n": body[i] = "</br>"
             #NOTE: Interpret '=====' as a divider

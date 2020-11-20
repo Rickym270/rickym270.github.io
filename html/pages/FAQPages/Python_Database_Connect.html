@@ -23,41 +23,41 @@
                         
                         <pre>
                         
-                        <code>#GET DB info</code>
+                        <code>#GET&nbsp;DB&nbsp;info</code>
                         
-                        <code>with open("CREDENTIALFILE",'r') as f:</code>
+                        <code>with&nbsp;open("CREDENTIALFILE",'r')&nbsp;as&nbsp;f:</code>
                         
-                        <code>  lines = f.readlines()</code>
+                        <code>&nbsp;&nbsp;lines&nbsp;=&nbsp;f.readlines()</code>
                         
-                        <code>  for i, line in enumerate(lines):</code>
+                        <code>&nbsp;&nbsp;for&nbsp;i,&nbsp;line&nbsp;in&nbsp;enumerate(lines):</code>
                         
-                        <code>    if i == 0:</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;i&nbsp;==&nbsp;0:</code>
                         
-                        <code>      host = line[:-1]</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;host&nbsp;=&nbsp;line[:-1]</code>
                         
-                        <code>    elif i == 1:</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;elif&nbsp;i&nbsp;==&nbsp;1:</code>
                         
-                        <code>      username = line[:-1]</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;username&nbsp;=&nbsp;line[:-1]</code>
                         
-                        <code>    elif i == 2:</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;elif&nbsp;i&nbsp;==&nbsp;2:</code>
                         
-                        <code>      password = line[:-1]</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;password&nbsp;=&nbsp;line[:-1]</code>
                         
-                        <code>  #CONNECT to DB</code>
+                        <code>&nbsp;&nbsp;#CONNECT&nbsp;to&nbsp;DB</code>
                         
-                        <code>  db = MySQLdb.connect(host='127.0.0.1',</code>
+                        <code>&nbsp;&nbsp;db&nbsp;=&nbsp;MySQLdb.connect(host='127.0.0.1',</code>
                         
-                        <code>                       user=username,</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user=username,</code>
                         
-                        <code>                       passwd=password,</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;passwd=password,</code>
                         
-                        <code>                       db="DATABASENAME",</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;db="DATABASENAME",</code>
                         
-                        <code>                       unix_socket = "SOCKET"")</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unix_socket&nbsp;=&nbsp;"SOCKET"")</code>
                         
                         <code></code>
                         
-                        <code>  cur = db.cursor()</code>
+                        <code>&nbsp;&nbsp;cur&nbsp;=&nbsp;db.cursor()</code>
                         
                         </pre>
                         

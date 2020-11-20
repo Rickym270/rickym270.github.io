@@ -23,35 +23,35 @@
                         
                         <code>$(document).ready(function(){</code>
                         
-                        <code>$('<DIV ID>').on("submit", function(e){</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;$('<DIV&nbsp;ID>').on("submit",&nbsp;function(e){</code>
                         
-                        <code>serializeData = JSON.stringify(jQuery('<DIV ID>').serializeArray());</code>
-                        
-                        <code></code>
-                        
-                        <code>$.ajax({</code>
-                        
-                        <code>type: "POST",</code>
-                        
-                        <code>url: "<URL>",</code>
-                        
-                        <code>data: serializeData,</code>
-                        
-                        <code>success: function(data) {</code>
-                        
-                        <code>console.log("SUCCESS")</code>
-                        
-                        <code>//var obj = jQuery.parseJSON(data); if the dataType is not specified as json uncomment this</code>
-                        
-                        <code>// do what ever you want with the server response</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;serializeData&nbsp;=&nbsp;JSON.stringify(jQuery('<DIV&nbsp;ID>').serializeArray());</code>
                         
                         <code></code>
                         
-                        <code>},error: function(e) {</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;$.ajax({</code>
                         
-                        <code>console.log(e);</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type:&nbsp;"POST",</code>
                         
-                        <code>}</code>
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;url:&nbsp;"<URL>",</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;serializeData,</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;function(data)&nbsp;{</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log("SUCCESS")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//var&nbsp;obj&nbsp;=&nbsp;jQuery.parseJSON(data);&nbsp;if&nbsp;the&nbsp;dataType&nbsp;is&nbsp;not&nbsp;specified&nbsp;as&nbsp;json&nbsp;uncomment&nbsp;this</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;do&nbsp;what&nbsp;ever&nbsp;you&nbsp;want&nbsp;with&nbsp;the&nbsp;server&nbsp;response</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;},error:&nbsp;function(e)&nbsp;{</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(e);</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;}</code>
                         
                         <code>});</code>
                         
