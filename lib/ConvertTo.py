@@ -44,8 +44,8 @@ class ConvertTo(object):
         #NOTE: Body is the rest minus the first line
         body = self.lines[1:]
         for i in range(len(body)):
-            #NOTE: Strips whitepsace from each line
-            body[i] = body[i].strip()
+            #NOTE: Strips whitepsace from end of each line
+            body[i] = body[i].rstrip()
 
             if body[i] == "\n": body[i] = "</br>"
             #NOTE: Interpret '=====' as a divider

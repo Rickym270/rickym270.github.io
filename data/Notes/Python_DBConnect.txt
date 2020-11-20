@@ -1,0 +1,22 @@
+Python Database Connection
+
+<pycode>
+#GET DB info
+with open("CREDENTIALFILE",'r') as f:
+  lines = f.readlines()
+  for i, line in enumerate(lines):
+    if i == 0:
+      host = line[:-1]
+    elif i == 1:
+      username = line[:-1]
+    elif i == 2:
+      password = line[:-1]
+  #CONNECT to DB
+  db = MySQLdb.connect(host='127.0.0.1',
+                       user=username,
+                       passwd=password, 
+                       db="DATABASENAME", 
+                       unix_socket = "SOCKET"")
+   
+  cur = db.cursor()
+</pycode>

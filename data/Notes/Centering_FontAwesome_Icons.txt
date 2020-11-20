@@ -1,0 +1,11 @@
+Centering a Font Awesome Icon
+
+<pycode>
+div {
+  display: inline-flex; /* make element size relative to content */
+  align-items: center; /* vertical alignment of items */
+  line-height: 40px; /* vertically size by height, line-height or padding */
+  padding: 0px 10px; /* horizontal with padding-l/r */
+  border: 1px solid #ccc;
+}
+</pycode>

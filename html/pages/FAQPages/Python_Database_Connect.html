@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Python Database Connection</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>#GET DB info</code>
+                        
+                        <code>with open("CREDENTIALFILE",'r') as f:</code>
+                        
+                        <code>  lines = f.readlines()</code>
+                        
+                        <code>  for i, line in enumerate(lines):</code>
+                        
+                        <code>    if i == 0:</code>
+                        
+                        <code>      host = line[:-1]</code>
+                        
+                        <code>    elif i == 1:</code>
+                        
+                        <code>      username = line[:-1]</code>
+                        
+                        <code>    elif i == 2:</code>
+                        
+                        <code>      password = line[:-1]</code>
+                        
+                        <code>  #CONNECT to DB</code>
+                        
+                        <code>  db = MySQLdb.connect(host='127.0.0.1',</code>
+                        
+                        <code>                       user=username,</code>
+                        
+                        <code>                       passwd=password,</code>
+                        
+                        <code>                       db="DATABASENAME",</code>
+                        
+                        <code>                       unix_socket = "SOCKET"")</code>
+                        
+                        <code></code>
+                        
+                        <code>  cur = db.cursor()</code>
+                        
+                        </pre>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>

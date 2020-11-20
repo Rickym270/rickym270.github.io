@@ -1,0 +1,4 @@
+Differentiate between outside HTML tags and inside HTML tags
+	outer vs inner HTML tags
+	
+Add indentation compatibility

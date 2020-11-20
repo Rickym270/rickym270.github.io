@@ -1,0 +1,22 @@
+Using Ajax
+<pycode>
+$(document).ready(function(){
+    $('<DIV ID>').on("submit", function(e){
+    serializeData = JSON.stringify(jQuery('<DIV ID>').serializeArray());
+
+    $.ajax({
+        type: "POST",
+        url: "<URL>",
+        data: serializeData,
+        success: function(data) {
+        console.log("SUCCESS")
+        //var obj = jQuery.parseJSON(data); if the dataType is not specified as json uncomment this
+        // do what ever you want with the server response
+
+    },error: function(e) {
+        console.log(e);
+    }
+});
+
+e.preventDefault()
+</pycode>
