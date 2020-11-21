@@ -53,10 +53,8 @@ body{
     margin-bottom: inherit;
     border-bottom: 1px solid rgba(0,0,0,.125) !important;
 }
-#footer{
-    position: absolute;
-    bottom: 0;
-    width: 100vw;
+#FAQMain{
+    word-wrap:  break-word;
 }
 .fpLine{
     margin-bottom: 0;
@@ -77,6 +75,7 @@ body{
 }
 
 #main{
+    height: 100%;
     width: 100vw;
     margin-top:50px !important;
 }
@@ -153,4 +152,12 @@ code:before{
     padding-top:17.5vh;
     /* Align Horizontally */
     justify-content: center;
+}
+
+#sticky-footer {
+    position:absolute;
+    height: 60px;
+    bottom: 0;
+    width: 100vw;
+    
 }

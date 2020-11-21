@@ -1,0 +1,147 @@
+Github Information
+
+============================================================================================ Intro ===========================================================================================================================
+
+Git is an incredibly useful tool that is used for version control. It is a standard and is commonly used by web developers to keep track of changes made in a project. The repository has two areas: staging, working:
+    working area - this is your local directory where files are being changed and testing
+    staging area - where changes are kept, ready to be pushed into the repository 
+
+====================================================================================== Useful Commands =======================================================================================================================
+
+git init - Creates a new git repository
+git status - inspects the contents of the working directory and staging area
+git add - adds files from the working directory to the staging area
+git diff - shows the difference between the working directory and the staging area
+git commit - permanently stores file changes from the staging area in the repository
+git log - shows a list of all previous commits
+
+============================================================================================= Backtracking ===================================================================================================================
+
+HEAD - Refers to the most recent commit that has been made in the repository. This can be viewed by running:
+    git show HEAD
+    
+Discarding a change
+    git diff
+        - It is recommended to do a ```git diff``` to see how the current file and differs from the previous commit
+      
+    git checkout HEAD <filename>
+        - If there is a change in a file that was made, and now the change needs to be discarded, you can run:
+          git checkout HEAD <filename>
+        - Use the above command to discard changes made to a file in your working directory.
+        
+        NOTE: This does not reset files that have been pushed already. This all takes place in the working area of the workflow.
+      
+    git reset HEAD <filename>
+        - If a change was made, and that change is added into the staging area by accident, you can reset the HEAD to remove the change from the STAGING AREA.
+        NOTE: This does not discard the change made on the working file, just the change that is reflected in the HEAD commit.
+        NOTE: In output, M is short for "modification"
+      
+    git reset <commit_SHA>
+        - To go back on changes, run git log to view all previous commits. 
+        - Find the commit you want to revert to and get the first 7 characters of the commit_SHA.
+        - Run git reset <commit_SHA> to revert back. This reassigns HEAD to be what it was in the commit that was selected
+
+        Before reset:
+            HEAD is at the most recent commit
+        
+        After resetting:
+            HEAD goes to a previously made commit of your choice
+            The gray commits are no longer part of your project
+            You have in essence rewound the project's history
+      
+=============================================================================================== Branching ====================================================================================================================
+
+Typically, the working branch name, if no other branch is created, is called master. Branches are created to test out different versions of the same project.
+  
+    git branch
+        - returns the name of the branch you are currently on. This is delimited by an asterisk
+    
+        - The above describes how branches work in relation to the project.
+            - The circles are commits, and together form the Git project's commit history.
+            - New Branch is a different version of the Git project. It contains commits from Master but also has commits that Master does not have.
+      
+CREATING A NEW Branch
+    git branch <new_branch>
+        - Use this command to create a branch. 
+          CONVENTION: This branch should be named something that describes its purpose. NO WHITESPACES!
+  
+  
+git checkout <branch name> 
+    - Used to switch branches.
+   
+    Files in Branch A            Files in Branch B
+       - a                             - a
+       - b                             - b 
+       - c
+       - d                             - d
+            
+    NOTE: in the above case, if switching from branch A to Branch B, the file will reflect that file C is not present because it doesn't exist in Branch B (even though it exists in Branch A).
+              
+git merge
+    - To merge cahnges made on one branch into the master branch, you merge them.
+      git merge <branch name>
+      
+merge conflict
+    - Merges are typically successful because there should be no changes made on the master branch unless it's going to production.
+    - If a commit is done:
+        - on master before the branches were merged, git doesn't know which changes to keep. 
+        - On Branch B File a Line 20, and on Branch A, File a Line 20
+            This is called a merge conflict. Error messages are as follows:
+            CONFLICT (content): Merge conflict in resumé.txt
+            Automatic merge failed; fix conflicts and then commit the result.
+            To solve, remove conflict from master branch, then add the file to the staging area and commit it. THEN merge.
+      
+delete branch 
+    - git branch -d <branch name>
+        
+NOTE: Branches are meant to be deleted unless there is a new feature that is currently being developed. Once the branch is done, it has completed its use and can be deleted.
+    
+==================================================================================== GIT Teamwork ===========================================================================================================================
+
+
+Git has tools that make it easier to collaborate with others on a project.
+Git handles the necessary to collaborate effectively:
+    1. Replicates project on users computer
+    2. Tracks and allows for review of each other's work
+    3. Access to project version
+    
+All of this is accomplished using remotes which allows collaborators to work on a project from different locations, independently. Later, just merge.
+  
+Useful commands:
+    git clone: Creates a local copy of a remote.
+    git remote -v: Lists a Git project's remotes.
+    git fetch: Fetches work from the remote into the local copy.
+    git merge origin/master: Merges origin/master into your local branch.
+    git push origin <branch_name>: Pushes a local branch to the origin remote.
+  
+Remote
+    - Git repository that lives outside of the project folder. These can live anywhere (web, shared network, seperate folder, etc)
+  
+Git Workflow, teams
+    - Create a branch (git branch <branch_name>)
+    - Swithc to the branch (git checkout <branch_name>)
+    - Make changes
+    - Add changes to staging area
+    - Commit the changes
+  
+git clone <remote location> <clone name>
+    - Replicates the repo onto your own computer. 
+    - <remote location> can be a filepath or a URL
+    - <clone name> is the name that will be given to the directory that the repo is being copied to
+
+git remote
+    - When a clone of a repository is made, a remote address is given to the repository. It is named, origin.
+    git remote -v
+        -Lists out the remotes
+      
+git fetch
+    When collaborating, it is necessary to be up-to-date with any changes that were made by other collaborators.
+    Fetch to bring any changes into your local copy.
+    NOTE: This does not merge changes into the local repository. It creates a remote branch
+
+git merge <remote branch> <master branch>
+    Recall the remote branch. Changes made by collaborators have been fetched and are visible in a branch called origin/master. This is not the same as the master branch.
+    a merge is necessary to merge changes that have been made (present in origin/master) into the master branch.
+    
+git push origin <branch_name>
+    Pushes changes made by a user up to the remote, origin. From there, the owner of the repo can review the changes, and merge the work into the master branch

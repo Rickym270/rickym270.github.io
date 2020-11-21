@@ -47,12 +47,13 @@ class ConvertTo(object):
             #NOTE: Strips whitepsace from end of each line
             body[i] = body[i].rstrip()
             body[i] = body[i].replace(" ", "&nbsp;")
+            body[i] = body[i].replace("\n", "</br>")
+            body[i] = body[i] + "</br>"
 
-            if body[i] == "\n": body[i] = "</br>"
             #NOTE: Interpret '=====' as a divider
             if "=====" in body[i]:
                 body[i] = """<div class='divider'></div></br>
-                                <h4>{}</h4>""".format(body[i].strip("=").strip())
+                                <h4>{}</h4>""".format(body[i].replace("=","").strip())
                 
 
             if pycode_start:

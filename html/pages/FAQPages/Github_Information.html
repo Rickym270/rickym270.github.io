@@ -1,0 +1,322 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Github Information</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        </br>
+                        
+                        <div class='divider'></div></br>
+                                <h4>&nbsp;Intro&nbsp;</br></h4>
+                        
+                        </br>
+                        
+                        Git&nbsp;is&nbsp;an&nbsp;incredibly&nbsp;useful&nbsp;tool&nbsp;that&nbsp;is&nbsp;used&nbsp;for&nbsp;version&nbsp;control.&nbsp;It&nbsp;is&nbsp;a&nbsp;standard&nbsp;and&nbsp;is&nbsp;commonly&nbsp;used&nbsp;by&nbsp;web&nbsp;developers&nbsp;to&nbsp;keep&nbsp;track&nbsp;of&nbsp;changes&nbsp;made&nbsp;in&nbsp;a&nbsp;project.&nbsp;The&nbsp;repository&nbsp;has&nbsp;two&nbsp;areas:&nbsp;staging,&nbsp;working:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;working&nbsp;area&nbsp;-&nbsp;this&nbsp;is&nbsp;your&nbsp;local&nbsp;directory&nbsp;where&nbsp;files&nbsp;are&nbsp;being&nbsp;changed&nbsp;and&nbsp;testing</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;staging&nbsp;area&nbsp;-&nbsp;where&nbsp;changes&nbsp;are&nbsp;kept,&nbsp;ready&nbsp;to&nbsp;be&nbsp;pushed&nbsp;into&nbsp;the&nbsp;repository</br>
+                        
+                        </br>
+                        
+                        <div class='divider'></div></br>
+                                <h4>&nbsp;Useful&nbsp;Commands&nbsp;</br></h4>
+                        
+                        </br>
+                        
+                        git&nbsp;init&nbsp;-&nbsp;Creates&nbsp;a&nbsp;new&nbsp;git&nbsp;repository</br></br>
+                        
+                        git&nbsp;status&nbsp;-&nbsp;inspects&nbsp;the&nbsp;contents&nbsp;of&nbsp;the&nbsp;working&nbsp;directory&nbsp;and&nbsp;staging&nbsp;area</br>
+                        
+                        git&nbsp;add&nbsp;-&nbsp;adds&nbsp;files&nbsp;from&nbsp;the&nbsp;working&nbsp;directory&nbsp;to&nbsp;the&nbsp;staging&nbsp;area</br>
+                        
+                        git&nbsp;diff&nbsp;-&nbsp;shows&nbsp;the&nbsp;difference&nbsp;between&nbsp;the&nbsp;working&nbsp;directory&nbsp;and&nbsp;the&nbsp;staging&nbsp;area</br>
+                        
+                        git&nbsp;commit&nbsp;-&nbsp;permanently&nbsp;stores&nbsp;file&nbsp;changes&nbsp;from&nbsp;the&nbsp;staging&nbsp;area&nbsp;in&nbsp;the&nbsp;repository</br>
+                        
+                        git&nbsp;log&nbsp;-&nbsp;shows&nbsp;a&nbsp;list&nbsp;of&nbsp;all&nbsp;previous&nbsp;commits</br>
+                        
+                        </br>
+                        
+                        <div class='divider'></div></br>
+                                <h4>&nbsp;Backtracking&nbsp;</br></h4>
+                        
+                        </br>
+                        
+                        HEAD&nbsp;-&nbsp;Refers&nbsp;to&nbsp;the&nbsp;most&nbsp;recent&nbsp;commit&nbsp;that&nbsp;has&nbsp;been&nbsp;made&nbsp;in&nbsp;the&nbsp;repository.&nbsp;This&nbsp;can&nbsp;be&nbsp;viewed&nbsp;by&nbsp;running:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;show&nbsp;HEAD</br>
+                        
+                        </br>
+                        
+                        Discarding&nbsp;a&nbsp;change</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;diff</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;It&nbsp;is&nbsp;recommended&nbsp;to&nbsp;do&nbsp;a&nbsp;```git&nbsp;diff```&nbsp;to&nbsp;see&nbsp;how&nbsp;the&nbsp;current&nbsp;file&nbsp;and&nbsp;differs&nbsp;from&nbsp;the&nbsp;previous&nbsp;commit</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;checkout&nbsp;HEAD&nbsp;<filename></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;If&nbsp;there&nbsp;is&nbsp;a&nbsp;change&nbsp;in&nbsp;a&nbsp;file&nbsp;that&nbsp;was&nbsp;made,&nbsp;and&nbsp;now&nbsp;the&nbsp;change&nbsp;needs&nbsp;to&nbsp;be&nbsp;discarded,&nbsp;you&nbsp;can&nbsp;run:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;checkout&nbsp;HEAD&nbsp;<filename></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Use&nbsp;the&nbsp;above&nbsp;command&nbsp;to&nbsp;discard&nbsp;changes&nbsp;made&nbsp;to&nbsp;a&nbsp;file&nbsp;in&nbsp;your&nbsp;working&nbsp;directory.</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;This&nbsp;does&nbsp;not&nbsp;reset&nbsp;files&nbsp;that&nbsp;have&nbsp;been&nbsp;pushed&nbsp;already.&nbsp;This&nbsp;all&nbsp;takes&nbsp;place&nbsp;in&nbsp;the&nbsp;working&nbsp;area&nbsp;of&nbsp;the&nbsp;workflow.</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;reset&nbsp;HEAD&nbsp;<filename></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;If&nbsp;a&nbsp;change&nbsp;was&nbsp;made,&nbsp;and&nbsp;that&nbsp;change&nbsp;is&nbsp;added&nbsp;into&nbsp;the&nbsp;staging&nbsp;area&nbsp;by&nbsp;accident,&nbsp;you&nbsp;can&nbsp;reset&nbsp;the&nbsp;HEAD&nbsp;to&nbsp;remove&nbsp;the&nbsp;change&nbsp;from&nbsp;the&nbsp;STAGING&nbsp;AREA.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;This&nbsp;does&nbsp;not&nbsp;discard&nbsp;the&nbsp;change&nbsp;made&nbsp;on&nbsp;the&nbsp;working&nbsp;file,&nbsp;just&nbsp;the&nbsp;change&nbsp;that&nbsp;is&nbsp;reflected&nbsp;in&nbsp;the&nbsp;HEAD&nbsp;commit.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;In&nbsp;output,&nbsp;M&nbsp;is&nbsp;short&nbsp;for&nbsp;"modification"</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;reset&nbsp;<commit_SHA></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;To&nbsp;go&nbsp;back&nbsp;on&nbsp;changes,&nbsp;run&nbsp;git&nbsp;log&nbsp;to&nbsp;view&nbsp;all&nbsp;previous&nbsp;commits.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Find&nbsp;the&nbsp;commit&nbsp;you&nbsp;want&nbsp;to&nbsp;revert&nbsp;to&nbsp;and&nbsp;get&nbsp;the&nbsp;first&nbsp;7&nbsp;characters&nbsp;of&nbsp;the&nbsp;commit_SHA.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Run&nbsp;git&nbsp;reset&nbsp;<commit_SHA>&nbsp;to&nbsp;revert&nbsp;back.&nbsp;This&nbsp;reassigns&nbsp;HEAD&nbsp;to&nbsp;be&nbsp;what&nbsp;it&nbsp;was&nbsp;in&nbsp;the&nbsp;commit&nbsp;that&nbsp;was&nbsp;selected</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Before&nbsp;reset:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEAD&nbsp;is&nbsp;at&nbsp;the&nbsp;most&nbsp;recent&nbsp;commit</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After&nbsp;resetting:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEAD&nbsp;goes&nbsp;to&nbsp;a&nbsp;previously&nbsp;made&nbsp;commit&nbsp;of&nbsp;your&nbsp;choice</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;gray&nbsp;commits&nbsp;are&nbsp;no&nbsp;longer&nbsp;part&nbsp;of&nbsp;your&nbsp;project</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You&nbsp;have&nbsp;in&nbsp;essence&nbsp;rewound&nbsp;the&nbsp;project's&nbsp;history</br>
+                        
+                        </br>
+                        
+                        <div class='divider'></div></br>
+                                <h4>&nbsp;Branching&nbsp;</br></h4>
+                        
+                        </br>
+                        
+                        Typically,&nbsp;the&nbsp;working&nbsp;branch&nbsp;name,&nbsp;if&nbsp;no&nbsp;other&nbsp;branch&nbsp;is&nbsp;created,&nbsp;is&nbsp;called&nbsp;master.&nbsp;Branches&nbsp;are&nbsp;created&nbsp;to&nbsp;test&nbsp;out&nbsp;different&nbsp;versions&nbsp;of&nbsp;the&nbsp;same&nbsp;project.</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;branch</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;returns&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;branch&nbsp;you&nbsp;are&nbsp;currently&nbsp;on.&nbsp;This&nbsp;is&nbsp;delimited&nbsp;by&nbsp;an&nbsp;asterisk</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;above&nbsp;describes&nbsp;how&nbsp;branches&nbsp;work&nbsp;in&nbsp;relation&nbsp;to&nbsp;the&nbsp;project.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;circles&nbsp;are&nbsp;commits,&nbsp;and&nbsp;together&nbsp;form&nbsp;the&nbsp;Git&nbsp;project's&nbsp;commit&nbsp;history.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;New&nbsp;Branch&nbsp;is&nbsp;a&nbsp;different&nbsp;version&nbsp;of&nbsp;the&nbsp;Git&nbsp;project.&nbsp;It&nbsp;contains&nbsp;commits&nbsp;from&nbsp;Master&nbsp;but&nbsp;also&nbsp;has&nbsp;commits&nbsp;that&nbsp;Master&nbsp;does&nbsp;not&nbsp;have.</br>
+                        
+                        </br>
+                        
+                        CREATING&nbsp;A&nbsp;NEW&nbsp;Branch</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;branch&nbsp;<new_branch></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Use&nbsp;this&nbsp;command&nbsp;to&nbsp;create&nbsp;a&nbsp;branch.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONVENTION:&nbsp;This&nbsp;branch&nbsp;should&nbsp;be&nbsp;named&nbsp;something&nbsp;that&nbsp;describes&nbsp;its&nbsp;purpose.&nbsp;NO&nbsp;WHITESPACES!</br>
+                        
+                        </br>
+                        
+                        </br>
+                        
+                        git&nbsp;checkout&nbsp;<branch&nbsp;name></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Used&nbsp;to&nbsp;switch&nbsp;branches.</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;Files&nbsp;in&nbsp;Branch&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Files&nbsp;in&nbsp;Branch&nbsp;B</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;a</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;b</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;c</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;d</br>
+                        
+                        </br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;in&nbsp;the&nbsp;above&nbsp;case,&nbsp;if&nbsp;switching&nbsp;from&nbsp;branch&nbsp;A&nbsp;to&nbsp;Branch&nbsp;B,&nbsp;the&nbsp;file&nbsp;will&nbsp;reflect&nbsp;that&nbsp;file&nbsp;C&nbsp;is&nbsp;not&nbsp;present&nbsp;because&nbsp;it&nbsp;doesn't&nbsp;exist&nbsp;in&nbsp;Branch&nbsp;B&nbsp;(even&nbsp;though&nbsp;it&nbsp;exists&nbsp;in&nbsp;Branch&nbsp;A).</br>
+                        
+                        </br>
+                        
+                        git&nbsp;merge</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;To&nbsp;merge&nbsp;cahnges&nbsp;made&nbsp;on&nbsp;one&nbsp;branch&nbsp;into&nbsp;the&nbsp;master&nbsp;branch,&nbsp;you&nbsp;merge&nbsp;them.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;merge&nbsp;<branch&nbsp;name></br>
+                        
+                        </br>
+                        
+                        merge&nbsp;conflict</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Merges&nbsp;are&nbsp;typically&nbsp;successful&nbsp;because&nbsp;there&nbsp;should&nbsp;be&nbsp;no&nbsp;changes&nbsp;made&nbsp;on&nbsp;the&nbsp;master&nbsp;branch&nbsp;unless&nbsp;it's&nbsp;going&nbsp;to&nbsp;production.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;If&nbsp;a&nbsp;commit&nbsp;is&nbsp;done:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;on&nbsp;master&nbsp;before&nbsp;the&nbsp;branches&nbsp;were&nbsp;merged,&nbsp;git&nbsp;doesn't&nbsp;know&nbsp;which&nbsp;changes&nbsp;to&nbsp;keep.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;On&nbsp;Branch&nbsp;B&nbsp;File&nbsp;a&nbsp;Line&nbsp;20,&nbsp;and&nbsp;on&nbsp;Branch&nbsp;A,&nbsp;File&nbsp;a&nbsp;Line&nbsp;20</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;is&nbsp;called&nbsp;a&nbsp;merge&nbsp;conflict.&nbsp;Error&nbsp;messages&nbsp;are&nbsp;as&nbsp;follows:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONFLICT&nbsp;(content):&nbsp;Merge&nbsp;conflict&nbsp;in&nbsp;resumé.txt</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Automatic&nbsp;merge&nbsp;failed;&nbsp;fix&nbsp;conflicts&nbsp;and&nbsp;then&nbsp;commit&nbsp;the&nbsp;result.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To&nbsp;solve,&nbsp;remove&nbsp;conflict&nbsp;from&nbsp;master&nbsp;branch,&nbsp;then&nbsp;add&nbsp;the&nbsp;file&nbsp;to&nbsp;the&nbsp;staging&nbsp;area&nbsp;and&nbsp;commit&nbsp;it.&nbsp;THEN&nbsp;merge.</br>
+                        
+                        </br>
+                        
+                        delete&nbsp;branch</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;git&nbsp;branch&nbsp;-d&nbsp;<branch&nbsp;name></br>
+                        
+                        </br>
+                        
+                        NOTE:&nbsp;Branches&nbsp;are&nbsp;meant&nbsp;to&nbsp;be&nbsp;deleted&nbsp;unless&nbsp;there&nbsp;is&nbsp;a&nbsp;new&nbsp;feature&nbsp;that&nbsp;is&nbsp;currently&nbsp;being&nbsp;developed.&nbsp;Once&nbsp;the&nbsp;branch&nbsp;is&nbsp;done,&nbsp;it&nbsp;has&nbsp;completed&nbsp;its&nbsp;use&nbsp;and&nbsp;can&nbsp;be&nbsp;deleted.</br>
+                        
+                        </br>
+                        
+                        <div class='divider'></div></br>
+                                <h4>&nbsp;GIT&nbsp;Teamwork&nbsp;</br></h4>
+                        
+                        </br>
+                        
+                        </br>
+                        
+                        Git&nbsp;has&nbsp;tools&nbsp;that&nbsp;make&nbsp;it&nbsp;easier&nbsp;to&nbsp;collaborate&nbsp;with&nbsp;others&nbsp;on&nbsp;a&nbsp;project.</br>
+                        
+                        Git&nbsp;handles&nbsp;the&nbsp;necessary&nbsp;to&nbsp;collaborate&nbsp;effectively:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;Replicates&nbsp;project&nbsp;on&nbsp;users&nbsp;computer</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;Tracks&nbsp;and&nbsp;allows&nbsp;for&nbsp;review&nbsp;of&nbsp;each&nbsp;other's&nbsp;work</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;Access&nbsp;to&nbsp;project&nbsp;version</br>
+                        
+                        </br>
+                        
+                        All&nbsp;of&nbsp;this&nbsp;is&nbsp;accomplished&nbsp;using&nbsp;remotes&nbsp;which&nbsp;allows&nbsp;collaborators&nbsp;to&nbsp;work&nbsp;on&nbsp;a&nbsp;project&nbsp;from&nbsp;different&nbsp;locations,&nbsp;independently.&nbsp;Later,&nbsp;just&nbsp;merge.</br>
+                        
+                        </br>
+                        
+                        Useful&nbsp;commands:</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;clone:&nbsp;Creates&nbsp;a&nbsp;local&nbsp;copy&nbsp;of&nbsp;a&nbsp;remote.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;remote&nbsp;-v:&nbsp;Lists&nbsp;a&nbsp;Git&nbsp;project's&nbsp;remotes.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;fetch:&nbsp;Fetches&nbsp;work&nbsp;from&nbsp;the&nbsp;remote&nbsp;into&nbsp;the&nbsp;local&nbsp;copy.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;merge&nbsp;origin/master:&nbsp;Merges&nbsp;origin/master&nbsp;into&nbsp;your&nbsp;local&nbsp;branch.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;push&nbsp;origin&nbsp;<branch_name>:&nbsp;Pushes&nbsp;a&nbsp;local&nbsp;branch&nbsp;to&nbsp;the&nbsp;origin&nbsp;remote.</br>
+                        
+                        </br>
+                        
+                        Remote</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Git&nbsp;repository&nbsp;that&nbsp;lives&nbsp;outside&nbsp;of&nbsp;the&nbsp;project&nbsp;folder.&nbsp;These&nbsp;can&nbsp;live&nbsp;anywhere&nbsp;(web,&nbsp;shared&nbsp;network,&nbsp;seperate&nbsp;folder,&nbsp;etc)</br>
+                        
+                        </br>
+                        
+                        Git&nbsp;Workflow,&nbsp;teams</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Create&nbsp;a&nbsp;branch&nbsp;(git&nbsp;branch&nbsp;<branch_name>)</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Swithc&nbsp;to&nbsp;the&nbsp;branch&nbsp;(git&nbsp;checkout&nbsp;<branch_name>)</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Make&nbsp;changes</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Add&nbsp;changes&nbsp;to&nbsp;staging&nbsp;area</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Commit&nbsp;the&nbsp;changes</br>
+                        
+                        </br>
+                        
+                        git&nbsp;clone&nbsp;<remote&nbsp;location>&nbsp;<clone&nbsp;name></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Replicates&nbsp;the&nbsp;repo&nbsp;onto&nbsp;your&nbsp;own&nbsp;computer.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<remote&nbsp;location>&nbsp;can&nbsp;be&nbsp;a&nbsp;filepath&nbsp;or&nbsp;a&nbsp;URL</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<clone&nbsp;name>&nbsp;is&nbsp;the&nbsp;name&nbsp;that&nbsp;will&nbsp;be&nbsp;given&nbsp;to&nbsp;the&nbsp;directory&nbsp;that&nbsp;the&nbsp;repo&nbsp;is&nbsp;being&nbsp;copied&nbsp;to</br>
+                        
+                        </br>
+                        
+                        git&nbsp;remote</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;When&nbsp;a&nbsp;clone&nbsp;of&nbsp;a&nbsp;repository&nbsp;is&nbsp;made,&nbsp;a&nbsp;remote&nbsp;address&nbsp;is&nbsp;given&nbsp;to&nbsp;the&nbsp;repository.&nbsp;It&nbsp;is&nbsp;named,&nbsp;origin.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;git&nbsp;remote&nbsp;-v</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-Lists&nbsp;out&nbsp;the&nbsp;remotes</br>
+                        
+                        </br>
+                        
+                        git&nbsp;fetch</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;When&nbsp;collaborating,&nbsp;it&nbsp;is&nbsp;necessary&nbsp;to&nbsp;be&nbsp;up-to-date&nbsp;with&nbsp;any&nbsp;changes&nbsp;that&nbsp;were&nbsp;made&nbsp;by&nbsp;other&nbsp;collaborators.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;Fetch&nbsp;to&nbsp;bring&nbsp;any&nbsp;changes&nbsp;into&nbsp;your&nbsp;local&nbsp;copy.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;NOTE:&nbsp;This&nbsp;does&nbsp;not&nbsp;merge&nbsp;changes&nbsp;into&nbsp;the&nbsp;local&nbsp;repository.&nbsp;It&nbsp;creates&nbsp;a&nbsp;remote&nbsp;branch</br>
+                        
+                        </br>
+                        
+                        git&nbsp;merge&nbsp;<remote&nbsp;branch>&nbsp;<master&nbsp;branch></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;Recall&nbsp;the&nbsp;remote&nbsp;branch.&nbsp;Changes&nbsp;made&nbsp;by&nbsp;collaborators&nbsp;have&nbsp;been&nbsp;fetched&nbsp;and&nbsp;are&nbsp;visible&nbsp;in&nbsp;a&nbsp;branch&nbsp;called&nbsp;origin/master.&nbsp;This&nbsp;is&nbsp;not&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;master&nbsp;branch.</br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;merge&nbsp;is&nbsp;necessary&nbsp;to&nbsp;merge&nbsp;changes&nbsp;that&nbsp;have&nbsp;been&nbsp;made&nbsp;(present&nbsp;in&nbsp;origin/master)&nbsp;into&nbsp;the&nbsp;master&nbsp;branch.</br>
+                        
+                        </br>
+                        
+                        git&nbsp;push&nbsp;origin&nbsp;<branch_name></br>
+                        
+                        &nbsp;&nbsp;&nbsp;&nbsp;Pushes&nbsp;changes&nbsp;made&nbsp;by&nbsp;a&nbsp;user&nbsp;up&nbsp;to&nbsp;the&nbsp;remote,&nbsp;origin.&nbsp;From&nbsp;there,&nbsp;the&nbsp;owner&nbsp;of&nbsp;the&nbsp;repo&nbsp;can&nbsp;review&nbsp;the&nbsp;changes,&nbsp;and&nbsp;merge&nbsp;the&nbsp;work&nbsp;into&nbsp;the&nbsp;master&nbsp;branch</br>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>
