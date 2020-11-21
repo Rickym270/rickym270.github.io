@@ -46,7 +46,7 @@ class ConvertTo(object):
         for i in range(len(body)):
             #NOTE: Strips whitepsace from end of each line
             body[i] = body[i].rstrip()
-            body[i] = body[i].replace(" ", "&nbsp;")
+            body[i] = body[i].replace("    ", "&nbsp;&nbsp;&nbsp;&nbsp;")
             body[i] = body[i].replace("\n", "</br>")
             body[i] = body[i] + "</br>"
 
