@@ -1,0 +1,147 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Using Python Logger</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>import logging</code>
+                        
+                        <code></code>
+                        
+                        <code>logging.addLevelName(LOG_LEVEL_TRACE, 'TRACE')</code>
+                        
+                        <code></code>
+                        
+                        <code>DEFAULT_LOG_LEVEL = logging.DEBUG</code>
+                        
+                        <code>DEFAULT_LOG_LEVEL_DEV = LOG_LEVEL_TRACE</code>
+                        
+                        <code></code>
+                        
+                        <code>DEFAULT_LOG_FILE = "/var/log/twns/portal_tools.log"</code>
+                        
+                        <code>DEFAULT_LOG_DIR = "/var/log/twns"</code>
+                        
+                        <code>DEFAULT_LOG_FILE_DEV = "/dev/stderr"</code>
+                        
+                        <code></code>
+                        
+                        <code>LOG_FORMAT = '%(asctime)s - %(levelname)s - %(name)s - %(funcName)s() %(lineno)s: %(message)s'</code>
+                        
+                        <code></code>
+                        
+                        <code>class Config():</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;'''</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Config class for the DynamicSearchTool package.  Contains some basic</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;configurations around logging, constants, etc.</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;'''</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;LOG_TRACE = LOG_LEVEL_TRACE</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, params):</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'''</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This class should not be instantiated</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'''</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise RuntimeError("Config class cannot be instantiated")</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@staticmethod</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def getLogger(name, level=None, logfile=None): ----------------</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# If logfile is a bare filename (i.e. no path), put it in the log dir</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if logfile and (logfile.find('/') < 0):</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logfile = DEFAULT_LOG_DIR+"/"+logfile</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if pwd.getpwuid(os.getuid()).pw_name == DEV_NAME</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logfile = logfile if logfile else DEFAULT_LOG_FILE_DEV</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level = level if level else DEFAULT_LOG_LEVEL_DEV</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logfile = logfile if logfile else DEFAULT_LOG_FILE</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level = level if level else DEFAULT_LOG_LEVEL</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rot_logger = RotatingFileHandler(logfile, mode='a', maxBytes = 1*1024*1024,</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; backupCount=1, encoding=None, delay=0)</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logform = logging.Formatter(LOG_FORMAT)</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rot_logger.setFormatter(logform)</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rot_logger.setLevel(level)</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logger = logging.getLogger(name)</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logger.setLevel(level)</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logger.addHandler(rot_logger)</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Create a convenience method for the trace level</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;setattr(logger, 'trace', lambda *args: logger.log(LOG_LEVEL_TRACE, *args))</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return(logger)</code>
+                        
+                        </pre>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>

@@ -130,7 +130,7 @@ pre{
 
 code{ 
     counter-increment: line; 
-    line-height: 0;
+    line-height: 0px;
 }
 
 code:before{

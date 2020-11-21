@@ -1,0 +1,62 @@
+Using Python Logger
+
+<pycode>
+import logging
+
+logging.addLevelName(LOG_LEVEL_TRACE, 'TRACE')
+
+DEFAULT_LOG_LEVEL = logging.DEBUG
+DEFAULT_LOG_LEVEL_DEV = LOG_LEVEL_TRACE
+
+DEFAULT_LOG_FILE = "/var/log/twns/portal_tools.log"
+DEFAULT_LOG_DIR = "/var/log/twns"
+DEFAULT_LOG_FILE_DEV = "/dev/stderr"
+
+LOG_FORMAT = '%(asctime)s - %(levelname)s - %(name)s - %(funcName)s() %(lineno)s: %(message)s'
+
+class Config():
+    '''
+        Config class for the DynamicSearchTool package.  Contains some basic
+        configurations around logging, constants, etc.
+    '''
+   
+    LOG_TRACE = LOG_LEVEL_TRACE
+   
+    def __init__(self, params):
+        '''
+            This class should not be instantiated
+        '''
+        raise RuntimeError("Config class cannot be instantiated")
+   
+        @staticmethod
+        def getLogger(name, level=None, logfile=None): ----------------
+   
+            # If logfile is a bare filename (i.e. no path), put it in the log dir
+            if logfile and (logfile.find('/') < 0):
+                logfile = DEFAULT_LOG_DIR+"/"+logfile
+   
+            if pwd.getpwuid(os.getuid()).pw_name == DEV_NAME
+                logfile = logfile if logfile else DEFAULT_LOG_FILE_DEV
+                level = level if level else DEFAULT_LOG_LEVEL_DEV
+            else:
+                logfile = logfile if logfile else DEFAULT_LOG_FILE
+                level = level if level else DEFAULT_LOG_LEVEL
+   
+            rot_logger = RotatingFileHandler(logfile, mode='a', maxBytes = 1*1024*1024,
+                                             backupCount=1, encoding=None, delay=0)
+   
+            logform = logging.Formatter(LOG_FORMAT)
+   
+            rot_logger.setFormatter(logform)
+            rot_logger.setLevel(level)
+   
+            logger = logging.getLogger(name)
+            logger.setLevel(level)
+   
+            logger.addHandler(rot_logger)
+   
+            # Create a convenience method for the trace level
+            setattr(logger, 'trace', lambda *args: logger.log(LOG_LEVEL_TRACE, *args))
+   
+            return(logger)
+</pycode>
