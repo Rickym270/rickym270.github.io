@@ -1,0 +1,157 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Sending and Email</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        
+                        
+                        <div class='divider'></div></br>
+                                <h4>Using twemailer library</h4>
+                        
+                        
+                        
+                        To send an email,
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>from emailer import twemailer</code>
+                        
+                        <code></code>
+                        
+                        <code>for error in errors:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if error[3] == 0:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#OKAY</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<tr>"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if error[3] == 1:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#Priority: Super High</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<tr style='background-color:#c0392b'>"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if error[3] == 2:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#Priority: High</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<tr style='background-color:#e67e22'>"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if error[3] == 3:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#Priority: Medium</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<tr style='background-color:#95a5a6'>"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if error[3] == 4:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#Priority: Low</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<tr style='background-color:#2ecc71'>"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;for ind,field in enumerate(error):</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ind == 3:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<td style='text-align:center'>{}</td>".format(field)</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table += "<td>{}</td>".format(field)</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;table += "</tr>"</code>
+                        
+                        <code></code>
+                        
+                        <code>table+= "</table>"</code>
+                        
+                        <code></code>
+                        
+                        <code>new_email = twemailer(table)</code>
+                        
+                        <code>new_email.send_email();</code>
+                        
+                        <code></code>
+                        
+                        <code># TWEMAIL REQUIRES:</code>
+                        
+                        <code>def __init__(self, issue, subject = 'Night Check Issues'):</code>
+                        
+                        </pre>
+                        
+                        
+                        
+                        <div class='divider'></div></br>
+                                <h4>USING POPEN</h4>
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;# Send email</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;Subject = "Daily Abnormal Port Check Report"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if OK:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subject = "OK: " + Subject</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;From = "<FROM STRING>"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;To = ['<EMAIL>']</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;command = '/usr/sbin/sendmail'</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;message = 'From: %s\n' % From</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;message += 'To: %s\n' % ', '.join(To)</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;message += "Subject: %s\n\n" % Subject</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;message += "The ports which is not connected, vlan number is not 999 and has no mac address.\n"</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;message += output</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;p = Popen([command, '-t', '-i'], stdin=PIPE, stdout=PIPE)</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;(stdout, stderr) = p.communicate(message)</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;print message</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;now = datetime.datetime.now()</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;print now</code>
+                        
+                        </pre>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>

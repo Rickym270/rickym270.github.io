@@ -1,0 +1,66 @@
+Sending and Email
+
+=========================================================================== Using twemailer library =============================================================================
+
+To send an email,
+
+<pycode>
+from emailer import twemailer
+
+for error in errors:
+    if error[3] == 0:
+        #OKAY
+        table += "<tr>"
+    if error[3] == 1:
+        #Priority: Super High
+        table += "<tr style='background-color:#c0392b'>"
+    if error[3] == 2:
+        #Priority: High
+        table += "<tr style='background-color:#e67e22'>"
+    if error[3] == 3:
+        #Priority: Medium
+        table += "<tr style='background-color:#95a5a6'>"
+    if error[3] == 4:
+        #Priority: Low
+        table += "<tr style='background-color:#2ecc71'>"
+    for ind,field in enumerate(error):
+        if ind == 3:
+            table += "<td style='text-align:center'>{}</td>".format(field)
+        else:
+            table += "<td>{}</td>".format(field)
+    table += "</tr>"
+
+table+= "</table>"
+
+new_email = twemailer(table)
+new_email.send_email();
+
+# TWEMAIL REQUIRES:
+def __init__(self, issue, subject = 'Night Check Issues'):
+</pycode>
+
+================================================ USING POPEN ===============================================
+
+<pycode>
+    # Send email
+    Subject = "Daily Abnormal Port Check Report"
+    if OK:
+        Subject = "OK: " + Subject
+    From = "<FROM STRING>"
+    To = ['<EMAIL>']
+    command = '/usr/sbin/sendmail'
+  
+    message = 'From: %s\n' % From
+    message += 'To: %s\n' % ', '.join(To)
+    message += "Subject: %s\n\n" % Subject
+  
+    message += "The ports which is not connected, vlan number is not 999 and has no mac address.\n"
+    message += output
+  
+    p = Popen([command, '-t', '-i'], stdin=PIPE, stdout=PIPE)
+    (stdout, stderr) = p.communicate(message)
+  
+    print message
+    now = datetime.datetime.now()
+    print now
+</pycode>
