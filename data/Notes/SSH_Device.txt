@@ -1,0 +1,62 @@
+SSH Into Device
+
+<pycode>
+def device_login(server,username,password,en_pwd):
+  print("Device login [Server: {}]...   ".format(server), end = "")
+
+  # DO SOMETHING
+  try:
+    ssh = paramiko.SSHClient();
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy());
+    ssh.connect(server,username=username, password=password, look_for_keys=False);
+
+    if ssh:
+      print("DONE")
+      print("Obtaining Transport...    ", end = "")
+      transport = ssh.get_transport()
+      if ssh.get_transport().is_active():
+        print("DONE")
+        print("Opening Session...    ",end="")
+      ssh_conn = transport.open_session();
+      print("DONE");
+      print("Getting PTY...    ", end="");
+      ssh_conn.get_pty()
+      print("DONE")
+      print("Invoking Shell...    ", end="")
+      ssh_conn.invoke_shell();
+      print("DONE")
+    else:
+      print("Error!")
+  except paramiko.AuthenticationException:
+    print("Error with authenticating user: {}".format(username))
+    ssh, ssh_conn = None, None
+
+  buff =''
+  print("Enabling en mode...    ",end="")
+  ssh_conn = enable_en_mode(ssh_conn, en_pwd);
+
+  rawtext_output = obtain_bgp_info(ssh_conn)
+  parse_info(rawtext_output, server)
+</pycode>
+  
+  ============================================================= EX SENDING CMDS ======================================
+  
+<pycode>
+def get_portch_info(platform, ssh_conn):
+  buff = ''
+  out = ''
+  cmd = ''
+
+  if platform == "Nexus":
+    cmd = 'show port-channel summary\n'
+  if platform == 'IOS':
+    cmd = 'show etherchannel summary\n'
+
+  ssh_conn.send(cmd)
+  time.sleep(5)
+
+  while ssh_conn.recv_ready():
+    buff += ssh_conn.recv(2048).decode("utf-8");
+
+    print(buff)
+</pycode>

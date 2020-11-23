@@ -1,0 +1,49 @@
+Multiprocessing with Python
+
+========================================================================================= Multiprocessing Module =========================================================================================
+
+from multiprocessing import Manager, Pool
+
+MAX_NUM_PROCESSES = <MAXPROCESSES>
+shared_list = manager.list()                                               # Required to share information between processes as they are independent
+
+with Pool(processes=MAX_NUM_PROCESSES) as pool:
+    print(pool.map(dps.get_ping_results, shared_list[0]['info']))
+
+
+=========================================================================================
+
+from multiprocessing import Manager, Process
+
+# Information isn't shared accross processes. Create a list using Manager
+# from multiprocessing import Manager, Process
+  
+  with Manager() as manager:
+    L = manager.list()
+    for device in device_info['info']:
+      L.append([device['ip'], device['hostname'], device['username'], device['password']])
+      
+# Create multiple processes and make sure to append them to close them later:
+  for i in range(len(L)):
+    print("i:{}".format(i))
+    p = Process(target=get_status_info, args=(L[i],))
+    p.start()
+    processes.append(p)
+    
+# Close processes:
+  for p in processes:
+    p.join()
+    
+========================================================================================
+
+from multiprocessing import Manager, Pool
+
+MAX_PROCESSES = 10
+manager = Manager()
+shared_list = manager.list()
+
+for line in noblank_lines(fh):
+    shared_list,append(line)
+    
+pool = Pool(processes=MAX_PROCESSES)
+pool.map(multiPro_test_msgs, shared_list)

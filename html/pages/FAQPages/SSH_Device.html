@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>SSH Into Device</h3>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-12">
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>def device_login(server,username,password,en_pwd):</code>
+                        
+                        <code>  print("Device login [Server: {}]...   ".format(server), end = "")</code>
+                        
+                        <code></code>
+                        
+                        <code>  # DO SOMETHING</code>
+                        
+                        <code>  try:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;ssh = paramiko.SSHClient();</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy());</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;ssh.connect(server,username=username, password=password, look_for_keys=False);</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;if ssh:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("DONE")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("Obtaining Transport...&nbsp;&nbsp;&nbsp;&nbsp;", end = "")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  transport = ssh.get_transport()</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  if ssh.get_transport().is_active():</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("DONE")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("Opening Session...&nbsp;&nbsp;&nbsp;&nbsp;",end="")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  ssh_conn = transport.open_session();</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("DONE");</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("Getting PTY...&nbsp;&nbsp;&nbsp;&nbsp;", end="");</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  ssh_conn.get_pty()</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("DONE")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("Invoking Shell...&nbsp;&nbsp;&nbsp;&nbsp;", end="")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  ssh_conn.invoke_shell();</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("DONE")</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;else:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  print("Error!")</code>
+                        
+                        <code>  except paramiko.AuthenticationException:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;print("Error with authenticating user: {}".format(username))</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;ssh, ssh_conn = None, None</code>
+                        
+                        <code></code>
+                        
+                        <code>  buff =''</code>
+                        
+                        <code>  print("Enabling en mode...&nbsp;&nbsp;&nbsp;&nbsp;",end="")</code>
+                        
+                        <code>  ssh_conn = enable_en_mode(ssh_conn, en_pwd);</code>
+                        
+                        <code></code>
+                        
+                        <code>  rawtext_output = obtain_bgp_info(ssh_conn)</code>
+                        
+                        <code>  parse_info(rawtext_output, server)</code>
+                        
+                        </pre>
+                        
+                        
+                        
+                        <div class='divider'></div></br>
+                                <h4>EX SENDING CMDS</h4>
+                        
+                        
+                        
+                        <pre>
+                        
+                        <code>def get_portch_info(platform, ssh_conn):</code>
+                        
+                        <code>  buff = ''</code>
+                        
+                        <code>  out = ''</code>
+                        
+                        <code>  cmd = ''</code>
+                        
+                        <code></code>
+                        
+                        <code>  if platform == "Nexus":</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;cmd = 'show port-channel summary\n'</code>
+                        
+                        <code>  if platform == 'IOS':</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;cmd = 'show etherchannel summary\n'</code>
+                        
+                        <code></code>
+                        
+                        <code>  ssh_conn.send(cmd)</code>
+                        
+                        <code>  time.sleep(5)</code>
+                        
+                        <code></code>
+                        
+                        <code>  while ssh_conn.recv_ready():</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;buff += ssh_conn.recv(2048).decode("utf-8");</code>
+                        
+                        <code></code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;print(buff)</code>
+                        
+                        </pre>
+                        
+                    </div>
+            </div>
+        </div>
+    </body>
