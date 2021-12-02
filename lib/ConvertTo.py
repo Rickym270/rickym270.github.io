@@ -54,7 +54,6 @@ class ConvertTo(object):
                 body[i] = """<div class='divider'></div></br>
                                 <h4>{}</h4>""".format(body[i].replace("=","").strip())
                 
-
             if pycode_start:
                 body[i] = "<code>{}</code>".format(body[i])
             # NOTE: Define if python code has started
