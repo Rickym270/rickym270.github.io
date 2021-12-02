@@ -18,8 +18,7 @@
                     $(this).addClass('active');
                     e.preventDefault();       // Prevents default re-direct of the anchor tag
                 });
-                $("ul > li a").on('click',function(e){
-                    console.log("Clicked anchor")
+                $("ul > li a").not('.nav-link').on('click',function(e){
                     e.preventDefault();
                     var attr = $(this).attr('href');
                     if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
@@ -30,18 +29,19 @@
         </script>
     </head>
     <body id="FAQMain">
-        <div id="toc_container">
-        <p class="toc_title">Contents</p>
-        <ul class="toc_list">
-          <li><a href="../html/pages/FAQPages/Python/Executing_CMDs.html">1. Executing Commands</a>
-          <ul>
-            <li><a href="#First_Sub_Point_1">1.1 First Sub Point 1</a></li>
-            <li><a href="#First_Sub_Point_2">1.2 First Sub Point 2</a></li>
-          </ul>
-        </li>
-        <li><a href="Jinja_Usage">2. Jinja Usage</a></li>
-        <li><a href="Multiprocessing_with_Python.html">3. Multiprocessing</a></li>
-        </ul>
+        <div>
+            <p class="toc_title">Contents</p>
+            <ul class="toc_list">
+                <li>
+                    <a href="../html/pages/FAQPages/Python/Executing_CMDs.html">1. Executing Commands</a>
+                    <ul>
+                        <li><a href="#First_Sub_Point_1">1.1 First Sub Point 1</a></li>
+                        <li><a href="#First_Sub_Point_2">1.2 First Sub Point 2</a></li>
+                    </ul>
+                </li>
+                <li><a href="../html/pages/FAQPages/Python/Jinja_Usage.html">2. Jinja Usage</a></li>
+                <li><a href="Multiprocessing_with_Python.html">3. Multiprocessing</a></li>
+            </ul>
         </div>
     </body>
 </html>
