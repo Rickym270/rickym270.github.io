@@ -7,11 +7,11 @@ $(document).ready(function(){
     }
     
     // Navbar Links
-        jQuery("a.nav-link").unbind("click").click(function(){            
-            var sectionUrl = $(this).attr("data-url");
-            console.log(sectionUrl);
-            jQuery("#content").load(sectionUrl, function(){
-                console.log("Loaded " + sectionUrl);
-            })
-        });
+    jQuery("a.nav-link").unbind("click").click(function(){            
+        var sectionUrl = $(this).attr("data-url");
+        console.log(sectionUrl);
+        jQuery("#content").load(sectionUrl, function(){
+            console.log("Loaded " + sectionUrl);
+        })
+    });
 });
