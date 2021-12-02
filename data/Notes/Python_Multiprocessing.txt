@@ -1,7 +1,7 @@
 Multiprocessing with Python
 
 ========================================================================================= Multiprocessing Module =========================================================================================
-
+<pycode>
 from multiprocessing import Manager, Pool
 
 MAX_NUM_PROCESSES = <MAXPROCESSES>
@@ -9,10 +9,11 @@ shared_list = manager.list()                                               # Req
 
 with Pool(processes=MAX_NUM_PROCESSES) as pool:
     print(pool.map(dps.get_ping_results, shared_list[0]['info']))
-
+</pycode>
 
 =========================================================================================
 
+<pycode>
 from multiprocessing import Manager, Process
 
 # Information isn't shared accross processes. Create a list using Manager

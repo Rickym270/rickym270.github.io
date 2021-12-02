@@ -2,3 +2,5 @@ Differentiate between outside HTML tags and inside HTML tags
 	outer vs inner HTML tags
 	
 Break-word on complete words. Not on words
+
+Notes on algorithms
