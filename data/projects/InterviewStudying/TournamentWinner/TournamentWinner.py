@@ -56,7 +56,7 @@ if __name__ == "__main__":
                      Why is it written like this?
                         This is a python one liner if-else. This is done to build more 'compact' and 
                         readable code and sometimes more efficient.
-        Line 15: Upfate the scores. This is done in a seperate function to make the code more legible
+        Line 15: Update the scores. This is done in a seperate function to make the code more legible
         Line 17: If the current score of the winningTeam is higher than the current score of the 
                  currentBestTeam, set the currentBestTeam = winningTeam
         Line 20: Return the currentBestTeam
