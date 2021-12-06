@@ -41,7 +41,7 @@ def isValidSubsequence(array, subsequence):
         Line 29: Move onto the next item in the array
         Line 31: Return True is the subsequence index == the length of the subsequence.
                     Why?
-                        This makes sense because if the subsequence index is the lenght of 
+                        This makes sense because if the subsequence index is the length of 
                         the length of the subsequence, that means that the subsequence item
                         was found in the array so we move onto the next item of the 
                         subsequence. If there are no more items, that means that the
