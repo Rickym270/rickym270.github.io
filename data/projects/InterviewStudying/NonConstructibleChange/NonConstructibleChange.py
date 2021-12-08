@@ -24,8 +24,13 @@ if __name__ == "__main__":
         Line 6: Initialize and set to 0 currentChangeCreated
                     Why?
                         We want to keep track of the max current change that 
-                        has been created
-        Line 8: Iterate through the given coins
+                        has been create
+                        It's set to 0 because at the beginning, we can only 
+                        make 0 change.
+        Line 8: Iterate through the given coins.
+                    Why?
+                        We need to go through every coin to see if it affects
+                        the currentChangeCreated
         Line 9: If the current coin is greater than the 
                 current change created + 1, then that means that we can't 
                 make the currentChange
@@ -43,7 +48,7 @@ if __name__ == "__main__":
         Line 14: After the loop, since there were no change amount that
                  could not be created, the lowest amount that can't be created
                  is the total change + 1
-                    What happened to currentChangeCreated?
+                    NOTE:
                         Since this is at the end of the loop,
                         currentChangeCreated is now the max amount of change
                         that can be created
