@@ -26,7 +26,7 @@ def spiralFill(array, startRow, endRow, startCol, endCol,\
     # NOTE: Starts wth first argument, but does not end with 
     #       secxond argument
     #       for i in range(1,10)
-    #           - 1,2,3,4,5,6,7,8,0
+    #           - 1,2,3,4,5,6,7,8,9
     # We want it to be inclusive
     # TODO: Iterate along top 
     for col in range(startCol, endCol + 1):
