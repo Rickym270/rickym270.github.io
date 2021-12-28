@@ -26,7 +26,7 @@ def longestPeak(array):
         # NOTE: We use a while loop here because we want to
         #       check that in each iteration, i < len(array)-1
         # TODO: Save condition as a boolean variable 
-        isPeak = array[i-1] < array[i] and array[i] > array[i+1]:
+        isPeak = array[i-1] < array[i] and array[i] > array[i+1]
         if not isPeak:
             # NOTE: There is nothing left to do so increase idx 
             #           and continue
