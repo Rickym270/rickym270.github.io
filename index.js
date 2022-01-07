@@ -1,5 +1,9 @@
-import express from 'express';
+var express = require("express");
+var bodyParser = require("body-parser")
+//const router = express.Router;
 var app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+
 var PORT = 8080;
 
 app.get('/projects', (req, resp) => {
@@ -9,15 +13,11 @@ app.get('/projects', (req, resp) => {
     })
 });
 
-app.post('/projects/:id', (req, resp) => {
-    const { id } = req.params;
-    const { title } = req.body;
-
-    if (!title) {
-        resp.status(418).send({message: "Title is required"})
-    }
+app.post('/projects', (req, resp) => {
+    console.log("POST request sent");
+    console.log(resp);
     resp.send({
-        message: `Project with ID of ${id} was created`
+        message: `Project was created`
     })
 });
 
