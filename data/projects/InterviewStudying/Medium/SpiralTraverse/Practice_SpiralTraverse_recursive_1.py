@@ -40,7 +40,7 @@ def spiralFiller(array, startRow, endRow, startCol, endCol,\
             break
         results.append(array[endRow][col])
     #TODO: Iterate through left
-    for row in reversed(range(startRow + 1], endRow)):
+    for row in reversed(range(startRow + 1, endRow)):
         if startRow > endRow or startCol > endCol:
             break
         results.append(array[row][startCol])
