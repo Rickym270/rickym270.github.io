@@ -65,7 +65,7 @@ body{
 }
 
 #homeBanner{
-    width: 100vw;
+    width: 99vw;
     height: 45vh;
     background-color: black;
 }
@@ -75,7 +75,7 @@ body{
 }
 
 #main{
-    width: 100vw;
+    width: 100%;
     margin-top:50px !important;
 }
 a.navbar-brand-name{
