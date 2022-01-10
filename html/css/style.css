@@ -4,11 +4,26 @@ html{
 
 body{ 
     padding-top:50px;
-    height: 180vh;
+    height: 160vh;
     min-height: 100vh;
     margin: 0;
     padding-bottom: 100px;
     box-sizing: border-box;
+}
+
+.carousel-caption{
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-item {
+  height: 384px;
+}
+
+.carousel-item img {
+    width: auto;
+    height: 100% !important;
+    margin: 0 auto;
+    opacity: 0.5;
 }
 
 .center{
@@ -78,17 +93,22 @@ body{
 }
 
 #home_skills img{
-    height: 80%;
-}
-
-#home_skills > .row{
-    height:17%;
+    height: 12vh;
 }
 
 #main{
     width: 100%;
     margin-top:50px !important;
 }
+.no-style-link a{
+    color: black;
+    text-decoration: none;
+}
+
+.no-style-link a:hover{
+    color: blue;
+}
+
 a.navbar-brand-name{
     color: black;
     text-decoration: none;
@@ -114,10 +134,10 @@ li.nav-item{
     margin-bottom:0px;
 }
 .max-bold{
-    font-weight: 500;
+    font-weight: 700;
 }
 .mid-bold{
-    font-weight: 400;
+    font-weight: 500;
 }
 .min-bold{
     font-weight: 300;
