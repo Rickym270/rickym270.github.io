@@ -1,3 +1,6 @@
+Add automations script to change paths 
+    - They differ in Git vs relative
+
 Differentiate between outside HTML tags and inside HTML tags
 	outer vs inner HTML tags
 	
