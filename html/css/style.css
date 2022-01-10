@@ -2,10 +2,10 @@ html{
     background-color: #ced6e0;
 }
 
-body{ 
+body{
+    overflow-x: hidden;
     padding-top:50px;
-    height: 160vh;
-    min-height: 100vh;
+    min-height: 100%;
     margin: 0;
     padding-bottom: 100px;
     box-sizing: border-box;
@@ -13,14 +13,6 @@ body{
 
 .carousel-caption{
     background: rgba(0, 0, 0, 0.6);
-}
-
-.carousel-inner{
-    top: 3vh;
-}
-
-.carousel-item {
-  height: 384px;
 }
 
 .carousel-item img {
@@ -94,10 +86,6 @@ body{
 
 #homeBannerContent{
     color:white;
-}
-
-#home_skills img{
-    height: 12vh;
 }
 
 #main{
