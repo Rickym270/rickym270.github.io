@@ -3,7 +3,8 @@ html{
 }
 
 body{ 
-    padding-top:50px; 
+    padding-top:50px;
+    height: 180vh;
     min-height: 100vh;
     margin: 0;
     padding-bottom: 100px;
@@ -59,7 +60,9 @@ body{
 .fpLine{
     margin-bottom: 0;
 }
-
+#GitUpdates{
+    height: 1px;
+}
 #header-section{
     border-bottom: 1px solid gray;
 }
@@ -72,6 +75,14 @@ body{
 
 #homeBannerContent{
     color:white;
+}
+
+#home_skills img{
+    height: 80%;
+}
+
+#home_skills > .row{
+    height:17%;
 }
 
 #main{
@@ -104,6 +115,9 @@ li.nav-item{
 }
 .max-bold{
     font-weight: 500;
+}
+.mid-bold{
+    font-weight: 400;
 }
 .min-bold{
     font-weight: 300;
