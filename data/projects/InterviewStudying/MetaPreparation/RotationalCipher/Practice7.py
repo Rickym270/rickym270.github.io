@@ -28,3 +28,4 @@ def encrypt(input, rotation_factor):
 
 if __name__ == "__main__":
     print(encrypt(string, rotational_factor))
+
