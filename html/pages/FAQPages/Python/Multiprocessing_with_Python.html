@@ -6,10 +6,14 @@
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        
+        <script src="../html/js/helper.js"></script>
     </head>
     <body>
         <div class="container">
+            <div id="docsNavigatrior">
+                <a href="../html/pages/FAQPages/Python/index.html">Back</a>
+            </div>
+            <div class="push3"></div>
             <div class="row">
                 <div class="col-12">
                     <h3>Multiprocessing with Python</h3>
@@ -24,70 +28,23 @@
                         <div class='divider'></div></br>
                                 <h4>Multiprocessing Module</h4>
                         
+                        <pre>
                         
+                        <code>from multiprocessing import Manager, Pool</code>
                         
-                        from multiprocessing import Manager, Pool
+                        <code></code>
                         
+                        <code>MAX_NUM_PROCESSES = <MAXPROCESSES></code>
                         
+                        <code>shared_list = manager.list()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   # Required to share information between processes as they are independent</code>
                         
-                        MAX_NUM_PROCESSES = <MAXPROCESSES>
+                        <code></code>
                         
-                        shared_list = manager.list()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   # Required to share information between processes as they are independent
+                        <code>with Pool(processes=MAX_NUM_PROCESSES) as pool:</code>
                         
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;print(pool.map(dps.get_ping_results, shared_list[0]['info']))</code>
                         
-                        
-                        with Pool(processes=MAX_NUM_PROCESSES) as pool:
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;print(pool.map(dps.get_ping_results, shared_list[0]['info']))
-                        
-                        
-                        
-                        
-                        
-                        <div class='divider'></div></br>
-                                <h4></h4>
-                        
-                        
-                        
-                        from multiprocessing import Manager, Process
-                        
-                        
-                        
-                        # Information isn't shared accross processes. Create a list using Manager
-                        
-                        # from multiprocessing import Manager, Process
-                        
-                        
-                        
-                          with Manager() as manager:
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;L = manager.list()
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;for device in device_info['info']:
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;  L.append([device['ip'], device['hostname'], device['username'], device['password']])
-                        
-                        
-                        
-                        # Create multiple processes and make sure to append them to close them later:
-                        
-                          for i in range(len(L)):
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;print("i:{}".format(i))
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;p = Process(target=get_status_info, args=(L[i],))
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;p.start()
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;processes.append(p)
-                        
-                        
-                        
-                        # Close processes:
-                        
-                          for p in processes:
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;p.join()
+                        </pre>
                         
                         
                         
@@ -96,27 +53,76 @@
                         
                         
                         
-                        from multiprocessing import Manager, Pool
+                        <pre>
                         
+                        <code>from multiprocessing import Manager, Process</code>
                         
+                        <code></code>
                         
-                        MAX_PROCESSES = 10
+                        <code># Information isn't shared accross processes. Create a list using Manager</code>
                         
-                        manager = Manager()
+                        <code># from multiprocessing import Manager, Process</code>
                         
-                        shared_list = manager.list()
+                        <code></code>
                         
+                        <code>  with Manager() as manager:</code>
                         
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;L = manager.list()</code>
                         
-                        for line in noblank_lines(fh):
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;for device in device_info['info']:</code>
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;shared_list,append(line)
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;  L.append([device['ip'], device['hostname'], device['username'], device['password']])</code>
                         
+                        <code></code>
                         
+                        <code># Create multiple processes and make sure to append them to close them later:</code>
                         
-                        pool = Pool(processes=MAX_PROCESSES)
+                        <code>  for i in range(len(L)):</code>
                         
-                        pool.map(multiPro_test_msgs, shared_list)
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;print("i:{}".format(i))</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;p = Process(target=get_status_info, args=(L[i],))</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;p.start()</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;processes.append(p)</code>
+                        
+                        <code></code>
+                        
+                        <code># Close processes:</code>
+                        
+                        <code>  for p in processes:</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;p.join()</code>
+                        
+                        <code></code>
+                        
+                        <code><div class='divider'></div></br>
+                                <h4></h4></code>
+                        
+                        <code></code>
+                        
+                        <code>from multiprocessing import Manager, Pool</code>
+                        
+                        <code></code>
+                        
+                        <code>MAX_PROCESSES = 10</code>
+                        
+                        <code>manager = Manager()</code>
+                        
+                        <code>shared_list = manager.list()</code>
+                        
+                        <code></code>
+                        
+                        <code>for line in noblank_lines(fh):</code>
+                        
+                        <code>&nbsp;&nbsp;&nbsp;&nbsp;shared_list,append(line)</code>
+                        
+                        <code></code>
+                        
+                        <code>pool = Pool(processes=MAX_PROCESSES)</code>
+                        
+                        <code>pool.map(multiPro_test_msgs, shared_list)</code>
                         
                     </div>
             </div>
