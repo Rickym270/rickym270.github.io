@@ -3,13 +3,13 @@ $(document).ready(function(){
     
     // Defaut load
     if(location_name == "index.html" || location_name == ""){
-        $("#content").load("html/pages/home.html");
+        jQuery("#content").load("html/pages/home.html");
     }
     
     // Navbar Links
-    $("a.nav-link").unbind("click").click(function(){
+    jQuery("a.nav-link").unbind("click").click(function(){ 
         var sectionUrl = $(this).attr("data-url");
-        $("#content").load(sectionUrl, function(){
+        jQuery("#content").load(sectionUrl, function(){
             console.log("Loaded " + sectionUrl);
         })
     });
