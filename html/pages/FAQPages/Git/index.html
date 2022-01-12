@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../html/css/style.css">
+        <link rel="stylesheet" href="../html/css/docs.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $.ajaxSetup({
+                    cache: false
+                });
+                $('#FAQLinks div.list-group a').click(function(e){
+                    // handles switching what link is active
+                    $('#FAQLinks a').removeClass('active');
+                    $(this).addClass('active');
+                    e.preventDefault();       // Prevents default re-direct of the anchor tag
+                });
+                $("ol > li a").not('.nav-link').on('click',function(e){
+                    e.preventDefault();
+                    var attr = $(this).attr('href');
+                    if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
+                        $('#FAQMain').load(attr);
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body id="FAQMain">
+        <div>
+            <p class="toc_title">Contents</p>
+            <ol class="toc_list">
+                <li>
+                    <a href="html/pages/FAQPages/Git/Github_Info.html">Git Info</a>
+                    <!--
+                    <ul>
+                        <li><a href="#First_Sub_Point_1">1.1 First Sub Point 1</a></li>
+                        <li><a href="#First_Sub_Point_2">1.2 First Sub Point 2</a></li>
+                    </ul>
+                    -->
+                </li>
+                
+            </ol>
+        </div>
+    </body>
+</html>

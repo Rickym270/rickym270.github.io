@@ -1,0 +1,12 @@
+Creating a doc workflow
+
+1. Translate from note to html
+    - Create the file with dest being pages/FAQPages/<Category>/<filename>
+2. Edit the docs.html page to reflect thus
+
+1. 
+    You must be in the bin directory
+    You must run the commannd with ./GenNotes.py not sudo python3 GenNotes.py
+    Specify the type, src_file, dest_file parameters
+2. Update pages/docs.html to have the index link of the specific note type        (Category)
+3. Update the categories index.html to reflect the generated note
