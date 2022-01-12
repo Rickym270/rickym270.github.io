@@ -22,6 +22,10 @@ body{
     opacity: 0.5;
 }
 
+#homeCarousel{
+    height: 40vh;
+}
+
 .center{
     text-align: center !important;
     display: block;
@@ -71,16 +75,14 @@ body{
 .fpLine{
     margin-bottom: 0;
 }
-#GitUpdates{
-    height: 1px;
-}
+
 #header-section{
     border-bottom: 1px solid gray;
 }
 
 #homeBanner{
     width: 99vw;
-    height: 45vh;
+    height: 40vh;
     background-color: black;
 }
 
