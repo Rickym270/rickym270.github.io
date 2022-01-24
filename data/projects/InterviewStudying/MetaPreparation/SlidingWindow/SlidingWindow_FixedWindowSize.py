@@ -11,7 +11,8 @@
 def findMaxSumSubarray(array, k):
     # TODO: Define variables
     maxValue = float("-inf")
-    currentRunningSum = 0       # NOTE: This is because we want this to start off 'neutral'
+    currentRunningSum = 0       # NOTE: This is because we want this to start off
+                                # 'neutral'
 
     for i in range(len(array)):
         # TODO: Grow initial window length
@@ -21,8 +22,9 @@ def findMaxSumSubarray(array, k):
         if i >= k - 1:
             # WHY?
             #   i denotes the current element
-            #   k denotes the total elements we want. Since k = 3, k - 1 = 2 which in terms of array idxs, this denotes
-            #       that we have 3 items.
+            #   k denotes the total elements we want. Since k = 3, k - 1 = 2 which
+            #   in terms of array idxs (Starting at 0) , this denotes
+            #       that we always have at least 3 items.
             # TODO: Now that we have 3 elements, compare the currentRunningSum to the max value
             maxValue = max(maxValue, currentRunningSum)
             # TODO: Subtract last element from currentRunningSum to keep the currentRunningSum correlated to array size
