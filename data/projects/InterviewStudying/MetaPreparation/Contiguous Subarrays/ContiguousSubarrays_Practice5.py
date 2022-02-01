@@ -18,33 +18,15 @@
             For index 3 - [6], [6, 2], [1, 6], [4, 1, 6], [3, 4, 1, 6]
             For index 4 - [2]
             So, the answer for the above input is [1, 3, 1, 5, 1]
-'''5
+'''
 arr = [3, 4, 1, 6, 2]
 def count_subarrays(array):
-    res = [1] * len(array)
-    stack = [-1]
+    n = len(array)
+    res = [1] * n
+    currentSubarrayAppearances = 0
+    maxSubarray = float("-inf")
 
-    # TRAVERSE LEFT
-    for i in range(len(array)):
-        while len(stack) > 1 and array[stack[-1]] < array[i]:
-            stack.pop()
-
-        res[i] += i - stack[-1] - 1
-        stack.append(i)
-
-    # TRAVERSE RIGHT
-    stack = [len(array)]
-    for i in range(len(array) - 1, -1, -1):
-        while len(stack) > 1 and array[stack[-1]] < array[i]:
-            stack.pop()
-
-        res[i] += stack[-1] - i - 1
-        stack.append(i)
-
-    return res
-
-    return res
-
+    for i in range(n):
 
 
 

@@ -30,7 +30,7 @@ def count_subarrays(arr):
         res[i] += i - stack[-1] - 1
         stack.append(i)
 
-    #TODO: Traverse right -> left
+    #TODO: Traverse right -> left5
     stack = [n]
     for i in range(n-1, -1, -1):
         while len(stack) > 1 and arr[stack[-1]] < arr[i]:
