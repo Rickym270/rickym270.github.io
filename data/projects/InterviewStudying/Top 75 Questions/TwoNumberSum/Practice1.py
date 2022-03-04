@@ -7,18 +7,24 @@
 
 def twoNumberSum(arr, targetSum):
     lp = 0
-    rp = 0
-    arr.sort()
+    rp = len(arr) - 1
+    count = 0
+    arr.sort() # [1,2,4,7,8]
 
-    while lp < rp:
-        currentSum = arr[lp] + arr[rp]
-        if currentSum == targetSum:
-            return [arr[lp], arr[rp]]
-        elif currentSum < targetSum:
-            lp += 1
-        elif currentSum > targetSum:
-            rp -= 1
-    return []
+
+    # while lp < rp:
+    #     currentSum = arr[lp] + arr[rp]
+    #     print("Current Sum of: {}".format(currentSum))
+    #     if currentSum < targetSum:
+    #         lp += 1
+    #     elif currentSum > targetSum:
+    #         rp -= 1
+    #     else:
+    #         count += 1
+    #         lp += 1
+    #         rp -= 1
+    # return count
 
 if __name__ == "__main__":
-    twoNumberSum([2, 1, 4, 7, 8], 11)
+    # print(twoNumberSum([2, 1, 4, 7, 8], 11))
+    print(twoNumberSum([2, 1, 4, 7, 8], 11))
