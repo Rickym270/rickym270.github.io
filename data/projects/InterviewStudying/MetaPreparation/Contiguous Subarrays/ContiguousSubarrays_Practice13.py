@@ -22,29 +22,32 @@
 arr = [3, 4, 1, 6, 2]
 # 1, 3, 1, 5, 1
 def count_subarrays(array):
-    # TODO: Get length of array to creaste an empty array
-    array_len = len(array)
-    res = [1 for _ in range(array_len)]
-    # TODO: Since we are using an aux ds, use a stack
+    # TODO: Init return
+    n = len(array)
+    res = [-1] * n
+    # TODO: Init aux ds
     stack = [-1]
 
     # TODO: Iterate left
-    for i in range(array_len):
+    for i in range(n):
+        # TODO: Pop elements while stack exist and previously seen num is
+        #           less than current
         while len(stack) > 1 and array[stack[-1]] < array[i]:
             stack.pop()
-        res += i - stack[-1] - 1
+
+        # TODO: Add to res
+        res[i] += i - stack[-1] - i
+        # TODO: Append to stack
         stack.append(i)
-
-
-    stack = [array_len]
-    for i in reversed(range(array_len)):
+    # TODO: Iterate right
+    for i in reversed(range(n)):
         while len(stack) < 1 and array[stack[-1]] < array[i]:
             stack.pop()
         res[i] += stack[-1] - i - 1
         stack.append(i)
+
+    # TODO: Return res
     return res
-
-
 
 if __name__ == "__main__":
     print(count_subarrays(arr))

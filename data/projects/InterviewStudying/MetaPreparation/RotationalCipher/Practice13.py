@@ -14,33 +14,29 @@ string = "All-convoYs-9-be:Alert1."
 rotational_factor = 4
 
 def rotationalCipher(input, rotation_factor):
-    # TODO: Return Encrypted String
-    encrypted_str = ""
+    # TODO: Return encrypter msg
+    encrypted_msg = ""
 
+    # TODO: Iterate through input chars
     for char in input:
-        # TODO: Upper
-        if char.isupper():
-            # TODO: Get unicode char
-            uni_char = ord(char) - ord("A")
-            shifted_idx = (uni_char + rotation_factor) % 26
-            new_char = chr(shifted_idx + ord("A"))
-            encrypted_str += new_char
-        # TODO: Lower
-        elif char.islower():
-            # TODO: Get unicode char
+        if char.islower():
             uni_char = ord(char) - ord("a")
-            shifted_idx = (uni_char + rotation_factor) % 26
-            new_char = chr(shifted_idx + ord("a"))
-            encrypted_str += new_char
-        # TODO: Numbers
+            shifted_char = (uni_char + rotation_factor) % 26
+            new_char = chr(shifted_char + ord("a"))
+            encrypted_msg += new_char
+        elif char.isupper():
+            uni_char = ord(char) - ord("A")
+            shifted_char = (uni_char + rotation_factor) % 26
+            new_char = chr(shifted_char + ord("A"))
+            encrypted_msg += new_char
         elif char.isdigit():
-            shifted_idx = (int(char) + rotation_factor) % 10
-            new_char = str(shifted_idx)
-            encrypted_str += new_char
-        # TODO: Punctuation
+            shifted_char = (int(char) + rotation_factor) % 10
+            new_char = shifted_char
+            encrypted_msg += str(new_char)
         else:
-            encrypted_str += char
-    return encrypted_str
+            encrypted_msg += char
+
+    return encrypted_msg
 
 
 

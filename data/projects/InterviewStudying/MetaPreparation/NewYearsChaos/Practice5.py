@@ -9,25 +9,20 @@ problems = [
 
 def count_skips(q):
     # [4, 1, 2, 3]
-    # [1, 2, 3, 4]
-    # i+1,
     # TODO: Return bribes
     bribes = 0
-
-    # TODO: Iterate through the list
-    for final_pos, current_value in enumerate(q):
-        # TODO: Determine if chaotic
-        if final_pos + 1 < current_value - 2:
+    # TODO: Iterate through q
+    for final_pos, current_val in enumerate(q):
+        # NOTE: Ideal val is final_pos + 1
+        # TODO Determine if too choatic
+        if final_pos + 1 < current_val - 2:
             print("Too chaotic")
             return
 
         # TODO: Determine potential bribes
-        potential_bribes = range(max(current_value - 2, 0), final_pos)
-        # TODO: Determine if bribe
+        potential_bribes = range(max(current_val - 2, 0), final_pos)
         bribes += [q[bribe] < final_pos for bribe in potential_bribes].count(True)
-
-    print(bribes)
-
+    return bribes
 
 if __name__ == "__main__":
     for set_num, problem_set in enumerate(problems):

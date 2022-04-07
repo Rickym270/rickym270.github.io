@@ -4,7 +4,8 @@ and get them signed by other students.
 You're given a list of n integers arr[1..n], which is guaranteed to be a permutation of 1..n (in other words, it
 includes the integers from 1 to n exactly once each, in some order). The meaning of this list is described below.
 Initially, each student is holding their own yearbook. The students will then repeat the following two steps each minute:
- Each student i will first sign the yearbook that they're currently holding (which may either belong to
+
+    - Each student, i, will first sign the yearbook that they're currently holding (which may either belong to
 themselves or to another student), and then they'll pass it to student arr[i-1]. It's possible that arr[i-1] = i for any
  given i, in which case student i will pass their yearbook back to themselves. Once a student has received their own
  yearbook back, they will hold on to it and no longer participate in the passing process.
@@ -22,24 +23,25 @@ def findSignatureCounts(arr):
     # TODO: Return number of sigs
     res = []
 
-    # TODO: Iterate th rough arr
-    for i, person in enumerate(arr):
-        # TODO: Since the first person signs their own yearbook, start at 1
-        signatures = 1
-        # TODO: Get current student
-        current_student = arr[i]
-        # TODO: Get next student
-        next_student = arr[current_student - 1]
 
-        # TODO: If they pass it to themselves, end
-        if next_student == current_student:
+
+    # TODO: Pass to a[i-1]
+    for i in range(len(arr)):
+        # TODO: Sign book
+        signatures = 1
+        current = arr[i]
+        next_student = arr[current-1]
+        # TODO: If a[i-1] == i
+        if next_student == current:
             res.append(signatures)
             continue
         else:
+            # TODO: Sign book
             signatures += 1
         res.append(signatures)
-
     return res
+
+
 
 
 # These are the tests we use to determine if the solution is correct.
@@ -86,11 +88,13 @@ def check(expected, output):
 
 if __name__ == "__main__":
     arr_1 = [2, 1]
+    print(arr_1)
     expected_1 = [2, 2]
     output_1 = findSignatureCounts(arr_1)
     check(expected_1, output_1)
 
     arr_2 = [1, 2]
+    print(arr_2)
     expected_2 = [1, 1]
     output_2 = findSignatureCounts(arr_2)
     check(expected_2, output_2)
