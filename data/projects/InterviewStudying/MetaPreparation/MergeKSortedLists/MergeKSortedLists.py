@@ -12,7 +12,7 @@ def merge_k_lists(lists):
     # TODO: Get mid of the llsts array
     mid = len(lists) // 2
     # TODO: Merge lists at both sides of mid
-    l, r = merge_k_lists(lists[:mid]), merge_k_lists(lists[mid:]) 5
+    l, r = merge_k_lists(lists[:mid]), merge_k_lists(lists[mid:])
     return merge(l, r)
 
 def merge(l, r):
