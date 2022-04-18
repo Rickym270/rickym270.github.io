@@ -2,23 +2,25 @@
 # Time: O(n)
 # Space: O(1)
 array = [-2, -1, 0, 5, 1]
-targetSum = 0
+targetSum = 10
 
 def twoNumberSum(nums, target_sum):
-    # TODO: Return list
-    res = []
+    # TODO: Define return list
+    # TODO: Return pairs
+    left = 0
+    right = len(nums) - 1
 
-    # TODO: Iterate through nums
-    for i in range(len(nums)):
-        idxOne = i + 1
+    while left < right:
+        current_sum = nums[left] + nums[right]
 
-        while idxOne < len(nums):
-            current_sum = nums[i] + nums[idxOne]
-            if current_sum == target_sum:
-                res.append([nums[i], nums[idxOne]])
+        if current_sum == target_sum:
+            return [nums[left], nums[right]]
+        elif current_sum < target_sum:
+            left += 1
+        else:
+            right -= 1
+    return []
 
-            idxOne += 1
-    return res
 
 if __name__ == "__main__":
     print(twoNumberSum(array, targetSum))
