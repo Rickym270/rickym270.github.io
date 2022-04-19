@@ -12,6 +12,9 @@
 '''
 
 # TODO: Define node class
+import ctypes
+
+
 class Node:
     def __init__(self, value):
         self.val = value
@@ -46,14 +49,19 @@ class XORLinkedList:
         # TODO: Save current head
         node = self.head
         # TODO: Iterate in range of idx
-        for i in range(idx):
+        for _ in range(idx):
             # TODO: Save next npx into a var
             next_npx = id(node) ^ prev_id
 
             # TODO: if next_npx
             if next_npx:
                 # TODO: If there is a next, same the new prev_id as current node
+                prev_id = id(node)
+                node = self.__type_cast(next_npx)
 
+    def __type_cast(self, id):
+        # TODO: Casts id into python object and returns its value
+        return ctypes.cast(id, ctypes.py_object).value
 
 
 
