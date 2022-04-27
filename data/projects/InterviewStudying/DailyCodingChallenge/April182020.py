@@ -10,11 +10,9 @@
     If using a language that has no pointers (such as Python), you can assume you have access to get_pointer and
     dereference_pointer functions that converts between nodes and memory addresses.
 '''
-
-# TODO: Define node class
 import ctypes
 
-
+# TODO: Define node class
 class Node:
     def __init__(self, value):
         self.val = value
@@ -62,35 +60,3 @@ class XORLinkedList:
     def __type_cast(self, id):
         # TODO: Casts id into python object and returns its value
         return ctypes.cast(id, ctypes.py_object).value
-
-
-
-
-
-
-# # TODO: Define a Node class
-# class Node(object):
-#     def __init__(self, value):
-#         self.val = value
-#         self.npx = 0
-#
-# class XORLinkedList:
-#     def __init__(self):
-#         # TODO: Create head, tail, __nodes
-#         self.head = None
-#         self.tail = None
-#         self.__nodes = []
-#
-#     def insert_beginning(self, value):
-#         node = Node(value)
-#         # TODO: If head doesn't exist
-#         if self.head is None:
-#             self.head = node
-#             self.tail = node
-#         else:
-#             # TODO: XOR current and head
-#             #           Remember we are dealing with id's so that is whatever is at head, npx
-#             self.head.npx = id(node) ^ self.head.npx
-#             node.npx = id(self.head)
-#             self.tail = node
-#         self.__nodes.append(node)
