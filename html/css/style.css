@@ -17,7 +17,7 @@ body{
 
 .carousel-item > img {
     width: auto;
-    height: 40vh;
+    height: 45vh;
     margin: 0 auto;
     opacity: 0.5;
 }
@@ -44,14 +44,6 @@ body{
   display: block;
 }
 
-.dropdown>.dropdown-toggle:active {
-  /*Without this, clicking will make it sticky*/
-    pointer-events: none;
-}
-
-.dropdown.nav-item:hover{
-    display:block;
-}
 
 #fullBody{
     height: 100%;
@@ -115,7 +107,6 @@ a.navbar-brand-name > p{
     padding-right: 10vw !important;
 }
 ul#navbar-links{
-    overflow: hidden;
     white-space: nowrap;
 }
 
