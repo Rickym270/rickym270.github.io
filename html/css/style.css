@@ -44,7 +44,8 @@ body{
   display: block;
 }
 
-.dropdown-menu{
+li.dropdown{
+    padding-left: 11%;
     margin: 0;
 }
 
