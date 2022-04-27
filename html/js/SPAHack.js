@@ -7,7 +7,11 @@ $(document).ready(function(){
     }
     
     // Navbar Links
+<<<<<<< Updated upstream
     jQuery("a.nav-link").unbind("click").click(function(){            
+=======
+    jQuery("a.nav-link, a.dropdown-item").unbind("click").click(function(){ 
+>>>>>>> Stashed changes
         var sectionUrl = $(this).attr("data-url");
         console.log(sectionUrl);
         jQuery("#content").load(sectionUrl, function(){
