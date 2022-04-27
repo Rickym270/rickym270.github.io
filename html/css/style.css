@@ -39,14 +39,6 @@ body{
   display: block;
 }
 
-.dropdown>.dropdown-toggle:active {
-  /*Without this, clicking will make it sticky*/
-    pointer-events: none;
-}
-
-.dropdown.nav-item:hover{
-    display:block;
-}
 
 #fullBody{
     height: 100%;
@@ -112,7 +104,6 @@ a.navbar-brand-name > p{
     padding-right: 10vw !important;
 }
 ul#navbar-links{
-    overflow: hidden;
     white-space: nowrap;
 }
 
