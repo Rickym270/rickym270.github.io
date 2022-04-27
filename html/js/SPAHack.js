@@ -7,10 +7,14 @@ $(document).ready(function(){
     }
     
     // Navbar Links
-    jQuery("a.nav-link, a.dropdown-item").unbind("click").click(function(){            
-        var sectionUrl = $(this).attr("data-url");
-        jQuery("#content").load(sectionUrl, function(){
-            console.log("Loaded " + sectionUrl);
-        })
-    });
+    if(jQuery("a.nav-link, a.dropdown-item, a.inline-load").length){
+        jQuery("a.nav-link, a.dropdown-item, a.inline-load").unbind("click").click(function(){
+            var sectionUrl = $(this).attr("data-url");
+            if(sectionUrl){
+                jQuery("#content").load(sectionUrl, function(){
+                    console.log("Loaded " + sectionUrl);
+                });
+            }
+        });
+    }
 });
