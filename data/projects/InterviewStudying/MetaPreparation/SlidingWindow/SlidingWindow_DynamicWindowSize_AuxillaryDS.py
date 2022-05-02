@@ -20,7 +20,8 @@ def findMaxSumSubarray(array):
 
     # TODO: Traverse left->right
     for i in range(n):
-        # NOTE: While stack has more than one element and previous element < current element
+        # NOTE: While stack has more than one element and previous element < current
+        # element
         while len(stack) > 1 and array[stack[-1]] < array[i]:
             stack.pop()
         res[i] += i - stack[-1] - 1
