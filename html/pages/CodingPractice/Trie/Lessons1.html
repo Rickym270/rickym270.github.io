@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="../../../css/style.css">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="../html/js/helper.js"></script>
+        
+        <link rel="stylesheet"
+        href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="docsNavigatrior">
+                <a href="../html/pages/FAQPages/python/index.html">Back</a>
+            </div>
+            <div class="push3"></div>
+            <div class="row">
+                <div class="col-12">
+                    <h3>This was presented to me on my daily coding challenges:</h3>
+                    <div class="divider"></div>
+                	<div class="push2"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    Implement an autocomplete system. That is, given a query string s and a set of all possible query strings, return all strings in the set that have <b>s</b> as a prefix.
+                    <br><br>
+
+                    For example, given the query string de and the set of strings
+                    <br><br>
+                    <pre>    [dog, deer, deal]</pre>
+
+                    <pre>    return [deer, deal]</pre>
+
+                    <i>Hint: Try preprocessing the dictionary into a more efficient data structure to speed up queries.</i>
+                    <br><br>
+                    We can go about solving this problem in many ways but one of the more efficientways is to use the Trie data structure. You can read more about it here:
+                            <br>
+                            <!-- <INSERT LINK HERE> -->
+                            <br>
+                    The trie works here assuming we "pre-process" the information. It helps for faster lookups. In English:
+                    <ul>
+                        <li>The Trie is like a mental map we have of looking at words:
+                            <ul>
+                                <li>If we see the word app is being typed, we look at it and might think, This could be the word "appl", but it could also be "apple" or "application" or any word that starts with "appl" for that matter.</li>
+                                <li>A Trie defines this structure</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <pre>
+                                    a
+                                    |
+                                    p
+                                    |
+                                    p
+                                    |
+                                    l
+                                   / \
+                                  e   i
+                                       \
+                                        c
+                                         \
+                                          a
+                                           \
+                                            t
+                                             \
+                                              i
+                    </pre>
+                    As we can tell, at "l", the paths split up to show that the	word could go either way.
+                    <ul>
+                        <li>To define the Trie, we need to define what a "node"(entry) looks like</li>
+
+                        <li>Notice that at each entry, we have a "knowledge" of it's neighbors
+                            <ul>
+                                <li>For node "t", it's neighbors are "i" and "a"  so we know we want to keep track of it's neighbors so we define a list
+                                    <ul>
+                                        <li>For more information on lists, go 
+                                            <!-- INSERT LINK --></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            We also have a knowledge of whether the current node is the "end" of the word that is being defined by the tree.
+                            <ul>
+                                <li>By default this isn't "True" because that would mean that a new entry of, say "u", is a word.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    Therefore:
+
+                    <pre>
+                        <code>
+                        class Node:
+                            def __init__(self):
+                                self.neighbors = []
+                                self.is_end = False
+                        </code>
+                    </pre>
+
+                    Now comes the "juicy" part, we need to define the Trie itself
+                    <ol>
+                        <li>
+                            <pre><code>
+                            class Trie:
+                                def __init__(self):
+                                    self.root = Node()  # The tree should have at least 1 node
+                            </code></pre>
+                            We need to have at least 1 element in the Trie so we use the previously defined Node to define the Trie and serve as it's "root"
+                        </li>
+                        <br>
+                        <li>
+                            We need to define a function to form the Trie from a given word
+                            <pre><code>
+                                def form_trie(self, word):
+                                    for char in word:
+                                        if char not in self.root:
+                                            self.insert(char)
+                            </code></pre>
+                            <ul>
+                                <li>Here we iterate through every character (letter) in the provided word.</li>
+                                <li>We check to see if the current character is not in the Trie already. If not, insert the currect character in there</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li>
+                            We need to define a function to "insert" also, since it is referenced in the form_trie function.
+                            <pre><code>
+                                def insert(self, val):
+                                    node = self.root
+                                    for char in val:
+                                        if char not in node.neighbors:
+                                            node.neighbors[char] = Node()
+                                        node = node.neighbors[char]
+                                    node.is_end = True
+                            </code></pre>
+                            <ul>
+                                <li>
+                                     Here we have to have to create a reference to the root node (beginning node)
+                                </li>
+                                <li>We iterate through the provided value</li>
+                                <li>We check if the current element of the provided value is in the neighbors of the node</li>
+                                <ul>
+                                    <li>If not, we create a Node as a neighbor. Why? Since it doesn't exist, we have to initiate it as a new "entry" or "point" within the Trie</li>
+                                </ul>
+                                <li>Set the newly inserted node as the new reference of the node</li>
+                                <li>Since we are, currently, "at the end" of the new "word", for all we know, we are at the end so set is_end to True</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Define the function to find a suggestion for the word we are trying to autocomplete.
+                            <ul>
+                                <li>Create a reference to the corrent node (we need to reference it to find a suggestion)</li>
+                                <li>Iterate through the word that is provided to get every character
+                                    <ul>
+                                        <li>Look to see if the node has the current char as a child. Return 0. If not,
+                                            <ul>
+                                                <li>Save node (current position) as the position of the next character</li>
+                                                <li><i>This is a bit confusing so here's an example:</i></li>
+                                                <ul>
+                                                    <li>
+                                                        <pre>
+    a
+    |
+    p
+    |
+    p &lt;- We are here
+    |
+    l
+   / \
+  e   i
+       \
+        c
+         \
+          a
+           \
+            t
+             \
+              i
+                                                        </pre>
+                                                    </li>
+                                                </ul>
+                                                <ol>
+                                                    <li>Say we're at p. This means that node.children will contain ["l"]. This is because at "p", the children of it are ["l"]</li>
+                                                    <li>We want to go to the next item, this means that we have to make node (points/references the letter we're at) equal to the next node.
+                                                        <pre><code>node = node.children[char]</code></pre>
+                                                    </li>
+                                                </ol>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>If there is no children in the node, return -1</li>
+                                <li>Recursively, find the word in the Trie</li>
+                                <li>Return 1 if we got this far</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Define the function to recursively find the word in the Trie. 
+                            <ul>
+                                <li>It should accept node and word as a parameter
+                                    <pre><code>
+                                        def recursive_suggestion(self, node, word):
+                                    </code></pre>
+                                </li>
+                                <li>
+                                    Create a base condition of
+                                    <pre><code>
+                                        if node.is_end:
+                                            return word
+                                    </code></pre>
+                                </li>
+                                <li>
+                                    Iterate through each node's child and get its node and char value.<br>
+                                    <i>Call itself with the node and the word + the char value</i>
+                                    <pre><code>
+                                        for n, v in node.children.items():
+                                            self.recursive_suggestion(n, word + v)
+                                    </code></pre>
+                                    <ul>
+                                        <li>We add v (the current node's value) to the word to indicate that we are adding letters to the provided word.</li>
+                                        <li>
+                                            <i>Example</i><br>
+                                            The numbers here refer to the number of times the function is calling itself (recursion)
+                                            <ol>
+                                                <li>word = "a"<br>
+                                                    k = "p" -> word + k = "ap"</li><br>
+                                                <li>word = "ap"<br>
+                                                    k = "p" -> word + k = "app"</li><br>
+                                                <li>word = "app"<br>
+                                                    k = "l" -> word + k = "appl"</li><br>
+                                                <li>word = "appl"<br>
+                                                    k = "e" -> word + k = "apple"</li>
+                                            </ol>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
