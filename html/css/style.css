@@ -39,6 +39,7 @@ body{
 }
 
 .divider{border-top: 1px solid #6C7A89;}
+.muted-divider{border-top: 1px solid #DFE6E9;}
 .right-divider{border-right: 1px solid #EEEEEE;}
 
 .dropdown:hover>.dropdown-menu {

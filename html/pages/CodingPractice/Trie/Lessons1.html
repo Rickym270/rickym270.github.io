@@ -11,15 +11,15 @@
         
         <link rel="stylesheet"
         href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/go.min.js"></script>
         <script src="../../../../html/js/highlight.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/go.min.js"></script>
         <script>hljs.highlightAll();</script>
     </head>
     <body>
         <div class="container">
             <div class="push8"></div>
             <div id="docsNavigatrior">
-                <a class="inline-load" href="../../../../data/projects/CodingPractices/index.html">Back</a>
+                <a class="inline-load" href="#" data-url="/data/projects/CodingPractices/index.html">Back</a>
             </div>
             <div class="push3"></div>
             <div class="row">
@@ -31,21 +31,19 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    Implement an autocomplete system. That is, given a query string s and a set of all possible query strings, return all strings in the set that have <b>s</b> as a prefix.
+                    Implement an autocomplete system. That is, given a query string <b>s</b> and a set of all possible query strings, return all strings in the set that have <b>s</b> as a prefix.
                     <br><br>
 
-                    For example, given the query string de and the set of strings
-                    <br><br>
-                    <pre>    [dog, deer, deal]</pre>
-
+                    For example, given the query string <b>de</b> and the set of strings <pre>[dog, deer, deal]</pre>
+                    <br>
                     <pre>    return [deer, deal]</pre>
 
                     <i>Hint: Try preprocessing the dictionary into a more efficient data structure to speed up queries.</i>
                     <br><br>
-                    We can go about solving this problem in many ways but one of the more efficientways is to use the Trie data structure. You can read more about it here:
-                            <br>
-                            <!-- <INSERT LINK HERE> -->
-                            <br>
+                    We can go about solving this problem in many ways but one of the more efficient ways is to use the Trie data structure. You can read more about it here:
+                    <br>
+                    <a href="https://medium.com/basecs/trying-to-understand-tries-3ec6bede0014#:~:text=A%20trie%20is%20a%20tree,are%20a%20relatively%20new%20thing." target="_blank">Tries Medium</a>
+                    <br>
                     The trie works here assuming we "pre-process" the information. It helps for faster lookups. In English:
                     <ul>
                         <li>The Trie is like a mental map we have of looking at words:
@@ -76,14 +74,14 @@
                     </pre>
                     As we can tell, at "l", the paths split up to show that the	word could go either way.
                     <ul>
-                        <li>To define the Trie, we need to define what a "node"(entry) looks like</li>
+                        <li>To define the Trie, we need to define what a "node" (entry) looks like</li>
 
                         <li>Notice that at each entry, we have a "knowledge" of it's neighbors
                             <ul>
                                 <li>For node "t", it's neighbors are "i" and "a"  so we know we want to keep track of it's neighbors so we define a list
                                     <ul>
                                         <li>For more information on lists, go 
-                                            <!-- INSERT LINK --></li>
+                                            <a href="https://www.w3schools.com/python/python_lists.asp" target="_blank">Python Lists</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -91,7 +89,7 @@
                         <li>
                             We also have a knowledge of whether the current node is the "end" of the word that is being defined by the tree.
                             <ul>
-                                <li>By default this isn't "True" because that would mean that a new entry of, say "u", is a word.</li>
+                                <li>By default this is "False" because that would mean that every new entry in the Trie is a word.</li>
                             </ul>
                         </li>
                     </ul>
@@ -126,7 +124,7 @@
                                             self.insert(char)
                             </code></pre>
                             <ul>
-                                <li>Here we iterate through every character (letter) in the provided word.</li>
+                                <li>Here we iterate through every character (letter) in the provided word to form the Trie from it.</li>
                                 <li>We check to see if the current character is not in the Trie already. If not, insert the currect character in there</li>
                             </ul>
                         </li>
