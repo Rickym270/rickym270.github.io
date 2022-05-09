@@ -16,12 +16,15 @@ def findMaxSumSubarray(array):
     res = [1] * n
     # TODO: Create stack
     #   NOTE: Stack must always have one element
+    #   NOTE: We want this as negative one because we do a comparison on line 26 and -1 is less than any positive int
     stack = [-1]
 
     # TODO: Traverse left->right
     for i in range(n):
-        # NOTE: While stack has more than one element and previous element < current
-        # element
+        # TODO: While stack has more than one element and previous element < current
+        #       element, remove the last element of stack
+        #       WHY?
+        #           We want to only keep track of
         while len(stack) > 1 and array[stack[-1]] < array[i]:
             stack.pop()
         res[i] += i - stack[-1] - 1

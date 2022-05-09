@@ -11,11 +11,20 @@ targetSum1 = 6
 
 # Returns 4
 array2 = [1, 5, 3, 3, 3]
+# 1+5 seen: TWO new numbers (1, 5)
+# 1+3 seen: ONE new number (3), ONE old number
+# 1+3 seen: ZERO new number, TWO old numbers
+# 1+3 seen: ZERO new number, TWO old numbers
+# 5+3 seen: ONE new number, ONE old number
+# 5+3 seen: ZERO new number, TWO old numbers
+# 5+3 seen: ZERO new number, TWO old numbers
+# 3+3 seen: ZERO new number, TWO old numbers
+# 3+3 seen: ZERO new number, TWO old numbers
+# 3+3 seen: ZERO new number, TWO old numbers
+# New Numbers: (1+5) and 5+3
 targetSum2 = 6
-# 1st 2nd
-# 3rd 4th
-# 3rd 5th
 
+# Return 6
 array3 = [2, 2, 2, 2]
 # 2+2 (1st, 2nd) seen: TWO new 2's, subtract one because we only want to count the 2 one time.
 # 2+2 (1st, 3rd) seen: ONE new 2, ONE old 2. We only care about the new one so subtract one
