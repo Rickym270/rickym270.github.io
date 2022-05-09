@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+# NOTE: CASE N << M
+arr1 = [10, 20, 100]
+arr2 = [10, 20, 30, 40, 60, 80]
 '''
 def find_duplicates(arr1, arr2):
   idxOne = 0
@@ -20,26 +22,25 @@ def find_duplicates(arr1, arr2):
 '''
 
 def find_duplicates(arr1, arr2):
-  duplicates = []
-  
-  for number in arr1:
-    if binarySearch(arr2, number) != -1:
-      duplicates.append(number)
-      
-  return duplicates
-  
-def binarySearch(arr, num):
-  begin = 0
-  end = len(arr) - 1
-  
-  while begin <= end:
-    mid = begin + (end-begin) // 2
-    if arr[mid] < num:
-      begin = mid + 1
-    elif num == arr[mid]:
-      return mid
-    else:
-      end = mid - 1
-      
-  return -1
+    duplicates = []
+    for number in arr1:
+        if BST(arr2, number) != -1:
+            duplicates.append(number)
+    return duplicates
 
+def BST(arr, number):
+    start = 0
+    end = len(arr) - 1
+
+    while start <= end:
+        mid = start + (end - start) // 2
+        if arr[mid] < number:
+            start = mid + 1
+        elif arr[mid] > number:
+            end = mid - 1
+        else:
+            return mid
+    return -1
+
+if __name__ == "__main__":
+    print(find_duplicates(arr1, arr2))
