@@ -1,0 +1,32 @@
+Github SSH Keygen
+
+Sometimes when pushing to your github repository, theres an Authentication error. This is usually fixed by generating a private key.
+
+If ~/.ssh doesn't exist, you need to run the following command in the command prompt
+	ssh-keygen
+
+Just click 'ENTER" every prompt to save in the default location (This tutorial will assume everything is in the default location).
+
+After this is done, run the following command to get the ssh key.
+	cat ~/.ssh/id_rsa.pub
+
+Copy the contents and continue to the next steps
+
+On a browser, go to github.com and sign in.
+Go to settings > SSH and GPG Keys.
+Add an SSH Keygen
+Write and appropriate title and in the 'key' section, paste the ssh-key value that you copied.
+Click "Add SSH key"
+
+
+If presented with this:
+	root at RickysDesktop in /mnt/c/Users/Marti/Documents/Git/rickym270.github.io
+	$ git push origin master
+	Username for 'https://github.com': Rickym270
+	Password for 'https://Rickym270@github.com':
+	remote: Support for password authentication was removed on August 13, 2021. Please use a personal access token instead.
+	remote: Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ for more information.
+	fatal: Authentication failed for 'https://github.com/Rickym270/rickym270.github.io.git/'
+	
+Go to settings >Developer settings > Personal Access token > Generate new token
+Copy the generated toekn and go a git push again. When prompted for a password, simply input your access token.

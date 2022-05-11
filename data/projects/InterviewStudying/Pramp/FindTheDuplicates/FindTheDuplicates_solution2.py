@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-arr1 = [10,20,30,40,50,60,70]
-arr2 = [10,20,30,40,50,60,70]
+arr1 = [10, 20, 30, 60, 70, 100]
+arr2 = [10, 20, 30, 40, 60, 80]
 
 def findDuplicates(arr1, arr2):
     duplicates = []

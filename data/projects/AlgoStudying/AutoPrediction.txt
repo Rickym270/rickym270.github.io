@@ -1,0 +1,203 @@
+This was presented to me on my daily coding challenges:
+	Implement an autocomplete system. That is, given a query string s and a set of
+	all possible query strings, return all strings in the set that have s as a
+	prefix.
+
+	For example, given the query string de and the set of strings 
+		[dog, deer, deal], 
+	return [deer, deal].
+	Hint: Try preprocessing the dictionary into a more efficient data structure to 
+	speed up queries.
+
+We can go about solving this problem in many ways but one of the more efficient 
+	ways is to use the Trie data structure. You can read more about it here:
+		<INSERT LINK HERE>
+	
+	The trie works here assuming we "pre-process" the information. It helps for
+		faster lookups. In english:
+			- The Trie is like a mental map we have of looking at words:
+				- If we see the word app is being typed, we look at it and might 
+					think, This could be the word "appl", but it could also be 
+					"apple" or "application" or any word that starts with "appl" 
+					for that matter.
+				- A trie defines this structure:
+					<pycode>
+					a
+					|
+					p
+					|
+					p
+					|
+					l
+				   / \
+				  e   i
+					   \
+						c
+						 \
+						  a
+						   \
+							t
+							 \
+							  i
+					</pycode>
+					* As we can tell, at "l", the paths split up to show that the
+						word could go either way. 
+		- To define the Trie, we need to define what a "node"(entry) looks like
+			- Notice that at each entry, we have a "knowledge" of it's neighbors
+				* For node "t", it's neighbors are "i" and "a"  so we know we want
+				to keep track of it's neighbors so we define a list
+					- For more information on lists, go <INSERT LINK>
+			- We also have a knowledge of whether the current node is the "end"
+				of the word thiat is being defined by the tree.
+				* By default this isn't "True" because that would mean that a new
+					entry of, say "u", is a word.
+			Therefore:
+				<pycode>
+					class Node:
+						def __init__(self):
+							self.neighbors = []
+							self.is_end = False
+				</pycode>
+		- Now comes the "juicy" part, we need to define the Trie itself
+			1. 
+				<pycode>
+					class Trie:
+						def __init__(self):
+							self.root = Node()
+				</pycode>
+			
+				* We need to have at least 1 element in the Trie so we use the
+					previously defined Node to define the Trie and serve as it's
+					"root"
+			
+			2. We need to define a function to form the Trie from a given word
+				<pycode>
+					...
+					def form_trie(self, word):
+						for char in word:
+							if char not in self.root:
+								self.insert(char)
+					...
+				</pycode>
+				- Here we iterate through every character (letter) in the provided
+					word.
+				- We check to see if the current character is not in the Trie already
+					- If not, insert the current character in there
+			3. We need to define a function to "insert" also, since it is referenced
+				in the form_trie function.
+				<pycode>
+				...
+					def insert(self, val):
+						node = self.root
+						for char in val:
+							if char not in node.neighbors:
+								node.neighbors[char] = Node()
+							node = node.neighbors[char]
+						node.is_end = True
+				...
+				</pycode>
+				- Here we have to have to create a reference to the root node 
+					(beginning node)
+				- We iterate through the provided value
+				- We check if the current element of the provided value is in the 
+						neighbors of the node
+					- If not, we create a Node as a neighbor. Why? Since it doesn't
+						exist, we have to initiate it as a new "entry" or "point"
+						within the Trie
+				- Set the newly inserted node as the new reference of the node
+				- Since we are, currently, "at the end" of the new "word", for all
+					we know, we are at the end so set is_end to True
+			
+		
+	1. Define the node here. We have to store the "children" and store whether we
+		are at the "end" of a word
+	2. Define the trie here.
+		1. Instantiate a node (Remember, we defined a node in step 1)
+			and save that to the object itself as root
+			<pycode>
+				    def __init__(self):
+					# TODO: Define the initial node
+					self.root = Node()
+			</pycode>
+		2. Define the function to form the Trie. It takes in a value as a 
+			parameter that we are going to form the Trie from
+			- Check if the node is in the Trie already
+				- Insert the node into the trie
+		3. Define the function to insert node into the trie. This takes in the
+			value that we are going to insert
+			- Create an instance of the node
+			- Iterate through the value
+				- check if the current char is in the node children
+					-  Create new Node at node.children[char]
+				- Save new instance of node after the insertion
+					<pycode>
+						node = node.children[char]
+					</pycode>
+			- For all we know, the word is at it's end so set node.is_end to True
+		4. Define the function to find a suggestion for the word we are trying to
+		autocomplete. 
+			- Create a reference to the corrent node (we need to reference it to 
+				find a suggestion)
+			- Iterate through the word that is provided to get every character
+				- Look to see if the node has the current char as a child. Return 0 if
+					not
+				- Save node (current position) as the position of the next character
+					* This is a bit confusing so heres an example
+					<pycode>
+						a
+						|
+						p
+						|
+						p <--- We are here
+						|
+						l
+					   / \
+					  e   i
+						   \
+							c
+							 \
+							  a
+							   \
+								t
+								 \
+								  i
+					</pycode>
+					1. Say we're at p. This means that node.children will contain
+						["l"]. This is because at "p", the children of it are ["l"]
+					2. We want to go to the next item, this means that we have to make
+						node (points/references the letter we're at) equal to the next
+						node.
+						<pycode>
+							node = node.children["l"]
+						</pycode>
+			- If there is no children in the node, return -1
+			- Recursively (link to definition) find the word in the Trie
+			- return 1 if we got this far
+		5. Define the function to recursively find the word in the Trie.
+			It should accept node and word as a parameter
+				<pycode>
+					def recursive_suggestion(self, node, word):
+				</pycode>
+			- Create a base condition of 
+				<pycode>
+					if node.is_end:
+						return word
+				</pycode>
+			- Iterate through each node's child and get its node and char value. 
+				* Call itself with the node and the word + the char value
+				<pycode>
+					for n, v in node.children.items():
+						self.recursive_suggestion(n, word + v)
+				</pycode>
+				* We add v (the current node's value) to the word to indicate that
+					we are adding letters to the provided word.
+					Example:
+						The numbers here refer to the number of times the function
+							is calling itself (recursion)
+							1. word = "a"		k = "p" -> word + k = "ap"
+							2. word = "ap"  	k = "p" -> word + k = "app"
+							3. word = "app" 	k = "l" -> word + k = "appl"
+							4. word = "appl"	k = "e" -> word + k = "apple"
+							   
+				
+			

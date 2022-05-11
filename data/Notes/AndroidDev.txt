@@ -1,3 +1,331 @@
+<<<<<<< HEAD
+If error that minSDK is not met, change value of compileSdk to <= 31 or 
+	whatever sdk is specified
+	Build -> run
+	
+MainActivity.java
+	- This has to do awith the activity_main.xml design
+	To find an element by ID, you reference the elements by an ID set by
+	ex.
+		TextView txtHello = findViewById(R.id.helloWorldText);
+			R - references the resources/objects
+			id - choose resource based on id
+			helloWorldText - ID
+	
+	To change text
+	ex.
+		txtHello.setText("<TEXT>");
+		
+---------------------
+Changing Classes on Click
+
+In the activity_main.xml file, assuming you've already created a button:
+	Locate that button on the xml and attach an "event listener"
+		- This sounds wild, "event listener" but it's just a fancy way of saying
+			- Listen for this event and when it happens, run the following function
+		android:onClick="onBtnClick"
+	Initially it'll show a red underline. This means that the function it's supposed
+		to run on click could not be found. Create that function in MainActivity so 
+		that it runs when it is clicked,
+		# ON MainActivity.java
+		public void onBtnClick (View view){
+        
+		}
+
+----------
+Getting user input
+	1. Create the element (EditText) on the xml file.
+	2. To reference it, go to MainActivity.java and in the onCreate method,
+		reference it with EditText editTxtName = findViewById(R.id.editTxtName);
+		- Once that is established, get the text and turn it into a string
+			editTxtName.getText().toString();
+
+----------
+UI Basics
+	Change layout in xML (activity_main.xml)
+	
+	Change the current layout to RelativeLayout
+		<RelativeLayout xmlns:android=...>
+	LINK TO ANDROID UI DOCS
+	
+	Adding a onClickListener from java (MainActivity.java)
+		In the onCreate method, define the button and then add an onClickListener
+			to the button
+			
+			Button btnHello = findViewById(R.id.btnHello);
+			btnHello.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v){
+
+				}
+			});
+		 
+		We can also change the function signature to implement the onClickListener
+		to add a switch-case block
+			public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+				@Override
+				public void onClick(View v){
+					switch (v.getId()){
+						case R.id.btnHello:
+							System.out.println("Hello clicked")
+							break;
+						default:
+							break;
+					}
+				}
+			
+	Adding a "Toast" message
+		In the MainActivity.java file, you can declare Toast.
+			Toast is a temporary pop up that appears at the bottom of the screen
+			@Override
+				public void onClick(View v){
+					switch (v.getId()){
+						case R.id.btnHello:
+							Toast.makeText(this, "Hello Button Clicked", Toast.LENGTH_SHORT).show();
+							break;
+						default:
+							break;
+					}
+				}
+	EditText
+		Adding a multiline EditText:
+			Add a multiline edit text using the following attribute in the XML:
+				<EditText
+					android:lines="4" />
+		Changing EditText input type
+			Add a multiline edit text using the following attribute in the XML:
+				<EditText
+					android:inputType="<INPUT_TYPE>" />
+	
+	Positioning Items
+		We can add margins but the better way is to create a nested relative 
+		layout
+	
+	Let's Practice what we did. Add 3 checkboxes and add a change listener to 
+		run whenever there is a change
+		
+	If you have radio buttons, put them in a RadioGroup
+	
+	
+PROGRESS BAR
+	Setting a progress bar can be useful for waiting for things to be done
+	To set it visible/not visible:
+		Add the following attribute in the progressBar definition:
+			android:visibility="gone"
+		
+	Instantiate the object in MainActivity.java
+		private ProgressBar progressBar;
+	Add code to change the visibility of the item
+		<code>
+			@Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                switch (checkedId){
+                    case R.id.rbMarried:
+                        Toast.makeText(MainActivity.this, "Married", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                        break;
+                    case R.id.rbInRelationship:
+                        Toast.makeText(MainActivity.this, "In a Relationship", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.rbSingle:
+                        Toast.makeText(MainActivity.this, "Single", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        Toast.makeText(MainActivity.this, "Choose a marital status", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+		</code>
+	You can also change the style of the progressBar so that it's horizontal
+		Add this to the XML, 
+			style:"@style/Widget.AppCompat.ProgressBar.Horizontal"
+			
+CREATE A THREAD
+	Thread thread = new Thread(new Runnable() {});
+	In the thread, you can increment the progress by doing something like this:
+		<code>
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					for (int i = 0; i < 10; i++){
+						progressBar.incrementProgressBy(10);
+						SystemClock.sleep(500)
+					}
+				}
+			});
+		</code>
+		- We could use thread.sleep but that might throw an exception. Instead, use
+			SystemClock.sleep()
+		- Start the thread by putting the following at the end of the new Thread 
+			creation
+		thread.start();
+
+DYNAMIC PROGRESS BAR
+	You can use the following to create a dynamic progress bar in MainActivity. 
+		<code>
+		// TODO: Create a worker thread
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++){
+                    // TODO: Increment progress of progress bar by 10
+                    progressBar.incrementProgressBy(10);
+                    SystemClock.sleep(500);
+                }
+            }
+        });
+        // TODO: Start thread
+        thread.start();
+		</code>
+		
+LAYOUTS
+	- Constrained Layout
+		Using this layout means every element has to be constrained to something.
+			It can be another object or a screen edge
+				This constraint could also be done in the 
+					"Design" view in Android
+						Studio via the 4 circles around an element
+					Code view
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+		In the design view, we can add "guidelines" to constraint elements to 
+			something other than the screen edges
+		We can create a constraint by selecting both elements, right clicking
+			and the constrainting them
+	- Relative Layout:
+		Using this positions elements relative to another element.
+			android:layout_toTopOf="@+id/"
+			android:layout_toRightOf="@+id/"
+			android:layout_toBottomOf="@+id/"
+			android:layout_toLeftOf="@+id/"
+		We can also use attributes like:
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="100dp"
+	
+		This would center and add a margin, to the top,  to the elements in the
+		RelativeLayout
+	- Linear Layout:
+		Ui elements will be placed line by line
+			Doi not have any of the center attributes
+		All UI elements will be placed one after the other.
+		- We can change the orientation of things by using attributes like:
+			android:orientation="vertical"
+		- To specify the "portion" of the screen we want to use, we can specify
+			a "weight":
+				android:layout_weight="20"
+			This would mean, this element takes 20% of the screen. There is no 
+				"out of" value for this. Weight of 20 or weight of 2 mean the
+				same.
+	--------
+	We can set sample text by clicking a TextView, or similar, and "Set sample text"
+	
+	Images
+		We can create an ImageView by specifying it in the XML. Even if not src or
+			specific image is applied, an outline should still be seen.
+		Add images from the internet or other places to the mipmap
+		
+	-----
+	ListView is one of the view we use to show items
+		In the XML file, add a list view
+			    <ListView
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginTop="100dp"
+					android:id="@+id/citiesList"/>
+		In Java folder
+			Create data by creating an array
+				ArrayList<String> cities = new ArrayList<>();
+				cities.add("Zurich");
+				cities.add("New York");
+				cities.add("Berlin");
+				cities.add("Moscow");
+				cities.add("Madrid");
+			// TODO: Create adapter
+			//          Purpose: To fetch the data
+			ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(
+					this,
+					android.R.layout.simple_list_item_1,        // TODO: Add a layout to specify how information
+																//          is presented
+					cities                                      // TODO: Specify data
+
+			);
+			// TODO: Pass adapter to ListView
+			citiesList.setAdapter(citiesAdapter);
+
+			// TODO: Add actions depending on the item that is clicked
+			citiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+					// NOTE: We are interested in 'int i'. This integer specifies the position of the item
+					//          clicked.
+					Toast.makeText(MainActivity.this, cities.get(i) + " Selected", Toast.LENGTH_SHORT).show();
+				}
+			});
+			
+		THIS IS OLD 
+		Now we can use something like a RecyclerView.
+		We don't use ListView because RecyclerView hass imrpovements that make it
+			the better option. 
+	
+	----
+	Spinner
+		Basically a dropdown menu
+		XML:
+			<Spinner
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_marginTop="50dp"
+				android:id="@+id/studentsSpinner"/>
+				
+		The process is similar to that of a ListView in that we have to init
+		private Spinner StudentsSpinner. This type of element is good for display
+		of dynamic information on the dropdown
+
+		
+		studentsSpinner = findViewById(R.id.studentsSpinner);
+		
+		// TODO: Create data for students spinner
+        final ArrayList<String> students = new ArrayList<>();
+        students.add("Melissa");
+        students.add("Brad");
+        students.add("Sarah");
+        students.add("Madelin");
+        students.add("Tom");
+
+        // TODO: Create an adapter for this spinner
+        ArrayAdapter<String> studentAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                students
+        );
+
+        // TODO: Set the adapter
+        studentsSpinner.setAdapter(studentAdapter);
+
+        // TODO: Add action on every item click
+		// NOTE: Has to be a SelectedListener for spinners
+        studentsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                // NOTE: We are interested in 'int i'. This integer specifies the position of the item
+                //          clicked.
+                Toast.makeText(MainActivity.this, students.get(i) + " Selected", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent){
+
+            }
+        });
+
+
+
+=======
 If error that minSDK is not met, change value of compileSdk to <= 31 or 
 	whatever sdk is specified
 	Build -> run
@@ -340,3 +668,4 @@ LAYOUTS
 			https://www.youtube.com/watch?v=Chso6xrJ6aU
 
 
+>>>>>>> 62572fead26b0b573a1f376aaf4f78a015bf4829

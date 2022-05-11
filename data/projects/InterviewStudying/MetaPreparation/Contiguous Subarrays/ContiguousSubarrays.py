@@ -24,6 +24,8 @@ def count_subarrays(arr):
     # Write your code here
     # NOTE: Output[i] = L[i] + R[i] - 1
     # TODO: Get length of array
+    #   WHY?
+    #       This is going to be used to iterate through the array and to create stack with a "dummy" val
     n = len(arr) # 5
     # TODO: Create empty array of 1's. Ex. [1, 1, 1, 1, 1]
     res = [1 for _ in arr]
@@ -40,8 +42,11 @@ def count_subarrays(arr):
         while len(stack) > 1 and arr[stack[-1]] < arr[i]:
             # NOTE: No empty stack so ensure there is always at least one element because there should be a "window"
             # NOTE: Last recorded position is less than the current element
+            #   NOTE: Since the elements are contiguous, we compare the previous value and the current value since the
+            #           current value must be the greatest
             stack.pop()
 
+        # TODO: Current element index - last seen element - 1
         res[i] += i - stack[-1] - 1
         stack.append(i)
 
