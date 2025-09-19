@@ -3,9 +3,9 @@ name: Playwright Tests
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: [ main ]
+    branches: [ master ]
   push:
-    branches: [ main ]
+    branches: [ master ]
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
