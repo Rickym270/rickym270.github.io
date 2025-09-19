@@ -8,3 +8,5 @@
 /myvenv/
 .DS_Store
 .vscode
+playwright-report/
+test-results/
