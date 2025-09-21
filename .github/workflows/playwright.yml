@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [ master ]
   push:
-    branches: [ master ]
+    branches: [ master, playwright_failures_fix ]
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:

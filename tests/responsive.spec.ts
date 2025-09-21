@@ -28,8 +28,8 @@ test.describe('Responsive layout', () => {
       }
 
       // Critical content should remain visible
-      await expect(page.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
-      await expect(page.getByRole('link', { name: 'Github' })).toBeVisible();
+      await expect(page.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible();
+      await expect(page.getByRole('link', { name: /^Github$/ })).toBeVisible();
 
       // Ensure no horizontal scroll at common sizes
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
