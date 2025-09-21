@@ -17,6 +17,7 @@ body{
 
 .carousel-item > img {
     width: auto;
+    max-width: 100%;
     height: 40vh;
     margin: 0 auto;
     opacity: 0.5;
@@ -80,7 +81,7 @@ li.dropdown{
 }
 
 #homeBanner{
-    width: 99vw;
+    width: 100%;
     height: 40vh;
     background-color: black;
 }
@@ -110,14 +111,28 @@ a.navbar-brand-name > p{
     margin-bottom: 0px !important;
 }
 .nav-item{
-    padding-right: 10vw !important;
+    padding-right: 2rem !important;
 }
 ul#navbar-links{
-    white-space: nowrap;
+    white-space: normal;
 }
 
 li.nav-item{
     display: inline-block;
+}
+
+/* Allow navbar items to wrap to avoid horizontal overflow */
+.navbar-nav{
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px){
+    .nav-item{
+        padding-right: 0.75rem !important;
+    }
+    ul#navbar-links{
+        white-space: normal;
+    }
 }
 
 /* Spacers */
@@ -183,6 +198,12 @@ li.nav-item{
     position:absolute;
     height: 60px;
     bottom: 0;
-    width: 100vw;
+    width: 100%;
     
+}
+
+@media (max-width: 768px){
+    li.dropdown{
+        padding-left: 0;
+    }
 }

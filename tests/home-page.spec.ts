@@ -10,12 +10,17 @@ test.describe('Home page content', () => {
     await expect(banner).toBeVisible();
     await expect(banner).toHaveCSS('background-color', 'rgb(0, 0, 0)');
 
-    // Image is centered within carousel
+    // Image is centered within carousel by geometry (left/right margins equal within tolerance)
     const img = page.locator('#content #homeBanner .carousel-item.active img');
     await expect(img).toBeVisible();
-    // margin-left/right auto centers image in this layout
-    await expect(img).toHaveCSS('margin-left', 'auto');
-    await expect(img).toHaveCSS('margin-right', 'auto');
+    const bannerBox = await banner.boundingBox();
+    const imgBox = await img.boundingBox();
+    expect(bannerBox && imgBox).toBeTruthy();
+    if (bannerBox && imgBox) {
+      const leftGap = imgBox.x - bannerBox.x;
+      const rightGap = (bannerBox.x + bannerBox.width) - (imgBox.x + imgBox.width);
+      expect(Math.abs(leftGap - rightGap)).toBeLessThanOrEqual(2);
+    }
 
     // Caption text
     const caption = page.locator('#content .carousel-caption');
@@ -26,8 +31,9 @@ test.describe('Home page content', () => {
 
   test('links below banner to LinkedIn and Github point correctly', async ({ page }) => {
     await page.goto('/');
-    const linkedIn = page.getByRole('link', { name: 'LinkedIn' });
-    const github = page.getByRole('link', { name: 'Github' });
+    const linkedIn = page.getByRole('link', { name: /^LinkedIn$/ });
+    // Disambiguate Github link: pick the one whose accessible name is exactly 'Github'
+    const github = page.getByRole('link', { name: /^Github$/ });
     await expect(linkedIn).toHaveAttribute('href', 'https://www.linkedin.com/in/rickym270');
     await expect(github).toHaveAttribute('href', 'http://www.github.com/rickym270');
   });
