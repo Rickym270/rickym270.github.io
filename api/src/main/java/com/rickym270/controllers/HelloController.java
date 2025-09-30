@@ -16,4 +16,9 @@ public class HelloController {
     public String root() {
         return "API OK";
     }
+
+    @GetMapping("/projects")
+    public String projects() {
+        return "Projects";
+    }
 }
