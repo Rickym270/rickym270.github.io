@@ -8,7 +8,8 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
-    "serve": "http-server -p 4321 -c-1 ."
+    "serve": "http-server -p 4321 -c-1 .",
+    "locators:update": "node scripts/update-locators.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
