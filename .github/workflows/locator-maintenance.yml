@@ -1,0 +1,69 @@
+name: Locator Maintenance
+
+on:
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  verify-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm i
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run UI tests
+        run: npx playwright test
+
+      - name: Update locators (only if tests failed previously)
+        if: failure()
+        run: npm run locators:update
+
+      - name: Detect changes
+        id: changes
+        run: |
+          echo "changed=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Create branch, commit and PR (only when changes exist)
+        if: steps.changes.outputs.changed != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="chore/locator-update-${GITHUB_RUN_ID}"
+          git checkout -b "$BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests scripts/update-locators.js package.json
+          git commit -m "chore(locators): normalize Playwright locators"
+          git push --set-upstream origin "$BRANCH"
+          gh pr create \
+            --title "chore(locators): normalize Playwright locators" \
+            --body "Auto-generated locator normalization after failing UI tests. Please review changes."
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Locator maintenance completed. If tests failed and changes were needed, a PR was opened." >> $GITHUB_STEP_SUMMARY
+
+
