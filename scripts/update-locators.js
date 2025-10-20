@@ -9,11 +9,24 @@ import path from 'node:path';
 const repoRoot = process.cwd();
 const testsDir = path.join(repoRoot, 'tests');
 
-function listTestFiles(dir) {
+function listTestFilesRecursive(dir) {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir)
-    .filter((f) => f.endsWith('.ts') || f.endsWith('.js'))
-    .map((f) => path.join(dir, f));
+  const out = [];
+  const stack = [dir];
+  while (stack.length) {
+    const current = stack.pop();
+    const entries = fs.readdirSync(current, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+        continue;
+      }
+      if (entry.isFile() && (fullPath.endsWith('.ts') || fullPath.endsWith('.js')))
+        out.push(fullPath);
+    }
+  }
+  return out;
 }
 
 function normalize(content) {
@@ -35,7 +48,16 @@ function normalize(content) {
 }
 
 function run() {
-  const files = listTestFiles(testsDir);
+  if (!fs.existsSync(testsDir)) {
+    console.log('[locators] No tests directory found. Skipping.');
+    if (process.env.GITHUB_OUTPUT) {
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, `changed=0\n`);
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_changes=false\n`);
+    }
+    process.exit(0);
+  }
+
+  const files = listTestFilesRecursive(testsDir);
   let changed = 0;
   files.forEach((file) => {
     const orig = fs.readFileSync(file, 'utf8');
@@ -47,6 +69,10 @@ function run() {
     }
   });
   console.log(`[locators] Completed. Files changed: ${changed}`);
+  if (process.env.GITHUB_OUTPUT) {
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `changed=${changed}\n`);
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_changes=${changed > 0 ? 'true' : 'false'}\n`);
+  }
   process.exit(0);
 }
 
