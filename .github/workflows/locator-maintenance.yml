@@ -1,0 +1,51 @@
+name: Locator Maintenance
+
+on:
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  verify-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Install deps (Yarn, no lockfile changes)
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run UI tests
+        run: npx playwright test
+
+      - name: Normalize locators and open PR (on test failure)
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/locator-normalize-and-pr.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Locator maintenance completed. If tests failed and changes were needed, a PR was opened." >> $GITHUB_STEP_SUMMARY
+
+

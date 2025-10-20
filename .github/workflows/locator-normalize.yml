@@ -1,0 +1,65 @@
+name: Locator normalization self-healing
+on:
+  workflow_dispatch:
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create branch, commit and PR (only when changes exist)
+        id: commit_pr
+        shell: bash
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          BRANCH="chore/locator-update-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+
+          # Run locator normalization (uses only Node core)
+          node scripts/update-locators.js
+
+          # Revert incidental changes that should not drive a PR
+          git restore --worktree --staged yarn.lock 2>/dev/null || true
+          git restore --worktree --staged package-lock.json 2>/dev/null || true
+          git checkout -- node_modules 2>/dev/null || true
+
+          # Stage only intended changes
+          git add -A tests || true
+
+          if git diff --cached --quiet; then
+            echo "No locator changes to commit; skipping PR."
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          git commit -m "test: normalize Playwright link locators (self-healing)"
+          git push -u origin "$BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Open PR
+        if: steps.commit_pr.outputs.skip != 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.commit_pr.outputs.branch }}
+          title: "Self-healing: normalize Playwright link locators"
+          body: |
+            Automated locator normalization for nav links. See job logs for files changed.
+          commit-message: "test: normalize Playwright link locators (self-healing)"
+          delete-branch: true
+
+
