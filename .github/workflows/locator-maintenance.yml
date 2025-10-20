@@ -25,10 +25,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'yarn'
 
-      - name: Install deps
-        run: npm i
+      - name: Install deps (Yarn, no lockfile changes)
+        run: yarn install --frozen-lockfile
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -36,30 +36,12 @@ jobs:
       - name: Run UI tests
         run: npx playwright test
 
-      - name: Update locators (only if tests failed previously)
+      - name: Normalize locators and open PR (on test failure)
         if: failure()
-        run: npm run locators:update
-
-      - name: Detect changes
-        id: changes
-        run: |
-          echo "changed=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
-
-      - name: Create branch, commit and PR (only when changes exist)
-        if: steps.changes.outputs.changed != '0'
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          BRANCH="chore/locator-update-${GITHUB_RUN_ID}"
-          git checkout -b "$BRANCH"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tests scripts/update-locators.js package.json
-          git commit -m "chore(locators): normalize Playwright locators"
-          git push --set-upstream origin "$BRANCH"
-          gh pr create \
-            --title "chore(locators): normalize Playwright locators" \
-            --body "Auto-generated locator normalization after failing UI tests. Please review changes."
+        run: bash scripts/locator-normalize-and-pr.sh
 
       - name: Summary
         if: always()
