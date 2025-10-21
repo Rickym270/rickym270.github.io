@@ -1,7 +1,7 @@
 /*
-  Minimal locator normalization script.
-  - Enforce exact-name regex for common links to avoid strict mode ambiguity
-  - Safe, idempotent text replacements across tests/*.ts
+  Locator normalization helper
+  - Makes Playwright link locators more reliable by enforcing exact, case-sensitive matches
+  - Applies safe, idempotent text replacements across tests/**.{ts,js}
 */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -32,13 +32,13 @@ function listTestFilesRecursive(dir) {
 function normalize(content) {
   let updated = content;
 
-  // Enforce exact GitHub link locator
+  // Enforce exact GitHub link locator (avoid partial/ambiguous matches)
   updated = updated.replace(
     /getByRole\(\s*['"]link['"]\s*,\s*\{\s*name:\s*['"]Github['"]\s*\}\s*\)/g,
     "getByRole('link', { name: /^Github$/ })"
   );
 
-  // Enforce exact LinkedIn link locator
+  // Enforce exact LinkedIn link locator (avoid partial/ambiguous matches)
   updated = updated.replace(
     /getByRole\(\s*['"]link['"]\s*,\s*\{\s*name:\s*['"]LinkedIn['"]\s*\}\s*\)/g,
     "getByRole('link', { name: /^LinkedIn$/ })"
