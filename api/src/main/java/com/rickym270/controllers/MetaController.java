@@ -3,27 +3,30 @@ package com.rickym270.controllers;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Map;
-import java.time.LocalTime;
-import java.util.HashMap;
 
+import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-public class MetaController{
-    @GetMappingg("/meta")
-    public Map<String, String> root() {
-        # TODO: Insert datetime
-        LocalTime currentTime = LocalTime.now();
-        # TODO: Convert to string
-        String strTime = currentTime.toString();
+public class MetaController {
 
-        Map<String, String> response = new HashMap<>();
+    @GetMapping("/meta")
+    public Map<String, Object> getMeta() {
+        String isoTime = OffsetDateTime.now().toString();
+
+        Map<String, Object> response = new HashMap<>();
         response.put("name", "Ricky Martinez");
-        response.put("tagline", "SDET * Python/Java+ * CI/CD");
+        response.put("tagline", "SDET • Python/Java+ • CI/CD");
         response.put("location", "NYC");
-        response.put("langugages", ["EN", "ES", "DE"]);
-        response.put("links", {"github":"https://github.com/rickym270","site":"https://rickym270.github.io"});
+        response.put("languages", Arrays.asList("EN", "ES", "DE"));
+        Map<String, String> links = new HashMap<>();
+        links.put("github", "https://github.com/rickym270");
+        links.put("site", "https://rickym270.github.io");
+        response.put("links", links);
+        response.put("time", isoTime);
 
         return response;
     }
