@@ -4,7 +4,7 @@
     "name": "Blue Manager",
     "summary": "Property maintenance app with OCR and Supabase backend.",
     "repo": "https://github.com/rickym270/Blue-Manager",
-    "tech": ["React Native", S"upabase", "OCR", "Spring Boot"],
+    "tech": ["React Native", "Supabase", "OCR", "Spring Boot"],
     "featured": true
   },
   {
