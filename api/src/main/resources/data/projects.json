@@ -1,0 +1,138 @@
+[
+  {
+    "slug": "blue-manager",
+    "name": "Blue Manager",
+    "summary": "Property maintenance app with OCR and Supabase backend.",
+    "repo": "https://github.com/rickym270/Blue-Manager",
+    "tech": ["React Native", S"upabase", "OCR", "Spring Boot"],
+    "featured": true
+  },
+  {
+    "slug": "xpress-transit",
+    "name": "XPress Transit",
+    "summary": "Ride management app (Django + React).",
+    "repo": "https://github.com/rickym270/XpressTransit",
+    "tech": ["Django", "React", "Postgres"],
+    "featured": true
+  },
+  {
+    "slug": "personal-website",
+    "name": "rickym270.github.io",
+    "summary": "Personal site to be used to host notes, tuts and projects. This site originally started as a means to teach python.",
+    "repo": "https://github.com/Rickym270/rickym270.github.io",
+    "tech": ["Python", "JavaScript", "Java", "HTML + CSS"],
+    "featured": true
+  },
+  {
+    "slug": "error-checker",
+    "name": "ErrorChecker",
+    "summary": "NightChecker developed to automate the process of going into every script to check for errors. An email is sent out to me every morning with an OK or an Error subject to let me know which scripts/applications failed overnight. This class is incorporated throughout various tools.",
+    "repo": "https://github.com/Rickym270/ErrorChecker",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "gen-graph",
+    "name": "GenGraph",
+    "summary": "Developed to make it easier to develop graphs out of obtained data to be displayed on a webpage.",
+    "repo": "https://github.com/Rickym270/GenGraph",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "f5requests",
+    "name": "F5Requests",
+    "summary": "Developed library to obtain information from F5 devices easily.",
+    "repo": "https://github.com/Rickym270/F5Requests",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "f5-sdk",
+    "name": "F5_SDK",
+    "summary": "Get some relevant information from F5SDK and save to db.",
+    "repo": "https://github.com/Rickym270/F5_SDK",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "connectivity-monitor",
+    "name": "ConnectivityMonitor",
+    "summary": "Developed to monitor all connections in the network via ping, tcp or udp.",
+    "repo": "https://github.com/Rickym270/ConnectivityMonitor",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "auth",
+    "name": "Auth",
+    "summary": "Very simple authorization script that gives/restricts access of features based on username.",
+    "repo": "https://github.com/Rickym270/Auth",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "ip-requests",
+    "name": "IPRequests",
+    "summary": "A lightweight toolkit for making, logging, and analyzing IP-based HTTP requests. IPRequests provides utilities and/or a small CLI and library interface to issue requests bound to specific source IPs, collect metadata, perform IP lookups, and generate reports.",
+    "repo": "https://github.com/Rickym270/IPRequests",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "intranet-site",
+    "name": "IntranetSite",
+    "summary": "None",
+    "repo": "https://github.com/Rickym270/IntranetSite",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "interface-err-report",
+    "name": "InterfaceErrReport",
+    "summary": "None",
+    "repo": "https://github.com/Rickym270/InterfaceErrReport",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "f5-vip-search",
+    "name": "F5VIPSearch",
+    "summary": "None",
+    "repo": "https://github.com/Rickym270/F5VIPSearch",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "f5-diffs",
+    "name": "F5Diffs",
+    "summary": "None",
+    "repo": "https://github.com/Rickym270/F5Diffs",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "cr-ip-lookup",
+    "name": "CR-IPLookup",
+    "summary": "None",
+    "repo": "https://github.com/Rickym270/CR-IPLookup",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "g-photography-php",
+    "name": "gPhotographyPHP",
+    "summary": "PHP version of gPhotography with a few extras.",
+    "repo": "https://github.com/Rickym270/gPhotographyPHP",
+    "tech": ["PHP"],
+    "featured": false
+  },
+  {
+    "slug": "muscribe",
+    "name": "Muscribe",
+    "summary": "No description because it is still a work-in-progress.",
+    "repo": "https://github.com/Rickym270/Muscribe",
+    "tech": [],
+    "featured": false
+  }
+]
