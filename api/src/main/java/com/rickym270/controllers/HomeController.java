@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class HomeController {
-    @GetMapping("/projects")
-    public String projects() {
-
-        return "Projects";
+    @GetMapping("/home")
+    public String home() {
+        return "Home";
     }
 }
