@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,44 +48,49 @@ public class ProjectsController {
             return ResponseEntity.ok(curatedProjects);
         }
 
-        // Index curated by repo name (derived from the repo URL) for easy merging
-        Map<String, Map<String, Object>> curatedByRepo = curatedProjects.stream()
-            .filter(p -> p.get("repo") instanceof String)
-            .collect(Collectors.toMap(
-                p -> normalizeRepoName(extractRepoNameFromUrl((String) p.get("repo"))),
-                p -> p,
-                (a, b) -> a
-            ));
+        try {
+            // Index curated by repo name (derived from the repo URL) for easy merging
+            Map<String, Map<String, Object>> curatedByRepo = curatedProjects.stream()
+                .filter(p -> p.get("repo") instanceof String)
+                .collect(Collectors.toMap(
+                    p -> normalizeRepoName(extractRepoNameFromUrl((String) p.get("repo"))),
+                    p -> p,
+                    (a, b) -> a
+                ));
 
-        // Merge: start from GitHub data and overlay curated fields when present
-        List<Map<String, Object>> merged = githubProjects.stream()
-            .map(gh -> {
-                String repoName = normalizeRepoName(String.valueOf(gh.getOrDefault("name", "")));
-                Map<String, Object> base = mapGithubRepoToProject(gh);
-                Map<String, Object> override = curatedByRepo.get(repoName);
-                if (override != null) {
-                    overlay(base, override);
-                }
-                return base;
-            })
-            .collect(Collectors.toList());
+            // Merge: start from GitHub data and overlay curated fields when present
+            List<Map<String, Object>> merged = githubProjects.stream()
+                .map(gh -> {
+                    String repoName = normalizeRepoName(String.valueOf(gh.getOrDefault("name", "")));
+                    Map<String, Object> base = mapGithubRepoToProject(gh);
+                    Map<String, Object> override = curatedByRepo.get(repoName);
+                    if (override != null) {
+                        overlay(base, override);
+                    }
+                    return base;
+                })
+                .collect(Collectors.toList());
 
-        // Add any curated projects that do not exist on GitHub (external or archived)
-        Set<String> mergedNames = merged.stream()
-            .map(p -> normalizeRepoName(String.valueOf(p.getOrDefault("name", ""))))
-            .collect(Collectors.toSet());
+            // Add any curated projects that do not exist on GitHub (external or archived)
+            Set<String> mergedNames = merged.stream()
+                .map(p -> normalizeRepoName(String.valueOf(p.getOrDefault("name", ""))))
+                .collect(Collectors.toSet());
 
-        curatedProjects.stream()
-            .filter(p -> p.get("repo") instanceof String)
-            .filter(p -> !mergedNames.contains(normalizeRepoName(extractRepoNameFromUrl((String) p.get("repo")))))
-            .forEach(merged::add);
+            curatedProjects.stream()
+                .filter(p -> p.get("repo") instanceof String)
+                .filter(p -> !mergedNames.contains(normalizeRepoName(extractRepoNameFromUrl((String) p.get("repo")))))
+                .forEach(merged::add);
 
-        // Optional: sort featured first, then by name
-        merged.sort(Comparator
-            .comparing((Map<String, Object> p) -> !(Boolean.TRUE.equals(p.get("featured"))))
-            .thenComparing(p -> String.valueOf(p.getOrDefault("name", "")).toLowerCase()));
+            // Optional: sort featured first, then by name
+            merged.sort(Comparator
+                .comparing((Map<String, Object> p) -> !(Boolean.TRUE.equals(p.get("featured"))))
+                .thenComparing(p -> String.valueOf(p.getOrDefault("name", "")).toLowerCase()));
 
-        return ResponseEntity.ok(merged);
+            return ResponseEntity.ok(merged);
+        } catch (Exception unexpected) {
+            // Defensive fallback: if anything in merge fails, return curated list only
+            return ResponseEntity.ok(curatedProjects);
+        }
     }
 
     private List<Map<String, Object>> readCuratedProjects() {
@@ -104,13 +108,13 @@ public class ProjectsController {
 
     private List<Map<String, Object>> fetchGithubRepos() {
         try {
-            RestTemplate restTemplate = new RestTemplate();
+            // RestTemplate with default settings
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             headers.set("X-GitHub-Api-Version", "2022-11-28");
 
             String token = System.getenv("GITHUB_TOKEN");
-            if (token != null && !token.isBlank()) {
+            if (token != null && !token.trim().isEmpty()) {
                 headers.set("Authorization", "Bearer " + token.trim());
             }
 
@@ -148,7 +152,7 @@ public class ProjectsController {
         project.put("name", name);
         project.put("summary", description);
         project.put("repo", htmlUrl);
-        if (!language.isBlank()) {
+        if (language != null && !language.trim().isEmpty()) {
             project.put("tech", Collections.singletonList(language));
         }
         project.putIfAbsent("featured", Boolean.FALSE);
@@ -163,7 +167,7 @@ public class ProjectsController {
                 continue;
             }
             // Do not overwrite repo URL or name if override is blank
-            if (("name".equals(key) || "repo".equals(key)) && String.valueOf(value).isBlank()) {
+            if (("name".equals(key) || "repo".equals(key)) && String.valueOf(value).trim().isEmpty()) {
                 continue;
             }
             base.put(key, value);
@@ -171,7 +175,7 @@ public class ProjectsController {
     }
 
     private String extractRepoNameFromUrl(String url) {
-        if (url == null || url.isBlank()) return "";
+        if (url == null || url.trim().isEmpty()) return "";
         int slash = url.lastIndexOf('/');
         if (slash >= 0 && slash < url.length() - 1) {
             return url.substring(slash + 1);
