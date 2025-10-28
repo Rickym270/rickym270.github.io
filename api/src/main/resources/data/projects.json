@@ -3,136 +3,184 @@
     "slug": "blue-manager",
     "name": "Blue Manager",
     "summary": "Property maintenance app with OCR and Supabase backend.",
-    "repo": "https://github.com/rickym270/Blue-Manager",
+    "repo": "https://github.com/Rickym270/Blue-Manager",
     "tech": ["React Native", "Supabase", "OCR", "Spring Boot"],
-    "featured": true
-  },
-  {
-    "slug": "xpress-transit",
-    "name": "XPress Transit",
-    "summary": "Ride management app (Django + React).",
-    "repo": "https://github.com/rickym270/XpressTransit",
-    "tech": ["Django", "React", "Postgres"],
     "featured": true
   },
   {
     "slug": "personal-website",
     "name": "rickym270.github.io",
-    "summary": "Personal site to be used to host notes, tuts and projects. This site originally started as a means to teach python.",
+    "summary": "Personal site to host notes, tutorials, and projects — originally built as a Python teaching platform.",
     "repo": "https://github.com/Rickym270/rickym270.github.io",
     "tech": ["Python", "JavaScript", "Java", "HTML + CSS"],
     "featured": true
   },
   {
-    "slug": "error-checker",
-    "name": "ErrorChecker",
-    "summary": "NightChecker developed to automate the process of going into every script to check for errors. An email is sent out to me every morning with an OK or an Error subject to let me know which scripts/applications failed overnight. This class is incorporated throughout various tools.",
-    "repo": "https://github.com/Rickym270/ErrorChecker",
-    "tech": ["Python"],
-    "featured": false
+    "slug": "xpress-transit",
+    "name": "XPress Transit",
+    "summary": "Ride management and scheduling app built with Django and React for handling vehicle and passenger data.",
+    "repo": "https://github.com/Rickym270/XpressTransit",
+    "tech": ["Django", "React", "Postgres"],
+    "featured": true
   },
   {
-    "slug": "gen-graph",
-    "name": "GenGraph",
-    "summary": "Developed to make it easier to develop graphs out of obtained data to be displayed on a webpage.",
-    "repo": "https://github.com/Rickym270/GenGraph",
-    "tech": ["Python"],
-    "featured": false
-  },
-  {
-    "slug": "f5requests",
-    "name": "F5Requests",
-    "summary": "Developed library to obtain information from F5 devices easily.",
-    "repo": "https://github.com/Rickym270/F5Requests",
-    "tech": ["Python"],
-    "featured": false
-  },
-  {
-    "slug": "f5-sdk",
-    "name": "F5_SDK",
-    "summary": "Get some relevant information from F5SDK and save to db.",
-    "repo": "https://github.com/Rickym270/F5_SDK",
+    "slug": "auth",
+    "name": "Auth",
+    "summary": "Simple Python-based authorization script that enables or restricts features based on username permissions.",
+    "repo": "https://github.com/Rickym270/Auth",
     "tech": ["Python"],
     "featured": false
   },
   {
     "slug": "connectivity-monitor",
     "name": "ConnectivityMonitor",
-    "summary": "Developed to monitor all connections in the network via ping, tcp or udp.",
+    "summary": "Monitors network connectivity via ping, TCP, or UDP and alerts when endpoints become unreachable.",
     "repo": "https://github.com/Rickym270/ConnectivityMonitor",
     "tech": ["Python"],
     "featured": false
   },
   {
-    "slug": "auth",
-    "name": "Auth",
-    "summary": "Very simple authorization script that gives/restricts access of features based on username.",
-    "repo": "https://github.com/Rickym270/Auth",
+    "slug": "cpptuts",
+    "name": "CPPTuts",
+    "summary": "Personal sandbox for learning and experimenting with C++ fundamentals.",
+    "repo": "https://github.com/Rickym270/CPPTuts",
+    "tech": ["C++"],
+    "featured": false
+  },
+  {
+    "slug": "cr-ip-lookup",
+    "name": "CR-IPLookup",
+    "summary": "Utility for performing IP and hostname lookups to quickly identify and cross-reference connected resources.",
+    "repo": "https://github.com/Rickym270/CR-IPLookup",
     "tech": ["Python"],
     "featured": false
   },
   {
-    "slug": "ip-requests",
-    "name": "IPRequests",
-    "summary": "A lightweight toolkit for making, logging, and analyzing IP-based HTTP requests. IPRequests provides utilities and/or a small CLI and library interface to issue requests bound to specific source IPs, collect metadata, perform IP lookups, and generate reports.",
-    "repo": "https://github.com/Rickym270/IPRequests",
+    "slug": "error-checker",
+    "name": "ErrorChecker",
+    "summary": "Automated script validator that scans all scripts for runtime errors and emails daily success or failure reports.",
+    "repo": "https://github.com/Rickym270/ErrorChecker",
     "tech": ["Python"],
     "featured": false
   },
   {
-    "slug": "intranet-site",
-    "name": "IntranetSite",
-    "summary": "None",
-    "repo": "https://github.com/Rickym270/IntranetSite",
-    "tech": ["Python"],
-    "featured": false
-  },
-  {
-    "slug": "interface-err-report",
-    "name": "InterfaceErrReport",
-    "summary": "None",
-    "repo": "https://github.com/Rickym270/InterfaceErrReport",
-    "tech": ["Python"],
-    "featured": false
-  },
-  {
-    "slug": "f5-vip-search",
-    "name": "F5VIPSearch",
-    "summary": "None",
-    "repo": "https://github.com/Rickym270/F5VIPSearch",
+    "slug": "f5-sdk",
+    "name": "F5_SDK",
+    "summary": "Wrapper script that uses the F5 SDK to extract and store network device configurations and metadata.",
+    "repo": "https://github.com/Rickym270/F5_SDK",
     "tech": ["Python"],
     "featured": false
   },
   {
     "slug": "f5-diffs",
     "name": "F5Diffs",
-    "summary": "None",
+    "summary": "Compares F5 configuration snapshots to identify and log differences between environments or revisions.",
     "repo": "https://github.com/Rickym270/F5Diffs",
     "tech": ["Python"],
     "featured": false
   },
   {
-    "slug": "cr-ip-lookup",
-    "name": "CR-IPLookup",
-    "summary": "None",
-    "repo": "https://github.com/Rickym270/CR-IPLookup",
+    "slug": "f5requests",
+    "name": "F5Requests",
+    "summary": "Lightweight Python library for easily interacting with F5 devices over REST APIs.",
+    "repo": "https://github.com/Rickym270/F5Requests",
     "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "f5-vip-search",
+    "name": "F5VIPSearch",
+    "summary": "Search utility for locating and analyzing Virtual IP (VIP) configurations across multiple F5 load balancers.",
+    "repo": "https://github.com/Rickym270/F5VIPSearch",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "gen-graph",
+    "name": "GenGraph",
+    "summary": "Python module for generating charts and graphs from structured data to embed in dashboards or web pages.",
+    "repo": "https://github.com/Rickym270/GenGraph",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "gops",
+    "name": "GoPS",
+    "summary": "C++ prototype of a navigation system designed to process coordinates and simulate GPS-like pathing logic.",
+    "repo": "https://github.com/Rickym270/GoPS",
+    "tech": ["C++"],
     "featured": false
   },
   {
     "slug": "g-photography-php",
     "name": "gPhotographyPHP",
-    "summary": "PHP version of gPhotography with a few extras.",
+    "summary": "A PHP-based photo gallery and management system with enhancements over the original Python version.",
     "repo": "https://github.com/Rickym270/gPhotographyPHP",
     "tech": ["PHP"],
     "featured": false
   },
   {
+    "slug": "interface-err-report",
+    "name": "InterfaceErrReport",
+    "summary": "Tool for parsing and reporting interface errors across network devices to assist with troubleshooting.",
+    "repo": "https://github.com/Rickym270/InterfaceErrReport",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "intranet-site",
+    "name": "IntranetSite",
+    "summary": "Internal company intranet built to centralize scripts, dashboards, and documentation for quick access.",
+    "repo": "https://github.com/Rickym270/IntranetSite",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "ip-requests",
+    "name": "IPRequests",
+    "summary": "Toolkit for logging and analyzing IP-based HTTP requests with metadata and reporting utilities.",
+    "repo": "https://github.com/Rickym270/IPRequests",
+    "tech": ["Python"],
+    "featured": false
+  },
+  {
+    "slug": "kappasigmahc",
+    "name": "KappaSigmaHC",
+    "summary": "Static website and code repository for the Kappa Sigma High Council chapter, showcasing events and history.",
+    "repo": "https://github.com/Rickym270/KappaSigmaHC",
+    "tech": ["JavaScript"],
+    "featured": false
+  },
+  {
+    "slug": "learning-java-2825378",
+    "name": "learning-java-2825378",
+    "summary": "Practice repository for exercises from the LinkedIn Learning course 'Learning Java'.",
+    "repo": "https://github.com/Rickym270/learning-java-2825378",
+    "tech": ["Java"],
+    "featured": false
+  },
+  {
     "slug": "muscribe",
     "name": "Muscribe",
-    "summary": "No description because it is still a work-in-progress.",
+    "summary": "Early prototype of an AI-powered tool that converts instrument audio into sheet music or note notation.",
     "repo": "https://github.com/Rickym270/Muscribe",
-    "tech": [],
+    "tech": ["Python", "Audio Processing", "Machine Learning"],
+    "featured": false
+  },
+  {
+    "slug": "pact-5-minute-getting-started-guide",
+    "name": "pact-5-minute-getting-started-guide",
+    "summary": "Short walkthrough repository demonstrating how to implement consumer-driven contract testing with Pact.",
+    "repo": "https://github.com/Rickym270/pact-5-minute-getting-started-guide",
+    "tech": ["JavaScript", "Testing"],
+    "featured": false
+  },
+  {
+    "slug": "pythontutorial",
+    "name": "PythonTutorial",
+    "summary": "Collection of Python learning exercises and scripts for teaching programming fundamentals.",
+    "repo": "https://github.com/Rickym270/PythonTutorial",
+    "tech": ["Python"],
     "featured": false
   }
 ]
