@@ -17,6 +17,8 @@
    - GET http://localhost:8080/api/stats        → Rollup stats (projects count, unique languages, lastUpdated)
    - GET http://localhost:8080/api/github/activity → Recent GitHub activity (type, repo, createdAt)
    - GET http://localhost:8080/api/home         → Simple home text
+   - POST http://localhost:8080/api/contact     → Submit contact form (JSON body)
+   - GET http://localhost:8080/api/contact      → Admin-only, requires `X-API-Key`
 
    Error handling
    - All errors return JSON with keys: `error`, `message`, `time` (ISO‑8601)
@@ -48,6 +50,8 @@
    - curl -s http://localhost:8080/api/projects | jq
    - curl -s http://localhost:8080/api/stats | jq
    - curl -s http://localhost:8080/api/github/activity | jq
+   - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"Alex","email":"alex@example.com","message":"Hi!"}' | jq
+   - curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact | jq
 
    Quick error tests
    - 404: `curl -s -i http://localhost:8080/api/does-not-exist`
@@ -58,6 +62,9 @@
    - 415: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: text/plain' -d 'hello'`
 
    Notes on /api/projects
+   Environment variables
+   - `GITHUB_TOKEN` (optional): increases GitHub API rate limits
+   - `ADMIN_API_KEY` (required for GET /api/contact): admin secret for listing contact messages
    - The endpoint fetches public repos from GitHub for user `rickym270` and overlays any matching entries from `api/src/main/resources/data/projects.json` (by repo name).
    - If the GitHub request fails or is rate-limited, it falls back to the curated `projects.json` only.
    - Optional: set `GITHUB_TOKEN` in the environment to raise GitHub API rate limits.

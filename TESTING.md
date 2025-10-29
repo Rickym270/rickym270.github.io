@@ -57,6 +57,14 @@ curl -s http://localhost:8080/api/stats | jq
 curl -s http://localhost:8080/api/github/activity | jq
 ```
 
+- Contact
+```bash
+# Submit a contact message
+curl -s -X POST http://localhost:8080/api/contact \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Alex","email":"alex@example.com","message":"Loved your portfolio!"}' | jq
+```
+
 - Home
 ```bash
 curl -s http://localhost:8080/api/home
@@ -119,7 +127,7 @@ curl -s -i -X POST http://localhost:8080/api/contact \
 
 ## Troubleshooting
 - Error about `StringConcatFactory` or class version:
-  <!-- - Your environment is using Java 8. Switch to Java 17 or use Docker. -->
+  - Your environment is using Java 8. Switch to Java 17 or use Docker.
 - IDE build path issues (IntelliJ/VS Code):
   - Set Project SDK/JDK to 17 and reimport Maven (`api/pom.xml`).
 - Port already in use:
