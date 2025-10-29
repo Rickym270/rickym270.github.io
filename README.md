@@ -7,6 +7,8 @@
 ## Backend API (Spring Boot)
    The repo contains a minimal Java backend under `api/` to support dynamic features.
 
+   For full run/test instructions, see `TESTING.md`.
+
    Endpoints
    - GET http://localhost:8080/api              → Health/status (UP, java, time)
    - GET http://localhost:8080/api/health       → Same as above
