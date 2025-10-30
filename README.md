@@ -10,11 +10,25 @@
    For full run/test instructions, see `TESTING.md`.
 
    Endpoints
-   - GET http://localhost:8080/api              → Health/status (UP, java, time)
-   - GET http://localhost:8080/api/health       → Same as above
-   - GET http://localhost:8080/api/meta         → Site metadata (name, tagline, links)
+   - GET http://localhost:8080/api              → Health (UP, version, time)
+   - GET http://localhost:8080/api/health       → Health (UP, version, time)
+   - GET http://localhost:8080/api/meta         → Profile metadata (name, title, location, languages, links)
    - GET http://localhost:8080/api/projects     → Project list merged from GitHub API + `data/projects.json`
-   - GET http://localhost:8080/api/home        → Simple home text
+   - GET http://localhost:8080/api/stats        → Rollup stats (projects count, unique languages, lastUpdated)
+   - GET http://localhost:8080/api/github/activity → Recent GitHub activity (type, repo, createdAt)
+   - GET http://localhost:8080/api/home         → Simple home text
+   - POST http://localhost:8080/api/contact     → Submit contact form (JSON body)
+   - GET http://localhost:8080/api/contact      → Admin-only, requires `X-API-Key`
+
+   Error handling
+   - All errors return JSON with keys: `error`, `message`, `time` (ISO‑8601)
+   - Common statuses
+     - 404 `not_found`: unknown route
+     - 422 `validation_error`: invalid body/params
+     - 400 `bad_request` / `bad_request_body`: malformed JSON or missing header/param
+     - 401 `unauthorized`: incorrect/missing `X-API-Key` for admin endpoints
+     - 405 `method_not_allowed`: wrong HTTP method
+     - 415 `unsupported_media_type`: bad `Content-Type`
 
    Requirements
    - Java 17+
@@ -34,8 +48,23 @@
    - curl -s http://localhost:8080/api | jq
    - curl -s http://localhost:8080/api/meta | jq
    - curl -s http://localhost:8080/api/projects | jq
+   - curl -s http://localhost:8080/api/stats | jq
+   - curl -s http://localhost:8080/api/github/activity | jq
+   - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"Alex","email":"alex@example.com","message":"Hi!"}' | jq
+   - curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact | jq
+
+   Quick error tests
+   - 404: `curl -s -i http://localhost:8080/api/does-not-exist`
+   - 422: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"","email":"bad","message":""}'`
+   - 400 malformed: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{ bad'`
+   - 401: `curl -s -i http://localhost:8080/api/contact`
+   - 405: `curl -s -i -X PUT http://localhost:8080/api/contact`
+   - 415: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: text/plain' -d 'hello'`
 
    Notes on /api/projects
+   Environment variables
+   - `GITHUB_TOKEN` (optional): increases GitHub API rate limits
+   - `ADMIN_API_KEY` (required for GET /api/contact): admin secret for listing contact messages
    - The endpoint fetches public repos from GitHub for user `rickym270` and overlays any matching entries from `api/src/main/resources/data/projects.json` (by repo name).
    - If the GitHub request fails or is rate-limited, it falls back to the curated `projects.json` only.
    - Optional: set `GITHUB_TOKEN` in the environment to raise GitHub API rate limits.
