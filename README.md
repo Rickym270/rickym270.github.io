@@ -7,6 +7,14 @@
 ## Backend API (Spring Boot)
    The repo contains a minimal Java backend under `api/` to support dynamic features.
 
+   Quick start
+   - Run with Maven Wrapper:
+     - From repo root:
+       - cd api && ./mvnw -DskipTests spring-boot:run
+   - Or with Docker (no local JDK/Maven needed):
+     - From repo root:
+       - cd api && docker run --rm -it -p 8080:8080 -v "$PWD":/app -w /app maven:3.9-eclipse-temurin-17 mvn -DskipTests spring-boot:run
+
    For full run/test instructions, see `TESTING.md`.
 
    Endpoints
