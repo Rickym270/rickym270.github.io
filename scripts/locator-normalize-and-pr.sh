@@ -31,8 +31,6 @@ git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
 node scripts/update-locators.js
 
 # Revert incidental changes that should not drive a PR
-git restore --worktree --staged yarn.lock 2>/dev/null || true
-git restore yarn.lock 2>/dev/null || true
 git restore --worktree --staged package-lock.json 2>/dev/null || true
 git restore package-lock.json 2>/dev/null || true
 git restore --worktree --staged node_modules/iconv-lite/.idea/iconv-lite.iml 2>/dev/null || true
