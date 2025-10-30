@@ -2,6 +2,15 @@
 
 This repo includes a minimal Spring Boot API under `api/` that powers dynamic features on the site.
 
+Quick start
+```bash
+# From repo root
+cd api
+./mvnw -DskipTests spring-boot:run
+# Or via Docker (no local JDK/Maven)
+cd api && docker run --rm -it -p 8080:8080 -v "$PWD":/app -w /app maven:3.9-eclipse-temurin-17 mvn -DskipTests spring-boot:run
+```
+
 ## Prerequisites
 - Java 17+
 - Maven Wrapper is included; local Maven is optional
