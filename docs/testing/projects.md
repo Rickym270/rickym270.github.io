@@ -5,7 +5,7 @@ Returns projects merged from GitHub public repos and curated `data/projects.json
 
 ## Positive tests
 ```bash
-curl -s http://localhost:8080/api/projects | jq
+curl -s http://localhost:8080/api/projects
 ```
 - Expect 200 JSON array.
 - Each item has: `slug`, `name`, `summary`, `repo`, optional `tech`, `featured` (default false).

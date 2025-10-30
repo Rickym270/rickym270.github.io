@@ -5,7 +5,7 @@ Provides profile metadata for the About section.
 
 ## Positive tests
 ```bash
-curl -s http://localhost:8080/api/meta | jq
+curl -s http://localhost:8080/api/meta
 ```
 - Expect 200 and keys: `name`, `title`, `location`, `languages` (array), `github`, `portfolio`.
 - Validate URLs for `github` and `portfolio` are well-formed.

@@ -15,7 +15,7 @@
      - From repo root:
        - cd api && docker run --rm -it -p 8080:8080 -v "$PWD":/app -w /app maven:3.9-eclipse-temurin-17 mvn -DskipTests spring-boot:run
 
-   For full run/test instructions, see `TESTING.md`.
+   For full run/test instructions, see `docs/TESTING.md`.
 
    Endpoints
    - GET http://localhost:8080/api              → Health (UP, version, time)
@@ -53,13 +53,13 @@
      - docker run --rm -it -p 8080:8080 -v "$PWD":/app -w /app maven:3.9-eclipse-temurin-17 mvn -DskipTests spring-boot:run
 
    Test the API
-   - curl -s http://localhost:8080/api | jq
-   - curl -s http://localhost:8080/api/meta | jq
-   - curl -s http://localhost:8080/api/projects | jq
-   - curl -s http://localhost:8080/api/stats | jq
-   - curl -s http://localhost:8080/api/github/activity | jq
-   - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"Alex","email":"alex@example.com","message":"Hi!"}' | jq
-   - curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact | jq
+   - curl -s http://localhost:8080/api
+   - curl -s http://localhost:8080/api/meta
+   - curl -s http://localhost:8080/api/projects
+   - curl -s http://localhost:8080/api/stats
+   - curl -s http://localhost:8080/api/github/activity
+   - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"RMTest","email":"rmtest@testing.com","message":"Test!"}'
+   - curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact
 
    Quick error tests
    - 404: `curl -s -i http://localhost:8080/api/does-not-exist`

@@ -6,8 +6,8 @@ Returns API heartbeat with status, version, and ISO timestamp.
 ## Positive tests
 ```bash
 # Either endpoint should return 200 with expected keys
-curl -s http://localhost:8080/api | jq
-curl -s http://localhost:8080/api/health | jq
+curl -s http://localhost:8080/api
+curl -s http://localhost:8080/api/health
 ```
 - Assert keys: `status == "UP"`, `version` non-empty, `time` ISO-8601.
 - Response Content-Type: `application/json`.

@@ -5,7 +5,7 @@ Returns rollup stats for curated projects and unique languages.
 
 ## Positive tests
 ```bash
-curl -s http://localhost:8080/api/stats | jq
+curl -s http://localhost:8080/api/stats
 ```
 - Expect 200 and keys: `projects` (int), `languages` (array), `lastUpdated` (ISO string).
 - `projects` should equal the number of items in curated `data/projects.json` (not GitHub merged).

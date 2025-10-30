@@ -42,37 +42,49 @@ docker run --rm -it -p 8080:8080 \
 ## Endpoints
 - Health
 ```bash
-curl -s http://localhost:8080/api | jq
-curl -s http://localhost:8080/api/health | jq
+curl -s http://localhost:8080/api
+curl -s http://localhost:8080/api/health
 ```
 
 - Metadata
 ```bash
-curl -s http://localhost:8080/api/meta | jq
+curl -s http://localhost:8080/api/meta
 ```
 
 - Projects (GitHub + curated merge)
 ```bash
-curl -s http://localhost:8080/api/projects | jq
+curl -s http://localhost:8080/api/projects
 ```
 
 - Stats
 ```bash
-curl -s http://localhost:8080/api/stats | jq
+curl -s http://localhost:8080/api/stats
 ```
 
 - GitHub recent activity
 ```bash
-curl -s http://localhost:8080/api/github/activity | jq
+curl -s http://localhost:8080/api/github/activity
 ```
 
-- Contact
+- Contact (submit message)
 ```bash
 # Submit a contact message
 curl -s -X POST http://localhost:8080/api/contact \
   -H 'Content-Type: application/json' \
   -d '{"name":"Alex","email":"alex@example.com","message":"Loved your portfolio!"}' | jq
+  -d '{"name":"RMTest","email":"rmtest@testing.com","message":"Test!"}'
 ```
+
+- Contact (view messages - admin only)
+```bash
+# First, ensure server was started with ADMIN_API_KEY set:
+# ADMIN_API_KEY="my-secret-key" ./mvnw -DskipTests spring-boot:run
+
+# Then list all stored messages
+curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+```
+
+**Note**: Contact messages are stored in-memory and will be cleared on server restart. You must POST at least one message before the GET endpoint returns data.
 
 - Home
 ```bash
@@ -90,14 +102,37 @@ Optional: to raise GitHub API limits
 export GITHUB_TOKEN=ghp_yourToken
 ```
 
-Admin-only endpoint
-```bash
-# Set admin API key (server must be started with this in env)
-export ADMIN_API_KEY=yourSecret
+## Testing the Contact Endpoint
 
-# List stored contact messages
-curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact | jq
+### Submit a message (POST)
+```bash
+curl -s -X POST http://localhost:8080/api/contact \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"RMTest","email":"rmtest@testing.com","message":"Test!"}'
 ```
+
+Expected: `201 Created` with the saved message including `id` and `receivedAt`.
+
+### View messages as admin (GET)
+
+**Important**: The server must be started with `ADMIN_API_KEY` set as an environment variable:
+
+```bash
+cd api
+ADMIN_API_KEY="my-secret-key" ./mvnw -DskipTests spring-boot:run
+```
+
+Then retrieve all messages:
+```bash
+curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+```
+
+Expected: `200 OK` with an array of all stored messages.
+
+**Notes**:
+- Messages are stored in-memory and reset on server restart
+- You must POST at least one message before GET returns any data
+- Empty list `[]` means no messages have been submitted yet
 
 ## Error responses
 - All errors return JSON with keys: `error`, `message`, `time` (ISO‑8601)
