@@ -33,7 +33,6 @@ jobs:
           node scripts/update-locators.js
 
           # Revert incidental changes that should not drive a PR
-          git restore --worktree --staged yarn.lock 2>/dev/null || true
           git restore --worktree --staged package-lock.json 2>/dev/null || true
           git checkout -- node_modules 2>/dev/null || true
 
