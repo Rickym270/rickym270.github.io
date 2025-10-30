@@ -141,4 +141,3 @@ curl -s -i -X POST http://localhost:8080/api/contact \
   - Set Project SDK/JDK to 17 and reimport Maven (`api/pom.xml`).
 - Port already in use:
   - Stop the other service or run with `-Dserver.port=8081`.
-
