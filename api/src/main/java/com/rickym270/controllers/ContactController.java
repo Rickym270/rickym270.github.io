@@ -29,8 +29,15 @@ public class ContactController {
 
     @GetMapping("/contact")
     public List<ContactMessage> list(@RequestHeader(name = "X-API-Key", required = false) String apiKey) {
-        String required = System.getenv("ADMIN_API_KEY");
-        if (required == null || required.trim().isEmpty() || apiKey == null || !apiKey.equals(required)) {
+        String requiredEnv = System.getenv("ADMIN_API_KEY");
+        String requiredProp = System.getProperty("ADMIN_API_KEY");
+        String required = requiredEnv != null && !requiredEnv.trim().isEmpty()
+            ? requiredEnv.trim()
+            : (requiredProp != null && !requiredProp.trim().isEmpty() ? requiredProp.trim() : null);
+
+        String provided = apiKey == null ? null : apiKey.trim();
+
+        if (required == null || required.isEmpty() || provided == null || !provided.equals(required)) {
             throw new UnauthorizedException("Invalid or missing API key");
         }
         return contactService.findAll();
