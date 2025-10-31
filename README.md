@@ -80,3 +80,27 @@
    Development notes
    - Main app: `com.rickym270.api.ApiApplication` (component scan set to `com.rickym270`)
    - Controllers live under `com.rickym270.controllers` with base path `/api`
+
+## Frontend & Testing
+   Requirements
+   - Node.js 18.x (LTS recommended)
+   - npm (comes with Node.js)
+
+   Verify Node.js version:
+   ```bash
+   node -v  # should show v18.x.x
+   npm -v
+   ```
+
+   Run Playwright tests:
+   ```bash
+   npm i
+   npx playwright install --with-deps
+   npm test
+   ```
+
+   Or use the npm scripts:
+   - `npm test` - Run tests headless
+   - `npm run test:ui` - Run with Playwright UI
+   - `npm run test:headed` - Run in headed mode
+   - `npm run test:debug` - Debug mode
