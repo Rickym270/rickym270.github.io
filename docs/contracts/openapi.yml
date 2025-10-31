@@ -1,0 +1,532 @@
+openapi: 3.0.3
+info:
+  title: Ricky Martinez Portfolio API
+  description: |
+    A minimal Spring Boot REST API for the rickym270.github.io portfolio site.
+    
+    All endpoints are prefixed with `/api` and return JSON responses.
+    
+    **Error Handling**: All errors return a JSON object with:
+    - `error`: Error code (e.g., `validation_error`, `not_found`)
+    - `message`: Human-readable error message
+    - `time`: ISO-8601 timestamp
+    
+    **CORS**: All endpoints allow requests from `https://rickym270.github.io`.
+  version: 1.0.0
+  contact:
+    name: Ricky Martinez
+    url: https://rickym270.github.io
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api.rickym270.github.io
+    description: Production server (if applicable)
+
+paths:
+  /api:
+    get:
+      summary: Health check
+      description: Returns API health status, version, and current timestamp
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: UP
+                version: "1.0.0"
+                time: "2025-01-30T12:00:00Z"
+
+  /api/health:
+    get:
+      summary: Health check (alternative endpoint)
+      description: Alias for GET /api - returns API health status
+      operationId: healthCheckAlt
+      tags:
+        - Health
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/meta:
+    get:
+      summary: Get profile metadata
+      description: Returns profile information including name, title, location, languages, and links
+      operationId: getMeta
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Profile metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetaResponse'
+              example:
+                name: "Ricky Martinez"
+                title: "Senior SDET / Developer in Test"
+                location: "New York, USA"
+                languages:
+                  - "English"
+                  - "Spanish"
+                  - "German"
+                github: "https://github.com/rickym270"
+                portfolio: "https://rickym270.github.io"
+
+  /api/projects:
+    get:
+      summary: Get projects list
+      description: |
+        Returns a merged list of projects from GitHub API and curated projects from `data/projects.json`.
+        Projects are sorted with featured items first, then alphabetically by name.
+        
+        **Note**: If GitHub API is unavailable or returns empty, only curated projects are returned.
+      operationId: getProjects
+      tags:
+        - Projects
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+              example:
+                - slug: "personal-website"
+                  name: "rickym270.github.io"
+                  summary: "Personal site to host notes, tutorials, and projects"
+                  repo: "https://github.com/Rickym270/rickym270.github.io"
+                  tech:
+                    - "Python"
+                    - "JavaScript"
+                    - "Java"
+                  featured: true
+
+  /api/stats:
+    get:
+      summary: Get project statistics
+      description: Returns rollup statistics including project count, unique languages, and last updated timestamp
+      operationId: getStats
+      tags:
+        - Statistics
+      responses:
+        '200':
+          description: Statistics data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+              example:
+                projects: 15
+                languages:
+                  - "Java"
+                  - "Python"
+                  - "JavaScript"
+                lastUpdated: "2025-01-30T12:00:00Z"
+
+  /api/github/activity:
+    get:
+      summary: Get recent GitHub activity
+      description: Returns recent public GitHub activity events (up to 10 most recent)
+      operationId: getGithubActivity
+      tags:
+        - GitHub
+      responses:
+        '200':
+          description: List of recent GitHub activity events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GithubActivity'
+              example:
+                - type: "PushEvent"
+                  repo: "rickym270/rickym270.github.io"
+                  createdAt: "2025-01-30T10:00:00Z"
+                - type: "CreateEvent"
+                  repo: "rickym270/Blue-Manager"
+                  createdAt: "2025-01-29T15:30:00Z"
+
+  /api/home:
+    get:
+      summary: Get home text
+      description: Returns a simple home text string
+      operationId: getHome
+      tags:
+        - Home
+      responses:
+        '200':
+          description: Home text
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Home"
+
+  /api/contact:
+    post:
+      summary: Submit contact form
+      description: |
+        Submits a new contact message. Messages are stored in-memory and cleared on server restart.
+        
+        **Validation**:
+        - `name`: Required, 1-100 characters
+        - `email`: Required, must be a valid email address
+        - `message`: Required, 1-2000 characters
+      operationId: createContact
+      tags:
+        - Contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+            example:
+              name: "John Doe"
+              email: "john@example.com"
+              message: "Hello, I'd like to get in touch!"
+      responses:
+        '201':
+          description: Contact message created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactMessage'
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                name: "John Doe"
+                email: "john@example.com"
+                message: "Hello, I'd like to get in touch!"
+                receivedAt: "2025-01-30T12:00:00Z"
+        '400':
+          description: Bad request (malformed JSON or missing Content-Type)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type (must be application/json)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "validation_error"
+                message: "name: must not be blank; email: must be a well-formed email address; message: must not be blank"
+                time: "2025-01-30T12:00:00Z"
+
+    get:
+      summary: List contact messages (admin only)
+      description: |
+        Returns all stored contact messages. Requires `X-API-Key` header matching the `ADMIN_API_KEY` environment variable.
+        
+        **Authentication**: This endpoint requires an API key header.
+      operationId: listContacts
+      tags:
+        - Contact
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: X-API-Key
+          in: header
+          required: true
+          description: Admin API key (must match ADMIN_API_KEY environment variable)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactMessage'
+              example:
+                - id: "550e8400-e29b-41d4-a716-446655440000"
+                  name: "John Doe"
+                  email: "john@example.com"
+                  message: "Hello!"
+                  receivedAt: "2025-01-30T12:00:00Z"
+        '401':
+          description: Unauthorized (missing or invalid API key)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "unauthorized"
+                message: "Invalid or missing API key"
+                time: "2025-01-30T12:00:00Z"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Admin API key for protected endpoints
+
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - version
+        - time
+      properties:
+        status:
+          type: string
+          example: "UP"
+        version:
+          type: string
+          example: "1.0.0"
+        time:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp
+          example: "2025-01-30T12:00:00Z"
+
+    MetaResponse:
+      type: object
+      required:
+        - name
+        - title
+        - location
+        - languages
+        - github
+        - portfolio
+      properties:
+        name:
+          type: string
+          example: "Ricky Martinez"
+        title:
+          type: string
+          example: "Senior SDET / Developer in Test"
+        location:
+          type: string
+          example: "New York, USA"
+        languages:
+          type: array
+          items:
+            type: string
+          example:
+            - "English"
+            - "Spanish"
+            - "German"
+        github:
+          type: string
+          format: uri
+          example: "https://github.com/rickym270"
+        portfolio:
+          type: string
+          format: uri
+          example: "https://rickym270.github.io"
+
+    Project:
+      type: object
+      required:
+        - slug
+        - name
+        - repo
+      properties:
+        slug:
+          type: string
+          description: URL-friendly project identifier
+          example: "personal-website"
+        name:
+          type: string
+          description: Project name
+          example: "rickym270.github.io"
+        summary:
+          type: string
+          description: Project description/summary
+          example: "Personal site to host notes, tutorials, and projects"
+        repo:
+          type: string
+          format: uri
+          description: GitHub repository URL
+          example: "https://github.com/Rickym270/rickym270.github.io"
+        tech:
+          type: array
+          items:
+            type: string
+          description: List of technologies/languages used
+          example:
+            - "Python"
+            - "JavaScript"
+            - "Java"
+        featured:
+          type: boolean
+          description: Whether the project is featured
+          default: false
+          example: true
+
+    StatsResponse:
+      type: object
+      required:
+        - projects
+        - languages
+        - lastUpdated
+      properties:
+        projects:
+          type: integer
+          description: Total number of curated projects
+          example: 15
+        languages:
+          type: array
+          items:
+            type: string
+          description: Unique list of programming languages/technologies
+          example:
+            - "Java"
+            - "Python"
+            - "JavaScript"
+        lastUpdated:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp of last update
+          example: "2025-01-30T12:00:00Z"
+
+    GithubActivity:
+      type: object
+      required:
+        - type
+        - repo
+        - createdAt
+      properties:
+        type:
+          type: string
+          description: Type of GitHub event (e.g., PushEvent, CreateEvent, PullRequestEvent)
+          example: "PushEvent"
+        repo:
+          type: string
+          description: Repository name in format "owner/repo"
+          example: "rickym270/rickym270.github.io"
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp of the event
+          example: "2025-01-30T10:00:00Z"
+
+    ContactRequest:
+      type: object
+      required:
+        - name
+        - email
+        - message
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Contact name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: Contact email address
+          example: "john@example.com"
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: Contact message content
+          example: "Hello, I'd like to get in touch!"
+
+    ContactMessage:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - message
+        - receivedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique message identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        message:
+          type: string
+          example: "Hello, I'd like to get in touch!"
+        receivedAt:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp when message was received
+          example: "2025-01-30T12:00:00Z"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - time
+      properties:
+        error:
+          type: string
+          description: Error code
+          enum:
+            - validation_error
+            - not_found
+            - bad_request
+            - bad_request_body
+            - unauthorized
+            - method_not_allowed
+            - unsupported_media_type
+            - internal_error
+          example: "validation_error"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "name: must not be blank; email: must be a well-formed email address"
+        time:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp when error occurred
+          example: "2025-01-30T12:00:00Z"
+
+tags:
+  - name: Health
+    description: API health and status endpoints
+  - name: Profile
+    description: Profile metadata endpoints
+  - name: Projects
+    description: Project listing and management
+  - name: Statistics
+    description: Statistics and analytics
+  - name: GitHub
+    description: GitHub integration endpoints
+  - name: Home
+    description: Home page content
+  - name: Contact
+    description: Contact form submission and management
+
