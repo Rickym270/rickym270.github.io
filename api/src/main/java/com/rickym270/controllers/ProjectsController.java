@@ -24,9 +24,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+@CrossOrigin(origins = "https://rickym270.github.io")
 @RestController
 @RequestMapping("/api")
 public class ProjectsController {
