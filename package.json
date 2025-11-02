@@ -8,6 +8,8 @@
     "npm": ">=9.0.0"
   },
   "scripts": {
+    "preinstall": "node scripts/check-node-version.js || exit 0",
+    "pretest": "node scripts/check-node-version.js || exit 0",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "wait-on": "^7.2.0"
   }
 }

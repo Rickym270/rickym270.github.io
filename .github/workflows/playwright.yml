@@ -31,14 +31,90 @@ jobs:
           node-version: '18.x'
           cache: 'npm'
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
       - name: Install dependencies
         run: npm i
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Build Spring Boot API
+        working-directory: ./api
+        run: ./mvnw clean package spring-boot:repackage -DskipTests
+
+      - name: Verify JAR exists
+        working-directory: ./api
+        run: |
+          if [ ! -f target/api-0.0.1-SNAPSHOT.jar ]; then
+            echo "Error: JAR file not found!"
+            exit 1
+          fi
+          echo "JAR file size: $(ls -lh target/api-0.0.1-SNAPSHOT.jar | awk '{print $5}')"
+
+      - name: Start Spring Boot API server
+        working-directory: ./api
+        run: |
+          java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar > api-server.log 2>&1 &
+          SERVER_PID=$!
+          echo $SERVER_PID > api-server.pid
+          echo "API server started with PID: $SERVER_PID"
+          sleep 5
+          if ! kill -0 $SERVER_PID 2>/dev/null; then
+            echo "ERROR: Server process died immediately!"
+            echo "Server logs:"
+            cat api-server.log || true
+            exit 1
+          fi
+
+      - name: Wait for API server to be ready
+        working-directory: ./api
+        run: |
+          echo "Waiting for API server to start..."
+          npx wait-on http://localhost:8080/api/health --timeout 120000 --interval 2000 || {
+            echo "ERROR: API server failed to start within timeout"
+            echo "Checking if server process is still running:"
+            if [ -f api-server.pid ]; then
+              PID=$(cat api-server.pid)
+              if kill -0 $PID 2>/dev/null; then
+                echo "Server process $PID is still running"
+              else
+                echo "Server process $PID is not running"
+              fi
+            fi
+            echo "Server logs:"
+            cat api-server.log || true
+            echo "Checking if port 8080 is in use:"
+            lsof -i :8080 || echo "Port 8080 is not in use"
+            exit 1
+          }
+          echo "API server is ready!"
+
       - name: Run Playwright tests
         run: npx playwright test
+
+      - name: Stop API server
+        if: always()
+        working-directory: ./api
+        run: |
+          if [ -f api-server.pid ]; then
+            kill $(cat api-server.pid) || true
+            rm api-server.pid || true
+          fi
+
+      - name: Upload API server logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-server-logs
+          path: api/api-server.log
+          retention-days: 7
+          if-no-files-found: ignore
 
       - name: Upload HTML report
         if: always() && env.ACT == ''
