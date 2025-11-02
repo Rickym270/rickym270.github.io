@@ -46,7 +46,7 @@ jobs:
 
       - name: Build Spring Boot API
         working-directory: ./api
-        run: ./mvnw clean package -DskipTests
+        run: ./mvnw clean package spring-boot:repackage -DskipTests
 
       - name: Verify JAR exists
         working-directory: ./api
