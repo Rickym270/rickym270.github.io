@@ -162,10 +162,18 @@ function renderProjects(projects) {
     }
 }
 
+// Flag to prevent double initialization
+let projectsInitialized = false;
+
 /**
  * Initialize projects page - load and render projects from API
  */
 async function initProjects() {
+    // Prevent double initialization
+    if (projectsInitialized) {
+        return;
+    }
+    projectsInitialized = true;
     try {
         // Show loading state
         const loadingMsg = document.createElement('div');
@@ -209,9 +217,25 @@ async function initProjects() {
 }
 
 // Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initProjects);
-} else {
-    initProjects();
-}
+// When loaded via jQuery .load(), scripts execute after DOM insertion
+(function() {
+    function tryInit() {
+        // Check if projects container exists (means we're on the projects page)
+        if (document.querySelector('#ProjInProgress')) {
+            // Ensure DOM is fully ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initProjects);
+            } else {
+                // DOM is ready, but wait a tick to ensure all elements are inserted
+                setTimeout(initProjects, 0);
+            }
+        }
+    }
+    
+    // Try immediately (in case page is loaded normally)
+    tryInit();
+    
+    // Also try after a short delay (in case loaded via jQuery .load())
+    setTimeout(tryInit, 100);
+})();
 
