@@ -36,7 +36,6 @@ public class ProjectsStatsService {
         return new ArrayList<>(unique);
     }
 
-    @SuppressWarnings("unchecked")
     private List<Map<String, Object>> readCuratedProjects() {
         ClassPathResource resource = new ClassPathResource("data/projects.json");
         try (InputStream input = resource.getInputStream()) {
