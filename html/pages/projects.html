@@ -12,6 +12,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        
+        <!-- API Client and Projects Loader -->
+        <script src="/html/js/api.js"></script>
+        <script src="/html/js/projects.js"></script>
 
     </head>
     <body>
@@ -27,43 +31,8 @@
                 <div class="divider text-muted"></div>
                 <div class="push3"></div>
                     <div class="row">
-                
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%;padding-top:1vh;">
-                            <img src="/html/imgs/rickym270.github.io.png" class="card-img-top center" alt="..." style="width: 75%;">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">rickym270.github.io</h5>
-                                <p class="card-text">Personal site to be used to host notes, tuts and projects. This site originally started as a means to teach python.</p>
-                                <a href="https://github.com/Rickym270/rickym270.github.io" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
+                        <!-- Projects will be dynamically loaded here from API -->
                     </div>
-                <div class="push4"></div>
-                
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%;padding-top:1vh;">
-                            <img src="/html/imgs/PythonTutorial.png" class="card-img-top center" alt="..." style="width: 75%;">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">PythonTutorial</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/PythonTutorial" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                <div class="push4"></div>
-                
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%;padding-top:1vh;">
-                            <img src="/html/imgs/GoPS.png" class="card-img-top center" alt="..." style="width: 75%;">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">GoPS</h5>
-                                <p class="card-text">Test Building Nav System in CPP</p>
-                                <a href="https://github.com/Rickym270/GoPS" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                <div class="push4"></div>
-                
             </div>
 
             <div id="ProjComplete">
@@ -72,163 +41,8 @@
                 <div class="divider text-muted"></div>
                 <div class="push3"></div>
                 <div class="row">
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/ErrorChecker.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">ErrorChecker</h5>
-                                <p class="card-text">NightChecker developed to automate the process of going into every script to check for errors. An email is sent out to me every morning with an OK or an Error subject to let me know which scripts/ applications failed overnight. This class is incorporated throughout various tools</p>
-                                <a href="https://github.com/Rickym270/ErrorChecker" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/GenGraph.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">GenGraph</h5>
-                                <p class="card-text">Developed to make it easier to develop graphs out of obtained data to be displayed on a webpage</p>
-                                <a href="https://github.com/Rickym270/GenGraph" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/F5Requests.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">F5Requests</h5>
-                                <p class="card-text">Developed library to obtain information from F5 devices easily</p>
-                                <a href="https://github.com/Rickym270/F5Requests" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/F5_SDK.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">F5_SDK</h5>
-                                <p class="card-text">Get some relevant information from F5SDK and save to db</p>
-                                <a href="https://github.com/Rickym270/F5_SDK" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/ConnectivityMonitor.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">ConnectivityMonitor</h5>
-                                <p class="card-text">Developed to monitor all connections in the network via ping, tcp or udp.</p>
-                                <a href="https://github.com/Rickym270/ConnectivityMonitor" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/Auth.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">Auth</h5>
-                                <p class="card-text">Very simple authorization script that gives/restrict access of features based on username</p>
-                                <a href="https://github.com/Rickym270/Auth" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/IPRequests.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">IPRequests</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/IPRequests" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/IntranetSite.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">IntranetSite</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/IntranetSite" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/InterfaceErrReport.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">InterfaceErrReport</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/InterfaceErrReport" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/F5VIPSearch.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">F5VIPSearch</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/F5VIPSearch" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/F5Diffs.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">F5Diffs</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/F5Diffs" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/CR-IPLookup.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">CR-IPLookup</h5>
-                                <p class="card-text">None</p>
-                                <a href="https://github.com/Rickym270/CR-IPLookup" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%; margin-bottom:1vh;padding-top:1vh;">
-                            <img src="/html/imgs/gPhotographyPHP.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">gPhotographyPHP</h5>
-                                <p class="card-text">PHP version of gPhotography with a few extras</p>
-                                <a href="https://github.com/Rickym270/gPhotographyPHP" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
+                    <!-- Projects will be dynamically loaded here from API -->
+                </div>
             </div>
 
             <div id="ProjComingSoon">
@@ -237,19 +51,8 @@
                 <div class="divider text-muted"></div>
                 <div class="push3"></div>
                 <div class="row">
-                
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        <div class="card" style="width: 100%;padding-top:1vh;">
-                            <img src="/html/imgs/Muscribe.png" class="card-img-top center" alt="..." style="width:75%">
-                            <div class="card-body">
-                                <h5 class="card-title nobr">Muscribe</h5>
-                                <p class="card-text">No description because it is still a work-in-progress</p>
-                                <a href="https://github.com/Rickym270/Muscribe" class="card-link">See on GitHub</a>
-                            </div>
-                        </div>
-                    </div>
-                	<div class="push4"></div>
-                
+                    <!-- Projects will be dynamically loaded here from API -->
+                </div>
             </div>
 
 			<div class="push6"></div>

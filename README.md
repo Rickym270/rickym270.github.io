@@ -18,15 +18,18 @@
    For full run/test instructions, see `docs/TESTING.md`.
 
    Endpoints
-   - GET http://localhost:8080/api              → Health (UP, version, time)
-   - GET http://localhost:8080/api/health       → Health (UP, version, time)
-   - GET http://localhost:8080/api/meta         → Profile metadata (name, title, location, languages, links)
-   - GET http://localhost:8080/api/projects     → Project list merged from GitHub API + `data/projects.json`
-   - GET http://localhost:8080/api/stats        → Rollup stats (projects count, unique languages, lastUpdated)
-   - GET http://localhost:8080/api/github/activity → Recent GitHub activity (type, repo, createdAt)
-   - GET http://localhost:8080/api/home         → Simple home text
-   - POST http://localhost:8080/api/contact     → Submit contact form (JSON body)
-   - GET http://localhost:8080/api/contact      → Admin-only, requires `X-API-Key`
+   - Production API: https://ricky-api-745807383723.us-east1.run.app
+   - Local dev: http://localhost:8080
+   
+   - GET /api              → Health (UP, version, time)
+   - GET /api/health       → Health (UP, version, time)
+   - GET /api/meta         → Profile metadata (name, title, location, languages, links)
+   - GET /api/projects     → Project list merged from GitHub API + `data/projects.json`
+   - GET /api/stats        → Rollup stats (projects count, unique languages, lastUpdated)
+   - GET /api/github/activity → Recent GitHub activity (type, repo, createdAt)
+   - GET /api/home         → Simple home text
+   - POST /api/contact     → Submit contact form (JSON body)
+   - GET /api/contact      → Admin-only, requires `X-API-Key`
 
    Error handling
    - All errors return JSON with keys: `error`, `message`, `time` (ISO‑8601)
