@@ -12,6 +12,8 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=chromium --project=firefox --project=webkit",
     "serve": "http-server -p 4321 -c-1 .",
     "locators:update": "node scripts/update-locators.js"
   },
