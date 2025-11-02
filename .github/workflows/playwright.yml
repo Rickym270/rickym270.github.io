@@ -31,14 +31,44 @@ jobs:
           node-version: '18.x'
           cache: 'npm'
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
       - name: Install dependencies
         run: npm i
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Build Spring Boot API
+        working-directory: ./api
+        run: ./mvnw clean package -DskipTests
+
+      - name: Start Spring Boot API server
+        working-directory: ./api
+        run: |
+          java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar > api-server.log 2>&1 &
+          echo $! > api-server.pid
+          echo "API server started with PID: $(cat api-server.pid)"
+
+      - name: Wait for API server to be ready
+        run: npx wait-on http://localhost:8080/api/health --timeout 60000
+
       - name: Run Playwright tests
         run: npx playwright test
+
+      - name: Stop API server
+        if: always()
+        working-directory: ./api
+        run: |
+          if [ -f api-server.pid ]; then
+            kill $(cat api-server.pid) || true
+            rm api-server.pid || true
+          fi
 
       - name: Upload HTML report
         if: always() && env.ACT == ''
