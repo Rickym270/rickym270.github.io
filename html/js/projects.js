@@ -193,14 +193,19 @@ async function initProjects() {
             loadingMsg.remove();
         }
         
-        // Render projects
-        if (projects && projects.length > 0) {
-            renderProjects(projects);
+        // Filter projects: only show featured projects
+        const featuredProjects = projects.filter(project => {
+            return project.featured === true;
+        });
+        
+        // Render only featured projects
+        if (featuredProjects && featuredProjects.length > 0) {
+            renderProjects(featuredProjects);
         } else {
-            // Show message if no projects
+            // Show message if no featured projects
             const noProjects = document.createElement('div');
             noProjects.className = 'alert alert-info';
-            noProjects.innerHTML = '<p>No projects found.</p>';
+            noProjects.innerHTML = '<p>No featured projects to display.</p>';
             container.appendChild(noProjects);
         }
     } catch (error) {
