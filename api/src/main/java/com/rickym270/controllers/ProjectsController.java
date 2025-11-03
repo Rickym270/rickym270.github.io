@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-@CrossOrigin(origins = "https://rickym270.github.io")
+@CrossOrigin(origins = {"https://rickym270.github.io", "http://localhost:4321", "http://localhost:8080"})
 @RestController
 @RequestMapping("/api")
 public class ProjectsController {
@@ -79,7 +81,23 @@ public class ProjectsController {
             curatedProjects.stream()
                 .filter(p -> p.get("repo") instanceof String)
                 .filter(p -> !mergedNames.contains(normalizeRepoName(extractRepoNameFromUrl((String) p.get("repo")))))
-                .forEach(merged::add);
+                .forEach(project -> {
+                    // For curated projects not on GitHub, check if we can infer activity from GitHub data
+                    // If we have matching GitHub data but it wasn't merged, check its activity
+                    String repoName = normalizeRepoName(extractRepoNameFromUrl((String) project.get("repo")));
+                    Optional<Map<String, Object>> matchingGitHubRepo = githubProjects.stream()
+                        .filter(gh -> normalizeRepoName(String.valueOf(gh.getOrDefault("name", ""))).equals(repoName))
+                        .findFirst();
+                    
+                    if (matchingGitHubRepo.isPresent()) {
+                        boolean hasRecentActivity = checkRecentActivity(matchingGitHubRepo.get());
+                        project.put("hasRecentActivity", hasRecentActivity);
+                    } else {
+                        // No GitHub data available, assume no recent activity
+                        project.put("hasRecentActivity", false);
+                    }
+                    merged.add(project);
+                });
 
             // Optional: sort featured first, then by name
             merged.sort(Comparator
@@ -156,10 +174,49 @@ public class ProjectsController {
             project.put("tech", Collections.singletonList(language));
         }
         project.putIfAbsent("featured", Boolean.FALSE);
+        
+        // Check if project has recent activity (commits within last month)
+        boolean hasRecentActivity = checkRecentActivity(gh);
+        project.put("hasRecentActivity", hasRecentActivity);
+        
         return project;
+    }
+    
+    /**
+     * Check if a GitHub repo has had commits/activity within the last month
+     * Uses pushed_at field from GitHub API which indicates last push time
+     */
+    private boolean checkRecentActivity(Map<String, Object> gh) {
+        try {
+            Object pushedAtObj = gh.get("pushed_at");
+            if (pushedAtObj == null) {
+                return false;
+            }
+            
+            String pushedAtStr = pushedAtObj.toString();
+            if (pushedAtStr == null || pushedAtStr.trim().isEmpty()) {
+                return false;
+            }
+            
+            // Parse ISO 8601 datetime (e.g., "2024-10-15T10:30:00Z")
+            Instant pushedAt = Instant.parse(pushedAtStr);
+            Instant oneMonthAgo = Instant.now().minus(30, ChronoUnit.DAYS);
+            
+            // Return true if last push was within the last month
+            return pushedAt.isAfter(oneMonthAgo);
+        } catch (Exception e) {
+            // If parsing fails, assume no recent activity
+            return false;
+        }
     }
 
     private void overlay(Map<String, Object> base, Map<String, Object> override) {
+        // First, explicitly handle status field - it always takes precedence from curated data
+        Object statusValue = override.get("status");
+        if (statusValue != null && !String.valueOf(statusValue).trim().isEmpty()) {
+            base.put("status", statusValue);
+        }
+        
         for (Map.Entry<String, Object> entry : override.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -168,6 +225,15 @@ public class ProjectsController {
             }
             // Do not overwrite repo URL or name if override is blank
             if (("name".equals(key) || "repo".equals(key)) && String.valueOf(value).trim().isEmpty()) {
+                continue;
+            }
+            // Status already handled above, skip here
+            if ("status".equals(key)) {
+                continue;
+            }
+            // Do not overwrite hasRecentActivity from GitHub data with curated data
+            // GitHub data is more accurate for activity tracking
+            if ("hasRecentActivity".equals(key) && base.containsKey("hasRecentActivity")) {
                 continue;
             }
             base.put(key, value);
