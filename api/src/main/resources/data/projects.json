@@ -149,7 +149,7 @@
     "summary": "Static website and code repository for the Kappa Sigma High Council chapter, showcasing events and history.",
     "repo": "https://github.com/Rickym270/KappaSigmaHC",
     "tech": ["JavaScript"],
-    "featured": false
+    "featured": true
   },
   {
     "slug": "learning-java-2825378",

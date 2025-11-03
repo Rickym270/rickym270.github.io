@@ -23,12 +23,12 @@ async function fetchProjectsFromAPI() {
 /**
  * Get image path for a project
  * @param {string} projectName - Name of the project
- * @returns {string} - Image path or default placeholder
+ * @returns {string} - Image path (returns path, but image may not exist - handled in render)
  */
 function getProjectImage(projectName) {
-    // Try common variations
-    const name = projectName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return `/html/imgs/${projectName}.png`;
+    // Return image path - missing images are handled gracefully via onerror
+    // URL encode the project name for proper path handling
+    return `/html/imgs/${encodeURIComponent(projectName)}.png`;
 }
 
 /**
@@ -50,7 +50,8 @@ function renderProjectCard(project, containerId) {
             <div class="card" style="width: 100%; margin-bottom: 1vh; padding-top: 1vh;">
                 <img src="${imagePath}" class="card-img-top center" alt="${project.name}" 
                      style="width: 75%;" 
-                     onerror="this.style.display='none';">
+                     onerror="this.onerror=null; this.style.display='none';"
+                     loading="lazy">
                 <div class="card-body">
                     <h5 class="card-title nobr">${project.name}</h5>
                     <p class="card-text">${summary}</p>
@@ -192,14 +193,19 @@ async function initProjects() {
             loadingMsg.remove();
         }
         
-        // Render projects
-        if (projects && projects.length > 0) {
-            renderProjects(projects);
+        // Filter projects: only show featured projects
+        const featuredProjects = projects.filter(project => {
+            return project.featured === true;
+        });
+        
+        // Render only featured projects
+        if (featuredProjects && featuredProjects.length > 0) {
+            renderProjects(featuredProjects);
         } else {
-            // Show message if no projects
+            // Show message if no featured projects
             const noProjects = document.createElement('div');
             noProjects.className = 'alert alert-info';
-            noProjects.innerHTML = '<p>No projects found.</p>';
+            noProjects.innerHTML = '<p>No featured projects to display.</p>';
             container.appendChild(noProjects);
         }
     } catch (error) {
