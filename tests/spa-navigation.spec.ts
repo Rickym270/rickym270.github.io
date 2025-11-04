@@ -4,13 +4,15 @@ test.describe('SPA Navigation', () => {
   test('navigation loads content into #content without full page reload', async ({ page }) => {
     await page.goto('/');
     
-    // Initial page load
+    // Initial page load - wait for content
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(500);
     const initialUrl = page.url();
     await expect(page.locator('#content')).toBeVisible();
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
     
     // URL should not change
     expect(page.url()).toBe(initialUrl);
@@ -19,7 +21,8 @@ test.describe('SPA Navigation', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Content should have changed
-    await expect(page.locator('#content h3')).toHaveText('Projects');
+    const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+    await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
   });
 
   test('theme persists across SPA navigation', async ({ page }) => {
@@ -74,14 +77,17 @@ test.describe('SPA Navigation', () => {
   test('content does not duplicate on multiple navigations', async ({ page }) => {
     await page.goto('/');
     
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(500);
+    
     // Navigate to Projects multiple times
     for (let i = 0; i < 3; i++) {
       await page.getByRole('link', { name: 'Projects' }).click();
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(1500);
       
-      // Should only have one Projects heading
-      const headings = page.locator('#content h3');
-      const projectsHeadings = headings.filter({ hasText: 'Projects' });
+      // Should only have one Projects heading (check both h1 and h3)
+      const projectsHeadings = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
       const count = await projectsHeadings.count();
       expect(count).toBe(1);
     }

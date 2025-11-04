@@ -12,6 +12,10 @@ test.describe('Responsive layout', () => {
       await page.setViewportSize(vp.size);
       await page.goto('/');
 
+      // Wait for content to load
+      await page.waitForSelector('#content', { state: 'attached' });
+      await page.waitForTimeout(1000);
+
       // Navbar should be visible and not overflow horizontally
       const nav = page.locator('nav.navbar');
       await expect(nav).toBeVisible();
@@ -20,7 +24,7 @@ test.describe('Responsive layout', () => {
 
       // Banner should be visible and not overflow viewport width
       const banner = page.locator('#content #homeBanner');
-      await expect(banner).toBeVisible();
+      await expect(banner).toBeVisible({ timeout: 3000 });
       const bannerBox = await banner.boundingBox();
       expect(bannerBox).toBeTruthy();
       if (bannerBox) {
@@ -28,8 +32,8 @@ test.describe('Responsive layout', () => {
       }
 
       // Critical content should remain visible
-      await expect(page.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible();
-      await expect(page.getByRole('link', { name: /^Github$/ })).toBeVisible();
+      await expect(page.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible({ timeout: 2000 });
+      await expect(page.getByRole('link', { name: /^GitHub$/i })).toBeVisible({ timeout: 2000 });
 
       // Allow small tolerance for scrollbar width differences across browsers
       const { scrollWidth, clientWidth } = await page.evaluate(() => ({

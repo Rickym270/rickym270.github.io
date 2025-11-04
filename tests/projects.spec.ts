@@ -4,18 +4,23 @@ test.describe('Projects Page', () => {
 test('navigates to Projects via navbar and renders content', async ({ page }) => {
   await page.goto('/');
     
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(500);
+    
     // Click Projects link (triggers jQuery load into #content)
     await page.getByRole('link', { name: 'Projects' }).click();
     
     // Wait for the projects page content to be loaded into #content
-    await expect(page.locator('#content h3')).toHaveText('Projects', { timeout: 10000 });
+    await expect(page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ })).toBeVisible({ timeout: 10000 });
     
     // Wait for scripts to execute and API call to complete (or fail gracefully)
     // The page will either show project cards OR an error message - both are valid
     await page.waitForTimeout(3000); // Give scripts time to load and execute
     
     // Verify page structure is correct
-    await expect(page.locator('#content h3')).toHaveText('Projects');
+    const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+    await expect(projectsHeading).toHaveText('Projects');
     
     // Check if projects loaded successfully (preferred case)
     const cardsVisible = await page.locator('#content .card .card-title').first().isVisible({ timeout: 5000 }).catch(() => false);
@@ -67,6 +72,10 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
     await page.goto('/');
     
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(500);
+    
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
     await page.waitForTimeout(2000);
@@ -76,11 +85,12 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     await page.waitForTimeout(1000);
     
     // Navigate back to Projects
-  await page.getByRole('link', { name: 'Projects' }).click();
+    await page.getByRole('link', { name: 'Projects' }).click();
     await page.waitForTimeout(2000);
     
     // Projects should still load correctly
-  await expect(page.locator('#content h3')).toHaveText('Projects');
+    const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+    await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
     
     // Sections should be visible
     await expect(page.locator('#ProjInProgress')).toBeVisible();

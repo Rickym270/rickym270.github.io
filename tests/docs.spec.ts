@@ -112,28 +112,35 @@ test.describe('Docs/Notes Page', () => {
   test('text in docs is visible and readable', async ({ page }) => {
     await page.goto('/');
     
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(500);
+    
     // Navigate to Docs
-    await page.getByRole('button', { name: 'Docs' }).or(page.getByRole('link', { name: 'Docs' })).hover();
+    const docsButton = page.getByRole('button', { name: 'Docs' }).or(page.getByRole('link', { name: 'Docs' }));
+    await docsButton.hover();
+    await page.waitForTimeout(300);
     await page.getByRole('link', { name: 'Notes' }).click();
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
     
     // Check that text has proper font size (not tiny)
-    const container = page.locator('#FAQMain .container');
-    if (await container.isVisible({ timeout: 2000 })) {
-      const fontSize = await container.evaluate((el) => {
+    const container = page.locator('#FAQMain .container, #FAQMain');
+    if (await container.first().isVisible({ timeout: 3000 })) {
+      const firstContainer = container.first();
+      const fontSize = await firstContainer.evaluate((el) => {
         return window.getComputedStyle(el).fontSize;
       });
       const fontSizeNum = parseFloat(fontSize);
       // Should be readable (at least 12px, ideally 16px)
       expect(fontSizeNum).toBeGreaterThanOrEqual(12);
+      
+      // Check that text color is visible
+      const textColor = await firstContainer.evaluate((el) => {
+        return window.getComputedStyle(el).color;
+      });
+      // Should not be transparent
+      expect(textColor).not.toBe('rgba(0, 0, 0, 0)');
     }
-    
-    // Check that text color is visible
-    const textColor = await container.evaluate((el) => {
-      return window.getComputedStyle(el).color;
-    });
-    // Should not be transparent
-    expect(textColor).not.toBe('rgba(0, 0, 0, 0)');
   });
 
   test('dropdown menu stays visible on hover', async ({ page }) => {

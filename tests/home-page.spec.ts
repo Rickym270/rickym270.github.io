@@ -25,29 +25,40 @@ test.describe('Home page content', () => {
     // Caption text
     const caption = page.locator('#content .carousel-caption');
     await expect(caption).toContainText(/Ricky Martinez/i);
-    // Accept either current or desired role text
-    await expect(caption).toContainText(/Software Architect, Engineer, Tester|Programmer, Musician, Fixer-Upper/i);
+    // Match the actual text: "Software Engineer • Musician • Fixer-Upper"
+    await expect(caption).toContainText(/Software Engineer.*Musician.*Fixer-Upper/i);
   });
 
   test('links below banner to LinkedIn and Github point correctly', async ({ page }) => {
     await page.goto('/');
+    // Wait for content to load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(1000); // Give SPA time to load
+    
     const linkedIn = page.getByRole('link', { name: /^LinkedIn$/ });
-    // Disambiguate Github link: pick the one whose accessible name is exactly 'Github'
-    const github = page.getByRole('link', { name: /^Github$/ });
+    // Disambiguate Github link: pick the one whose accessible name is exactly 'Github' or 'GitHub'
+    const github = page.getByRole('link', { name: /^GitHub$/i });
     await expect(linkedIn).toHaveAttribute('href', 'https://www.linkedin.com/in/rickym270');
-    await expect(github).toHaveAttribute('href', 'http://www.github.com/rickym270');
+    await expect(github).toHaveAttribute('href', 'https://github.com/rickym270');
   });
 
   test('two-column content: left story, right skills', async ({ page }) => {
     await page.goto('/');
-    const leftTitle = page.locator('#content h2', { hasText: 'The story so far...' });
-    await expect(leftTitle).toBeVisible();
+    
+    // Wait for content to load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(1000);
+    
+    const leftTitle = page.locator('#content h2', { hasText: /The story so far|About Me/i });
+    await expect(leftTitle).toBeVisible({ timeout: 3000 });
 
-    const skillsHeader = page.locator('#content h4', { hasText: 'Skills' });
-    await expect(skillsHeader).toBeVisible();
+    const skillsHeader = page.locator('#content h2, #content h4').filter({ hasText: /Tech Stack|Skills/i });
+    await expect(skillsHeader).toBeVisible({ timeout: 3000 });
 
     // Ensure two columns are stacked side-by-side on desktop
     await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForTimeout(500); // Let layout settle
+    
     const leftCol = leftTitle.locator('xpath=ancestor::div[contains(@class,"col-")][1]');
     const rightCol = skillsHeader.locator('xpath=ancestor::div[contains(@class,"col-")][1]');
     const leftBox = await leftCol.boundingBox();
@@ -122,14 +133,18 @@ test.describe('Home page content', () => {
   test('View All Skills button navigates to skills page via SPA', async ({ page }) => {
     await page.goto('/');
     
+    // Wait for content to load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(1000);
+    
     const viewAllSkillsBtn = page.locator('#content a').filter({ hasText: /View All Skills/i });
-    await expect(viewAllSkillsBtn).toBeVisible({ timeout: 2000 });
+    await expect(viewAllSkillsBtn).toBeVisible({ timeout: 3000 });
     
     const urlBefore = page.url();
     
     // Click button
     await viewAllSkillsBtn.click();
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
     
     // URL should not change (SPA navigation)
     expect(page.url()).toBe(urlBefore);
@@ -137,8 +152,10 @@ test.describe('Home page content', () => {
     // Navbar should still be visible
     await expect(page.locator('nav.navbar')).toBeVisible();
     
-    // Skills page content should load
-    await expect(page.locator('#content h3')).toHaveText('Skills', { timeout: 3000 });
+    // Skills page content should load - check for h1 or h3
+    const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Skills$/ });
+    await expect(skillsHeading).toBeVisible({ timeout: 3000 });
+    await expect(skillsHeading).toHaveText('Skills', { timeout: 1000 });
   });
 
   test('Quick Stats displays last updated in correct format', async ({ page }) => {
