@@ -429,15 +429,24 @@ body[style*="background"] {
 .carousel-inner {
     height: 100%;
     position: relative;
+    overflow: visible !important; /* Allow caption to be fully visible */
 }
 
 .carousel-item {
     height: 40vh;
-    overflow: hidden;
+    overflow: visible !important; /* Allow caption to extend beyond image bounds */
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+}
+
+.carousel-item .carousel-caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
 }
 
 .carousel-item > img {
@@ -451,27 +460,50 @@ body[style*="background"] {
 }
 
 .carousel-caption {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     z-index: 10;
     background: rgba(0, 0, 0, 0.6);
     border-radius: var(--radius-md);
-    padding: var(--spacing-md) var(--spacing-lg);
-    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-xl) !important;
+    text-align: center !important;
     width: auto;
     max-width: 90%;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
 }
 
 .carousel-caption h3 {
-    color: #ffffff;
+    color: #ffffff !important;
     margin-bottom: var(--spacing-sm);
+    font-size: 2rem !important;
+    line-height: 1.3 !important;
+    margin-top: 0 !important;
 }
 
 .carousel-caption p {
-    color: #ffffff;
+    color: #ffffff !important;
     margin: 0;
+    font-size: 1.125rem !important;
+    line-height: 1.4 !important;
+    padding-top: 0 !important;
+}
+
+/* Ensure carousel caption text stays white in all themes */
+[data-theme="dark"] .carousel-caption h3,
+[data-theme="light"] .carousel-caption h3 {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .carousel-caption p,
+[data-theme="light"] .carousel-caption p {
+    color: #ffffff !important;
 }
 
 /* Dark mode carousel adjustments */
@@ -571,7 +603,7 @@ body[style*="background"] {
     opacity: 0.8;
 }
 
-/* Tutorials page - ensure text is visible */
+/* Tutorials page - ensure text is visible in both modes */
 .indent,
 p.indent {
     color: var(--color-text-secondary) !important;
@@ -593,6 +625,27 @@ p.indent a:hover {
     color: var(--color-text-primary) !important;
     opacity: 0.8;
     text-decoration: underline !important;
+}
+
+/* Light mode for tutorials - ensure text is dark and visible */
+[data-theme="light"] .indent,
+[data-theme="light"] p.indent {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] .indent a,
+[data-theme="light"] p.indent a {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] #content .container p,
+[data-theme="light"] #content .container h3,
+[data-theme="light"] #content .container h5 {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] #content .container .text-muted {
+    color: #6b7280 !important;
 }
 
 [data-theme="dark"] .indent,
@@ -620,6 +673,65 @@ h5 u {
 
 [data-theme="dark"] h5 u {
     color: var(--color-text-primary) !important;
+}
+
+[data-theme="light"] h5 u {
+    color: #1a1a1a !important;
+}
+
+/* Ensure all text elements have proper colors in dark mode */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div,
+[data-theme="dark"] b,
+[data-theme="dark"] strong,
+[data-theme="dark"] i,
+[data-theme="dark"] em {
+    color: var(--color-text-primary) !important;
+}
+
+/* Ensure text in UI elements is visible in dark mode */
+[data-theme="dark"] .container p,
+[data-theme="dark"] .container span,
+[data-theme="dark"] .container div,
+[data-theme="dark"] .row p,
+[data-theme="dark"] .row span,
+[data-theme="dark"] .col-12 p,
+[data-theme="dark"] .col-12 span,
+[data-theme="dark"] .col-9 p,
+[data-theme="dark"] .col-3 p {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] small {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Light mode text colors */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6 {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] p {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] .text-muted {
+    color: #6b7280 !important;
 }
 
 /* ============================================

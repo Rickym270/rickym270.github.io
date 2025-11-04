@@ -251,12 +251,17 @@ async function initProjects() {
     function tryInit() {
         // Check if projects container exists (means we're on the projects page)
         if (document.querySelector('#ProjInProgress')) {
+            // Reset initialization flag if page was reloaded
+            if (window.projectsInitialized && !document.querySelector('#ProjInProgress .project-card')) {
+                window.projectsInitialized = false;
+                projectsInitialized = false;
+            }
             // Ensure DOM is fully ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initProjects);
             } else {
                 // DOM is ready, but wait a tick to ensure all elements are inserted
-                setTimeout(initProjects, 0);
+                setTimeout(initProjects, 50);
             }
         }
     }
@@ -264,7 +269,11 @@ async function initProjects() {
     // Try immediately (in case page is loaded normally)
     tryInit();
     
-    // Also try after a short delay (in case loaded via jQuery .load())
+    // Also try after delays (in case loaded via jQuery .load())
     setTimeout(tryInit, 100);
+    setTimeout(tryInit, 300);
+    
+    // Make initProjects available globally for SPA navigation
+    window.initProjects = initProjects;
 })();
 
