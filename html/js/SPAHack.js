@@ -5,10 +5,14 @@ $(document).ready(function(){
     }
     window.spaInitialized = true;
     
-    var location_name = location.href.split("/")[3];
+    // Better URL parsing - handle both absolute and relative paths
+    var pathParts = window.location.pathname.split("/").filter(Boolean);
+    var location_name = pathParts[pathParts.length - 1] || "";
+    var isIndexPage = location_name === "index.html" || location_name === "" || pathParts.length === 0;
     
     // Default load - only if content is empty (initial page load)
-    if ((location_name == "index.html" || location_name == "") && jQuery("#content").html().trim() === "") {
+    var contentElement = jQuery("#content");
+    if (isIndexPage && (!contentElement.length || contentElement.html().trim() === "")) {
         jQuery("#content").load("html/pages/home.html", function(){
             // Reinitialize theme after content loads
             if (typeof window.reinitTheme === 'function') {
@@ -18,19 +22,76 @@ $(document).ready(function(){
             if (typeof jQuery.fn.carousel !== 'undefined') {
                 jQuery('#homeCarousel').carousel();
             }
+            // Set active nav item
+            updateActiveNavItem('html/pages/home.html');
+        });
+    }
+    
+    // Function to update active nav item based on current page
+    function updateActiveNavItem(url) {
+        // Remove active class from all nav items
+        jQuery("li.nav-item").removeClass("active");
+        
+        // Map URLs to nav items
+        var navMapping = {
+            'html/pages/home.html': 'a[data-url="html/pages/home.html"]',
+            'html/pages/projects.html': 'a[data-url="html/pages/projects.html"]',
+            'html/pages/skills.html': 'a[data-url="html/pages/skills.html"]',
+            'html/pages/docs.html': 'a[data-url="html/pages/docs.html"]',
+            'html/pages/tutorials.html': 'a[data-url="html/pages/tutorials.html"]',
+            'html/pages/Journal/index.html': 'a[data-url="html/pages/Journal/index.html"]'
+        };
+        
+        // Find matching nav item and add active class
+        for (var mappedUrl in navMapping) {
+            if (url.includes(mappedUrl.split('/').pop()) || url === mappedUrl) {
+                var selector = navMapping[mappedUrl];
+                var navLink = jQuery(selector);
+                if (navLink.length) {
+                    navLink.closest('li.nav-item').addClass('active');
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Default load - only if content is empty (initial page load)
+    var contentElement = jQuery("#content");
+    if (isIndexPage && (!contentElement.length || contentElement.html().trim() === "")) {
+        jQuery("#content").load("html/pages/home.html", function(){
+            // Reinitialize theme after content loads
+            if (typeof window.reinitTheme === 'function') {
+                window.reinitTheme();
+            }
+            // Reinitialize Bootstrap carousel to ensure its presence
+            if (typeof jQuery.fn.carousel !== 'undefined') {
+                jQuery('#homeCarousel').carousel();
+            }
+            // Set active nav item
+            updateActiveNavItem('html/pages/home.html');
         });
     }
     
     // Function to setup click handlers
     function setupClickHandlers() {
         // Use event delegation for dynamically loaded content
-        jQuery(document).off('click', 'a.nav-link, a.dropdown-item, a.inline-load');
-        jQuery(document).on('click', 'a.nav-link, a.dropdown-item, a.inline-load', function(e){
+        jQuery(document).off('click', 'a.nav-link, a.dropdown-item, a.inline-load, a.navbar-brand-name');
+        jQuery(document).on('click', 'a.nav-link, a.dropdown-item, a.inline-load, a.navbar-brand-name', function(e){
             e.preventDefault(); // Prevent default anchor behavior
             var sectionUrl = $(this).attr("data-url");
             // If no data-url but href points to index.html, load home page
             if (!sectionUrl && $(this).attr("href") === "index.html") {
                 sectionUrl = "html/pages/home.html";
+            }
+            // Handle href="#Skills" or similar hash links
+            if (!sectionUrl && $(this).attr("href") && $(this).attr("href").startsWith("#")) {
+                var href = $(this).attr("href").substring(1);
+                // Map hash to actual URL
+                if (href === "Skills") {
+                    sectionUrl = "html/pages/skills.html";
+                } else if (href === "Projects") {
+                    sectionUrl = "html/pages/projects.html";
+                }
             }
             if(sectionUrl){
                 // Reset projects initialization flag when loading projects page
@@ -103,8 +164,8 @@ $(document).ready(function(){
                         console.error("Failed to fetch " + sectionUrl);
                     });
                 } else {
-                    jQuery("#content").load(sectionUrl, function(){
-                        console.log("Loaded " + sectionUrl);
+                jQuery("#content").load(sectionUrl, function(){
+                    console.log("Loaded " + sectionUrl);
                         // Reinitialize theme after content loads
                         if (typeof window.reinitTheme === 'function') {
                             window.reinitTheme();
@@ -113,9 +174,20 @@ $(document).ready(function(){
                         if (typeof jQuery.fn.carousel !== 'undefined') {
                             jQuery('#homeCarousel').carousel();
                         }
+                        // Update active nav item
+                        updateActiveNavItem(sectionUrl);
                         // Re-setup click handlers for newly loaded content
                         setupClickHandlers();
-                    });
+                        // Load scripts if projects page
+                        if (sectionUrl.includes('projects.html')) {
+                            // Ensure projects.js runs after content is loaded
+                            setTimeout(function() {
+                                if (typeof initProjects === 'function' && !window.projectsInitialized) {
+                                    initProjects();
+                                }
+                            }, 100);
+                        }
+                });
                 }
             }
         });
