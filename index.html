@@ -1,7 +1,20 @@
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Ricky Martinez - Software Engineer, Musician, Fixer-Upper">
         <link rel="shortcut icon" href="#">
+        
+        <!-- Google Fonts - Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Bootstrap 4 (kept for grid system) -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        <!-- Modern CSS -->
+        <link rel="stylesheet" href="html/css/modern.css">
         <link rel="stylesheet" href="html/css/style.css">
         
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -16,42 +29,46 @@
             });
         </script>
         <script type="text/javascript" src="html/js/SPAHack.js"></script>
+        <script type="text/javascript" src="html/js/theme.js"></script>
 
     </head>
-    <body style="padding-top:0px !important;padding-bottom: 0px !important;" class="d-flex flex-column min-vh-100">
-        <nav class="navbar fixed-top navbar-expand navbar-light bg-light">
-            <div class="center">
-                <ul class="navbar-nav mr-auto" id="navbar-links">
-                    <div class="col-4">
+    <body class="d-flex flex-column min-vh-100">
+        <nav class="navbar fixed-top navbar-expand navbar-light">
+            <div class="container">
+                <ul class="navbar-nav mr-auto d-flex flex-row align-items-center justify-content-between w-100" id="navbar-links" style="flex-wrap: wrap;">
+                    <div class="d-flex align-items-center">
                         <li class="nav-item active">
-                            <a class="nav-link" href="index.html">Home</a>
+                            <a class="nav-link" href="#" data-url="html/pages/home.html">Home</a>
                         </li>
-
                         <li class="nav-item">
                             <a class="nav-link" href="#Projects" data-url="html/pages/projects.html">Projects</a>
                         </li>
-                    </div>
-                    <div class="col-3">
-                        <li class="center">
-                            <a class="navbar-brand-name" href="index.html"><p>Ricky</p><p>Martinez</p></a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#Skills" data-url="html/pages/skills.html">Skills</a>
                         </li>
                     </div>
-                    <div class="col-5">
+                    <div class="d-flex align-items-center">
+                        <li class="nav-item">
+                            <a class="navbar-brand-name" href="index.html"><p style="margin: 0;">Ricky Martinez</p></a>
+                        </li>
+                    </div>
+                    <div class="d-flex align-items-center">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               Docs
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="dropdown-item" href="#" data-url="html/pages/docs.html">Notes</a>
                                 <a class="dropdown-item" href="#" data-url="html/pages/Journal/index.html">Journal</a>
-                                <!--
-                                <a class="dropdown-item" href="#" data-url="html/pages/docs.html">Notes</a>
-                                <a class="dropdown-item" href="#" data-url="html/pages/docs.html">Notes</a>
-                                -->
                             </div>
-                          </li>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html">Tutorials</a>
+                        </li>
+                        <li class="nav-item ml-2">
+                            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                                <span id="theme-icon">🌙</span>
+                            </button>
                         </li>
                     </div>
                 </ul>

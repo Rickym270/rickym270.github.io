@@ -1,7 +1,8 @@
-$("#docsNavigatrior > a").on('click',function(e){
+// Use event delegation for dynamically loaded content
+$(document).on('click', '#docsNavigatrior > a', function(e){
     e.preventDefault();
     var attr = $(this).attr('href');
-    if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
+    if(attr && attr !== '#'){
         $('#FAQMain').load(attr);
     }
 });
