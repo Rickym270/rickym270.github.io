@@ -24,6 +24,7 @@ body{
 }
 
 #homeCarousel{
+    padding-top: 7vh;
     height: 40vh;
 }
 
@@ -33,7 +34,6 @@ body{
     margin: 0 auto;
 }
 
-//NOTE: Add a white background to the body
 #content{
     background-color: white;
     font-size: 12% !important;

@@ -1,0 +1,1411 @@
+/**
+ * Modern Portfolio Design System
+ * Inspired by Linear.app, Vercel.com, read.cv
+ * Flat, minimalist aesthetic with subtle motion
+ */
+
+/* ============================================
+   CSS Variables & Color Palette
+   ============================================ */
+:root {
+    /* Light Mode Colors */
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #fafafa;
+    --color-bg-tertiary: #f5f5f5;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #6b7280;
+    --color-text-tertiary: #9ca3af;
+    --color-accent: #3b82f6;
+    --color-accent-hover: #2563eb;
+    --color-accent-light: #dbeafe;
+    --color-border: #e5e7eb;
+    --color-border-light: #f3f4f6;
+    
+    /* Typography */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Layout */
+    --max-width: 1200px;
+    --nav-height: 72px;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg-primary: #0a0a0a;
+        --color-bg-secondary: #111111;
+        --color-bg-tertiary: #1a1a1a;
+        --color-text-primary: #fafafa;
+        --color-text-secondary: #a1a1aa;
+        --color-text-tertiary: #71717a;
+        --color-accent: #60a5fa;
+        --color-accent-hover: #3b82f6;
+        --color-accent-light: #1e3a5f;
+        --color-border: #27272a;
+        --color-border-light: #18181b;
+    }
+}
+
+[data-theme="dark"] {
+    --color-bg-primary: #0a0a0a;
+    --color-bg-secondary: #111111;
+    --color-bg-tertiary: #1a1a1a;
+    --color-text-primary: #fafafa;
+    --color-text-secondary: #a1a1aa;
+    --color-text-tertiary: #71717a;
+    --color-accent: #60a5fa;
+    --color-accent-hover: #3b82f6;
+    --color-accent-light: #1e3a5f;
+    --color-border: #27272a;
+    --color-border-light: #18181b;
+}
+
+[data-theme="light"] {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #fafafa;
+    --color-bg-tertiary: #f5f5f5;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #6b7280;
+    --color-text-tertiary: #9ca3af;
+    --color-accent: #3b82f6;
+    --color-accent-hover: #2563eb;
+    --color-accent-light: #dbeafe;
+    --color-border: #e5e7eb;
+    --color-border-light: #f3f4f6;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary);
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override style.css html background */
+html[style*="background-color"] {
+    background-color: var(--color-bg-primary) !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    padding-top: var(--nav-height) !important;
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 var(--spacing-md) 0;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+p {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--color-text-secondary);
+}
+
+a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-text-primary);
+    opacity: 0.8;
+}
+
+/* Links in light mode should be black */
+[data-theme="light"] a,
+[data-theme="light"] a:visited {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] a:hover {
+    color: #1a1a1a !important;
+    opacity: 0.7;
+}
+
+/* Ensure all links use proper colors by default */
+a:not(.btn):not(.nav-link):not(.dropdown-item) {
+    color: var(--color-text-primary);
+}
+
+[data-theme="light"] a:not(.btn):not(.nav-link):not(.dropdown-item) {
+    color: #1a1a1a !important;
+}
+
+[data-theme="dark"] a:not(.btn):not(.nav-link):not(.dropdown-item) {
+    color: #ffffff !important;
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+.navbar {
+    height: var(--nav-height);
+    background-color: var(--color-bg-primary) !important;
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background-color var(--transition-base), border-color var(--transition-base);
+    padding: 0 var(--spacing-lg);
+}
+
+.navbar.bg-light {
+    background-color: var(--color-bg-primary) !important;
+}
+
+.navbar-brand-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary) !important;
+    transition: color var(--transition-fast);
+}
+
+.navbar-brand-name:hover {
+    color: var(--color-accent) !important;
+}
+
+.navbar-brand-name p {
+    margin: 0;
+    line-height: 1.2;
+}
+
+.nav-link {
+    color: var(--color-text-secondary) !important;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    transition: color var(--transition-fast);
+    position: relative;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-link.dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.nav-link.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid currentColor;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    flex-shrink: 0;
+}
+
+.nav-link:hover {
+    color: var(--color-text-primary) !important;
+}
+
+.nav-item.active .nav-link {
+    color: var(--color-text-primary) !important;
+}
+
+.nav-item.active .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    height: 2px;
+    background-color: var(--color-accent);
+    border-radius: 2px;
+}
+
+.dropdown-menu {
+    background-color: var(--color-bg-primary) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+}
+
+/* Fix dropdown hover - allow moving mouse to menu */
+.dropdown:hover .dropdown-menu,
+.dropdown .dropdown-menu:hover {
+    display: block !important;
+}
+
+/* Keep dropdown open when mouse is between trigger and menu */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    margin-top: 0;
+    top: 100%;
+    left: 0;
+    /* Add a small invisible bridge to prevent gap */
+}
+
+/* Create invisible bridge between dropdown trigger and menu */
+.dropdown::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: transparent;
+    z-index: 1001;
+}
+
+.dropdown:hover::before {
+    display: block;
+}
+
+.dropdown-item {
+    color: var(--color-text-secondary) !important;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+    text-decoration: none !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--color-bg-secondary) !important;
+    color: var(--color-text-primary) !important;
+    text-decoration: none !important;
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background-color: var(--color-bg-primary) !important;
+    border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: var(--color-text-primary) !important;
+    background-color: transparent !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: var(--color-bg-secondary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Dark Mode Toggle */
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 1.125rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+}
+
+/* ============================================
+   Content Area
+   ============================================ */
+#content {
+    background-color: var(--color-bg-primary) !important;
+    min-height: calc(100vh - var(--nav-height));
+    transition: background-color var(--transition-base);
+    margin-top: 0; /* Ensure no margin-top on content itself */
+}
+
+/* Override style.css white background for #content */
+#content[style*="background-color: white"] {
+    background-color: var(--color-bg-primary) !important;
+}
+
+/* Ensure body background adapts to theme */
+body {
+    background-color: var(--color-bg-primary) !important;
+}
+
+/* Override any inline styles on body */
+body[style*="background"] {
+    background-color: var(--color-bg-primary) !important;
+}
+
+/* Add margin-top to first child elements in #content to account for navbar */
+#content > *:first-child {
+    margin-top: 0;
+}
+
+/* Specifically handle carousel in content */
+#content #homeBanner {
+    margin-top: 0;
+}
+
+/* Override Bootstrap defaults for modern design */
+#content .container {
+    padding-top: var(--spacing-2xl);
+}
+
+/* ============================================
+   Carousel Dark Mode Support
+   ============================================ */
+#homeBanner {
+    width: 100%;
+    height: 40vh;
+    background-color: #000000;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#homeCarousel {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    padding-top: 0 !important; /* Override style.css padding */
+}
+
+.carousel-inner {
+    height: 100%;
+    position: relative;
+}
+
+.carousel-item {
+    height: 40vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.carousel-item > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.5;
+    display: block;
+    margin: 0 auto;
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: center;
+    width: auto;
+    max-width: 90%;
+}
+
+.carousel-caption h3 {
+    color: #ffffff;
+    margin-bottom: var(--spacing-sm);
+}
+
+.carousel-caption p {
+    color: #ffffff;
+    margin: 0;
+}
+
+/* Dark mode carousel adjustments */
+@media (prefers-color-scheme: dark) {
+    #homeBanner {
+        background-color: #000000;
+        height: 40vh;
+    }
+    
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.7);
+    }
+}
+
+[data-theme="dark"] #homeBanner {
+    background-color: #000000;
+    height: 40vh;
+}
+
+[data-theme="dark"] .carousel-caption {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* ============================================
+   Bootstrap Component Dark Mode Support
+   ============================================ */
+[data-theme="dark"] .alert {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .alert-info {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .alert-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border-color: rgba(40, 167, 69, 0.5);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    color: var(--color-text-primary);
+}
+
+/* Bootstrap buttons in dark mode */
+[data-theme="dark"] .btn-secondary {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+/* Ensure text colors work in dark mode */
+[data-theme="dark"] .text-muted {
+    color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] small.text-muted {
+    color: var(--color-text-tertiary) !important;
+}
+
+/* Tutorials page dark mode support */
+[data-theme="dark"] .indent,
+[data-theme="dark"] p.indent {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] h3,
+[data-theme="dark"] h5,
+[data-theme="dark"] p {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] a {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] a:hover {
+    color: #ffffff !important;
+    opacity: 0.8;
+}
+
+/* Tutorials page - ensure text is visible */
+.indent,
+p.indent {
+    color: var(--color-text-secondary) !important;
+    font-size: 1rem !important;
+    line-height: 1.6;
+}
+
+.indent a,
+p.indent a {
+    color: var(--color-text-primary) !important;
+    text-decoration: none !important;
+    font-size: 1rem !important;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.indent a:hover,
+p.indent a:hover {
+    color: var(--color-text-primary) !important;
+    opacity: 0.8;
+    text-decoration: underline !important;
+}
+
+[data-theme="dark"] .indent,
+[data-theme="dark"] p.indent {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .indent a,
+[data-theme="dark"] p.indent a {
+    color: #ffffff !important;
+    font-size: 1rem !important;
+}
+
+[data-theme="dark"] .indent a:hover,
+[data-theme="dark"] p.indent a:hover {
+    color: #ffffff !important;
+    opacity: 0.8;
+}
+
+/* Ensure h5 with underline is visible */
+h5 u {
+    color: var(--color-text-primary);
+    text-decoration: underline;
+}
+
+[data-theme="dark"] h5 u {
+    color: var(--color-text-primary) !important;
+}
+
+/* ============================================
+   Docs Page Dark Mode Support
+   ============================================ */
+[data-theme="dark"] #FAQLinks,
+[data-theme="dark"] .col-xs-4.col-sm-4.col-md-3.col-lg-2.right-divider {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .right-divider {
+    border-right-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .list-group-item {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .list-group-item:hover,
+[data-theme="dark"] .list-group-item.active {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .list-group-item-action {
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .list-group-item-action:hover {
+    color: var(--color-text-primary);
+}
+
+/* Fix text color in docs content */
+[data-theme="dark"] #FAQMain,
+[data-theme="dark"] #FAQMain * {
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] #FAQMain h1,
+[data-theme="dark"] #FAQMain h2,
+[data-theme="dark"] #FAQMain h3,
+[data-theme="dark"] #FAQMain h4,
+[data-theme="dark"] #FAQMain h5,
+[data-theme="dark"] #FAQMain h6 {
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] #FAQMain ol li,
+[data-theme="dark"] #FAQMain ul li,
+[data-theme="dark"] #FAQMain p {
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] #FAQMain a {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] #FAQMain a:hover {
+    color: #ffffff !important;
+    opacity: 0.8;
+}
+
+[data-theme="light"] #FAQMain a {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] #FAQMain a:hover {
+    color: #1a1a1a !important;
+    opacity: 0.7;
+}
+
+/* TOC list styling for FAQ pages */
+.toc_list {
+    list-style: decimal;
+    padding-left: 2rem;
+}
+
+.toc_list li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+}
+
+.toc_list a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-size: 1.125rem; /* Increased from 1rem for better visibility */
+    display: inline-block;
+    padding: var(--spacing-xs) 0;
+    font-weight: 500;
+}
+
+.toc_list a:hover {
+    color: var(--color-text-primary);
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.toc_title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .toc_list li {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .toc_list a {
+    color: #ffffff !important;
+    font-size: 1.125rem !important;
+}
+
+[data-theme="dark"] .toc_title {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .toc_list a:hover {
+    color: #ffffff !important;
+    opacity: 0.8;
+}
+
+/* Journal page styling - ensure text is visible */
+#content .container #main,
+#content #main,
+body #main {
+    font-size: 1rem !important;
+    color: var(--color-text-primary) !important;
+}
+
+#content .container #main p,
+#content #main p,
+body #main p {
+    color: var(--color-text-primary) !important;
+    font-size: 1rem !important;
+}
+
+#content .container #main .text-muted,
+#content #main .text-muted,
+body #main .text-muted {
+    color: var(--color-text-secondary) !important;
+    font-size: 1rem !important;
+}
+
+#content .container #main h2,
+#content #main h2,
+body #main h2 {
+    color: var(--color-text-primary) !important;
+}
+
+#content .container #main a,
+#content #main a,
+body #main a {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container #main,
+[data-theme="dark"] #content #main,
+[data-theme="dark"] body #main {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container #main p,
+[data-theme="dark"] #content #main p,
+[data-theme="dark"] body #main p {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container #main .text-muted,
+[data-theme="dark"] #content #main .text-muted,
+[data-theme="dark"] body #main .text-muted {
+    color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] #content .container #main a,
+[data-theme="dark"] #content #main a,
+[data-theme="dark"] body #main a {
+    color: #ffffff !important;
+}
+
+/* View All Skills button styling - transparent fill, blue outline */
+.btn-outline-primary {
+    background-color: transparent !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-accent) !important;
+    transition: all var(--transition-fast);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-outline-primary {
+    background-color: transparent !important;
+    border-color: var(--color-accent) !important;
+    color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .toc_list a {
+    color: #1a1a1a !important;
+}
+
+[data-theme="light"] .toc_list a:hover {
+    color: #1a1a1a !important;
+    opacity: 0.7;
+}
+
+/* Position FAQMain content higher - align with Notes title */
+#FAQMain {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    font-size: 1rem !important; /* Override style.css 12% font-size */
+}
+
+/* Fix text size in docsNavigatrior */
+#docsNavigatrior {
+    font-size: 1rem !important;
+}
+
+#docsNavigatrior a {
+    font-size: 1rem !important;
+}
+
+/* Fix container font-size - override style.css 12% font-size */
+#FAQMain .container {
+    font-size: 1rem !important;
+    line-height: 1.6;
+}
+
+/* Fix unwrapped text nodes - text directly in container without wrapping element */
+/* Target all direct children and text nodes */
+#FAQMain .container {
+    font-size: 1rem !important;
+}
+
+/* Ensure rows and columns have proper font size */
+#FAQMain .row,
+#FAQMain .col-12 {
+    font-size: 1rem !important;
+}
+
+/* Fix any text content inside col-12 */
+#FAQMain .col-12 {
+    font-size: 1rem !important;
+}
+
+/* Code block styling - ensure code snippets are displayed properly with single spacing */
+#FAQMain pre {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    padding-left: var(--spacing-xl) !important; /* Indentation to differentiate from headers */
+    margin: var(--spacing-md) 0;
+    overflow-x: auto;
+    text-align: left !important;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1 !important; /* Single spacing - critical for no double spacing */
+    white-space: pre; /* Preserve whitespace and line breaks */
+    direction: ltr;
+    /* Aggressively remove any spacing */
+    font-size-adjust: none;
+    letter-spacing: normal;
+}
+
+/* Inline code */
+#FAQMain code:not(pre code) {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    background-color: var(--color-bg-secondary);
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    display: inline;
+    text-align: left !important;
+}
+
+/* Code inside pre blocks - single spacing display (no double spacing) */
+#FAQMain pre code {
+    background-color: transparent;
+    padding: 0 !important;
+    border-radius: 0;
+    display: block !important;
+    text-align: left !important;
+    white-space: pre-wrap; /* Preserve whitespace but wrap if needed */
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1 !important; /* Exact single spacing - height equals font-size */
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: auto;
+    /* Remove any browser defaults */
+    border: 0;
+    outline: 0;
+}
+
+/* Critical: Ensure consecutive code elements have absolutely zero spacing */
+#FAQMain pre code + code {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    /* Negative margin to eliminate any visual spacing */
+    margin-top: -0.1em !important;
+}
+
+/* Empty code elements should not take any space */
+#FAQMain pre code:empty {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden;
+}
+
+/* Override any browser defaults on pre children */
+#FAQMain pre > * {
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Dark mode code blocks */
+[data-theme="dark"] #FAQMain pre {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] #FAQMain code {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] #FAQMain pre code {
+    background-color: transparent;
+    color: var(--color-text-primary);
+}
+
+/* Hide Back button on index pages (when FAQMain contains toc_list or toc_title) */
+#FAQMain:has(.toc_list) #docsNavigatrior,
+#FAQMain:has(.toc_title) #docsNavigatrior {
+    display: none !important;
+}
+
+/* Alternative selector for browsers that don't support :has() */
+#FAQMain .toc_list ~ #docsNavigatrior,
+#FAQMain .toc_list + #docsNavigatrior,
+#FAQMain .toc_title ~ #docsNavigatrior,
+#FAQMain .toc_title + #docsNavigatrior {
+    display: none !important;
+}
+
+/* Show Back button only on article pages (when container has docsNavigatrior but no toc_list/toc_title) */
+#FAQMain .container #docsNavigatrior {
+    display: block;
+}
+
+/* Hide on the initial "Click any FAQ" message */
+#FAQMain:has(h4:contains("Click any FAQ")) #docsNavigatrior {
+    display: none !important;
+}
+
+/* Remove push3 spacing before FAQMain for better alignment */
+.col-xs-8.col-sm-8.col-md-9.col-lg-10 > .push3 {
+    display: none;
+}
+
+/* Ensure back link appears higher */
+#FAQMain > div:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* Align FAQMain with Notes title */
+.col-xs-8.col-sm-8.col-md-9.col-lg-10 {
+    padding-top: 0;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-xl) var(--spacing-md);
+    }
+}
+
+/* ============================================
+   Sections
+   ============================================ */
+.section {
+    margin-bottom: var(--spacing-3xl);
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-primary);
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+.card {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-base);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    object-fit: cover;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+}
+
+.card-text {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-md);
+    flex-grow: 1;
+}
+
+.card-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.card-link:hover {
+    color: var(--color-accent-hover);
+}
+
+/* ============================================
+   Skills & Badges
+   ============================================ */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--spacing-lg); /* Increased from md to lg for more spacing */
+    margin-top: var(--spacing-lg);
+    row-gap: var(--spacing-md); /* Ensure vertical spacing between rows */
+}
+
+.skill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+}
+
+.skill-badge:hover {
+    background-color: var(--color-accent-light);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-1px);
+}
+
+.skill-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.skill-category {
+    margin-bottom: var(--spacing-xl);
+}
+
+.skill-category-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+}
+
+/* ============================================
+   Project Cards
+   ============================================ */
+.project-card {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-base);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+}
+
+.project-image {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: var(--radius-md);
+    margin: 0 auto var(--spacing-md);
+    display: block;
+    background-color: var(--color-bg-secondary);
+    padding: var(--spacing-xs);
+}
+
+/* In dark mode, add subtle background and brightness adjustment for dark images */
+@media (prefers-color-scheme: dark) {
+    .project-image {
+        background-color: var(--color-bg-tertiary);
+        filter: brightness(1.1) contrast(1.05);
+    }
+}
+
+[data-theme="dark"] .project-image {
+    background-color: var(--color-bg-tertiary);
+    filter: brightness(1.1) contrast(1.05);
+}
+
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-md);
+}
+
+.tech-tag {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.hero {
+    padding: var(--spacing-3xl) 0;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ============================================
+   About Section
+   ============================================ */
+.about-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-text {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary) !important;
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--color-text-secondary);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: var(--spacing-xl) 0;
+    border: none;
+}
+
+/* Spacing Utilities */
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.mt-5 { margin-top: var(--spacing-xl); }
+
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-5 { margin-bottom: var(--spacing-xl); }
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+    .skills-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .navbar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .navbar-nav > div {
+        width: 100%;
+        justify-content: center;
+        margin: 0.25rem 0;
+    }
+    
+    .navbar-brand-name {
+        font-size: 1rem;
+    }
+    
+    .nav-link {
+        font-size: 0.875rem;
+        padding: var(--spacing-xs) var(--spacing-sm) !important;
+    }
+    
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.5rem; }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .container {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--color-border);
+    border-radius: 50%;
+    border-top-color: var(--color-accent);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+

@@ -42,32 +42,28 @@ function renderProjectCard(project, containerId) {
     const repoUrl = project.repo || '#';
     const tech = project.tech || [];
     const techTags = tech.length > 0 
-        ? `<small class="text-muted">${tech.join(', ')}</small>` 
+        ? tech.map(t => `<span class="tech-tag">${t}</span>`).join('') 
         : '';
     
     const cardHtml = `
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
-            <div class="card" style="width: 100%; margin-bottom: 1vh; padding-top: 1vh;">
-                <img src="${imagePath}" class="card-img-top center" alt="${project.name}" 
-                     style="width: 75%;" 
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+            <div class="project-card fade-in">
+                <img src="${imagePath}" class="project-image" alt="${project.name}" 
                      onerror="this.onerror=null; this.style.display='none';"
                      loading="lazy">
-                <div class="card-body">
-                    <h5 class="card-title nobr">${project.name}</h5>
-                    <p class="card-text">${summary}</p>
-                    ${techTags ? `<div style="margin-bottom: 0.5rem;">${techTags}</div>` : ''}
-                    <a href="${repoUrl}" class="card-link" target="_blank" rel="noopener noreferrer">
-                        See on GitHub
-                    </a>
-                </div>
+                <h5 class="card-title">${project.name}</h5>
+                <p class="card-text">${summary}</p>
+                ${techTags ? `<div class="project-tech">${techTags}</div>` : ''}
+                <a href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer">
+                    View on GitHub →
+                </a>
             </div>
         </div>
-        <div class="push4"></div>
     `;
     
     const container = document.getElementById(containerId);
     if (container) {
-        const row = container.querySelector('.row') || container.querySelector('div');
+        const row = container.querySelector('.row');
         if (row) {
             row.insertAdjacentHTML('beforeend', cardHtml);
         } else {
@@ -84,24 +80,26 @@ function renderProjectCard(project, containerId) {
  */
 function groupProjects(projects) {
     const grouped = {
-        featured: [],
         inProgress: [],
         complete: [],
         ideas: []
     };
     
     projects.forEach(project => {
-        // Featured projects go to in-progress section (they'll be shown first)
-        if (project.featured === true) {
-            grouped.featured.push(project);
-        } else if (project.status === 'in-progress' || project.status === 'in_progress' || project.status === 'inProgress') {
+        // Priority 1: Manual status declaration in projects.json takes precedence
+        if (project.status === 'in-progress' || project.status === 'in_progress' || project.status === 'inProgress') {
             grouped.inProgress.push(project);
-        } else if (project.status === 'complete' || project.status === 'completed') {
-            grouped.complete.push(project);
-        } else if (project.status === 'idea' || project.status === 'ideas') {
+        } 
+        // Priority 2: Automatic detection based on GitHub activity (commits within last month)
+        else if (project.hasRecentActivity === true) {
+            grouped.inProgress.push(project);
+        } 
+        // Ideas section
+        else if (project.status === 'idea' || project.status === 'ideas') {
             grouped.ideas.push(project);
-        } else {
-            // Default: assume complete if no status specified
+        } 
+        // Default: put all other featured projects in "Complete" section
+        else {
             grouped.complete.push(project);
         }
     });
@@ -114,17 +112,20 @@ function groupProjects(projects) {
  * @param {Array} projects - Array of project objects
  */
 function renderProjects(projects) {
-    const grouped = groupProjects(projects);
+    // Deduplicate projects first
+    const uniqueProjects = deduplicateProjects(projects);
     
-    // Clear existing static content (optional - comment out if you want to keep fallback)
-    // document.getElementById('ProjInProgress').querySelector('.row').innerHTML = '';
-    // document.getElementById('ProjComplete').querySelector('.row').innerHTML = '';
-    // document.getElementById('ProjComingSoon').querySelector('.row').innerHTML = '';
+    // Clear existing content in rows before rendering to prevent duplicates
+    const inProgressRow = document.querySelector('#ProjInProgress .row');
+    const completeRow = document.querySelector('#ProjComplete .row');
+    const ideasRow = document.querySelector('#ProjComingSoon .row');
     
-    // Render featured projects first (in "In Progress" section)
-    grouped.featured.forEach(project => {
-        renderProjectCard(project, 'ProjInProgress');
-    });
+    // Clear "Please Wait" messages
+    if (inProgressRow) inProgressRow.innerHTML = '';
+    if (completeRow) completeRow.innerHTML = '';
+    if (ideasRow) ideasRow.innerHTML = '';
+    
+    const grouped = groupProjects(uniqueProjects);
     
     // Render in-progress projects
     grouped.inProgress.forEach(project => {
@@ -142,56 +143,78 @@ function renderProjects(projects) {
     });
     
     // Hide sections that have no projects
-    if (grouped.inProgress.length === 0 && grouped.featured.length === 0) {
+    if (grouped.inProgress.length === 0) {
         const section = document.getElementById('ProjInProgress');
         if (section) {
-            const header = section.querySelector('p.text-muted');
-            const divider = section.querySelector('.divider');
-            if (header) header.style.display = 'none';
-            if (divider) divider.style.display = 'none';
+            section.style.display = 'none';
         }
     }
     
     if (grouped.complete.length === 0) {
         const section = document.getElementById('ProjComplete');
-        if (section) section.style.display = 'none';
+        if (section) {
+            section.style.display = 'none';
+        }
     }
     
     if (grouped.ideas.length === 0) {
         const section = document.getElementById('ProjComingSoon');
-        if (section) section.style.display = 'none';
+        if (section) {
+            section.style.display = 'none';
+        }
     }
+}
+
+/**
+ * Deduplicate projects by slug or name
+ * @param {Array} projects - Array of project objects
+ * @returns {Array} - Deduplicated array
+ */
+function deduplicateProjects(projects) {
+    const seen = new Set();
+    return projects.filter(project => {
+        const key = project.slug || project.name || JSON.stringify(project);
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
 }
 
 // Flag to prevent double initialization
 let projectsInitialized = false;
+// Make it accessible globally for SPA navigation
+window.projectsInitialized = false;
 
 /**
  * Initialize projects page - load and render projects from API
  */
 async function initProjects() {
     // Prevent double initialization
-    if (projectsInitialized) {
+    if (projectsInitialized || window.projectsInitialized) {
         return;
     }
     projectsInitialized = true;
+    window.projectsInitialized = true;
     try {
-        // Show loading state
-        const loadingMsg = document.createElement('div');
-        loadingMsg.className = 'text-center';
-        loadingMsg.innerHTML = '<p class="text-muted">Loading projects...</p>';
-        const container = document.querySelector('.container');
-        if (container) {
-            container.insertBefore(loadingMsg, container.querySelector('#ProjInProgress'));
+        // Show loading state in each section
+        const inProgressRow = document.querySelector('#ProjInProgress .row');
+        const completeRow = document.querySelector('#ProjComplete .row');
+        const ideasRow = document.querySelector('#ProjComingSoon .row');
+        
+        if (inProgressRow) {
+            inProgressRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
+        }
+        if (completeRow) {
+            completeRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
+        }
+        if (ideasRow) {
+            ideasRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
         }
         
         // Fetch projects from API
         const projects = await fetchProjectsFromAPI();
-        
-        // Remove loading message
-        if (loadingMsg.parentNode) {
-            loadingMsg.remove();
-        }
         
         // Filter projects: only show featured projects
         const featuredProjects = projects.filter(project => {
