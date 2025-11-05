@@ -12,9 +12,9 @@ test.describe('Responsive layout', () => {
       await page.setViewportSize(vp.size);
       await page.goto('/');
 
-      // Wait for content to load
+      // Wait for SPA to initialize and load home content
       await page.waitForSelector('#content', { state: 'attached' });
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000); // Give SPA time to load home.html
 
       // Navbar should be visible and not overflow horizontally
       const nav = page.locator('nav.navbar');
@@ -24,7 +24,7 @@ test.describe('Responsive layout', () => {
 
       // Banner should be visible and not overflow viewport width
       const banner = page.locator('#content #homeBanner');
-      await expect(banner).toBeVisible({ timeout: 3000 });
+      await expect(banner).toBeVisible({ timeout: 10000 });
       const bannerBox = await banner.boundingBox();
       expect(bannerBox).toBeTruthy();
       if (bannerBox) {

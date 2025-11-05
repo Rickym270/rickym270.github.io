@@ -17,8 +17,15 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
     // Click toggle
     await themeToggle.click();
     
-    // Wait for theme to change
-    await page.waitForTimeout(300);
+    // Wait for theme to change - use waitForFunction for more reliable check
+    await page.waitForFunction(
+      (expectedTheme) => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        return currentTheme && currentTheme !== expectedTheme;
+      },
+      initialTheme || 'light',
+      { timeout: 5000 }
+    );
     
     // Verify theme attribute changed
     const newTheme = await page.evaluate(() => {

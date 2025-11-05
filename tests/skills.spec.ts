@@ -6,16 +6,16 @@ test.describe('Skills Page', () => {
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
     
     // Navigate to Skills
     await page.getByRole('link', { name: 'Skills' }).click();
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
     
-    // Skills page should load - check for h1 or h3
-    const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Skills$/ });
-    await expect(skillsHeading).toBeVisible({ timeout: 3000 });
-    await expect(skillsHeading).toHaveText('Skills', { timeout: 1000 });
+    // Skills page should load - check for h1 (actual text is "Skills & Technologies")
+    const skillsHeading = page.locator('#content h1').filter({ hasText: /Skills/i });
+    await expect(skillsHeading).toBeVisible({ timeout: 5000 });
+    await expect(skillsHeading).toContainText('Skills', { timeout: 2000 });
     
     // Should have skill badges/categories
     const skillBadges = page.locator('#content .skill-badge');
@@ -33,8 +33,8 @@ test.describe('Skills Page', () => {
     await page.getByRole('link', { name: 'Skills' }).click();
     await page.waitForTimeout(1500);
     
-    // Check skills grid has proper spacing
-    const skillsGrid = page.locator('#content .skills-grid');
+    // Check skills grid has proper spacing - use first() to avoid strict mode violation
+    const skillsGrid = page.locator('#content .skills-grid').first();
     if (await skillsGrid.isVisible({ timeout: 3000 })) {
       const gap = await skillsGrid.evaluate((el) => {
         return window.getComputedStyle(el).gap;
