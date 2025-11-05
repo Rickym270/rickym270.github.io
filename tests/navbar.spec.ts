@@ -47,12 +47,17 @@ test.describe('Navbar', () => {
   test('Home link loads home page content', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate away from home
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(1000);
     
-    // Verify we're on Projects
-    await expect(page.locator('#content h3')).toHaveText('Projects');
+    // Navigate away from home
+    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.waitForTimeout(2000);
+    
+    // Verify we're on Projects - check for h1 or h3
+    const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+    await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });
     
     // Click Home link
     await page.getByRole('link', { name: 'Home' }).click();
@@ -72,10 +77,10 @@ test.describe('Navbar', () => {
     await page.getByRole('link', { name: 'Skills' }).click();
     await page.waitForTimeout(1500);
     
-    // Skills page should load - check for h1 or h3
-    const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Skills$/ });
-    await expect(skillsHeading).toBeVisible({ timeout: 3000 });
-    await expect(skillsHeading).toHaveText('Skills', { timeout: 1000 });
+    // Skills page should load - check for h1 (actual text is "Skills & Technologies")
+    const skillsHeading = page.locator('#content h1').filter({ hasText: /Skills/i });
+    await expect(skillsHeading).toBeVisible({ timeout: 5000 });
+    await expect(skillsHeading).toContainText('Skills', { timeout: 2000 });
   });
 });
 

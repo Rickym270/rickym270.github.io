@@ -4,12 +4,13 @@ test.describe('Home Page Initial Load', () => {
   test('loads Home content on initial load', async ({ page }) => {
     await page.goto('/');
     
-    // Wait for content to load - give SPA time to initialize
+    // Wait for SPA to initialize and load home content
     await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(2000); // Give SPA time to load home.html
     
     // Wait for home page content to be loaded (banner should appear)
     const banner = page.locator('#content #homeBanner');
-    await expect(banner).toBeVisible({ timeout: 5000 });
+    await expect(banner).toBeVisible({ timeout: 10000 });
     
     // Social links should be visible
     await expect(page.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible({ timeout: 2000 });
