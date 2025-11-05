@@ -187,6 +187,12 @@ let projectsInitialized = false;
 // Make it accessible globally for SPA navigation
 window.projectsInitialized = false;
 
+// Function to reset initialization flags (called from SPA navigation)
+window.resetProjectsInit = function() {
+    projectsInitialized = false;
+    window.projectsInitialized = false;
+};
+
 /**
  * Initialize projects page - load and render projects from API
  */
@@ -251,17 +257,27 @@ async function initProjects() {
     function tryInit() {
         // Check if projects container exists (means we're on the projects page)
         if (document.querySelector('#ProjInProgress')) {
-            // Reset initialization flag if page was reloaded
-            if (window.projectsInitialized && !document.querySelector('#ProjInProgress .project-card')) {
+            // Reset initialization flag if no projects are currently displayed
+            // This handles the case where we navigate back to projects page
+            const hasProjects = document.querySelector('#ProjInProgress .project-card') || 
+                               document.querySelector('#ProjComplete .project-card') ||
+                               document.querySelector('#ProjComingSoon .project-card');
+            
+            if (!hasProjects) {
+                // No projects displayed, reset flags to allow initialization
                 window.projectsInitialized = false;
                 projectsInitialized = false;
             }
-            // Ensure DOM is fully ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initProjects);
-            } else {
-                // DOM is ready, but wait a tick to ensure all elements are inserted
-                setTimeout(initProjects, 50);
+            
+            // Only initialize if not already initialized
+            if (!window.projectsInitialized && !projectsInitialized) {
+                // Ensure DOM is fully ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initProjects);
+                } else {
+                    // DOM is ready, but wait a tick to ensure all elements are inserted
+                    setTimeout(initProjects, 50);
+                }
             }
         }
     }
