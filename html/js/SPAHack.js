@@ -95,8 +95,13 @@ $(document).ready(function(){
             }
             if(sectionUrl){
                 // Reset projects initialization flag when loading projects page
-                if (sectionUrl.includes('projects.html') && typeof window.projectsInitialized !== 'undefined') {
+                if (sectionUrl.includes('projects.html')) {
+                    // Reset both global and local flags to ensure projects reload
                     window.projectsInitialized = false;
+                    // Also reset the local variable if it exists in the projects.js scope
+                    if (typeof window.resetProjectsInit === 'function') {
+                        window.resetProjectsInit();
+                    }
                 }
                 // For tutorial pages, load only the body content (not full page redirect)
                 if (sectionUrl.includes('/data/projects/')) {
@@ -164,6 +169,16 @@ $(document).ready(function(){
                         console.error("Failed to fetch " + sectionUrl);
                     });
                 } else {
+                // If navigating away from projects page, reset flags when loading other pages
+                var currentContent = jQuery("#content").html();
+                var isLeavingProjects = currentContent && currentContent.includes('ProjInProgress');
+                if (isLeavingProjects && !sectionUrl.includes('projects.html')) {
+                    // Clear projects flags when leaving projects page
+                    if (typeof window.resetProjectsInit === 'function') {
+                        window.resetProjectsInit();
+                    }
+                }
+                
                 jQuery("#content").load(sectionUrl, function(){
                     console.log("Loaded " + sectionUrl);
                         // Reinitialize theme after content loads
@@ -180,12 +195,34 @@ $(document).ready(function(){
                         setupClickHandlers();
                         // Load scripts if projects page
                         if (sectionUrl.includes('projects.html')) {
+                            // Always reset flags before loading projects to ensure fresh initialization
+                            if (typeof window.resetProjectsInit === 'function') {
+                                window.resetProjectsInit();
+                            }
                             // Ensure projects.js runs after content is loaded
                             setTimeout(function() {
-                                if (typeof initProjects === 'function' && !window.projectsInitialized) {
-                                    initProjects();
+                                // Check if projects page containers exist
+                                if (document.querySelector('#ProjInProgress')) {
+                                    if (typeof initProjects === 'function') {
+                                        // Double-check flags are reset before calling
+                                        if (typeof window.resetProjectsInit === 'function') {
+                                            window.resetProjectsInit();
+                                        }
+                                        // Force initialization by calling directly
+                                        initProjects();
+                                    } else {
+                                        // If initProjects not available yet, wait a bit more
+                                        setTimeout(function() {
+                                            if (typeof initProjects === 'function') {
+                                                if (typeof window.resetProjectsInit === 'function') {
+                                                    window.resetProjectsInit();
+                                                }
+                                                initProjects();
+                                            }
+                                        }, 300);
+                                    }
                                 }
-                            }, 100);
+                            }, 200);
                         }
                 });
                 }
