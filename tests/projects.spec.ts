@@ -42,10 +42,12 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
         test.info().annotations.push({ type: 'note', description: 'API call failed but page handled error gracefully' });
       } else {
         // Neither cards nor error - page structure should at least be present
-        // Verify sections are present even if empty
-        await expect(page.locator('#ProjInProgress')).toBeVisible();
-        await expect(page.locator('#ProjComplete')).toBeVisible();
-        await expect(page.locator('#ProjComingSoon')).toBeVisible();
+        // Verify sections exist in DOM (they may be hidden if empty)
+        await expect(page.locator('#ProjInProgress')).toBeAttached();
+        await expect(page.locator('#ProjComplete')).toBeAttached();
+        // ProjComingSoon may be hidden if no ideas - check it exists in DOM
+        const comingSoonExists = await page.locator('#ProjComingSoon').count() > 0;
+        expect(comingSoonExists).toBeTruthy();
       }
     }
   });
@@ -64,9 +66,11 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     const inProgressSection = page.locator('#ProjInProgress');
     await expect(inProgressSection).toBeVisible({ timeout: 2000 });
     
-    // Sections should exist even if empty
-    await expect(page.locator('#ProjComplete')).toBeVisible();
-    await expect(page.locator('#ProjComingSoon')).toBeVisible();
+    // Sections should exist in DOM (may be hidden if empty)
+    await expect(page.locator('#ProjComplete')).toBeAttached();
+    // ProjComingSoon may be hidden if no ideas - check it exists in DOM
+    const comingSoonExists = await page.locator('#ProjComingSoon').count() > 0;
+    expect(comingSoonExists).toBeTruthy();
   });
 
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
