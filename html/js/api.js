@@ -3,7 +3,10 @@
  * Base URL: https://ricky-api-745807383723.us-east1.run.app
  */
 
-const API_BASE_URL = 'https://ricky-api-745807383723.us-east1.run.app';
+// Only declare if not already declared (prevents redeclaration errors in SPA)
+if (typeof API_BASE_URL === 'undefined') {
+    var API_BASE_URL = 'https://ricky-api-745807383723.us-east1.run.app';
+}
 
 /**
  * Fetch data from API endpoint
