@@ -8,8 +8,8 @@
     "npm": ">=9.0.0"
   },
   "scripts": {
-    "preinstall": "node scripts/check-node-version.js || exit 0",
-    "pretest": "node scripts/check-node-version.js || exit 0",
+    "preinstall": "node scripts/check-node-version.js",
+    "pretest": "node scripts/check-node-version.js",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
