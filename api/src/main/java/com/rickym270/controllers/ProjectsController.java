@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @CrossOrigin(origins = {"https://rickym270.github.io", "http://localhost:4321", "http://localhost:8080"})
@@ -38,14 +37,29 @@ public class ProjectsController {
     private static final String GITHUB_USER = "rickym270";
 
     @GetMapping("/projects")
-    public ResponseEntity<List<Map<String, Object>>> getProjects() {
+    public ResponseEntity<List<Map<String, Object>>> getProjects(
+            @org.springframework.web.bind.annotation.RequestParam(name = "source", required = false) String source
+    ) {
         // Load curated projects from classpath
         List<Map<String, Object>> curatedProjects = readCuratedProjects();
 
-        // Attempt to fetch GitHub repositories; fall back to curated only on failure
-        List<Map<String, Object>> githubProjects = fetchGithubRepos();
+        // Allow curated-only mode for debugging or when GitHub API is unavailable
+        if ("curated".equalsIgnoreCase(source)) {
+            return ResponseEntity.ok(curatedProjects);
+        }
 
-        if (githubProjects.isEmpty()) {
+        // Attempt to fetch GitHub repositories; fall back to curated only on failure
+        final List<Map<String, Object>> githubProjects;
+        try {
+            githubProjects = fetchGithubRepos();
+        } catch (Exception e) {
+            // Log error but don't fail - we'll return curated projects
+            System.err.println("[ProjectsController] Failed to fetch GitHub repos: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.ok(curatedProjects);
+        }
+
+        if (githubProjects == null || githubProjects.isEmpty()) {
             // Return curated list if GitHub call fails or returns nothing
             return ResponseEntity.ok(curatedProjects);
         }
@@ -63,14 +77,21 @@ public class ProjectsController {
             // Merge: start from GitHub data and overlay curated fields when present
             List<Map<String, Object>> merged = githubProjects.stream()
                 .map(gh -> {
-                    String repoName = normalizeRepoName(String.valueOf(gh.getOrDefault("name", "")));
-                    Map<String, Object> base = mapGithubRepoToProject(gh);
-                    Map<String, Object> override = curatedByRepo.get(repoName);
-                    if (override != null) {
-                        overlay(base, override);
+                    try {
+                        String repoName = normalizeRepoName(String.valueOf(gh.getOrDefault("name", "")));
+                        Map<String, Object> base = mapGithubRepoToProject(gh);
+                        Map<String, Object> override = curatedByRepo.get(repoName);
+                        if (override != null) {
+                            overlay(base, override);
+                        }
+                        return base;
+                    } catch (Exception e) {
+                        System.err.println("[ProjectsController] Error mapping GitHub repo: " + e.getMessage());
+                        e.printStackTrace();
+                        return null;
                     }
-                    return base;
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
             // Add any curated projects that do not exist on GitHub (external or archived)
@@ -82,21 +103,29 @@ public class ProjectsController {
                 .filter(p -> p.get("repo") instanceof String)
                 .filter(p -> !mergedNames.contains(normalizeRepoName(extractRepoNameFromUrl((String) p.get("repo")))))
                 .forEach(project -> {
-                    // For curated projects not on GitHub, check if we can infer activity from GitHub data
-                    // If we have matching GitHub data but it wasn't merged, check its activity
-                    String repoName = normalizeRepoName(extractRepoNameFromUrl((String) project.get("repo")));
-                    Optional<Map<String, Object>> matchingGitHubRepo = githubProjects.stream()
-                        .filter(gh -> normalizeRepoName(String.valueOf(gh.getOrDefault("name", ""))).equals(repoName))
-                        .findFirst();
-                    
-                    if (matchingGitHubRepo.isPresent()) {
-                        boolean hasRecentActivity = checkRecentActivity(matchingGitHubRepo.get());
-                        project.put("hasRecentActivity", hasRecentActivity);
-                    } else {
-                        // No GitHub data available, assume no recent activity
+                    try {
+                        // For curated projects not on GitHub, check if we can infer activity from GitHub data
+                        // If we have matching GitHub data but it wasn't merged, check its activity
+                        String repoName = normalizeRepoName(extractRepoNameFromUrl((String) project.get("repo")));
+                        Optional<Map<String, Object>> matchingGitHubRepo = githubProjects.stream()
+                            .filter(gh -> normalizeRepoName(String.valueOf(gh.getOrDefault("name", ""))).equals(repoName))
+                            .findFirst();
+                        
+                        if (matchingGitHubRepo.isPresent()) {
+                            boolean hasRecentActivity = checkRecentActivity(matchingGitHubRepo.get());
+                            project.put("hasRecentActivity", hasRecentActivity);
+                        } else {
+                            // No GitHub data available, assume no recent activity
+                            project.put("hasRecentActivity", false);
+                        }
+                        merged.add(project);
+                    } catch (Exception e) {
+                        System.err.println("[ProjectsController] Error processing curated project: " + e.getMessage());
+                        e.printStackTrace();
+                        // Still add the project without activity info
                         project.put("hasRecentActivity", false);
+                        merged.add(project);
                     }
-                    merged.add(project);
                 });
 
             // Optional: sort featured first, then by name
@@ -107,6 +136,8 @@ public class ProjectsController {
             return ResponseEntity.ok(merged);
         } catch (Exception unexpected) {
             // Defensive fallback: if anything in merge fails, return curated list only
+            System.err.println("[ProjectsController] Unexpected error during merge: " + unexpected.getMessage());
+            unexpected.printStackTrace();
             return ResponseEntity.ok(curatedProjects);
         }
     }
@@ -151,7 +182,10 @@ public class ProjectsController {
             return repos.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        } catch (RestClientException ex) {
+        } catch (Exception ex) {
+            // Catch all exceptions, not just RestClientException
+            System.err.println("[ProjectsController] Error fetching GitHub repos: " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+            ex.printStackTrace();
             return Collections.emptyList();
         }
     }

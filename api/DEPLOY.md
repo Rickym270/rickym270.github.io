@@ -30,6 +30,13 @@ This guide walks you through deploying the Spring Boot API to Google Cloud Run.
    gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
    ```
 
+5. **Verify build compiles locally** (recommended before deploying):
+   ```bash
+   cd api
+   ./mvnw clean package -DskipTests
+   # Should complete without errors and create target/api-0.0.1-SNAPSHOT.jar
+   ```
+
 ## Quick Deploy (Option 1: Using Makefile)
 
 1. **Set environment variables**:
@@ -141,6 +148,8 @@ curl $API_URL/api/projects
 ### Build fails
 - Ensure you're running from the `api/` directory (where `pom.xml` lives)
 - Check Java 17 compatibility: Cloud Run supports Java 17+
+- Verify compilation locally first: `./mvnw clean package -DskipTests`
+- Check for compilation errors in the build output
 
 ### CORS errors
 - Verify `@CrossOrigin(origins = "https://rickym270.github.io")` is on all controllers
