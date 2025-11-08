@@ -5,7 +5,8 @@
     "summary": "Property maintenance app with OCR and Supabase backend.",
     "repo": "https://github.com/Rickym270/Blue-Manager",
     "tech": ["React Native", "Supabase", "OCR", "Spring Boot"],
-    "featured": true
+    "featured": true,
+    "status": "in-progress"
   },
   {
     "slug": "personal-website",
@@ -29,7 +30,7 @@
     "summary": "Simple Python-based authorization script that enables or restricts features based on username permissions.",
     "repo": "https://github.com/Rickym270/Auth",
     "tech": ["Python"],
-    "featured": false
+    "featured": true
   },
   {
     "slug": "connectivity-monitor",
