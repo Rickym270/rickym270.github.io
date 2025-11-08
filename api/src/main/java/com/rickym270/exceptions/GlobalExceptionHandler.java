@@ -79,7 +79,12 @@ public class GlobalExceptionHandler {
     // 500 — fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "internal_error", "An unexpected error occurred");
+        // Include exception message for debugging (remove in production if needed)
+        String message = ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred";
+        System.err.println("[GlobalExceptionHandler] Unhandled exception: " + ex.getClass().getSimpleName());
+        System.err.println("Message: " + message);
+        ex.printStackTrace();
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "internal_error", message);
     }
 
     private String formatFieldError(FieldError e) {
