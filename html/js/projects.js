@@ -3,7 +3,10 @@
  */
 
 // API Base URL - fallback if api.js isn't loaded
-const API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+// Only declare if not already declared (prevents redeclaration errors in SPA)
+if (typeof API_BASE_URL_FALLBACK === 'undefined') {
+    var API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+}
 
 // Fetch projects function - works standalone or with api.js
 async function fetchProjectsFromAPI() {
@@ -22,13 +25,30 @@ async function fetchProjectsFromAPI() {
 
 /**
  * Get image path for a project
+ * Tries multiple filename variations to handle different naming conventions
  * @param {string} projectName - Name of the project
  * @returns {string} - Image path (returns path, but image may not exist - handled in render)
  */
 function getProjectImage(projectName) {
-    // Return image path - missing images are handled gracefully via onerror
-    // URL encode the project name for proper path handling
-    return `/html/imgs/${encodeURIComponent(projectName)}.png`;
+    // Map of project names that have non-standard image filenames
+    // Only include projects where the filename doesn't match standard variations
+    
+    // For standard naming, try variations: original name, with underscores, without spaces
+    // This handles: "KappaSigmaHC" -> "KappaSigmaHC.png", "XPress Transit" -> "XpressTransit.png", etc.
+    // Note: We don't use encodeURIComponent here because filenames don't use URL encoding
+    const variations = [
+        projectName.replace(/\s+/g, ''), // "BlueManager" or "XpressTransit" - most common
+        projectName.replace(/\s+/g, '_'), // "Blue_Manager" or "Xpress_Transit"
+        projectName, // Original: "Blue Manager" (will be URL encoded by browser)
+        projectName.replace(/\s+/g, '-'), // "Blue-Manager"
+        projectName.toLowerCase().replace(/\s+/g, '_'), // "blue_manager"
+    ];
+    
+    // Return the first variation (most likely to match)
+    // The browser will URL encode spaces automatically when used in src attribute
+    const path = `/html/imgs/${variations[0]}.png`;
+    console.log(`[Image] Using variation for ${projectName} -> ${path}`);
+    return path;
 }
 
 /**
@@ -45,12 +65,17 @@ function renderProjectCard(project, containerId) {
         ? tech.map(t => `<span class="tech-tag">${t}</span>`).join('') 
         : '';
     
+    // Only include image if path is not empty
+    const imageHtml = imagePath 
+        ? `<img src="${imagePath}" class="project-image" alt="${project.name}" 
+                 onerror="this.onerror=null; this.style.display='none';"
+                 loading="lazy">`
+        : '';
+    
     const cardHtml = `
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
             <div class="project-card fade-in">
-                <img src="${imagePath}" class="project-image" alt="${project.name}" 
-                     onerror="this.onerror=null; this.style.display='none';"
-                     loading="lazy">
+                ${imageHtml}
                 <h5 class="card-title">${project.name}</h5>
                 <p class="card-text">${summary}</p>
                 ${techTags ? `<div class="project-tech">${techTags}</div>` : ''}
@@ -73,8 +98,8 @@ function renderProjectCard(project, containerId) {
 }
 
 /**
- * Group projects by status (featured, in progress, complete, ideas)
- * Projects are grouped by featured flag or status field
+ * Group projects by status (in progress, complete, ideas)
+ * Projects are grouped by status field from projects.json, then by GitHub activity
  * @param {Array} projects - Array of project objects
  * @returns {Object} - Grouped projects
  */
@@ -86,19 +111,22 @@ function groupProjects(projects) {
     };
     
     projects.forEach(project => {
-        // Priority 1: Manual status declaration in projects.json takes precedence
-        if (project.status === 'in-progress' || project.status === 'in_progress' || project.status === 'inProgress') {
-            grouped.inProgress.push(project);
-        } 
-        // Priority 2: Automatic detection based on GitHub activity (commits within last month)
-        else if (project.hasRecentActivity === true) {
+        const status = project.status;
+        
+        // Priority 1: Use status field from projects.json
+        if (status === 'in-progress' || status === 'in_progress' || status === 'inProgress') {
             grouped.inProgress.push(project);
         } 
         // Ideas section
-        else if (project.status === 'idea' || project.status === 'ideas') {
+        else if (status === 'idea' || status === 'ideas') {
             grouped.ideas.push(project);
         } 
-        // Default: put all other featured projects in "Complete" section
+        // Priority 2: Automatic detection based on GitHub activity (commits within last month)
+        // Only use this if status is not explicitly set
+        else if (project.hasRecentActivity === true) {
+            grouped.inProgress.push(project);
+        } 
+        // Default: put all other projects in "Complete" section
         else {
             grouped.complete.push(project);
         }
@@ -222,20 +250,18 @@ async function initProjects() {
         // Fetch projects from API
         const projects = await fetchProjectsFromAPI();
         
-        // Filter projects: only show featured projects
-        const featuredProjects = projects.filter(project => {
-            return project.featured === true;
-        });
-        
-        // Render only featured projects
-        if (featuredProjects && featuredProjects.length > 0) {
-            renderProjects(featuredProjects);
+        // Render all projects (not just featured)
+        if (projects && projects.length > 0) {
+            renderProjects(projects);
         } else {
-            // Show message if no featured projects
+            // Show message if no projects
             const noProjects = document.createElement('div');
             noProjects.className = 'alert alert-info';
-            noProjects.innerHTML = '<p>No featured projects to display.</p>';
-            container.appendChild(noProjects);
+            noProjects.innerHTML = '<p>No projects to display.</p>';
+            const container = document.querySelector('.container');
+            if (container) {
+                container.appendChild(noProjects);
+            }
         }
     } catch (error) {
         console.error('Error loading projects:', error);
@@ -292,4 +318,3 @@ async function initProjects() {
     // Make initProjects available globally for SPA navigation
     window.initProjects = initProjects;
 })();
-
