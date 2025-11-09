@@ -4,7 +4,10 @@ test.describe('Home page content', () => {
   test('banner image centered with black background and caption', async ({ page }) => {
     await page.goto('/');
     // Ensure Home loaded into #content
-    await page.waitForSelector('#content');
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     // Banner container exists and has black background
     const banner = page.locator('#content #homeBanner');
     await expect(banner).toBeVisible();
@@ -32,8 +35,10 @@ test.describe('Home page content', () => {
   test('links below banner to LinkedIn and Github point correctly', async ({ page }) => {
     await page.goto('/');
     // Wait for content to load
-    await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForTimeout(1000); // Give SPA time to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     const linkedIn = page.getByRole('link', { name: /^LinkedIn$/ });
     // Disambiguate Github link: pick the one whose accessible name is exactly 'Github' or 'GitHub'
@@ -46,8 +51,10 @@ test.describe('Home page content', () => {
     await page.goto('/');
     
     // Wait for content to load
-    await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     const leftTitle = page.locator('#content h2', { hasText: /The story so far|About Me/i });
     await expect(leftTitle).toBeVisible({ timeout: 3000 });
