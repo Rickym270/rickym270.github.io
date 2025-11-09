@@ -10,10 +10,24 @@ $(document).ready(function(){
     var location_name = pathParts[pathParts.length - 1] || "";
     var isIndexPage = location_name === "index.html" || location_name === "" || pathParts.length === 0;
     
-    // Default load - only if content is empty (initial page load)
+    // Default load - only if content is truly empty (comments/whitespace don't count)
     var contentElement = jQuery("#content");
-    if (isIndexPage && (!contentElement.length || contentElement.html().trim() === "")) {
-        jQuery("#content").load("html/pages/home.html", function(){
+    var contentHtml = contentElement.length ? contentElement.html().trim() : "";
+    // Remove HTML comments; use [\\s\\S] in string context or [\s\S] in regex literal.
+    // This is a regex literal, so use single backslashes:
+    var contentWithoutComments = contentHtml.replace(/<!--[\s\S]*?-->/g, '').trim();
+    var isEmpty = !contentElement.length || contentWithoutComments === "";
+    if (isIndexPage && isEmpty) {
+        console.log("SPA: Loading home.html, isIndexPage:", isIndexPage, "content empty:", isEmpty);
+        jQuery("#content").load("html/pages/home.html", function(response, status, xhr){
+            if (status === "error") {
+                console.error("Failed to load home.html:", xhr && xhr.status, xhr && xhr.statusText);
+                // Mark as failed for testing/diagnostics
+                jQuery("#content").attr("data-content-loaded", "error");
+                return;
+            }
+            // Mark content as loaded for testing
+            jQuery("#content").attr("data-content-loaded", "true");
             // Reinitialize theme after content loads
             if (typeof window.reinitTheme === 'function') {
                 window.reinitTheme();
@@ -25,6 +39,8 @@ $(document).ready(function(){
             // Set active nav item
             updateActiveNavItem('html/pages/home.html');
         });
+    } else {
+        console.log("SPA: Skipping home.html load, isIndexPage:", isIndexPage, "content exists:", !isEmpty);
     }
     
     // Function to update active nav item based on current page
@@ -55,22 +71,7 @@ $(document).ready(function(){
         }
     }
     
-    // Default load - only if content is empty (initial page load)
-    var contentElement = jQuery("#content");
-    if (isIndexPage && (!contentElement.length || contentElement.html().trim() === "")) {
-        jQuery("#content").load("html/pages/home.html", function(){
-            // Reinitialize theme after content loads
-            if (typeof window.reinitTheme === 'function') {
-                window.reinitTheme();
-            }
-            // Reinitialize Bootstrap carousel to ensure its presence
-            if (typeof jQuery.fn.carousel !== 'undefined') {
-                jQuery('#homeCarousel').carousel();
-            }
-            // Set active nav item
-            updateActiveNavItem('html/pages/home.html');
-        });
-    }
+    // (duplicate default-load block removed; handled above)
     
     // Function to setup click handlers
     function setupClickHandlers() {
