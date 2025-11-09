@@ -49,14 +49,20 @@ test.describe('Navbar', () => {
     
     // Navigate away from home
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
     
     // Verify we're on Projects
     await expect(page.locator('#content h3')).toHaveText('Projects');
     
     // Click Home link
     await page.getByRole('link', { name: 'Home' }).click();
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     // Should load home content
     await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 2000 });
@@ -67,10 +73,16 @@ test.describe('Navbar', () => {
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForTimeout(500);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     await page.getByRole('link', { name: 'Skills' }).click();
-    await page.waitForTimeout(1500);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
+    }, { timeout: 15000 });
     
     // Skills page should load - check for h1 or h3
     const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Skills$/ });
