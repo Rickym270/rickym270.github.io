@@ -148,6 +148,8 @@ $(document).ready(function(){
                                 jQuery("#content").html($contentDiv.html());
                             }
                             console.log("Loaded " + sectionUrl);
+                            // Mark content as loaded for testing
+                            jQuery("#content").attr("data-content-loaded", "true");
                             // Reinitialize theme after content loads
                             if (typeof window.reinitTheme === 'function') {
                                 window.reinitTheme();
@@ -165,20 +167,27 @@ $(document).ready(function(){
                         console.error("Failed to fetch " + sectionUrl);
                     });
                 } else {
-                jQuery("#content").load(sectionUrl, function(){
+                jQuery("#content").load(sectionUrl, function(response, status, xhr){
+                    if (status === "error") {
+                        console.error("Failed to load " + sectionUrl + ":", xhr && xhr.status, xhr && xhr.statusText);
+                        jQuery("#content").attr("data-content-loaded", "error");
+                        return;
+                    }
                     console.log("Loaded " + sectionUrl);
-                        // Reinitialize theme after content loads
-                        if (typeof window.reinitTheme === 'function') {
-                            window.reinitTheme();
-                        }
-                        // Reinitialize Bootstrap carousel if to ensure its presence
-                        if (typeof jQuery.fn.carousel !== 'undefined') {
-                            jQuery('#homeCarousel').carousel();
-                        }
-                        // Update active nav item
-                        updateActiveNavItem(sectionUrl);
-                        // Re-setup click handlers for newly loaded content
-                        setupClickHandlers();
+                    // Mark content as loaded for testing
+                    jQuery("#content").attr("data-content-loaded", "true");
+                    // Reinitialize theme after content loads
+                    if (typeof window.reinitTheme === 'function') {
+                        window.reinitTheme();
+                    }
+                    // Reinitialize Bootstrap carousel if to ensure its presence
+                    if (typeof jQuery.fn.carousel !== 'undefined') {
+                        jQuery('#homeCarousel').carousel();
+                    }
+                    // Update active nav item
+                    updateActiveNavItem(sectionUrl);
+                    // Re-setup click handlers for newly loaded content
+                    setupClickHandlers();
                         // Load scripts if projects page
                         if (sectionUrl.includes('projects.html')) {
                             // Ensure projects.js runs after content is loaded
