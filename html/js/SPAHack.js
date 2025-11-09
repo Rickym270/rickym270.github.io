@@ -13,8 +13,7 @@ $(document).ready(function(){
     // Default load - only if content is truly empty (comments/whitespace don't count)
     var contentElement = jQuery("#content");
     var contentHtml = contentElement.length ? contentElement.html().trim() : "";
-    // Remove HTML comments; use [\\s\\S] in string context or [\s\S] in regex literal.
-    // This is a regex literal, so use single backslashes:
+    // Remove HTML comments
     var contentWithoutComments = contentHtml.replace(/<!--[\s\S]*?-->/g, '').trim();
     var isEmpty = !contentElement.length || contentWithoutComments === "";
     if (isIndexPage && isEmpty) {
@@ -70,8 +69,6 @@ $(document).ready(function(){
             }
         }
     }
-    
-    // (duplicate default-load block removed; handled above)
     
     // Function to setup click handlers
     function setupClickHandlers() {
@@ -176,18 +173,18 @@ $(document).ready(function(){
                     console.log("Loaded " + sectionUrl);
                     // Mark content as loaded for testing
                     jQuery("#content").attr("data-content-loaded", "true");
-                    // Reinitialize theme after content loads
-                    if (typeof window.reinitTheme === 'function') {
-                        window.reinitTheme();
-                    }
-                    // Reinitialize Bootstrap carousel if to ensure its presence
-                    if (typeof jQuery.fn.carousel !== 'undefined') {
-                        jQuery('#homeCarousel').carousel();
-                    }
-                    // Update active nav item
-                    updateActiveNavItem(sectionUrl);
-                    // Re-setup click handlers for newly loaded content
-                    setupClickHandlers();
+                        // Reinitialize theme after content loads
+                        if (typeof window.reinitTheme === 'function') {
+                            window.reinitTheme();
+                        }
+                        // Reinitialize Bootstrap carousel if to ensure its presence
+                        if (typeof jQuery.fn.carousel !== 'undefined') {
+                            jQuery('#homeCarousel').carousel();
+                        }
+                        // Update active nav item
+                        updateActiveNavItem(sectionUrl);
+                        // Re-setup click handlers for newly loaded content
+                        setupClickHandlers();
                         // Load scripts if projects page
                         if (sectionUrl.includes('projects.html')) {
                             // Ensure projects.js runs after content is loaded
@@ -206,3 +203,4 @@ $(document).ready(function(){
     // Setup click handlers initially
     setupClickHandlers();
 });
+No
