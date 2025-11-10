@@ -18,7 +18,8 @@ $(document).ready(function(){
     var isEmpty = !contentElement.length || contentWithoutComments === "";
     if (isIndexPage && isEmpty) {
         console.log("SPA: Loading home.html, isIndexPage:", isIndexPage, "content empty:", isEmpty);
-        jQuery("#content").load("html/pages/home.html", function(response, status, xhr){
+        // Add cache-busting query to ensure latest HTML (and scripts) load
+        jQuery("#content").load("html/pages/home.html?v=20251110", function(response, status, xhr){
             if (status === "error") {
                 console.error("Failed to load home.html:", xhr && xhr.status, xhr && xhr.statusText);
                 // Mark as failed for testing/diagnostics
@@ -92,9 +93,20 @@ $(document).ready(function(){
                 }
             }
             if(sectionUrl){
+                // Append cache-busting param to force fresh fetch of HTML sections
+                var bust = "v=20251110";
+                if (sectionUrl.indexOf('?') === -1) {
+                    sectionUrl = sectionUrl + "?" + bust;
+                } else if (!sectionUrl.includes("v=")) {
+                    sectionUrl = sectionUrl + "&" + bust;
+                }
                 // Reset projects initialization flag when loading projects page
-                if (sectionUrl.includes('projects.html') && typeof window.projectsInitialized !== 'undefined') {
-                    window.projectsInitialized = false;
+                if (sectionUrl.includes('projects.html')) {
+                    if (typeof window.resetProjectsInit === 'function') {
+                        window.resetProjectsInit();
+                    } else if (typeof window.projectsInitialized !== 'undefined') {
+                        window.projectsInitialized = false;
+                    }
                 }
                 // For tutorial pages, load only the body content (not full page redirect)
                 if (sectionUrl.includes('/data/projects/')) {
