@@ -17,7 +17,7 @@
   },
   {
     "slug": "xpress-transit",
-    "name": "XPress Transit",
+    "name": "Xpress Transit",
     "summary": "Ride management and scheduling app built with Django and React for handling vehicle and passenger data.",
     "repo": "https://github.com/Rickym270/XpressTransit",
     "tech": ["Django", "React", "Postgres"],
