@@ -1443,6 +1443,21 @@ body #main a {
     transform: translateY(-4px);
 }
 
+.project-card .card-title {
+    /* Adaptive sizing based on viewport and container */
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    margin-bottom: var(--spacing-sm);
+}
+
+.project-card .card-text {
+    font-size: clamp(0.9rem, 1.8vw, 1.0625rem);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
 .project-image {
     width: 100%;
     max-width: 200px;
