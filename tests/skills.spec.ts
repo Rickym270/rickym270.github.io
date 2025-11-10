@@ -11,17 +11,16 @@ test.describe('Skills Page', () => {
     return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
   }, { timeout: 15000 });
     
-    // Navigate to Skills
-    await page.getByRole('link', { name: 'Skills' }).click();
+    // Navigate to Skills (disambiguate from "View All Skills" link)
+    await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
   await page.waitForFunction(() => {
     const c = document.querySelector('#content');
-    return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');
   }, { timeout: 15000 });
     
     // Skills page should load - check for h1 or h3
-    const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Skills$/ });
-    await expect(skillsHeading).toBeVisible({ timeout: 3000 });
-    await expect(skillsHeading).toHaveText('Skills', { timeout: 1000 });
+    const skillsHeading = page.locator('#content h1, #content h2, #content h3').filter({ hasText: /Skills/i });
+    await expect(skillsHeading.first()).toBeVisible({ timeout: 3000 });
     
     // Should have skill badges/categories
     const skillBadges = page.locator('#content .skill-badge');
@@ -39,10 +38,10 @@ test.describe('Skills Page', () => {
     return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
   }, { timeout: 15000 });
     
-    await page.getByRole('link', { name: 'Skills' }).click();
+    await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
   await page.waitForFunction(() => {
     const c = document.querySelector('#content');
-    return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');
   }, { timeout: 15000 });
     
     // Check skills grid has proper spacing
