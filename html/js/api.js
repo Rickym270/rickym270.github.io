@@ -3,7 +3,22 @@
  * Base URL: https://ricky-api-745807383723.us-east1.run.app
  */
 
-const API_BASE_URL = 'https://ricky-api-745807383723.us-east1.run.app';
+// Avoid redeclaration when this script is loaded multiple times via SPA navigation.
+// Use global assignment without var/let/const so we don't re-declare identifiers.
+(function() {
+    try {
+        var g = (typeof globalThis !== 'undefined') ? globalThis : window;
+        if (typeof g.API_BASE_URL === 'undefined') {
+            g.API_BASE_URL = 'https://ricky-api-745807383723.us-east1.run.app';
+        }
+    } catch (e) {
+        // Fallback for unusual environments
+        if (typeof API_BASE_URL === 'undefined') {
+            // eslint-disable-next-line no-implicit-globals
+            API_BASE_URL = 'https://ricky-api-745807383723.us-east1.run.app';
+        }
+    }
+})();
 
 /**
  * Fetch data from API endpoint

@@ -26,9 +26,51 @@ async function fetchProjectsFromAPI() {
  * @returns {string} - Image path (returns path, but image may not exist - handled in render)
  */
 function getProjectImage(projectName) {
-    // Return image path - missing images are handled gracefully via onerror
-    // URL encode the project name for proper path handling
-    return `/html/imgs/${encodeURIComponent(projectName)}.png`;
+    const basePath = '/html/imgs/';
+    
+    // Explicit mappings for known exceptions or special filenames
+    const imageMap = {
+        'BlueManager': 'Blue_Manager.png',
+        'KappaSigmaHC': 'KappaSigmaHC.png',
+        // Xpress Transit variants
+        'Xpress Transit': 'Xpress_Transit.jpg',
+        'XPress Transit': 'Xpress_Transit.jpg',
+        'XpressTransit': 'Xpress_Transit.jpg',
+        'xpress transit': 'Xpress_Transit.jpg'
+    };
+    if (imageMap[projectName]) {
+        return `${basePath}${imageMap[projectName]}`;
+    }
+    
+    // Generate common filename variations
+    const noSpaces = projectName.replace(/\s+/g, '');
+    const underscores = projectName.replace(/\s+/g, '_');
+    const hyphens = projectName.replace(/\s+/g, '-');
+    const alnum = projectName.replace(/[^A-Za-z0-9]/g, '');
+    const lowerNoSpaces = noSpaces.toLowerCase();
+    const lowerUnderscores = underscores.toLowerCase();
+    
+    const candidates = [
+        // Preferred variations (underscore style first)
+        `${underscores}.png`,
+        `${underscores}.jpg`,
+        `${underscores}.png`,
+        `${noSpaces}.png`,
+        `${noSpaces}.jpg`,
+        `${hyphens}.png`,
+        `${hyphens}.jpg`,
+        // Lowercase fallbacks
+        `${lowerUnderscores}.png`,
+        `${lowerNoSpaces}.png`,
+        `${lowerUnderscores}.jpg`,
+        `${lowerNoSpaces}.jpg`,
+        // Last resort: original with encoding (if any spaces/specials)
+        `${encodeURIComponent(projectName)}.png`,
+        `${encodeURIComponent(projectName)}.jpg`
+    ];
+    
+    // Return the first candidate; missing file will be hidden by onerror
+    return `${basePath}${candidates[0]}`;
 }
 
 /**
@@ -112,8 +154,42 @@ function groupProjects(projects) {
  * @param {Array} projects - Array of project objects
  */
 function renderProjects(projects) {
-    // Deduplicate projects first
-    const uniqueProjects = deduplicateProjects(projects);
+    // Exclude specific projects by slug or name
+    const EXCLUDED = new Set([
+        'learning-java-2825378',
+        'pact-5-minute-getting-started-guide',
+        'cpptuts',
+        'pythontutorial'
+    ]);
+    const isExcluded = (project) => {
+        const slug = (project.slug || '').toLowerCase();
+        const name = (project.name || '').toLowerCase();
+        if (EXCLUDED.has(slug)) return true;
+        // Normalize name as slug-like for comparison (spaces -> hyphens)
+        const nameAsSlug = name.replace(/\s+/g, '-');
+        return EXCLUDED.has(name) || EXCLUDED.has(nameAsSlug);
+    };
+    
+    // Default featured: if missing, treat as true so we can sort but not filter out
+    const normalized = (projects || []).map(p => {
+        if (typeof p.featured === 'undefined') {
+            p.featured = true;
+        }
+        return p;
+    }).filter(p => !isExcluded(p));
+    
+    // Sort: featured first, then alphabetical by name
+    normalized.sort((a, b) => {
+        const aFeat = a.featured === true ? 1 : 0;
+        const bFeat = b.featured === true ? 1 : 0;
+        if (bFeat - aFeat !== 0) return bFeat - aFeat;
+        const an = (a.name || '').toLowerCase();
+        const bn = (b.name || '').toLowerCase();
+        return an.localeCompare(bn);
+    });
+    
+    // Deduplicate after normalization
+    const uniqueProjects = deduplicateProjects(normalized);
     
     // Clear existing content in rows before rendering to prevent duplicates
     const inProgressRow = document.querySelector('#ProjInProgress .row');
@@ -186,6 +262,11 @@ function deduplicateProjects(projects) {
 let projectsInitialized = false;
 // Make it accessible globally for SPA navigation
 window.projectsInitialized = false;
+// Provide a safe reset API so SPA can re-initialize when navigating back
+window.resetProjectsInit = function resetProjectsInit() {
+    projectsInitialized = false;
+    window.projectsInitialized = false;
+};
 
 /**
  * Initialize projects page - load and render projects from API
@@ -216,20 +297,18 @@ async function initProjects() {
         // Fetch projects from API
         const projects = await fetchProjectsFromAPI();
         
-        // Filter projects: only show featured projects
-        const featuredProjects = projects.filter(project => {
-            return project.featured === true;
-        });
-        
-        // Render only featured projects
-        if (featuredProjects && featuredProjects.length > 0) {
-            renderProjects(featuredProjects);
+        // Render all projects (no feature-only filter)
+        if (projects && projects.length > 0) {
+            renderProjects(projects);
         } else {
-            // Show message if no featured projects
-            const noProjects = document.createElement('div');
-            noProjects.className = 'alert alert-info';
-            noProjects.innerHTML = '<p>No featured projects to display.</p>';
-            container.appendChild(noProjects);
+            // Show message if no projects
+            const containerEl = document.querySelector('.container');
+            if (containerEl) {
+                const noProjects = document.createElement('div');
+                noProjects.className = 'alert alert-info';
+                noProjects.innerHTML = '<p>No projects to display.</p>';
+                containerEl.appendChild(noProjects);
+            }
         }
     } catch (error) {
         console.error('Error loading projects:', error);

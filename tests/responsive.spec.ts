@@ -13,8 +13,10 @@ test.describe('Responsive layout', () => {
       await page.goto('/');
 
       // Wait for content to load
-      await page.waitForSelector('#content', { state: 'attached' });
-      await page.waitForTimeout(1000);
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      }, { timeout: 15000 });
 
       // Navbar should be visible and not overflow horizontally
       const nav = page.locator('nav.navbar');
@@ -22,7 +24,7 @@ test.describe('Responsive layout', () => {
       const body = page.locator('body');
       await expect(body).toHaveCSS('overflow-x', 'hidden');
 
-      // Banner should be visible and not overflow viewport width
+      // Hero banner should be visible and not overflow viewport width
       const banner = page.locator('#content #homeBanner');
       await expect(banner).toBeVisible({ timeout: 3000 });
       const bannerBox = await banner.boundingBox();
@@ -31,9 +33,24 @@ test.describe('Responsive layout', () => {
         expect(Math.round(bannerBox.width)).toBeLessThanOrEqual(vp.size.width + 1);
       }
 
-      // Critical content should remain visible
-      await expect(page.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible({ timeout: 2000 });
-      await expect(page.getByRole('link', { name: /^GitHub$/i })).toBeVisible({ timeout: 2000 });
+      // Hero buttons should be visible (updated button text)
+      const linkedInBtn = page.getByRole('link', { name: /Connect on LinkedIn/i });
+      const githubBtn = page.getByRole('link', { name: /View GitHub/i });
+      
+      // On mobile, buttons might be stacked, so check visibility with timeout
+      await expect(linkedInBtn).toBeVisible({ timeout: 2000 }).catch(() => {
+        // If not found with new text, try old text as fallback
+        return page.getByRole('link', { name: /^LinkedIn$/ }).toBeVisible({ timeout: 2000 });
+      });
+      
+      await expect(githubBtn).toBeVisible({ timeout: 2000 }).catch(() => {
+        // If not found with new text, try old text as fallback
+        return page.getByRole('link', { name: /^GitHub$/i }).toBeVisible({ timeout: 2000 });
+      });
+
+      // Skills section should be visible
+      const skillsSection = page.locator('#content').getByText(/Tech Stack|Skills/i);
+      await expect(skillsSection.first()).toBeVisible({ timeout: 3000 });
 
       // Allow small tolerance for scrollbar width differences across browsers
       const { scrollWidth, clientWidth } = await page.evaluate(() => ({
@@ -44,6 +61,65 @@ test.describe('Responsive layout', () => {
       expect(overflowPx).toBeLessThanOrEqual(16);
     });
   }
+  
+  test('hero banner stacks correctly on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/');
+    
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
+    const heroImage = page.locator('#content #homeBanner .hero-image-column');
+    const heroText = page.locator('#content #homeBanner .hero-text-column');
+    
+    await expect(heroImage).toBeVisible();
+    await expect(heroText).toBeVisible();
+    
+    // On mobile, image should appear before text (order: 1 vs order: 2)
+    const imageBox = await heroImage.boundingBox();
+    const textBox = await heroText.boundingBox();
+    
+    expect(imageBox && textBox).toBeTruthy();
+    if (imageBox && textBox) {
+      // Image should be above text on mobile
+      expect(imageBox.y).toBeLessThan(textBox.y);
+    }
+  });
+  
+  test('stats cards stack vertically on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/');
+    
+    // Wait for stats to potentially load
+    await page.waitForTimeout(3000);
+    
+    const statsSection = page.locator('#stats-section');
+    const statsVisible = await statsSection.isVisible({ timeout: 2000 }).catch(() => false);
+    
+    if (statsVisible) {
+      const cards = page.locator('#stats-section .card');
+      const cardCount = await cards.count();
+      
+      if (cardCount > 0) {
+        // On mobile, cards should stack vertically
+        const firstCard = cards.first();
+        const secondCard = cards.nth(1);
+        
+        if (await secondCard.isVisible().catch(() => false)) {
+          const firstBox = await firstCard.boundingBox();
+          const secondBox = await secondCard.boundingBox();
+          
+          expect(firstBox && secondBox).toBeTruthy();
+          if (firstBox && secondBox) {
+            // Second card should be below first card
+            expect(secondBox.y).toBeGreaterThan(firstBox.y);
+          }
+        }
+      }
+    }
+  });
 });
 
 

@@ -10,10 +10,24 @@ $(document).ready(function(){
     var location_name = pathParts[pathParts.length - 1] || "";
     var isIndexPage = location_name === "index.html" || location_name === "" || pathParts.length === 0;
     
-    // Default load - only if content is empty (initial page load)
+    // Default load - only if content is truly empty (comments/whitespace don't count)
     var contentElement = jQuery("#content");
-    if (isIndexPage && (!contentElement.length || contentElement.html().trim() === "")) {
-        jQuery("#content").load("html/pages/home.html", function(){
+    var contentHtml = contentElement.length ? contentElement.html().trim() : "";
+    // Remove HTML comments
+    var contentWithoutComments = contentHtml.replace(/<!--[\s\S]*?-->/g, '').trim();
+    var isEmpty = !contentElement.length || contentWithoutComments === "";
+    if (isIndexPage && isEmpty) {
+        console.log("SPA: Loading home.html, isIndexPage:", isIndexPage, "content empty:", isEmpty);
+        // Add cache-busting query to ensure latest HTML (and scripts) load
+        jQuery("#content").load("html/pages/home.html?v=20251110", function(response, status, xhr){
+            if (status === "error") {
+                console.error("Failed to load home.html:", xhr && xhr.status, xhr && xhr.statusText);
+                // Mark as failed for testing/diagnostics
+                jQuery("#content").attr("data-content-loaded", "error");
+                return;
+            }
+            // Mark content as loaded for testing
+            jQuery("#content").attr("data-content-loaded", "true");
             // Reinitialize theme after content loads
             if (typeof window.reinitTheme === 'function') {
                 window.reinitTheme();
@@ -25,6 +39,8 @@ $(document).ready(function(){
             // Set active nav item
             updateActiveNavItem('html/pages/home.html');
         });
+    } else {
+        console.log("SPA: Skipping home.html load, isIndexPage:", isIndexPage, "content exists:", !isEmpty);
     }
     
     // Function to update active nav item based on current page
@@ -55,23 +71,6 @@ $(document).ready(function(){
         }
     }
     
-    // Default load - only if content is empty (initial page load)
-    var contentElement = jQuery("#content");
-    if (isIndexPage && (!contentElement.length || contentElement.html().trim() === "")) {
-        jQuery("#content").load("html/pages/home.html", function(){
-            // Reinitialize theme after content loads
-            if (typeof window.reinitTheme === 'function') {
-                window.reinitTheme();
-            }
-            // Reinitialize Bootstrap carousel to ensure its presence
-            if (typeof jQuery.fn.carousel !== 'undefined') {
-                jQuery('#homeCarousel').carousel();
-            }
-            // Set active nav item
-            updateActiveNavItem('html/pages/home.html');
-        });
-    }
-    
     // Function to setup click handlers
     function setupClickHandlers() {
         // Use event delegation for dynamically loaded content
@@ -94,9 +93,20 @@ $(document).ready(function(){
                 }
             }
             if(sectionUrl){
+                // Append cache-busting param to force fresh fetch of HTML sections
+                var bust = "v=20251110";
+                if (sectionUrl.indexOf('?') === -1) {
+                    sectionUrl = sectionUrl + "?" + bust;
+                } else if (!sectionUrl.includes("v=")) {
+                    sectionUrl = sectionUrl + "&" + bust;
+                }
                 // Reset projects initialization flag when loading projects page
-                if (sectionUrl.includes('projects.html') && typeof window.projectsInitialized !== 'undefined') {
-                    window.projectsInitialized = false;
+                if (sectionUrl.includes('projects.html')) {
+                    if (typeof window.resetProjectsInit === 'function') {
+                        window.resetProjectsInit();
+                    } else if (typeof window.projectsInitialized !== 'undefined') {
+                        window.projectsInitialized = false;
+                    }
                 }
                 // For tutorial pages, load only the body content (not full page redirect)
                 if (sectionUrl.includes('/data/projects/')) {
@@ -147,6 +157,8 @@ $(document).ready(function(){
                                 jQuery("#content").html($contentDiv.html());
                             }
                             console.log("Loaded " + sectionUrl);
+                            // Mark content as loaded for testing
+                            jQuery("#content").attr("data-content-loaded", "true");
                             // Reinitialize theme after content loads
                             if (typeof window.reinitTheme === 'function') {
                                 window.reinitTheme();
@@ -164,8 +176,15 @@ $(document).ready(function(){
                         console.error("Failed to fetch " + sectionUrl);
                     });
                 } else {
-                jQuery("#content").load(sectionUrl, function(){
+                jQuery("#content").load(sectionUrl, function(response, status, xhr){
+                    if (status === "error") {
+                        console.error("Failed to load " + sectionUrl + ":", xhr && xhr.status, xhr && xhr.statusText);
+                        jQuery("#content").attr("data-content-loaded", "error");
+                        return;
+                    }
                     console.log("Loaded " + sectionUrl);
+                    // Mark content as loaded for testing
+                    jQuery("#content").attr("data-content-loaded", "true");
                         // Reinitialize theme after content loads
                         if (typeof window.reinitTheme === 'function') {
                             window.reinitTheme();

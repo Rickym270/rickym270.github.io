@@ -10,9 +10,12 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     
     // Click Projects link (triggers jQuery load into #content)
     await page.getByRole('link', { name: 'Projects' }).click();
-    
-    // Wait for the projects page content to be loaded into #content
-    await expect(page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ })).toBeVisible({ timeout: 10000 });
+  // Wait for the projects page content to be loaded into #content
+  await page.waitForFunction(() => {
+    const c = document.querySelector('#content');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+  }, { timeout: 15000 });
+  await expect(page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ })).toBeVisible({ timeout: 10000 });
     
     // Wait for scripts to execute and API call to complete (or fail gracefully)
     // The page will either show project cards OR an error message - both are valid
@@ -54,7 +57,10 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     await page.goto('/');
     
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(500); // Give time for loading messages to appear
+  await page.waitForFunction(() => {
+    const c = document.querySelector('#content');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress, #ProjComplete, #ProjComingSoon');
+  }, { timeout: 15000 }); // Give time for loading messages to appear
     
     // Check that loading messages appear (may be brief, so check quickly)
     const loadingMessages = page.locator('#content').getByText(/Loading|Please Wait/i);
@@ -78,7 +84,10 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(2000);
+  await page.waitForFunction(() => {
+    const c = document.querySelector('#content');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+  }, { timeout: 15000 });
     
     // Navigate away
     await page.getByRole('link', { name: 'Home' }).click();
@@ -86,7 +95,10 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     
     // Navigate back to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(2000);
+  await page.waitForFunction(() => {
+    const c = document.querySelector('#content');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+  }, { timeout: 15000 });
     
     // Projects should still load correctly
     const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
@@ -108,7 +120,10 @@ test('navigates to Projects via navbar and renders content', async ({ page }) =>
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(3000);
+  await page.waitForFunction(() => {
+    const c = document.querySelector('#content');
+    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+  }, { timeout: 15000 });
     
     // Check for project images/icons
     const projectImages = page.locator('#content .project-image img, #content .card img');
