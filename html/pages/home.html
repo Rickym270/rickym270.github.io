@@ -9,53 +9,43 @@
     <link rel="stylesheet" href="/html/css/style.css" />
     </head>
     <body>
-    <!-- Banner Carousel -->
-                <div id="homeBanner">
-        <div id="homeCarousel" class="carousel slide" data-ride="carousel" data-interval="5000">
-                        <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img class="d-block" src="/html/imgs/Selfie2.jpg" alt="Ricky Martinez">
-                    <div class="carousel-caption">
-                                <h3>Ricky Martinez</h3>
-                        <p>Software Engineer • Musician • Fixer-Upper</p>
+    <!-- Hero Banner -->
+    <div id="homeBanner">
+        <div class="container-fluid h-100">
+            <div class="row h-100 align-items-center">
+                <!-- Left Column: Text Content -->
+                <div class="col-lg-6 col-md-12 hero-text-column">
+                    <div class="hero-content">
+                        <h1 class="hero-headline">
+                            <span class="hero-title-accent">Code with purpose. Test with precision.</span><br>
+                            <span class="hero-name">RICKY MARTINEZ</span>
+                        </h1>
+                        <p class="hero-description">
+                            Developer and problem-solver who thrives on efficiency, creativity, and automation. From test frameworks to full-stack systems, I love building solutions that make technology work smarter, not harder.
+                        </p>
+                        <div class="hero-buttons">
+                            <a href="https://www.linkedin.com/in/rickym270" class="btn btn-hero-primary" target="_blank" rel="noopener noreferrer">
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/rickym270" class="btn btn-hero-secondary" target="_blank" rel="noopener noreferrer">
+                                View GitHub
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="carousel-item">
-                    <img class="d-block" src="/html/imgs/Selfie1.jpg" alt="Ricky Martinez">
-                    <div class="carousel-caption">
-                        <h3>Ricky Martinez</h3>
-                        <p>Software Engineer • Musician • Fixer-Upper</p>
+                <!-- Right Column: Portrait Image -->
+                <div class="col-lg-6 col-md-12 hero-image-column">
+                    <div class="hero-image-wrapper">
+                        <img src="/html/imgs/Selfie2.jpg" alt="Ricky Martinez" class="hero-portrait">
                     </div>
                 </div>
-                <div class="carousel-item">
-                    <img class="d-block" src="/html/imgs/Workspace_Setup.jpg" alt="Workspace">
-                    <div class="carousel-caption">
-                        <h3>Ricky Martinez</h3>
-                        <p>Software Engineer • Musician • Fixer-Upper</p>
-                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-    <!-- Social Links -->
-                                    <div class="row">
-        <div class="container pt-0">
-            <div class="row" style="padding-top:1vh;padding-bottom:3vh;border-bottom: 1px solid var(--color-border);">
-                <div class="col-6 text-center">
-                    <a href="https://www.linkedin.com/in/rickym270" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                                        </div>
-                <div class="col-6 text-center">
-                    <a href="https://github.com/rickym270" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+            </div>
+        </div>
+    </div>
 
     <!-- About Section -->
     <section class="section">
-        <div class="container pt-1">
-            <div class="about-content">
+        <div class="container pt-">
                 <h2 class="section-title">About Me</h2>
                 <div class="about-text">
                     <p>
@@ -78,7 +68,6 @@
                         </small>
                     </p>
                 </div>
-            </div>
         </div>
     </section>
 
@@ -197,11 +186,14 @@
                                 label = 'Languages';
                             }
                             
+                            // Add class for languages card to style differently
+                            const titleClass = key === 'languages' ? 'card-title languages-list' : 'card-title';
+                            
                             statsHtml += `
                                 <div class="col-md-4 mb-3">
                                     <div class="card">
                                         <div class="card-body text-center">
-                                            <h3 class="card-title">${displayValue}</h3>
+                                            <h3 class="${titleClass}">${displayValue}</h3>
                                             <p class="card-text text-muted">${label}</p>
                                         </div>
                                     </div>
