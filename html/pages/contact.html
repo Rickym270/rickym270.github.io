@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Ricky Martinez</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/html/css/modern.css" />
+    <link rel="stylesheet" href="/html/css/style.css" />
+</head>
+<body>
+    <div class="container" style="padding-top: 2rem;">
+        <div class="section">
+            <h1 class="section-title">Contact Me</h1>
+            <p class="section-subtitle">Have a question or want to collaborate? Send me a message!</p>
+        </div>
+
+        <div class="section">
+            <div class="row">
+                <div class="col-12">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   minlength="1" maxlength="100" placeholder="Your name">
+                            <small class="form-text text-muted">Required</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="your.email@example.com">
+                            <small class="form-text text-muted">Required - We'll never share your email</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="subject" name="subject" required 
+                                   minlength="1" maxlength="200" placeholder="What's this about?">
+                            <small class="form-text text-muted">Required</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="message" name="message" rows="6" required 
+                                      minlength="1" maxlength="2000" placeholder="Tell me what's on your mind..."></textarea>
+                            <small class="form-text text-muted">Required - Max 2000 characters</small>
+                        </div>
+
+                        <!-- Honeypot field - hidden from users, bots will fill it -->
+                        <div style="position: absolute; left: -9999px; opacity: 0;">
+                            <label for="website">Website (leave blank)</label>
+                            <input type="text" id="website" name="honeypot" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div id="form-message" class="alert" role="alert" style="display: none;"></div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100" id="submit-btn">
+                            <span id="submit-text">Send Message</span>
+                            <span id="submit-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="/html/js/api.js"></script>
+    <script>
+        (function() {
+            const form = document.getElementById('contact-form');
+            const messageDiv = document.getElementById('form-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const submitSpinner = document.getElementById('submit-spinner');
+
+            function showMessage(text, isError = false) {
+                messageDiv.textContent = text;
+                messageDiv.className = 'alert ' + (isError ? 'alert-danger' : 'alert-success');
+                messageDiv.style.display = 'block';
+                messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function hideMessage() {
+                messageDiv.style.display = 'none';
+            }
+
+            function setSubmitting(isSubmitting) {
+                submitBtn.disabled = isSubmitting;
+                submitText.style.display = isSubmitting ? 'none' : 'inline';
+                submitSpinner.style.display = isSubmitting ? 'inline-block' : 'none';
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideMessage();
+
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const subject = document.getElementById('subject').value.trim();
+                const message = document.getElementById('message').value.trim();
+                const honeypot = document.getElementById('website').value.trim();
+
+                // Client-side validation
+                if (!name || !email || !subject || !message) {
+                    showMessage('Please fill in all required fields.', true);
+                    return;
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showMessage('Please enter a valid email address.', true);
+                    return;
+                }
+
+                // Check honeypot
+                if (honeypot) {
+                    showMessage('Spam detected. Message not sent.', true);
+                    return;
+                }
+
+                setSubmitting(true);
+
+                try {
+                    // Use API if available, otherwise fallback
+                    const API_BASE_URL = (typeof window.API_BASE_URL !== 'undefined') 
+                        ? window.API_BASE_URL 
+                        : 'https://ricky-api-745807383723.us-east1.run.app';
+
+                    const response = await fetch(`${API_BASE_URL}/api/contact`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            subject: subject,
+                            message: message,
+                            honeypot: honeypot || ''
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                        throw new Error(errorData.message || `Server error: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    showMessage('✓ Email sent successfully! Thank you for reaching out. I\'ll get back to you soon.', false);
+                    form.reset();
+                } catch (error) {
+                    console.error('Error submitting contact form:', error);
+                    let errorMessage = 'Failed to send message. ';
+                    if (error.message.includes('wait')) {
+                        errorMessage += 'Please wait a few minutes before sending another message.';
+                    } else if (error.message.includes('Spam')) {
+                        errorMessage += 'Spam detected.';
+                    } else {
+                        errorMessage += 'Please try again later or reach out via LinkedIn.';
+                    }
+                    showMessage(errorMessage, true);
+                } finally {
+                    setSubmitting(false);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+
