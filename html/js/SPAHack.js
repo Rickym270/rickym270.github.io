@@ -203,4 +203,3 @@ $(document).ready(function(){
     // Setup click handlers initially
     setupClickHandlers();
 });
-No
