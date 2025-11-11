@@ -1775,12 +1775,13 @@ body #main a {
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--radius-md);
     font-weight: 500;
+    font-size: 1.1rem;
     margin-bottom: var(--spacing-md);
     min-height: 3rem;
     display: flex;
     align-items: center;
     word-wrap: break-word;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .contact-form #form-message.alert-success {
