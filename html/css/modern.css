@@ -1734,6 +1734,7 @@ body #main a {
 
 .contact-form label {
     font-weight: 500;
+    font-size: 1rem;
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-xs);
     display: block;
