@@ -36,6 +36,11 @@ public class EmailService {
             System.out.println("[EmailService] Contact email sent successfully to " + recipient);
         } catch (Exception e) {
             System.err.println("[EmailService] Failed to send contact email: " + e.getMessage());
+            // Print full stack trace for debugging authentication issues
+            if (e.getMessage() != null && e.getMessage().contains("Authentication")) {
+                System.err.println("[EmailService] Full error details:");
+                e.printStackTrace();
+            }
             throw e;
         }
     }
