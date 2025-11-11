@@ -9,7 +9,9 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: 'Test User',
         email: 'test@example.com',
+        subject: 'Test Subject',
         message: 'This is a test message',
+        honeypot: ''
       },
       headers: {
         'Content-Type': 'application/json',
@@ -21,6 +23,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body).toHaveProperty('id');
     expect(body).toHaveProperty('name', 'Test User');
     expect(body).toHaveProperty('email', 'test@example.com');
+    expect(body).toHaveProperty('subject', 'Test Subject');
     expect(body).toHaveProperty('message', 'This is a test message');
     expect(body).toHaveProperty('receivedAt');
     // Verify UUID format
@@ -34,7 +37,9 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: '',
         email: 'invalid-email',
+        subject: '',
         message: '',
+        honeypot: ''
       },
       headers: {
         'Content-Type': 'application/json',
@@ -48,6 +53,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body).toHaveProperty('time');
     expect(body.message).toContain('name');
     expect(body.message).toContain('email');
+    expect(body.message).toContain('subject');
   });
 
   test('POST /api/contact returns 400 for malformed JSON', async ({ request }) => {
@@ -83,7 +89,29 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: longName,
         email: 'test@example.com',
+        subject: 'Test Subject',
         message: 'Test message',
+        honeypot: ''
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    expect(response.status()).toBe(422);
+    const body = await response.json();
+    expect(body.error).toBe('validation_error');
+  });
+
+  test('POST /api/contact validates subject length (max 200)', async ({ request }) => {
+    const longSubject = 'a'.repeat(201);
+    const response = await request.post(`${API_BASE_URL}/api/contact`, {
+      data: {
+        name: 'Test User',
+        email: 'test@example.com',
+        subject: longSubject,
+        message: 'Test message',
+        honeypot: ''
       },
       headers: {
         'Content-Type': 'application/json',
@@ -101,7 +129,9 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: 'Test User',
         email: 'test@example.com',
+        subject: 'Test Subject',
         message: longMessage,
+        honeypot: ''
       },
       headers: {
         'Content-Type': 'application/json',
@@ -111,6 +141,25 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(response.status()).toBe(422);
     const body = await response.json();
     expect(body.error).toBe('validation_error');
+  });
+
+  test('POST /api/contact rejects spam (honeypot filled)', async ({ request }) => {
+    const response = await request.post(`${API_BASE_URL}/api/contact`, {
+      data: {
+        name: 'Test User',
+        email: 'test@example.com',
+        subject: 'Test Subject',
+        message: 'Test message',
+        honeypot: 'spam-bot-filled-this'
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    const body = await response.json();
+    expect(body).toHaveProperty('error');
   });
 });
 
@@ -140,7 +189,9 @@ test.describe('API Contact Endpoint - GET', () => {
       data: {
         name: 'API Test User',
         email: 'apitest@example.com',
+        subject: 'API Test Subject',
         message: 'Test message for GET endpoint',
+        honeypot: ''
       },
       headers: {
         'Content-Type': 'application/json',
@@ -164,6 +215,7 @@ test.describe('API Contact Endpoint - GET', () => {
         expect(message).toHaveProperty('id');
         expect(message).toHaveProperty('name');
         expect(message).toHaveProperty('email');
+        expect(message).toHaveProperty('subject');
         expect(message).toHaveProperty('message');
         expect(message).toHaveProperty('receivedAt');
       }
