@@ -60,20 +60,6 @@ jobs:
 
       - name: Start Spring Boot API server
         working-directory: ./api
-        env:
-          # Email configuration (from GitHub Secrets)
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
-          SMTP_FROM_EMAIL: ${{ secrets.SMTP_FROM_EMAIL }}
-          # GitHub API (optional, for projects endpoint)
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Admin API key (optional)
-          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
-          # Turnstile (optional, for contact form spam protection)
-          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
           java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar > api-server.log 2>&1 &
           SERVER_PID=$!
