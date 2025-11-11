@@ -19,6 +19,28 @@ public class MailConfig {
         String username = firstNonBlank(env("SMTP_USERNAME"), prop("SMTP_USERNAME"), prop("spring.mail.username"));
         String password = firstNonBlank(env("SMTP_PASSWORD"), prop("SMTP_PASSWORD"), prop("spring.mail.password"));
 
+        // Diagnostic logging (without exposing sensitive data)
+        if (!isBlank(username)) {
+            String usernameSource = env("SMTP_USERNAME") != null ? "env" : (prop("SMTP_USERNAME") != null ? "system-property" : "spring.mail.username");
+            System.out.println("[MailConfig] Username loaded from: " + usernameSource + " = " + username);
+        }
+        if (!isBlank(password)) {
+            String passwordSource = env("SMTP_PASSWORD") != null ? "env" : (prop("SMTP_PASSWORD") != null ? "system-property" : "spring.mail.password");
+            System.out.println("[MailConfig] Password loaded from: " + passwordSource + " (length: " + password.length() + " chars)");
+            // Check for common issues
+            if (password.length() != 16) {
+                System.out.println("[MailConfig] WARNING: Password length is " + password.length() + ", Gmail App Passwords are 16 characters");
+            }
+            if (password.contains(" ")) {
+                System.out.println("[MailConfig] WARNING: Password contains spaces - remove them!");
+            }
+            // Check for non-printable characters
+            boolean hasNonPrintable = password.chars().anyMatch(c -> c < 32 || c > 126);
+            if (hasNonPrintable) {
+                System.out.println("[MailConfig] WARNING: Password contains non-printable characters!");
+            }
+        }
+
         if (isBlank(host) || isBlank(portStr)) {
             System.out.println("[MailConfig] SMTP not configured (missing SMTP_HOST/SMTP_PORT). Email sending will be disabled.");
             // Return a sender with no host; EmailService will detect and skip sending
@@ -40,10 +62,6 @@ public class MailConfig {
         }
         if (!isBlank(password)) {
             mailSender.setPassword(password);
-            // Diagnostic: verify password is loaded (without printing it)
-            if (password.length() < 8) {
-                System.out.println("[MailConfig] WARNING: SMTP_PASSWORD appears too short. Gmail App Passwords are 16 characters.");
-            }
         }
 
         Properties props = mailSender.getJavaMailProperties();
@@ -51,13 +69,7 @@ public class MailConfig {
         props.putIfAbsent("mail.transport.protocol", "smtp");
         props.putIfAbsent("mail.smtp.auth", String.valueOf(!isBlank(username)));
         props.putIfAbsent("mail.smtp.starttls.enable", "true");
-        // Respect debug setting from application.properties or environment
-        String debugSetting = firstNonBlank(prop("spring.mail.properties.mail.debug"), prop("mail.debug"));
-        if (debugSetting != null) {
-            props.setProperty("mail.debug", debugSetting);
-        } else {
-            props.putIfAbsent("mail.debug", "false");
-        }
+        System.out.println("[MailConfig] SMTP debug logging enabled");
 
         System.out.println("[MailConfig] SMTP configured: " + host + ":" + port + " (username: " + (isBlank(username) ? "<none>" : username) + ")");
         return mailSender;
