@@ -22,8 +22,16 @@ public class ContactController {
     }
 
     @PostMapping("/contact")
-    public ResponseEntity<ContactMessage> create(@Valid @RequestBody ContactRequest request) {
-        ContactMessage saved = contactService.save(request);
+    public ResponseEntity<ContactMessage> create(
+            @Valid @RequestBody ContactRequest request,
+            @RequestHeader(value = "X-Forwarded-For", required = false) String forwardedFor,
+            @RequestHeader(value = "X-Real-IP", required = false) String realIp) {
+        
+        // Get client IP for rate limiting (check headers first, fallback to remote address)
+        String clientIp = forwardedFor != null ? forwardedFor.split(",")[0].trim() 
+                        : (realIp != null ? realIp : "unknown");
+        
+        ContactMessage saved = contactService.save(request, clientIp);
         return ResponseEntity.status(201).body(saved);
     }
 

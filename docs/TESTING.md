@@ -71,8 +71,12 @@ curl -s http://localhost:8080/api/github/activity
 # Submit a contact message
 curl -s -X POST http://localhost:8080/api/contact \
   -H 'Content-Type: application/json' \
-  -d '{"name":"Alex","email":"alex@example.com","message":"Loved your portfolio!"}' | jq
-  -d '{"name":"RMTest","email":"rmtest@testing.com","message":"Test!"}'
+  -d '{"name":"Alex","email":"alex@example.com","subject":"Inquiry","message":"Loved your portfolio!"}' | jq
+
+# Alternative example
+curl -s -X POST http://localhost:8080/api/contact \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"RMTest","email":"rmtest@testing.com","subject":"Test Subject","message":"Test!"}'
 ```
 
 - Contact (view messages - admin only)
@@ -108,10 +112,14 @@ export GITHUB_TOKEN=ghp_yourToken
 ```bash
 curl -s -X POST http://localhost:8080/api/contact \
   -H 'Content-Type: application/json' \
-  -d '{"name":"RMTest","email":"rmtest@testing.com","message":"Test!"}'
+  -d '{"name":"RMTest","email":"rmtest@testing.com","subject":"Test Subject","message":"Test!"}'
 ```
 
-Expected: `201 Created` with the saved message including `id` and `receivedAt`.
+Expected: `201 Created` with the saved message including `id`, `subject`, and `receivedAt`.
+
+**Note**: The endpoint includes spam protection:
+- Honeypot field (if provided and filled, request is rejected with 400)
+- Rate limiting: 5 minutes per IP address (subsequent requests return 400)
 
 ### View messages as admin (GET)
 
@@ -152,7 +160,7 @@ curl -s -i http://localhost:8080/api/does-not-exist
 # 422 validation (invalid body)
 curl -s -i -X POST http://localhost:8080/api/contact \
   -H 'Content-Type: application/json' \
-  -d '{"name":"","email":"bad","message":""}'
+  -d '{"name":"","email":"bad","subject":"","message":""}'
 
 # 400 malformed JSON
 curl -s -i -X POST http://localhost:8080/api/contact \
