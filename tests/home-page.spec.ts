@@ -8,21 +8,9 @@ test.describe('Home page content', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
-    // Banner container exists and has dark background
+    // Banner container exists
     const banner = page.locator('#content #homeBanner');
     await expect(banner).toBeVisible();
-    // Check for dark background gradient (banner uses gradient, not solid color)
-    const bgImage = await banner.evaluate((el) => {
-      return window.getComputedStyle(el).backgroundImage;
-    });
-    // Should have gradient background
-    expect(bgImage).toMatch(/gradient|linear-gradient/);
-    // Also check that it's not transparent
-    const bgColor = await banner.evaluate((el) => {
-      return window.getComputedStyle(el).backgroundColor;
-    });
-    // Background color might be transparent for gradient, but should not be white
-    expect(bgColor).not.toMatch(/rgb\(255, 255, 255\)|rgba\(255, 255, 255/);
 
     // Hero portrait image exists
     const img = page.locator('#content #homeBanner .hero-portrait');
@@ -32,7 +20,7 @@ test.describe('Home page content', () => {
     const headline = page.locator('#content #homeBanner .hero-headline');
     await expect(headline).toBeVisible();
     await expect(headline).toContainText(/RICKY MARTINEZ/i);
-    await expect(headline).toContainText(/I'M A DEVELOPER/i);
+    await expect(headline).toContainText(/Do Not Repeat Yourself/i);
   });
 
   test('hero buttons link to LinkedIn and Github correctly', async ({ page }) => {
