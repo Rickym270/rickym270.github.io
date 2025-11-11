@@ -1721,6 +1721,104 @@ body #main a {
 }
 
 /* ============================================
+   Contact Form
+   ============================================ */
+.contact-form {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.contact-form .form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.contact-form label {
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+    display: block;
+}
+
+.contact-form .form-control {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.contact-form .form-control:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.contact-form textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form .form-text {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.contact-form .btn-primary {
+    margin-top: var(--spacing-md);
+}
+
+.contact-form #form-message {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    margin-bottom: var(--spacing-md);
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+
+.contact-form #form-message.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+[data-theme="dark"] .contact-form #form-message.alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border-color: rgba(40, 167, 69, 0.5);
+    color: #90ee90;
+}
+
+.contact-form #form-message.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+[data-theme="dark"] .contact-form #form-message.alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    color: #ff6b6b;
+}
+
+[data-theme="dark"] .contact-form .form-control {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .contact-form .form-control:focus {
+    border-color: var(--color-accent);
+    background-color: var(--color-bg-secondary);
+}
+
+/* ============================================
    Loading States
    ============================================ */
 .loading {
