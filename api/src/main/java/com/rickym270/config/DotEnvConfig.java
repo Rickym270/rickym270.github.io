@@ -1,10 +1,10 @@
 package com.rickym270.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import io.github.cdimascio.dotenv.DotenvEntry;
 import org.springframework.context.annotation.Configuration;
 
 import jakarta.annotation.PostConstruct;
-import java.util.Map;
 
 @Configuration
 public class DotEnvConfig {
@@ -19,9 +19,9 @@ public class DotEnvConfig {
                 .load();
 
             int loaded = 0;
-            for (Map.Entry<String, String> entry : dotenv.entries().entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
+            for (DotenvEntry e : dotenv.entries()) {
+                String key = e.getKey();
+                String value = e.getValue();
                 // Skip placeholders like "your-..." to avoid misconfiguration
                 if (value == null || value.trim().isEmpty() || value.startsWith("your-")) {
                     continue;
