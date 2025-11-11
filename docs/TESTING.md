@@ -142,6 +142,53 @@ Expected: `200 OK` with an array of all stored messages.
 - You must POST at least one message before GET returns any data
 - Empty list `[]` means no messages have been submitted yet
 
+## Email setup (for contact notifications)
+
+To enable email sending when a contact message is submitted, configure SMTP via environment variables or an `api/.env` file.
+
+Required variables:
+```bash
+# In api/.env (or set as environment variables)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+CONTACT_EMAIL=your-email@gmail.com      # recipient
+SMTP_FROM_EMAIL=your-email@gmail.com    # from address (optional; defaults to SMTP_USERNAME)
+```
+
+Start the API:
+```bash
+cd api
+./mvnw -DskipTests spring-boot:run
+```
+
+You should see logs like:
+```
+[DotEnvConfig] ✓ Loaded X variables from .env file in api/
+[MailConfig] SMTP configured: smtp.gmail.com:587 (username: your-email@gmail.com)
+```
+
+Test email by submitting a contact:
+```bash
+curl -s -X POST http://localhost:8080/api/contact \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Alex","email":"alex@example.com","subject":"Hello","message":"Test email"}'
+```
+
+Check API logs for:
+```
+[EmailService] Contact email sent successfully to your-email@gmail.com
+```
+
+If email fails, you’ll see an error with the reason; verify credentials and allow “App Passwords” if using Gmail.
+
+Optional CAPTCHA (Cloudflare Turnstile):
+```bash
+TURNSTILE_SECRET_KEY=your-turnstile-secret
+```
+If not set, verification is skipped in development.
+
 ## Error responses
 - All errors return JSON with keys: `error`, `message`, `time` (ISO‑8601)
 - Common statuses:
