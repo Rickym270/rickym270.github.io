@@ -74,11 +74,11 @@
 
    Notes on /api/projects
    Environment variables
-   - `GITHUB_TOKEN` (optional): increases GitHub API rate limits
+   - `GH_TOKEN` (optional): increases GitHub API rate limits
    - `ADMIN_API_KEY` (required for GET /api/contact): admin secret for listing contact messages
    - The endpoint fetches public repos from GitHub for user `rickym270` and overlays any matching entries from `api/src/main/resources/data/projects.json` (by repo name).
    - If the GitHub request fails or is rate-limited, it falls back to the curated `projects.json` only.
-   - Optional: set `GITHUB_TOKEN` in the environment to raise GitHub API rate limits.
+   - Optional: set `GH_TOKEN` in the environment to raise GitHub API rate limits.
 
    Development notes
    - Main app: `com.rickym270.api.ApiApplication` (component scan set to `com.rickym270`)

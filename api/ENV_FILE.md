@@ -15,7 +15,7 @@ SMTP_USERNAME=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
 CONTACT_EMAIL=your-email@gmail.com
 SMTP_FROM_EMAIL=your-email@gmail.com
-GITHUB_TOKEN=your-github-token
+GH_TOKEN=your-github-token
 ADMIN_API_KEY=your-admin-key
 TURNSTILE_SECRET_KEY=your-turnstile-secret
 ```
