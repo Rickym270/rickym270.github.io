@@ -1723,6 +1723,11 @@ body #main a {
 /* ============================================
    Contact Form
    ============================================ */
+/* Reduce spacing between title section and form section */
+.section:has(+ .section .contact-form) {
+    margin-bottom: var(--spacing-lg);
+}
+
 .contact-form {
     margin: 0 auto;
     width: 100%;
