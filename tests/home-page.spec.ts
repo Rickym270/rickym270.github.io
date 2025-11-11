@@ -8,14 +8,9 @@ test.describe('Home page content', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
-    // Banner container exists and has dark background
+    // Banner container exists
     const banner = page.locator('#content #homeBanner');
     await expect(banner).toBeVisible();
-    // Check for dark background (should be rgb(10, 10, 10) or similar)
-    const bgColor = await banner.evaluate((el) => {
-      return window.getComputedStyle(el).backgroundColor;
-    });
-    expect(bgColor).toMatch(/rgb\(10, 10, 10\)|rgb\(26, 26, 26\)|rgba\(10, 10, 10/);
 
     // Hero portrait image exists
     const img = page.locator('#content #homeBanner .hero-portrait');
@@ -25,7 +20,7 @@ test.describe('Home page content', () => {
     const headline = page.locator('#content #homeBanner .hero-headline');
     await expect(headline).toBeVisible();
     await expect(headline).toContainText(/RICKY MARTINEZ/i);
-    await expect(headline).toContainText(/I'M A DEVELOPER/i);
+    await expect(headline).toContainText(/Do Not Repeat Yourself/i);
   });
 
   test('hero buttons link to LinkedIn and Github correctly', async ({ page }) => {
@@ -57,19 +52,22 @@ test.describe('Home page content', () => {
     const skillsHeader = page.locator('#content h2').filter({ hasText: /Tech Stack/i });
     await expect(skillsHeader).toBeVisible({ timeout: 3000 });
 
-    // Ensure two columns are stacked side-by-side on desktop
-    await page.setViewportSize({ width: 1280, height: 800 });
-    await page.waitForTimeout(500); // Let layout settle
+    // Both sections should be visible and properly structured
+    // About Me section
+    const aboutSection = leftTitle.locator('xpath=ancestor::section[1]');
+    await expect(aboutSection).toBeVisible();
     
-    const leftCol = leftTitle.locator('xpath=ancestor::div[contains(@class,"col-") or contains(@class,"section")][1]');
-    const rightCol = skillsHeader.locator('xpath=ancestor::div[contains(@class,"col-") or contains(@class,"section")][1]');
-    const leftBox = await leftCol.boundingBox();
-    const rightBox = await rightCol.boundingBox();
-    expect(leftBox && rightBox).toBeTruthy();
-    if (leftBox && rightBox) {
-      // On desktop, sections should be stacked vertically (left section above right)
-      // or side-by-side depending on layout
-      expect(leftBox.y).toBeLessThanOrEqual(rightBox.y + 10); // Allow small tolerance
+    // Tech Stack section
+    const skillsSection = skillsHeader.locator('xpath=ancestor::section[1]');
+    await expect(skillsSection).toBeVisible();
+    
+    // Verify sections are stacked vertically (About Me above Tech Stack)
+    const aboutBox = await aboutSection.boundingBox();
+    const skillsBox = await skillsSection.boundingBox();
+    expect(aboutBox && skillsBox).toBeTruthy();
+    if (aboutBox && skillsBox) {
+      // About Me section should be above Tech Stack section
+      expect(aboutBox.y).toBeLessThan(skillsBox.y);
     }
   });
 

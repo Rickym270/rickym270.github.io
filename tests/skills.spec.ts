@@ -44,8 +44,8 @@ test.describe('Skills Page', () => {
     return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');
   }, { timeout: 15000 });
     
-    // Check skills grid has proper spacing
-    const skillsGrid = page.locator('#content .skills-grid');
+    // Check skills grid has proper spacing (use first() to avoid strict mode violation)
+    const skillsGrid = page.locator('#content .skills-grid').first();
     if (await skillsGrid.isVisible({ timeout: 3000 })) {
       const gap = await skillsGrid.evaluate((el) => {
         return window.getComputedStyle(el).gap;
