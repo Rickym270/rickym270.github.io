@@ -62,7 +62,7 @@ export TURNSTILE_SECRET_KEY=your-secret-key-here
 ```bash
 # Add to your deployment command
 gcloud run deploy ricky-api \
-  --set-env-vars "TURNSTILE_SECRET_KEY=your-secret-key-here,GITHUB_TOKEN=...,ADMIN_API_KEY=..."
+  --set-env-vars "TURNSTILE_SECRET_KEY=your-secret-key-here,GH_TOKEN=...,ADMIN_API_KEY=..."
 ```
 
 Or update your `Makefile`/`deploy.sh` to include it.

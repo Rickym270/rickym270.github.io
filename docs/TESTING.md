@@ -33,7 +33,7 @@ Verify Java:
 ```bash
 cd api
 docker run --rm -it -p 8080:8080 \
-  -e GITHUB_TOKEN="$GITHUB_TOKEN" \
+  -e GH_TOKEN="$GH_TOKEN" \
   -v "$PWD":/app -w /app \
   maven:3.9-eclipse-temurin-17 \
   mvn -DskipTests spring-boot:run
@@ -103,7 +103,7 @@ curl -s http://localhost:8080/api/home
 
 Optional: to raise GitHub API limits
 ```bash
-export GITHUB_TOKEN=ghp_yourToken
+export GH_TOKEN=ghp_yourToken
 ```
 
 ## Testing the Contact Endpoint

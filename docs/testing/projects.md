@@ -14,7 +14,7 @@ curl -s http://localhost:8080/api/projects
 ## Negative tests
 ```bash
 # Force missing/invalid token still OK (should fallback or continue)
-unset GITHUB_TOKEN
+unset GH_TOKEN
 curl -s -i http://localhost:8080/api/projects
 ```
 - Expect 200 and non-empty list (curated fallback is acceptable if GitHub rate-limits).

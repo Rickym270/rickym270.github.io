@@ -38,10 +38,11 @@ This guide explains how to configure GitHub Secrets for CI/CD workflows.
 
 ### Optional Secrets
 
-7. **GITHUB_TOKEN**
+7. **GH_TOKEN**
    - Value: GitHub Personal Access Token (for fetching repo data)
    - Generate at: https://github.com/settings/tokens
    - Scopes needed: `public_repo` (read-only)
+   - **Note**: Must be named `GH_TOKEN` (not `GITHUB_TOKEN`) because GitHub reserves the `GITHUB_` prefix
 
 8. **ADMIN_API_KEY**
    - Value: Custom API key for admin endpoints
