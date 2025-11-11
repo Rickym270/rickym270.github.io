@@ -25,7 +25,7 @@ public class GitHubClient {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 			headers.set("X-GitHub-Api-Version", "2022-11-28");
-			String token = System.getenv("GITHUB_TOKEN");
+			String token = System.getenv("GH_TOKEN");
 			if (token != null && !token.trim().isEmpty()) {
 				headers.set("Authorization", "Bearer " + token.trim());
 			}
