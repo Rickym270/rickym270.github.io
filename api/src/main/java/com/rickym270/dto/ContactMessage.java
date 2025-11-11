@@ -7,6 +7,7 @@ public record ContactMessage(
     UUID id,
     String name,
     String email,
+    String subject,
     String message,
     Instant receivedAt
 ) {}

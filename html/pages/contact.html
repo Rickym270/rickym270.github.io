@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Ricky Martinez</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/html/css/modern.css" />
+    <link rel="stylesheet" href="/html/css/style.css" />
+</head>
+<body>
+    <div class="container" style="padding-top: 2rem;">
+        <div class="section">
+            <h1 class="section-title">Contact Me</h1>
+            <p class="section-subtitle">Have a question or want to collaborate? Send me a message!</p>
+        </div>
+
+        <div class="section">
+            <div class="row">
+                <div class="col-12">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   minlength="1" maxlength="100" placeholder="Your name">
+                            <small class="form-text text-muted">Required</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="your.email@example.com">
+                            <small class="form-text text-muted">Required - We'll never share your email</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="subject" name="subject" required 
+                                   minlength="1" maxlength="200" placeholder="What's this about?">
+                            <small class="form-text text-muted">Required</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="message" name="message" rows="6" required 
+                                      minlength="1" maxlength="2000" placeholder="Tell me what's on your mind..."></textarea>
+                            <small class="form-text text-muted">Required - Max 2000 characters</small>
+                        </div>
+
+                        <!-- Honeypot field - hidden from users, bots will fill it -->
+                        <div style="position: absolute; left: -9999px; opacity: 0;">
+                            <label for="website">Website (leave blank)</label>
+                            <input type="text" id="website" name="honeypot" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <!-- Cloudflare Turnstile CAPTCHA (only shown if site key is configured) -->
+                        <div id="turnstile-container" class="form-group" style="display: none;">
+                            <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY_HERE" data-theme="auto"></div>
+                        </div>
+
+                        <div id="form-message" class="alert" role="alert" style="display: none;"></div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100" id="submit-btn">
+                            <span id="submit-text">Send Message</span>
+                            <span id="submit-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <!-- Only load Turnstile script if site key is configured -->
+    <script>
+        // Turnstile site key - replace with your actual site key, or leave as placeholder to disable
+        // To disable Turnstile, set to 'YOUR_SITE_KEY_HERE' or empty string
+        const TURNSTILE_SITE_KEY = 'YOUR_SITE_KEY_HERE';
+        
+        // Helper function to check if Turnstile is properly configured
+        function isTurnstileConfigured() {
+            return TURNSTILE_SITE_KEY && 
+                   TURNSTILE_SITE_KEY !== 'YOUR_SITE_KEY_HERE' && 
+                   TURNSTILE_SITE_KEY.trim().length > 0 &&
+                   TURNSTILE_SITE_KEY.length > 20; // Valid Turnstile keys are longer
+        }
+        
+        // Only load Turnstile if site key is properly configured
+        if (isTurnstileConfigured()) {
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.async = true;
+            script.defer = true;
+            script.onerror = function() {
+                console.warn('[Turnstile] Failed to load Turnstile script. Spam protection disabled.');
+            };
+            script.onload = function() {
+                // Show Turnstile widget and update site key
+                const container = document.getElementById('turnstile-container');
+                const widget = document.querySelector('.cf-turnstile');
+                if (container && widget) {
+                    container.style.display = 'block';
+                    widget.setAttribute('data-sitekey', TURNSTILE_SITE_KEY);
+                }
+            };
+            document.head.appendChild(script);
+        } else {
+            console.log('[Turnstile] Not configured - form will work without CAPTCHA');
+        }
+    </script>
+    <script src="/html/js/api.js"></script>
+    <script>
+        // Global error handler for unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            // Prevent the error from showing in console (we'll handle it ourselves)
+            // But log it for debugging
+            if (event.reason && event.reason.message && event.reason.message.includes('message channel')) {
+                // This is often caused by browser extensions, ignore it
+                console.warn('Browser extension interference detected (message channel error). This is usually harmless.');
+                event.preventDefault(); // Prevent default error logging
+            }
+        });
+        
+        (function() {
+            const form = document.getElementById('contact-form');
+            const messageDiv = document.getElementById('form-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const submitSpinner = document.getElementById('submit-spinner');
+            
+            // Turnstile site key - replace with your actual site key
+            const TURNSTILE_SITE_KEY = 'YOUR_SITE_KEY_HERE';
+            
+            // Helper function to check if Turnstile is properly configured
+            function isTurnstileConfigured() {
+                return TURNSTILE_SITE_KEY && 
+                       TURNSTILE_SITE_KEY !== 'YOUR_SITE_KEY_HERE' && 
+                       TURNSTILE_SITE_KEY.trim().length > 0 &&
+                       TURNSTILE_SITE_KEY.length > 20; // Valid Turnstile keys are longer
+            }
+
+            function showMessage(text, isError = false) {
+                // Ensure we always have a message to display
+                const displayText = text && text.trim() ? text.trim() : (isError ? 'An error occurred. Please try again.' : 'Success!');
+                messageDiv.textContent = displayText;
+                messageDiv.className = 'alert ' + (isError ? 'alert-danger' : 'alert-success');
+                messageDiv.style.display = 'block';
+                messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function hideMessage() {
+                messageDiv.style.display = 'none';
+            }
+
+            function setSubmitting(isSubmitting) {
+                submitBtn.disabled = isSubmitting;
+                submitText.style.display = isSubmitting ? 'none' : 'inline';
+                submitSpinner.style.display = isSubmitting ? 'inline-block' : 'none';
+            }
+
+            // Wait for Turnstile to load (removed - now handled in script loading)
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideMessage();
+
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const subject = document.getElementById('subject').value.trim();
+                const message = document.getElementById('message').value.trim();
+                const honeypot = document.getElementById('website').value.trim();
+
+                // Client-side validation
+                if (!name || !email || !subject || !message) {
+                    showMessage('Please fill in all required fields.', true);
+                    return;
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showMessage('Please enter a valid email address.', true);
+                    return;
+                }
+
+                // Check honeypot
+                if (honeypot) {
+                    showMessage('Spam detected. Message not sent.', true);
+                    return;
+                }
+
+                // Get Turnstile token (only if Turnstile is configured and loaded)
+                let turnstileToken = '';
+                
+                if (isTurnstileConfigured()) {
+                    if (typeof turnstile === 'undefined') {
+                        // Turnstile is configured but not loaded yet
+                        showMessage('Security verification is loading. Please wait a moment and try again.', true);
+                        return;
+                    }
+                    
+                    try {
+                        turnstileToken = turnstile.getResponse();
+                        if (!turnstileToken) {
+                            showMessage('Please complete the security verification.', true);
+                            return;
+                        }
+                    } catch (error) {
+                        console.error('Turnstile error:', error);
+                        // If Turnstile fails, allow submission anyway (backend will handle verification)
+                        console.warn('Turnstile verification failed, submitting without token');
+                    }
+                }
+                // If Turnstile is not configured, allow submission without token (backend will handle it)
+
+                setSubmitting(true);
+
+                try {
+                    // Use API if available, otherwise fallback
+                    const API_BASE_URL = (typeof window.API_BASE_URL !== 'undefined') 
+                        ? window.API_BASE_URL 
+                        : 'https://ricky-api-745807383723.us-east1.run.app';
+
+                    // Wrap fetch in Promise to handle all errors
+                    let response;
+                    try {
+                        // Add timeout to prevent hanging
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                        
+                        response = await fetch(`${API_BASE_URL}/api/contact`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name: name,
+                                email: email,
+                                subject: subject,
+                                message: message,
+                                honeypot: honeypot || '',
+                                turnstileToken: turnstileToken || ''
+                            }),
+                            signal: controller.signal
+                        });
+                        
+                        clearTimeout(timeoutId);
+                    } catch (fetchError) {
+                        // Handle network errors, CORS, timeouts, etc.
+                        console.error('Fetch error:', fetchError);
+                        
+                        if (fetchError.name === 'AbortError') {
+                            throw new Error('Request timed out. Please check your connection and try again.');
+                        } else if (fetchError.message && fetchError.message.includes('message channel')) {
+                            // Browser extension interference - try again or show friendly message
+                            throw new Error('Browser extension interference detected. Please disable extensions and try again, or refresh the page.');
+                        } else {
+                            throw new Error('Network error: ' + (fetchError.message || 'Failed to connect to server'));
+                        }
+                    }
+
+                    if (!response.ok) {
+                        let errorMessage = null;
+                        const contentType = response.headers.get('content-type');
+                        
+                        try {
+                            if (contentType && contentType.includes('application/json')) {
+                                const errorData = await response.json();
+                                errorMessage = errorData.message || errorData.error || errorData.details || `Server error: ${response.status}`;
+                                console.error('API Error (JSON):', errorData);
+                            } else {
+                                const text = await response.text();
+                                errorMessage = text.trim() || `Server error: ${response.status}`;
+                                console.error('API Error (Text):', text);
+                            }
+                        } catch (parseError) {
+                            console.error('Failed to parse error response:', parseError);
+                            errorMessage = `Server error: ${response.status} ${response.statusText || ''}`;
+                        }
+                        
+                        // Ensure we have a meaningful error message
+                        if (!errorMessage || errorMessage.trim() === '' || errorMessage === '---') {
+                            errorMessage = `Failed to send message. Server returned ${response.status}. Please try again.`;
+                        }
+                        
+                        throw new Error(errorMessage);
+                    }
+
+                    const result = await response.json();
+                    showMessage('✓ Email sent successfully! Thank you for reaching out. I\'ll get back to you soon.', false);
+                    form.reset();
+                    
+                    // Reset Turnstile widget if it exists
+                    if (typeof turnstile !== 'undefined' && isTurnstileConfigured()) {
+                        try {
+                            turnstile.reset();
+                        } catch (e) {
+                            console.warn('Failed to reset Turnstile:', e);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error submitting contact form:', error);
+                    console.error('Error stack:', error.stack);
+                    
+                    // Extract the actual error message
+                    let errorText = '';
+                    if (error.message) {
+                        errorText = error.message;
+                    } else if (error.toString) {
+                        errorText = error.toString();
+                    } else {
+                        errorText = 'Unknown error';
+                    }
+                    
+                    console.error('Error details:', errorText);
+                    
+                    let errorMessage = '';
+                    
+                    // Handle specific error types
+                    if (errorText.includes('wait') || errorText.includes('Please wait') || errorText.includes('rate limit')) {
+                        errorMessage = 'Please wait a few minutes before sending another message.';
+                    } else if (errorText.includes('Spam') || errorText.includes('spam') || errorText.includes('honeypot')) {
+                        errorMessage = 'Spam detected. Please refresh the page and try again.';
+                        if (typeof turnstile !== 'undefined' && isTurnstileConfigured()) {
+                            try {
+                                turnstile.reset();
+                            } catch (e) {
+                                console.warn('Failed to reset Turnstile:', e);
+                            }
+                        }
+                    } else if (errorText.includes('CAPTCHA') || errorText.includes('verification failed') || errorText.includes('Turnstile') || errorText.includes('400020')) {
+                        errorMessage = 'Security verification failed. Please refresh the page and try again.';
+                        if (typeof turnstile !== 'undefined' && isTurnstileConfigured()) {
+                            try {
+                                turnstile.reset();
+                            } catch (e) {
+                                console.warn('Failed to reset Turnstile:', e);
+                            }
+                        }
+                    } else if (errorText.includes('validation') || errorText.includes('required') || errorText.includes('blank') || errorText.includes('Invalid')) {
+                        errorMessage = 'Please fill in all required fields correctly.';
+                    } else if (errorText.includes('NetworkError') || errorText.includes('Failed to fetch') || errorText.includes('CORS') || errorText.includes('Network') || errorText.includes('message channel') || errorText.includes('Browser extension')) {
+                        if (errorText.includes('message channel') || errorText.includes('Browser extension')) {
+                            errorMessage = 'Browser extension interference detected. Please try disabling browser extensions (password managers, ad blockers) and refresh the page, or try in an incognito/private window.';
+                        } else {
+                            errorMessage = 'Network error. Please check your connection and try again.';
+                        }
+                    } else if (errorText.includes('timeout') || errorText.includes('timed out')) {
+                        errorMessage = 'Request timed out. Please check your connection and try again.';
+                    } else if (errorText.includes('500') || errorText.includes('Internal Server Error')) {
+                        errorMessage = 'Server error occurred. Please try again later.';
+                    } else {
+                        // Show the actual error message from the API, but clean it up
+                        const cleanError = errorText.replace(/^Error:\s*/i, '').trim();
+                        if (cleanError && cleanError !== '---' && cleanError.length > 0) {
+                            errorMessage = cleanError;
+                        } else {
+                            errorMessage = 'Failed to send message. Please try again.';
+                        }
+                    }
+                    
+                    // Ensure we always have a message
+                    if (!errorMessage || errorMessage.trim() === '' || errorMessage === '---') {
+                        errorMessage = 'Failed to send message. Please try again.';
+                    }
+                    
+                    showMessage(errorMessage, true);
+                } finally {
+                    setSubmitting(false);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+

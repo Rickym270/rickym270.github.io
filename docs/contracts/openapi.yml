@@ -323,7 +323,12 @@ paths:
         **Validation**:
         - `name`: Required, 1-100 characters
         - `email`: Required, must be a valid email address
+        - `subject`: Required, 1-200 characters
         - `message`: Required, 1-2000 characters
+        
+        **Spam Protection**:
+        - Honeypot field: If `honeypot` field is provided and filled, request is rejected with 400 Bad Request
+        - Rate limiting: 5 minutes per IP address (subsequent requests return 400 Bad Request)
       operationId: createContact
       tags:
         - Contact
@@ -336,7 +341,9 @@ paths:
             example:
               name: "John Doe"
               email: "john@example.com"
+              subject: "Project Inquiry"
               message: "Hello, I'd like to get in touch!"
+              honeypot: ""
       responses:
         '201':
           description: Contact message created successfully
@@ -348,14 +355,19 @@ paths:
                 id: "550e8400-e29b-41d4-a716-446655440000"
                 name: "John Doe"
                 email: "john@example.com"
+                subject: "Project Inquiry"
                 message: "Hello, I'd like to get in touch!"
                 receivedAt: "2025-01-30T12:00:00Z"
         '400':
-          description: Bad request (malformed JSON or missing Content-Type)
+          description: Bad request (malformed JSON, missing Content-Type, spam detected, or rate limited)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "bad_request"
+                message: "Spam detected" or "Please wait before submitting another message"
+                time: "2025-01-30T12:00:00Z"
         '415':
           description: Unsupported media type (must be application/json)
           content:
@@ -370,7 +382,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
                 error: "validation_error"
-                message: "name: must not be blank; email: must be a well-formed email address; message: must not be blank"
+                message: "name: must not be blank; email: must be a well-formed email address; subject: must not be blank; message: must not be blank"
                 time: "2025-01-30T12:00:00Z"
         '404':
           description: Resource not found
@@ -422,6 +434,7 @@ paths:
                 - id: "550e8400-e29b-41d4-a716-446655440000"
                   name: "John Doe"
                   email: "john@example.com"
+                  subject: "Project Inquiry"
                   message: "Hello!"
                   receivedAt: "2025-01-30T12:00:00Z"
         '401':
@@ -608,6 +621,7 @@ components:
       required:
         - name
         - email
+        - subject
         - message
       properties:
         name:
@@ -621,12 +635,22 @@ components:
           format: email
           description: Contact email address
           example: "john@example.com"
+        subject:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Message subject/title
+          example: "Project Inquiry"
         message:
           type: string
           minLength: 1
           maxLength: 2000
           description: Contact message content
           example: "Hello, I'd like to get in touch!"
+        honeypot:
+          type: string
+          description: Spam protection field (should be empty). If filled, request is rejected.
+          example: ""
 
     ContactMessage:
       type: object
@@ -634,6 +658,7 @@ components:
         - id
         - name
         - email
+        - subject
         - message
         - receivedAt
       properties:
@@ -649,6 +674,10 @@ components:
           type: string
           format: email
           example: "john@example.com"
+        subject:
+          type: string
+          description: Message subject/title
+          example: "Project Inquiry"
         message:
           type: string
           example: "Hello, I'd like to get in touch!"

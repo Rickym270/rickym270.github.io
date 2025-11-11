@@ -9,6 +9,7 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: 'Test User',
         email: 'test@example.com',
+        subject: 'Test Subject',
         message: 'This is a test message',
       },
       headers: {
@@ -21,6 +22,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body).toHaveProperty('id');
     expect(body).toHaveProperty('name', 'Test User');
     expect(body).toHaveProperty('email', 'test@example.com');
+    expect(body).toHaveProperty('subject', 'Test Subject');
     expect(body).toHaveProperty('message', 'This is a test message');
     expect(body).toHaveProperty('receivedAt');
     // Verify UUID format
@@ -34,6 +36,7 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: '',
         email: 'invalid-email',
+        subject: '',
         message: '',
       },
       headers: {
@@ -48,6 +51,8 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body).toHaveProperty('time');
     expect(body.message).toContain('name');
     expect(body.message).toContain('email');
+    expect(body.message).toContain('subject');
+    expect(body.message).toContain('message');
   });
 
   test('POST /api/contact returns 400 for malformed JSON', async ({ request }) => {
@@ -83,6 +88,7 @@ test.describe('API Contact Endpoint - POST', () => {
       data: {
         name: longName,
         email: 'test@example.com',
+        subject: 'Test Subject',
         message: 'Test message',
       },
       headers: {
@@ -95,13 +101,14 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body.error).toBe('validation_error');
   });
 
-  test('POST /api/contact validates message length (max 2000)', async ({ request }) => {
-    const longMessage = 'a'.repeat(2001);
+  test('POST /api/contact validates subject length (max 200)', async ({ request }) => {
+    const longSubject = 'a'.repeat(201);
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: 'Test User',
         email: 'test@example.com',
-        message: longMessage,
+        subject: longSubject,
+        message: 'Test message',
       },
       headers: {
         'Content-Type': 'application/json',
@@ -140,6 +147,7 @@ test.describe('API Contact Endpoint - GET', () => {
       data: {
         name: 'API Test User',
         email: 'apitest@example.com',
+        subject: 'API Test Subject',
         message: 'Test message for GET endpoint',
       },
       headers: {
@@ -164,6 +172,7 @@ test.describe('API Contact Endpoint - GET', () => {
         expect(message).toHaveProperty('id');
         expect(message).toHaveProperty('name');
         expect(message).toHaveProperty('email');
+        expect(message).toHaveProperty('subject');
         expect(message).toHaveProperty('message');
         expect(message).toHaveProperty('receivedAt');
       }

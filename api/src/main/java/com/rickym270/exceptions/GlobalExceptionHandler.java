@@ -76,6 +76,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNAUTHORIZED, "unauthorized", ex.getMessage());
     }
 
+    // 400 — bad request (e.g., spam detection, rate limiting, CAPTCHA failure)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        return build(HttpStatus.BAD_REQUEST, "bad_request", ex.getMessage());
+    }
+
     // 500 — fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {

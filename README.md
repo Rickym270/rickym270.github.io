@@ -28,7 +28,7 @@
    - GET /api/stats        → Rollup stats (projects count, unique languages, lastUpdated)
    - GET /api/github/activity → Recent GitHub activity (type, repo, createdAt)
    - GET /api/home         → Simple home text
-   - POST /api/contact     → Submit contact form (JSON body)
+   - POST /api/contact     → Submit contact form (JSON body: name, email, subject, message)
    - GET /api/contact      → Admin-only, requires `X-API-Key`
 
    Error handling
@@ -61,12 +61,12 @@
    - curl -s http://localhost:8080/api/projects
    - curl -s http://localhost:8080/api/stats
    - curl -s http://localhost:8080/api/github/activity
-   - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"RMTest","email":"rmtest@testing.com","message":"Test!"}'
+   - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"RMTest","email":"rmtest@testing.com","subject":"Test Subject","message":"Test!"}'
    - curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact
 
    Quick error tests
    - 404: `curl -s -i http://localhost:8080/api/does-not-exist`
-   - 422: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"","email":"bad","message":""}'`
+   - 422: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"","email":"bad","subject":"","message":""}'`
    - 400 malformed: `curl -s -i -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{ bad'`
    - 401: `curl -s -i http://localhost:8080/api/contact`
    - 405: `curl -s -i -X PUT http://localhost:8080/api/contact`
