@@ -41,7 +41,7 @@ This guide walks you through deploying the Spring Boot API to Google Cloud Run.
 
 1. **Set environment variables**:
    ```bash
-   export GITHUB_TOKEN=your_github_pat_here
+   export GH_TOKEN=your_github_pat_here
    export ADMIN_API_KEY=your_random_admin_key_here
    ```
 
@@ -60,7 +60,7 @@ This guide walks you through deploying the Spring Boot API to Google Cloud Run.
 
 1. **Set environment variables**:
    ```bash
-   export GITHUB_TOKEN=your_github_pat_here
+   export GH_TOKEN=your_github_pat_here
    export ADMIN_API_KEY=your_random_admin_key_here
    ```
 
@@ -88,14 +88,14 @@ gcloud run deploy $SERVICE \
   --region $REGION \
   --source . \
   --allow-unauthenticated \
-  --set-env-vars "GITHUB_TOKEN=your_pat_here,ADMIN_API_KEY=your_random_admin_key" \
+  --set-env-vars "GH_TOKEN=your_pat_here,ADMIN_API_KEY=your_random_admin_key" \
   --min-instances=0 \
   --max-instances=3
 ```
 
 ## Environment Variables
 
-- **GITHUB_TOKEN** (optional but recommended): GitHub Personal Access Token to avoid rate limits
+- **GH_TOKEN** (optional but recommended): GitHub Personal Access Token to avoid rate limits
   - Generate at: https://github.com/settings/tokens
   - Scopes: `public_repo` (read access to public repos)
 
@@ -124,7 +124,7 @@ make set-env
 # Or manually:
 gcloud run services update ricky-api \
   --region us-east1 \
-  --update-env-vars "GITHUB_TOKEN=new_token,ADMIN_API_KEY=new_key"
+  --update-env-vars "GH_TOKEN=new_token,ADMIN_API_KEY=new_key"
 ```
 
 ### Test endpoints
@@ -156,7 +156,7 @@ curl $API_URL/api/projects
 - Check you're calling the Cloud Run URL, not localhost
 
 ### GitHub rate limits
-- Set `GITHUB_TOKEN` environment variable with a valid PAT
+- Set `GH_TOKEN` environment variable with a valid PAT
 - Re-deploy with: `make deploy` or update env vars: `make set-env`
 
 ### Cold starts

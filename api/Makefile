@@ -19,10 +19,10 @@ check-project: ## Check if GCP project is set
 	fi
 	@gcloud config get-value project
 
-deploy: check-project ## Deploy to Cloud Run (requires GITHUB_TOKEN and ADMIN_API_KEY env vars)
-	@if [ -z "$$GITHUB_TOKEN" ] || [ -z "$$ADMIN_API_KEY" ]; then \
-		echo "⚠️  Warning: GITHUB_TOKEN and/or ADMIN_API_KEY not set"; \
-		echo "   Run: export GITHUB_TOKEN=your_token ADMIN_API_KEY=your_key"; \
+deploy: check-project ## Deploy to Cloud Run (requires GH_TOKEN and ADMIN_API_KEY env vars)
+	@if [ -z "$$GH_TOKEN" ] || [ -z "$$ADMIN_API_KEY" ]; then \
+		echo "⚠️  Warning: GH_TOKEN and/or ADMIN_API_KEY not set"; \
+		echo "   Run: export GH_TOKEN=your_token ADMIN_API_KEY=your_key"; \
 		echo ""; \
 		read -p "Continue anyway? (y/N) " -n 1 -r; \
 		echo ""; \
@@ -35,7 +35,7 @@ deploy: check-project ## Deploy to Cloud Run (requires GITHUB_TOKEN and ADMIN_AP
 	@echo "   Service: $(SERVICE)"
 	@echo "   Region:  $(REGION)"
 	@ENV_VARS=""; \
-	if [ -n "$$GITHUB_TOKEN" ]; then ENV_VARS="GITHUB_TOKEN=$$GITHUB_TOKEN"; fi; \
+	if [ -n "$$GH_TOKEN" ]; then ENV_VARS="GH_TOKEN=$$GH_TOKEN"; fi; \
 	if [ -n "$$ADMIN_API_KEY" ]; then \
 		if [ -n "$$ENV_VARS" ]; then ENV_VARS="$$ENV_VARS,ADMIN_API_KEY=$$ADMIN_API_KEY"; \
 		else ENV_VARS="ADMIN_API_KEY=$$ADMIN_API_KEY"; fi; \
@@ -67,10 +67,10 @@ logs: ## View Cloud Run service logs
 		--project $$(gcloud config get-value project)
 
 set-env: check-project ## Set environment variables (interactive)
-	@read -p "GITHUB_TOKEN: " GITHUB_TOKEN; \
+	@read -p "GH_TOKEN: " GH_TOKEN; \
 	read -p "ADMIN_API_KEY: " ADMIN_API_KEY; \
 	echo ""; \
-	ENV_VARS="GITHUB_TOKEN=$$GITHUB_TOKEN,ADMIN_API_KEY=$$ADMIN_API_KEY"; \
+	ENV_VARS="GH_TOKEN=$$GH_TOKEN,ADMIN_API_KEY=$$ADMIN_API_KEY"; \
 	gcloud run services update $(SERVICE) \
 		--region $(REGION) \
 		--update-env-vars "$$ENV_VARS" || \

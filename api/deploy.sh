@@ -27,9 +27,9 @@ echo "   Region:  $REGION"
 echo ""
 
 # Check if environment variables are set
-if [ -z "$GITHUB_TOKEN" ]; then
-    echo "⚠️  Warning: GITHUB_TOKEN not set. GitHub API calls may be rate-limited."
-    echo "   Set it with: export GITHUB_TOKEN=your_token"
+if [ -z "$GH_TOKEN" ]; then
+    echo "⚠️  Warning: GH_TOKEN not set. GitHub API calls may be rate-limited."
+    echo "   Set it with: export GH_TOKEN=your_token"
     echo ""
 fi
 
@@ -41,8 +41,8 @@ fi
 
 # Build env vars string
 ENV_VARS=""
-if [ -n "$GITHUB_TOKEN" ]; then
-    ENV_VARS="GITHUB_TOKEN=$GITHUB_TOKEN"
+if [ -n "$GH_TOKEN" ]; then
+    ENV_VARS="GH_TOKEN=$GH_TOKEN"
 fi
 if [ -n "$ADMIN_API_KEY" ]; then
     if [ -n "$ENV_VARS" ]; then
