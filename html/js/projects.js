@@ -88,6 +88,7 @@ function renderProjectCard(project, containerId) {
         ? tech.map(t => `<span class="tech-tag">${t}</span>`).join('') 
         : '';
     
+    const projectSlug = project.slug || project.name.toLowerCase().replace(/\s+/g, '-');
     const cardHtml = `
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
             <div class="project-card fade-in">
@@ -95,9 +96,9 @@ function renderProjectCard(project, containerId) {
                      onerror="this.onerror=null; this.style.display='none';"
                      loading="lazy">
                 <h5 class="card-title">${project.name}</h5>
-                <p class="card-text">${summary}</p>
+                <p class="card-text" data-translate="projects.descriptions.${projectSlug}">${summary}</p>
                 ${techTags ? `<div class="project-tech">${techTags}</div>` : ''}
-                <a href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer">
+                <a href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer" data-translate="projects.viewGitHub">
                     View on GitHub →
                 </a>
             </div>
@@ -301,6 +302,12 @@ async function initProjects() {
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects);
+            // Re-apply translations after projects are rendered
+            if (typeof window.TranslationManager !== 'undefined') {
+                setTimeout(() => {
+                    window.TranslationManager.applyTranslations();
+                }, 100);
+            }
         } else {
             // Show message if no projects
             const containerEl = document.querySelector('.container');

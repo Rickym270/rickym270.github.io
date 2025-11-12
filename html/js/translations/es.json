@@ -35,7 +35,29 @@
     "inProgress": "En Progreso",
     "complete": "Completado",
     "ideas": "Ideas",
-    "pleaseWait": "Por favor espere..."
+    "pleaseWait": "Por favor espere...",
+    "viewGitHub": "Ver en GitHub →",
+    "descriptions": {
+      "blue-manager": "Aplicación de mantenimiento de propiedades con OCR y backend de Supabase.",
+      "personal-website": "Sitio personal para alojar notas, tutoriales y proyectos — originalmente construido como plataforma de enseñanza de Python.",
+      "xpress-transit": "Aplicación de gestión y programación de viajes construida con Django y React para manejar datos de vehículos y pasajeros.",
+      "auth": "Script de autorización simple basado en Python que habilita o restringe funciones según los permisos del nombre de usuario.",
+      "connectivity-monitor": "Monitorea la conectividad de red mediante ping, TCP o UDP y alerta cuando los endpoints se vuelven inaccesibles.",
+      "cr-ip-lookup": "Utilidad para realizar búsquedas de IP y nombre de host para identificar rápidamente y hacer referencias cruzadas de recursos conectados.",
+      "error-checker": "Validador automatizado de scripts que escanea todos los scripts en busca de errores de tiempo de ejecución y envía informes diarios de éxito o fallo por correo electrónico.",
+      "f5-sdk": "Script wrapper que usa el SDK de F5 para extraer y almacenar configuraciones y metadatos de dispositivos de red.",
+      "f5-diffs": "Compara instantáneas de configuración de F5 para identificar y registrar diferencias entre entornos o revisiones.",
+      "f5requests": "Biblioteca Python ligera para interactuar fácilmente con dispositivos F5 a través de APIs REST.",
+      "f5-vip-search": "Utilidad de búsqueda para localizar y analizar configuraciones de IP Virtual (VIP) en múltiples balanceadores de carga F5.",
+      "gen-graph": "Módulo Python para generar gráficos y diagramas a partir de datos estructurados para incrustar en paneles o páginas web.",
+      "g-photography-php": "Sistema de galería y gestión de fotos basado en PHP con mejoras sobre la versión original de Python.",
+      "interface-err-report": "Herramienta para analizar y reportar errores de interfaz en dispositivos de red para ayudar con la solución de problemas.",
+      "intranet-site": "Intranet interna de la empresa construida para centralizar scripts, paneles y documentación para acceso rápido.",
+      "ip-requests": "Kit de herramientas para registrar y analizar solicitudes HTTP basadas en IP con metadatos y utilidades de informes.",
+      "kappasigmahc": "Sitio web estático y repositorio de código para el capítulo del Consejo Superior de Kappa Sigma, mostrando eventos e historia.",
+      "muscribe": "Prototipo temprano de una herramienta impulsada por IA que convierte audio de instrumentos en partituras o notación musical.",
+      "gops": "Prototipo en C++ de un sistema de navegación diseñado para procesar coordenadas y simular lógica de rutas similar a GPS."
+    }
   },
   "skills": {
     "title": "Habilidades y Tecnologías - Ricky Martinez",

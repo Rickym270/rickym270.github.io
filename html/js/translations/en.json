@@ -35,7 +35,29 @@
     "inProgress": "In Progress",
     "complete": "Complete",
     "ideas": "Ideas",
-    "pleaseWait": "Please Wait..."
+    "pleaseWait": "Please Wait...",
+    "viewGitHub": "View on GitHub →",
+    "descriptions": {
+      "blue-manager": "Property maintenance app with OCR and Supabase backend.",
+      "personal-website": "Personal site to host notes, tutorials, and projects — originally built as a Python teaching platform.",
+      "xpress-transit": "Ride management and scheduling app built with Django and React for handling vehicle and passenger data.",
+      "auth": "Simple Python-based authorization script that enables or restricts features based on username permissions.",
+      "connectivity-monitor": "Monitors network connectivity via ping, TCP, or UDP and alerts when endpoints become unreachable.",
+      "cr-ip-lookup": "Utility for performing IP and hostname lookups to quickly identify and cross-reference connected resources.",
+      "error-checker": "Automated script validator that scans all scripts for runtime errors and emails daily success or failure reports.",
+      "f5-sdk": "Wrapper script that uses the F5 SDK to extract and store network device configurations and metadata.",
+      "f5-diffs": "Compares F5 configuration snapshots to identify and log differences between environments or revisions.",
+      "f5requests": "Lightweight Python library for easily interacting with F5 devices over REST APIs.",
+      "f5-vip-search": "Search utility for locating and analyzing Virtual IP (VIP) configurations across multiple F5 load balancers.",
+      "gen-graph": "Python module for generating charts and graphs from structured data to embed in dashboards or web pages.",
+      "g-photography-php": "A PHP-based photo gallery and management system with enhancements over the original Python version.",
+      "interface-err-report": "Tool for parsing and reporting interface errors across network devices to assist with troubleshooting.",
+      "intranet-site": "Internal company intranet built to centralize scripts, dashboards, and documentation for quick access.",
+      "ip-requests": "Toolkit for logging and analyzing IP-based HTTP requests with metadata and reporting utilities.",
+      "kappasigmahc": "Static website and code repository for the Kappa Sigma High Council chapter, showcasing events and history.",
+      "muscribe": "Early prototype of an AI-powered tool that converts instrument audio into sheet music or note notation.",
+      "gops": "C++ prototype of a navigation system designed to process coordinates and simulate GPS-like pathing logic."
+    }
   },
   "skills": {
     "title": "Skills & Technologies - Ricky Martinez",
