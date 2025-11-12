@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Tutorials Page', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure English is set for these tests
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('siteLanguage', 'en');
+      if (typeof window.TranslationManager !== 'undefined') {
+        window.TranslationManager.switchLanguage('en');
+      }
+    });
+    await page.waitForTimeout(300);
+  });
+
   test('tutorials page loads without redirecting entire page', async ({ page }) => {
     await page.goto('/');
     

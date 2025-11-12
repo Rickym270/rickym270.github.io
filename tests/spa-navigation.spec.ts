@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('SPA Navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure English is set for these tests
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('siteLanguage', 'en');
+      if (typeof window.TranslationManager !== 'undefined') {
+        window.TranslationManager.switchLanguage('en');
+      }
+    });
+    await page.waitForTimeout(300);
+  });
+
   test('navigation loads content into #content without full page reload', async ({ page }) => {
     await page.goto('/');
     

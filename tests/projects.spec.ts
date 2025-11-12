@@ -1,7 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Projects Page', () => {
-test('navigates to Projects via navbar and renders content', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure English is set for these tests
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('siteLanguage', 'en');
+      if (typeof window.TranslationManager !== 'undefined') {
+        window.TranslationManager.switchLanguage('en');
+      }
+    });
+    await page.waitForTimeout(300);
+  });
+
+  test('navigates to Projects via navbar and renders content', async ({ page }) => {
   await page.goto('/');
     
     // Wait for initial load
