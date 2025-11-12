@@ -142,10 +142,14 @@
                     // For labels, preserve HTML like <span class="text-danger">*</span>
                     if (element.tagName === 'LABEL' && element.innerHTML.includes('<')) {
                         const htmlContent = element.innerHTML;
-                        const textMatch = htmlContent.match(/^([^<]*)/);
-                        if (textMatch) {
-                            const beforeTag = textMatch[1];
-                            element.innerHTML = htmlContent.replace(beforeTag, translation);
+                        // Extract text before first HTML tag and the HTML part
+                        const parts = htmlContent.split(/(<[^>]*>)/);
+                        if (parts.length > 1) {
+                            // Find the first text part (before any HTML)
+                            const textPart = parts[0].trim();
+                            // Reconstruct with translation replacing the text part
+                            const htmlPart = parts.slice(1).join(''); // Everything after first text
+                            element.innerHTML = translation + ' ' + htmlPart;
                         } else {
                             element.textContent = translation;
                         }
