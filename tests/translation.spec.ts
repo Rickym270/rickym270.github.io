@@ -326,6 +326,72 @@ test.describe('Translation feature', () => {
     }
   });
 
+  test('docs page translates correctly', async ({ page }) => {
+    // Switch to Spanish
+    const esButton = page.locator('#language-switcher button[data-lang="es"]');
+    await esButton.click();
+    await page.waitForTimeout(500);
+    
+    // Navigate to Docs
+    await page.getByRole('button', { name: 'Documentos' }).or(page.getByRole('link', { name: 'Documentos' })).hover();
+    await page.getByRole('link', { name: 'Notas' }).click();
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#FAQLinks');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(300);
+    
+    // Check translations
+    const notesHeading = page.locator('#content h3[data-translate="docs.notes"]');
+    await expect(notesHeading).toHaveText('Notas');
+    
+    const pythonLink = page.locator('#content a[data-translate="docs.python"]');
+    await expect(pythonLink).toHaveText('Python');
+    
+    const gitLink = page.locator('#content a[data-translate="docs.git"]');
+    await expect(gitLink).toHaveText('Git');
+    
+    const miscLink = page.locator('#content a[data-translate="docs.misc"]');
+    await expect(miscLink).toHaveText('Misc.');
+    
+    const clickToStart = page.locator('#content h4[data-translate="docs.clickToStart"]');
+    await expect(clickToStart).toContainText('Haz clic en cualquier FAQ');
+  });
+  
+  test('tutorials page translates correctly', async ({ page }) => {
+    // Switch to Spanish
+    const esButton = page.locator('#language-switcher button[data-lang="es"]');
+    await esButton.click();
+    await page.waitForTimeout(500);
+    
+    // Navigate to Tutorials
+    await page.getByRole('link', { name: 'Tutoriales' }).click();
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(300);
+    
+    // Check translations
+    const title = page.locator('#content h1[data-translate="tutorials.heading"]');
+    await expect(title).toHaveText('Tutoriales');
+    
+    const subtitle = page.locator('#content p[data-translate="tutorials.subtitle"]');
+    await expect(subtitle).toContainText('Directorio de todos los tutoriales');
+    
+    const pythonTutorial = page.locator('#content h3[data-translate="tutorials.pythonTutorial"]');
+    await expect(pythonTutorial).toHaveText('Tutorial de Python');
+    
+    const codingChallenges = page.locator('#content h3[data-translate="tutorials.codingChallenges"]');
+    await expect(codingChallenges).toHaveText('Desafíos de Programación');
+    
+    const viewLessons = page.locator('#content a[data-translate="tutorials.viewLessons"]');
+    await expect(viewLessons).toHaveText('Ver Lecciones →');
+    
+    const viewChallenges = page.locator('#content a[data-translate="tutorials.viewChallenges"]');
+    await expect(viewChallenges).toHaveText('Ver Desafíos →');
+  });
+
   test('language preference persists after page reload', async ({ page }) => {
     // Switch to Spanish
     const esButton = page.locator('#language-switcher button[data-lang="es"]');
