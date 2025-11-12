@@ -1081,6 +1081,26 @@ body #main a {
 
 #docsNavigatrior a {
     font-size: 1rem !important;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: inline-block;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-secondary);
+    transition: all var(--transition-fast);
+}
+
+#docsNavigatrior a:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-accent);
+    color: var(--color-accent-hover);
+}
+
+[data-theme="dark"] #docsNavigatrior a {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border);
 }
 
 /* Fix container font-size - override style.css 12% font-size */
@@ -1847,5 +1867,606 @@ body #main a {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Tutorial Cards
+   ============================================ */
+.tutorial-card {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.tutorial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
+}
+
+.tutorial-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.tutorial-card:hover::before {
+    transform: scaleX(1);
+}
+
+.tutorial-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.tutorial-icon-text {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.tutorial-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+    line-height: 1.3;
+}
+
+.tutorial-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+    flex-grow: 1;
+}
+
+.tutorial-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    margin-top: auto;
+}
+
+.tutorial-link:hover {
+    color: var(--color-accent-hover);
+    transform: translateX(4px);
+}
+
+.tutorial-link::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-accent);
+    margin-left: 8px;
+    transition: width var(--transition-fast);
+}
+
+.tutorial-link:hover::after {
+    width: 24px;
+}
+
+/* Dark mode adjustments for tutorial cards */
+[data-theme="dark"] .tutorial-card {
+    background-color: var(--color-bg-secondary);
+}
+
+[data-theme="dark"] .tutorial-card:hover {
+    background-color: var(--color-bg-tertiary);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .tutorial-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .tutorial-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .tutorial-icon-text {
+        font-size: 1.75rem;
+    }
+    
+    .tutorial-title {
+        font-size: 1.25rem;
+    }
+    
+    .tutorial-description {
+        font-size: 0.9375rem;
+    }
+}
+
+/* ============================================
+   Lesson Pages
+   ============================================ */
+.lesson-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.lesson-header-icon {
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.introduction-section {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.introduction-content {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .introduction-section {
+    background-color: var(--color-bg-tertiary);
+}
+
+.lesson-card {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.lesson-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-base);
+}
+
+.lesson-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.lesson-card:hover::before {
+    transform: scaleX(1);
+}
+
+.lesson-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.lesson-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+    line-height: 1.3;
+}
+
+.lesson-card-description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+    flex-grow: 1;
+}
+
+.lesson-card-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    margin-top: auto;
+}
+
+.lesson-card-link:hover {
+    color: var(--color-accent-hover);
+    transform: translateX(4px);
+}
+
+.lesson-card-link::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-accent);
+    margin-left: 8px;
+    transition: width var(--transition-fast);
+}
+
+.lesson-card-link:hover::after {
+    width: 24px;
+}
+
+/* Lesson Content Pages */
+.lesson-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) 0;
+}
+
+.lesson-nav-top {
+    margin-bottom: var(--spacing-xl);
+}
+
+.lesson-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition: all var(--transition-fast);
+    margin-bottom: var(--spacing-lg);
+}
+
+.lesson-back-button:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateX(-4px);
+}
+
+.lesson-back-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+[data-theme="dark"] .lesson-back-button {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border);
+}
+
+[data-theme="dark"] .lesson-back-button:hover {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-accent);
+}
+
+.lesson-nav-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-3xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.lesson-nav-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.lesson-nav-label {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.lesson-nav-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.lesson-nav-link:hover {
+    color: var(--color-accent-hover);
+}
+
+.lesson-nav-link[href*="→"]:hover {
+    transform: translateX(4px);
+}
+
+.lesson-nav-link:not([href*="→"]):hover {
+    transform: translateX(-4px);
+}
+
+.lesson-header-content {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.lesson-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    color: white;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.lesson-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+    line-height: 1.2;
+}
+
+.lesson-subtitle {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-bottom: 0;
+}
+
+.lesson-body {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-text-primary);
+}
+
+.lesson-body h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-top: var(--spacing-2xl);
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-primary);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.lesson-body h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+}
+
+.lesson-body h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+}
+
+.lesson-body p {
+    margin-bottom: var(--spacing-md);
+}
+
+.lesson-body ul,
+.lesson-body ol {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-xl);
+}
+
+.lesson-body li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.lesson-list {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: lesson-counter;
+}
+
+.lesson-list > li {
+    counter-increment: lesson-counter;
+    padding-left: var(--spacing-2xl);
+    position: relative;
+    margin-bottom: var(--spacing-lg);
+}
+
+.lesson-list > li::before {
+    content: counter(lesson-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.lesson-list ul {
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    list-style: disc;
+    padding-left: var(--spacing-xl);
+}
+
+.code-block {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+    overflow-x: auto;
+    position: relative;
+}
+
+.code-block pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+}
+
+.code-block code {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    color: var(--color-text-primary);
+    background: transparent;
+    padding: 0;
+}
+
+[data-theme="dark"] .code-block {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border);
+}
+
+[data-theme="dark"] .code-block code {
+    color: var(--color-text-primary);
+}
+
+.lesson-note {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-left: 4px solid var(--color-accent);
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+    border-radius: var(--radius-md);
+}
+
+.lesson-note strong {
+    color: var(--color-accent);
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+.lesson-note p {
+    margin-bottom: var(--spacing-xs);
+}
+
+.lesson-note small {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+[data-theme="dark"] .lesson-note {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-left-color: var(--color-accent);
+}
+
+/* Dark mode adjustments for lesson cards */
+[data-theme="dark"] .lesson-card {
+    background-color: var(--color-bg-secondary);
+}
+
+[data-theme="dark"] .lesson-card:hover {
+    background-color: var(--color-bg-tertiary);
+}
+
+/* Mobile responsiveness for lesson pages */
+@media (max-width: 768px) {
+    .lesson-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+    
+    .lesson-header-icon {
+        font-size: 3rem;
+    }
+    
+    .lesson-title {
+        font-size: 2rem;
+    }
+    
+    .lesson-subtitle {
+        font-size: 1rem;
+    }
+    
+    .lesson-content {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .lesson-nav-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .lesson-nav-group {
+        width: 100%;
+    }
+    
+    .lesson-list > li {
+        padding-left: var(--spacing-xl);
+    }
+    
+    .lesson-list > li::before {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+    
+    .code-block {
+        padding: var(--spacing-md);
+    }
+    
+    .code-block pre,
+    .code-block code {
+        font-size: 0.875rem;
+    }
 }
 
