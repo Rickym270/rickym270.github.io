@@ -53,7 +53,8 @@ test.describe('SPA Navigation', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Content should have changed
-    const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
+    await expect(projectsHeading).toBeVisible({ timeout: 3000 });
     await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
   });
 
@@ -119,8 +120,11 @@ test.describe('SPA Navigation', () => {
       await page.getByRole('link', { name: 'Projects' }).click();
       await page.waitForTimeout(1500);
       
-      // Should only have one Projects heading (check both h1 and h3)
-      const projectsHeadings = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+      // Wait for translations to apply
+      await page.waitForTimeout(500);
+      
+      // Should only have one Projects heading (use data-translate attribute for reliable selection)
+      const projectsHeadings = page.locator('#content h1[data-translate="projects.heading"]');
       const count = await projectsHeadings.count();
       expect(count).toBe(1);
     }
