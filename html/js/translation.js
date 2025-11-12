@@ -24,6 +24,19 @@
             this.loadLanguage(defaultLang).then(() => {
                 this.applyTranslations();
                 this.updateLanguageSwitcher();
+                
+                // Listen for dynamically loaded content
+                const observer = new MutationObserver(() => {
+                    // Re-apply translations when new content is added
+                    this.applyTranslations();
+                });
+                
+                // Observe the content area for changes
+                const contentArea = document.getElementById('content') || document.body;
+                observer.observe(contentArea, {
+                    childList: true,
+                    subtree: true
+                });
             });
         },
 

@@ -65,6 +65,28 @@
     "sendMessage": "Send Message",
     "success": "✓ Email sent successfully! Thank you for reaching out. I'll get back to you soon.",
     "error": "Failed to send message. Please try again."
+  },
+  "docs": {
+    "title": "Ricky Martinez - Docs",
+    "notes": "Notes",
+    "clickToStart": "Click any FAQ to get started!",
+    "python": "Python",
+    "git": "Git",
+    "misc": "Misc."
+  },
+  "tutorials": {
+    "title": "Ricky Martinez - Tutorials",
+    "heading": "Tutorials",
+    "subtitle": "Directory of all tutorials and side projects that I would like to exhibit.",
+    "pythonTutorial": "Python Tutorial",
+    "pythonDescription": "Project was done to teach the utmost basics of programming in Python. Perfect for beginners looking to get started with programming fundamentals.",
+    "viewLessons": "View Lessons →",
+    "codingChallenges": "Coding Challenges",
+    "codingDescription": "Essentially algorithm notes where I explore the \"English\" translation of code. Dive into problem-solving approaches and algorithmic thinking.",
+    "viewChallenges": "View Challenges →"
+  },
+  "journal": {
+    "title": "Ricky Martinez - Journal"
   }
 }
 

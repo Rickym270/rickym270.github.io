@@ -65,6 +65,28 @@
     "sendMessage": "Enviar Mensaje",
     "success": "✓ ¡Correo enviado con éxito! Gracias por contactarme. Te responderé pronto.",
     "error": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
+  },
+  "docs": {
+    "title": "Ricky Martinez - Documentos",
+    "notes": "Notas",
+    "clickToStart": "¡Haz clic en cualquier FAQ para comenzar!",
+    "python": "Python",
+    "git": "Git",
+    "misc": "Misc."
+  },
+  "tutorials": {
+    "title": "Ricky Martinez - Tutoriales",
+    "heading": "Tutoriales",
+    "subtitle": "Directorio de todos los tutoriales y proyectos secundarios que me gustaría exhibir.",
+    "pythonTutorial": "Tutorial de Python",
+    "pythonDescription": "Proyecto realizado para enseñar los fundamentos básicos de programación en Python. Perfecto para principiantes que buscan comenzar con los fundamentos de programación.",
+    "viewLessons": "Ver Lecciones →",
+    "codingChallenges": "Desafíos de Programación",
+    "codingDescription": "Básicamente notas de algoritmos donde exploro la traducción \"en inglés\" del código. Sumérgete en enfoques de resolución de problemas y pensamiento algorítmico.",
+    "viewChallenges": "Ver Desafíos →"
+  },
+  "journal": {
+    "title": "Ricky Martinez - Diario"
   }
 }
 
