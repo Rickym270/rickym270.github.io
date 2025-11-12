@@ -135,6 +135,8 @@ $(document).ready(function(){
                             // Remove any script tags that might cause redirects
                             var $contentDiv = jQuery('<div>').html(bodyContent);
                             $contentDiv.find('script').remove();
+                            // Ensure all links with data-url get inline-load class
+                            $contentDiv.find('a[data-url]').addClass('inline-load').attr('href', '#');
                             // Convert regular links to inline-load links if they point to data/projects
                             $contentDiv.find('a[href*="/data/projects/"]').each(function() {
                                 var href = jQuery(this).attr('href');
