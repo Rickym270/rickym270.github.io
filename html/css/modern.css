@@ -1775,6 +1775,13 @@ body #main a {
 
 .contact-form .btn-primary {
     margin-top: var(--spacing-md);
+    font-size: 0.9375rem !important; /* Override #content font-size: 12% */
+}
+
+/* Ensure all buttons inside #content have proper font-size */
+#content .btn,
+#content button.btn {
+    font-size: 0.9375rem !important;
 }
 
 .contact-form #form-message {
