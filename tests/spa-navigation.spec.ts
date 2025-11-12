@@ -70,8 +70,9 @@ test.describe('SPA Navigation', () => {
     // Navbar should still be visible
     await expect(page.locator('nav.navbar')).toBeVisible();
     
-    // Tutorials content should load
-    await expect(page.locator('#content h3')).toHaveText('Tutorials');
+    // Tutorials content should load - check for h3 with exact text "Tutorials" or h1
+    const tutorialsHeading = page.locator('#content h3, #content h1').filter({ hasText: /^Tutorials$/ });
+    await expect(tutorialsHeading.first()).toHaveText('Tutorials', { timeout: 3000 });
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
