@@ -45,8 +45,7 @@ public class ContactService {
         // If no token provided and Turnstile isn't configured, allow submission (for development)
 
         // Rate limiting check - use email address instead of IP to prevent global lockouts
-        // Normalize email to lowercase and trim to ensure consistent rate limiting
-        String rateLimitKey = dto.email().toLowerCase().trim();
+        String rateLimitKey = dto.email();
         long now = System.currentTimeMillis();
         Long lastSubmission = rateLimitMap.get(rateLimitKey);
         if (lastSubmission != null) {
