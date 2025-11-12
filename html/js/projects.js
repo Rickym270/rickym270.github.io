@@ -30,6 +30,7 @@ function getProjectImage(projectName) {
     
     // Explicit mappings for known exceptions or special filenames
     const imageMap = {
+        'Blue Manager': 'Blue_Manager.png',
         'BlueManager': 'Blue_Manager.png',
         'KappaSigmaHC': 'KappaSigmaHC.png',
         // Xpress Transit variants
