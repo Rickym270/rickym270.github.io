@@ -47,14 +47,22 @@ test.describe('Projects Page', () => {
     const c = document.querySelector('#content');
     return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
   }, { timeout: 15000 });
-  await expect(page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ })).toBeVisible({ timeout: 10000 });
+  
+  // Wait for translations to apply
+  await page.waitForTimeout(500);
+  
+  // Check for Projects heading - use data-translate attribute for more reliable selection
+  const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
+  await expect(projectsHeading).toBeVisible({ timeout: 10000 });
+  await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
     
     // Wait for scripts to execute and API call to complete (or fail gracefully)
     // The page will either show project cards OR an error message - both are valid
     await page.waitForTimeout(3000); // Give scripts time to load and execute
     
     // Verify page structure is correct
-    const projectsHeading = page.locator('#content h1, #content h3').filter({ hasText: /^Projects$/ });
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
+    await expect(projectsHeading).toBeVisible({ timeout: 3000 });
     await expect(projectsHeading).toHaveText('Projects');
     
     // Check if projects loaded successfully (preferred case)

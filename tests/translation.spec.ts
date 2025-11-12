@@ -96,9 +96,12 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
+    // Wait for translations to apply
+    await page.waitForTimeout(500);
+    
     // Check that Home page is still in Spanish
     const homeTagline = page.locator('#content .hero-title-accent[data-translate="home.tagline"]');
-    await expect(homeTagline).toContainText('No te repitas');
+    await expect(homeTagline).toContainText('No te repitas', { timeout: 5000 });
   });
 
   test('home page content translates correctly', async ({ page }) => {
