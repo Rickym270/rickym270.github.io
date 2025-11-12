@@ -60,8 +60,7 @@ test.describe('Projects Page', () => {
     // The page will either show project cards OR an error message - both are valid
     await page.waitForTimeout(3000); // Give scripts time to load and execute
     
-    // Verify page structure is correct
-    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
+    // Verify page structure is correct (projectsHeading already declared above)
     await expect(projectsHeading).toBeVisible({ timeout: 3000 });
     await expect(projectsHeading).toHaveText('Projects');
     
