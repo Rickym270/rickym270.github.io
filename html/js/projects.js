@@ -95,7 +95,7 @@ function renderProjectCard(project, containerId) {
                 <img src="${imagePath}" class="project-image" alt="${project.name}" 
                      onerror="this.onerror=null; this.style.display='none';"
                      loading="lazy">
-                <h5 class="card-title">${project.name}</h5>
+                <h5 class="card-title" data-no-translate="true">${project.name}</h5>
                 <p class="card-text" data-translate="projects.descriptions.${projectSlug}">${summary}</p>
                 ${techTags ? `<div class="project-tech">${techTags}</div>` : ''}
                 <a href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer" data-translate="projects.viewGitHub">

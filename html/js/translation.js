@@ -120,7 +120,8 @@
             }
             
             this.isApplying = true;
-            const elements = document.querySelectorAll('[data-translate]');
+            // Only select elements with data-translate that don't have data-no-translate
+            const elements = document.querySelectorAll('[data-translate]:not([data-no-translate])');
             elements.forEach(element => {
                 const key = element.getAttribute('data-translate');
                 const translation = this.t(key);
