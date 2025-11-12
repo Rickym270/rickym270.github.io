@@ -107,6 +107,10 @@ test.describe('Translation feature', () => {
     await esButton.click();
     await page.waitForTimeout(500);
     
+    // Check page title
+    const pageTitle = await page.title();
+    expect(pageTitle).toContain('Inicio');
+    
     // Check hero section
     const tagline = page.locator('#content .hero-title-accent[data-translate="home.tagline"]');
     await expect(tagline).toContainText('No te repitas');
@@ -135,6 +139,11 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
+    await page.waitForTimeout(300);
+    
+    // Check page title
+    const pageTitle = await page.title();
+    expect(pageTitle).toContain('Proyectos');
     
     // Check translations
     const title = page.locator('#content h1[data-translate="projects.title"]');
@@ -159,6 +168,11 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
     }, { timeout: 15000 });
+    await page.waitForTimeout(300);
+    
+    // Check page title
+    const pageTitle = await page.title();
+    expect(pageTitle).toContain('Habilidades');
     
     // Check translations
     const title = page.locator('#content h1[data-translate="skills.title"]');
@@ -186,6 +200,10 @@ test.describe('Translation feature', () => {
     
     // Wait a bit for translations to apply
     await page.waitForTimeout(300);
+    
+    // Check page title
+    const pageTitle = await page.title();
+    expect(pageTitle).toContain('Contáctame');
     
     // Check page title and subtitle
     const title = page.locator('#content h1[data-translate="contact.title"]');
@@ -341,6 +359,10 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
     
+    // Check page title
+    const pageTitle = await page.title();
+    expect(pageTitle).toContain('Documentos');
+    
     // Check translations
     const notesHeading = page.locator('#content h3[data-translate="docs.notes"]');
     await expect(notesHeading).toHaveText('Notas');
@@ -371,6 +393,10 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
+    
+    // Check page title
+    const pageTitle = await page.title();
+    expect(pageTitle).toContain('Tutoriales');
     
     // Check translations
     const title = page.locator('#content h1[data-translate="tutorials.heading"]');
