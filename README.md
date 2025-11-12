@@ -107,3 +107,7 @@
    - `npm run test:ui` - Run with Playwright UI
    - `npm run test:headed` - Run in headed mode
    - `npm run test:debug` - Debug mode
+
+   Local development server
+   - `npm run serve` - Serves on `http://localhost:4321` using `http-server`
+   - Or use Python: `python3 -m http.server 4321` (Playwright will detect and reuse it)
