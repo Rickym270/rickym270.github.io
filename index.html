@@ -33,6 +33,14 @@
         <script type="text/javascript" src="/html/js/api.js?v=20251110"></script>
         <script type="text/javascript" src="/html/js/projects.js?v=20251110"></script>
         <script type="text/javascript" src="html/js/theme.js"></script>
+        <script type="text/javascript">
+            // Prefetch projects data on page load so it's ready when user navigates to projects page
+            (function() {
+                if (typeof prefetchProjects === 'function') {
+                    prefetchProjects();
+                }
+            })();
+        </script>
 
     </head>
     <body class="d-flex flex-column min-vh-100">
