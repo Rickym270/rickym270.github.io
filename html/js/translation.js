@@ -10,6 +10,8 @@
         currentLanguage: 'en',
         translations: {},
         loadedLanguages: new Set(),
+        isApplying: false,
+        observerTimeout: null,
 
         /**
          * Initialize translation system
@@ -25,18 +27,27 @@
                 this.applyTranslations();
                 this.updateLanguageSwitcher();
                 
-                // Listen for dynamically loaded content
+                // Listen for dynamically loaded content with debouncing
                 const observer = new MutationObserver(() => {
-                    // Re-apply translations when new content is added
-                    this.applyTranslations();
+                    // Debounce to prevent infinite loops
+                    if (this.observerTimeout) {
+                        clearTimeout(this.observerTimeout);
+                    }
+                    this.observerTimeout = setTimeout(() => {
+                        if (!this.isApplying) {
+                            this.applyTranslations();
+                        }
+                    }, 100);
                 });
                 
                 // Observe the content area for changes
                 const contentArea = document.getElementById('content') || document.body;
-                observer.observe(contentArea, {
-                    childList: true,
-                    subtree: true
-                });
+                if (contentArea) {
+                    observer.observe(contentArea, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
             });
         },
 
@@ -103,6 +114,12 @@
          * Apply translations to all elements with data-translate attribute
          */
         applyTranslations: function() {
+            // Prevent recursive calls
+            if (this.isApplying) {
+                return;
+            }
+            
+            this.isApplying = true;
             const elements = document.querySelectorAll('[data-translate]');
             elements.forEach(element => {
                 const key = element.getAttribute('data-translate');
@@ -143,6 +160,8 @@
                 const titleKey = titleElement.getAttribute('data-translate-title');
                 document.title = this.t(titleKey);
             }
+            
+            this.isApplying = false;
         },
 
         /**
