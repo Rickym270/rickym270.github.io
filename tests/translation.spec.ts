@@ -86,7 +86,7 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     
     // Check that Projects page is in Spanish
-    const projectsTitle = page.locator('#content h1[data-translate="projects.title"]');
+    const projectsTitle = page.locator('#content h1[data-translate="projects.heading"]');
     await expect(projectsTitle).toHaveText('Proyectos');
     
     // Navigate back to Home
@@ -146,7 +146,7 @@ test.describe('Translation feature', () => {
     expect(pageTitle).toContain('Proyectos');
     
     // Check translations
-    const title = page.locator('#content h1[data-translate="projects.title"]');
+    const title = page.locator('#content h1[data-translate="projects.heading"]');
     await expect(title).toHaveText('Proyectos');
     
     const inProgress = page.locator('#content h2[data-translate="projects.inProgress"]');
@@ -162,8 +162,8 @@ test.describe('Translation feature', () => {
     await esButton.click();
     await page.waitForTimeout(500);
     
-    // Navigate to Skills
-    await page.getByRole('link', { name: 'Habilidades' }).click();
+    // Navigate to Skills (use navbar scoped locator to avoid home page button)
+    await page.locator('nav.navbar').getByRole('link', { name: 'Habilidades' }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
