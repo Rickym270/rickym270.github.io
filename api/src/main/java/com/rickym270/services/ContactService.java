@@ -18,9 +18,10 @@ public class ContactService {
     private final List<ContactMessage> messages = Collections.synchronizedList(new ArrayList<>());
     private final TurnstileService turnstileService;
     private final EmailService emailService;
-    // Rate limiting: track IP addresses and their last submission time
+    // Rate limiting: track IP+email combinations to prevent spam while allowing multiple users per IP
+    // This prevents one user from locking out other users on the same IP (family, office, etc.)
     private final ConcurrentHashMap<String, Long> rateLimitMap = new ConcurrentHashMap<>();
-    private static final long RATE_LIMIT_MINUTES = 5; // Allow one submission per 5 minutes per IP
+    private static final long RATE_LIMIT_MINUTES = 5; // Allow one submission per 5 minutes per IP+email combo
 
     public ContactService(TurnstileService turnstileService, EmailService emailService) {
         this.turnstileService = turnstileService;
@@ -43,9 +44,12 @@ public class ContactService {
         }
         // If no token provided and Turnstile isn't configured, allow submission (for development)
 
-        // Rate limiting check
+        // Rate limiting check - use IP+email combination to allow multiple users per IP
+        // Normalize email to lowercase and trim to ensure consistent rate limiting
+        String normalizedEmail = dto.email().toLowerCase().trim();
+        String rateLimitKey = clientIp + ":" + normalizedEmail;
         long now = System.currentTimeMillis();
-        Long lastSubmission = rateLimitMap.get(clientIp);
+        Long lastSubmission = rateLimitMap.get(rateLimitKey);
         if (lastSubmission != null) {
             long timeSinceLastSubmission = TimeUnit.MILLISECONDS.toMinutes(now - lastSubmission);
             if (timeSinceLastSubmission < RATE_LIMIT_MINUTES) {
@@ -53,8 +57,8 @@ public class ContactService {
             }
         }
 
-        // Update rate limit
-        rateLimitMap.put(clientIp, now);
+        // Update rate limit for this IP+email combination
+        rateLimitMap.put(rateLimitKey, now);
         // Clean up old entries (older than 1 hour)
         rateLimitMap.entrySet().removeIf(entry -> 
             TimeUnit.MILLISECONDS.toMinutes(now - entry.getValue()) > 60);
