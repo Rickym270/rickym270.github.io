@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lesson 3: Conditionals - Python Tutorial</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="/html/css/modern.css">
+        <link rel="stylesheet" href="/html/css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="lesson-content">
+                <div class="lesson-nav-top">
+                    <a href="#" class="lesson-back-button inline-load" data-url="/data/projects/kspythontut/index.html">
+                        <span class="lesson-back-icon">←</span>
+                        <span>Back to Table of Contents</span>
+                    </a>
+                </div>
+
+                <div class="lesson-header-content">
+                    <div class="lesson-badge">Lesson 3</div>
+                    <h1 class="lesson-title">Conditionals</h1>
+                    <p class="lesson-subtitle">If this is true, then this happens/is true.</p>
+                </div>
+
+                <div class="lesson-body">
+                    <h3>Small intro</h3>
+                    <p>Conditionals are a control structure. Control structures are used to change the flow of the code to execute instructions.</p>
+
+                    <h3>The <strong><em>if/else</em></strong> statements</h3>
+                    <div class="code-block">
+                        <pre><code>if condition:
+    instruction</code></pre>
+                    </div>
+
+                    <p>The <em>if</em> statement is one of the simplest control structures. Assuming <strong>condition</strong> is a valid condition, if the <strong>condition</strong> evaluates to true, then <strong>instruction</strong> executes. If <strong>condition</strong> evaluates to false, <strong>instruction</strong> is skipped over and doesn't execute <em>(if <code>else</code> condition isn't specified/ present)</em></p>
+
+                    <p>The <em>else</em> statement is used with the <em>if</em> statement. Else is used to tell the code what to do if <strong>condition</strong> is False.</p>
+
+                    <h3>Examples</h3>
+                    <div class="code-block">
+                        <pre><code>x = 5               # This is known as a variable. If you dont really
+                      # get this, please let me know so I could clarify.
+
+if x < 10:          # Evaluates to True because 5 is less than 10.
+    print("True")   # This executes
+
+if x > 10:          # Evaluates to False. 5 is NOT greater than 10.
+    print("True")   # This is skipped over and never executes
+else:               # Since condition evaluated to False, the 
+                    # instruction in this 'block' executes..
+    print("False")  # This executes
+
+if x == 5:          # Evaluates as True. 5 is equal to 5.
+    print("True")   # This executes</code></pre>
+                    </div>
+
+                    <div class="lesson-note">
+                        <strong>** I encourage you all to try this with PyCharm. Learning to code comes easier when you put what you learned, into practice. If you need any help as to how to do this on PyCharm, let me know. **</strong>
+                    </div>
+                </div>
+
+                <div class="lesson-nav-bottom">
+                    <div class="lesson-nav-group">
+                        <a href="#" class="lesson-nav-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-2-hello-world.html">← Previous: Hello World!</a>
+                    </div>
+                    <div class="lesson-nav-group">
+                        <span class="lesson-nav-label">Next Lesson:</span>
+                        <a href="#" class="lesson-nav-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-4-loops.html">4: Loops →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

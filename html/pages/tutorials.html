@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -6,35 +7,47 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="/html/css/modern.css">
         <link rel="stylesheet" href="/html/css/style.css">
-        
-        <!-- Scripts are already loaded in index.html, no need to reload them -->
-
     </head>
     <body>
         <div class="container">
-            <div class="row">
-                <div class="col-12">
-                     <h3>Tutorials</h3>
-                     <div class="push2"></div>
-                    <p>Directory of all tutorials or side projects that I would like to exhibit.</p>
-                </div>
+            <div class="section">
+                <h1 class="section-title">Tutorials</h1>
+                <p class="section-subtitle">Directory of all tutorials and side projects that I would like to exhibit.</p>
             </div>
-            <div class="push3"></div>
-            <div class="row">
-                <div class="col-12">
-                    <h5><u>Python Tutorial</u></h5>
-                    <p class="indent">Project was done to teach the utmost basics of programming in python.</p>
-                    <div class="push1"></div>
-                    <p class="indent"><a class="inline-load" href="#" data-url='/data/projects/kspythontut/index.html'>Python Tutorial Link</a></p>
-                </div>
-            </div>
-            <div class="push4"></div>
-            <div class="row">
-                <div class="col-12">
-                    <h5><u>Coding Challenges</u></h5>
-                    <p class="indent">Essentially algorithm notes where I explore the "English" translation of code</p>
-                    <div class="push1"></div>
-                    <p class="indent"><a class="inline-load" href="#" data-url='/data/projects/CodingPractices/index.html'>Coding Practices</a></p>
+
+            <div class="section">
+                <div class="row">
+                    <!-- Python Tutorial Card -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-4">
+                        <div class="tutorial-card fade-in">
+                            <div class="tutorial-icon">
+                                <span class="tutorial-icon-text">🐍</span>
+                            </div>
+                            <h3 class="tutorial-title">Python Tutorial</h3>
+                            <p class="tutorial-description">
+                                Project was done to teach the utmost basics of programming in Python. Perfect for beginners looking to get started with programming fundamentals.
+                            </p>
+                            <a href="#" class="tutorial-link inline-load" data-url="/data/projects/kspythontut/index.html">
+                                View Lessons →
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Coding Challenges Card -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mb-4">
+                        <div class="tutorial-card fade-in">
+                            <div class="tutorial-icon">
+                                <span class="tutorial-icon-text">💻</span>
+                            </div>
+                            <h3 class="tutorial-title">Coding Challenges</h3>
+                            <p class="tutorial-description">
+                                Essentially algorithm notes where I explore the "English" translation of code. Dive into problem-solving approaches and algorithmic thinking.
+                            </p>
+                            <a href="#" class="tutorial-link inline-load" data-url="/data/projects/CodingPractices/index.html">
+                                View Challenges →
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

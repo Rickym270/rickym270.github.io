@@ -1,183 +1,99 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Python Tutorial - Lessons</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="/html/css/modern.css">
+        <link rel="stylesheet" href="/html/css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="section">
+                <div class="lesson-header">
+                    <div class="lesson-header-icon">🐍</div>
+                    <div>
+                        <h1 class="section-title">Python Tutorial</h1>
+                        <p class="section-subtitle">Learn the basics of programming in Python. Start from the beginning and work your way through each lesson.</p>
+                    </div>
+                </div>
+            </div>
 
-</br>
-<h2>4: Loops</h2>
-<i>While condition is true, keep doing this. (This one may be long)</i>
+            <!-- Introduction Section -->
+            <div class="section">
+                <div class="introduction-section">
+                    <h2 class="section-title" style="font-size: 1.5rem;">Introduction</h2>
+                    <div class="introduction-content">
+                        <p>I'll post here instead because it's way more convenient</p>
+                    </div>
+                </div>
+            </div>
 
-<h3>Small intro</h3>
-    <p>Instructions in programming are normally executed sequentially (in the order they're written). There are, however, times where 
-       a certain block of code needs to be executed multiple times. In this instance, a loop is required.</p>
+            <div class="section">
+                <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: var(--spacing-lg);">Lessons</h2>
+                <div class="row">
+                    <!-- Introduction -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
+                        <div class="lesson-card fade-in">
+                            <div class="lesson-number">0</div>
+                            <h3 class="lesson-card-title">Introduction</h3>
+                            <p class="lesson-card-description">Get started with this Python tutorial series</p>
+                            <a href="#" class="lesson-card-link inline-load" data-url="/data/projects/kspythontut/lessons/introduction.html">
+                                Start Here →
+                            </a>
+                        </div>
+                    </div>
 
-<h2>Examples</h2>
-    <h3>The <b><i>for</i></b> loop</h3>
+                    <!-- Lesson 1 -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
+                        <div class="lesson-card fade-in">
+                            <div class="lesson-number">1</div>
+                            <h3 class="lesson-card-title">Setting Up</h3>
+                            <p class="lesson-card-description">Install Python and PyCharm on Windows or Mac</p>
+                            <a href="#" class="lesson-card-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-1-setting-up.html">
+                                View Lesson →
+                            </a>
+                        </div>
+                    </div>
 
-    {% highlight python %}
-    sample_list = [1,2,3,4]     // Create a list object. These objects can 
-                                // hold multiple items in them.
+                    <!-- Lesson 2 -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
+                        <div class="lesson-card fade-in">
+                            <div class="lesson-number">2</div>
+                            <h3 class="lesson-card-title">Hello World!</h3>
+                            <p class="lesson-card-description">Create your first Python program</p>
+                            <a href="#" class="lesson-card-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-2-hello-world.html">
+                                View Lesson →
+                            </a>
+                        </div>
+                    </div>
 
-    for item in sample_list:    //Iterates through every item in sample_list
-        print(item)             // prints 1 2 3 4
-    {% endhighlight %}
-    </br>
-    <p>The above code goes through (iterates) the provided list.</p>
+                    <!-- Lesson 3 -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
+                        <div class="lesson-card fade-in">
+                            <div class="lesson-number">3</div>
+                            <h3 class="lesson-card-title">Conditionals</h3>
+                            <p class="lesson-card-description">Learn if/else statements and control flow</p>
+                            <a href="#" class="lesson-card-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-3-conditionals.html">
+                                View Lesson →
+                            </a>
+                        </div>
+                    </div>
 
-    <h3>The <b><i>while</i></b> loop</h3>
-    <p>The while loop will execute a set of commands while the condition provided is True</p>
-
-    {% highlight python %}
-    i = 1                       // Creates a variable i that is
-                                // initiated to a value of 1
-
-    while i < 10:               //Iterates through every item in sample_list
-        print(i)             // prints 1 2 3 4 5 6 7 8 9 10 after every
-                                // loop run
-        i += 1                  // Increments the value of i by 1
-    {% endhighlight %}
-    </br>
-    <p>The above code in the while loop executes as long as the variable is less than 10.</p>
-    <p><b>NOTE:</b> &lt; is not the same as &lt;=</p>
-
-<h3>References:</h3>
-    <p><a href="/data/projects/kspythontut/references/collections.html">Learn about lists.</a></p>
-    
-
-</br>
---------------------------------------------------------------------------------------------------------------------
-</br>
-<h2>3: Conditionals</h2>
-<i>If this is true, then this happens/is true.</i>
-
-<h3>Small intro</h3>
-    <p>Conditionals are a control structure. Control structures are used to change the flow of the code to executee
-        instructions.</p>
-
-<h3>The <b><i>if/else</i></b> statements</h3>
-    {% highlight python %}
-    if condition:
-        instruction
-    {% endhighlight %}
-    </br>
-    <p>The ``<i>if</i>`` statement is one of the simplest control structures. Assuming ``<b>condition</b>`` is a valid condition, if the ``<b>condition</b>``
-    evaluates to true, then ``<b>instruction</b>`` executes. If ``<b>condition</b>`` evaluates to false, ``<b>instruction</b>`` is skipped over and doesn't
-    execute <i>(if ``else`` condition isn't specified/ present)</i></p>
-    <p>The ``<i>else</i>`` statement is used with the ``<i>if</i>`` statement. Else is used to tell the code what to do if ``<b>condition</b>`` is False.</p>
-
-<h3>Examples</h3>
-    <p>{% highlight python %}
-        x = 5               //This is known as a variable. If you dont really
-                            // get this, please let me know so I could clarify.
-
-        if x < 10:          //Evaluates to True because 5 is less than 10.
-            print("True")       // This executes
-
-        if x > 10:          // Evaluates to False. 5 is NOT greater than 10.
-            print("True")      // This is skipped over and never executes
-        else:               // Since condition evaluated to False, the 
-                                // instruction in this 'block' executes..
-            print("False")     //  This executes
-
-        if x == 5:         // Evaluates as True. 5 is equal to 5.
-            print("True")       //This executes
-    {% endhighlight %}</p>
-</br>
-
-<p><b>** I encourage you all to try this with PyCharm. Learning to code comes easier when you put what you learned, into practice          
-         If you need any help as to how to do this on PyCharm, let me know. **</b></p>
-</br>
-
---------------------------------------------------------------------------------------------------------------------
-</br>
-<h2>2: Hello World!</h2>
-<i>Extremely short but remember, this is an intro still</i>
-<h3>Create project</h3>
-<p>Start up PyCharm and create a new Project and name it PythonTutorial
-<h3>Create file and code!</h3>
-<ol>
-    <li>
-        Once the project is created, make a new file and title it, helloworld.py
-    </li>
-    <li>
-        On line 1, type the following:
-        
-        {% highlight python %}
-            print("Hello World!")
-        {% endhighlight %}
-    </li>
-    <li>
-        On the taskbar, find Run then click Run.
-    </li>
-    <li>
-        A window should appear and it should say "Hello World"
-    </li>
-</ol>
-<p> You've just built your first python program. It's small and simple but baby steps.</p>
-<p><b>NOTE:</b></p>
-<p>It's fairly easy to get lost in this so reach out to me or google, whenever you have a question. I may not know the answer
-    but I'll find out for you.<small>Worst case scenario: Google it.</small></p>
-</br>
---------------------------------------------------------------------------------------------------------------------
-</br>
-<h2>1: Setting up</h2>
-<i>This one is going to be annoying.</i>
-</br></br>
-
-<h3>Windows:</h3>
-<ol>
-    <li>
-        Get python3.8.2 from here:
-            <a href="https://www.python.org/downloads/release/python-382/">Get Python3.8.2</a>
-
-        Choose the Windows x86-64 web-based installer and go through the installation. If at one point it asks if you 
-        want to disable a MAX_PATH limitation, do it. 
-    </li>
-    <li>
-        Download a program called “pycharm community edition.” 
-            - From <a href="http://www.jetbrains.com/pycharm/download/#section=windows">Get PyCharm for Windows</a>
-        Download the free one.
-    </li>
-    <li>
-        When installing pycharm, it’ll ask you to check some installation options. Just select “create desktop shortcut” and 
-        “create associations.” Click continue and let the installer run. 
-    
-        When it finishes, click the option that says Run PyCharm Community Edition and then finish.
-    </li>
-    <li>
-        At some point it’ll give two options, click the one that says “Do not import settings” 
-        Agree to the terms if you agree, I guess
-        Then click “Skip the remaining set to defaults” option when it’s prompted.
-    </li>
-</ol>
-
-</br>
-<h3>Apple Mac OSX</h3>
-<ol>
-    <li>
-        Python comes preinstalled so no need to install it
-    </li>
-    <li>
-        Download a program called “pycharm community edition.” 
-            - From <a href="https://www.jetbrains.com/pycharm/download/#section=mac">Get PyCharm for Mac</a>
-        Download the free one.
-    </li>
-    <li>
-        Run the installer and let the installer run. 
-    </li>
-    <li>
-        When pycharm finishes installing, look for and run the program. It should be in your applications folder. 
-    </li>
-    <li>
-        At some point it’ll give two options, click the one that says “Do not import settings” 
-        Agree to the terms if you agree, I guess
-        Then click “Skip the remaining set to defaults” option when it’s prompted. 
-    </li>
-</ol></br>
-
-<h3>DONE FOR TODAY</h3>
-</br>
---------------------------------------------------------------------------------------------------------------------
-</br>
-<h2>Introduction</h2>
-<p>I'll post here instead because it's way more convenient</p>
-</br>
+                    <!-- Lesson 4 -->
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
+                        <div class="lesson-card fade-in">
+                            <div class="lesson-number">4</div>
+                            <h3 class="lesson-card-title">Loops</h3>
+                            <p class="lesson-card-description">Master for and while loops</p>
+                            <a href="#" class="lesson-card-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-4-loops.html">
+                                View Lesson →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

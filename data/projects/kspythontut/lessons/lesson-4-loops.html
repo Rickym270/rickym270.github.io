@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lesson 4: Loops - Python Tutorial</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="/html/css/modern.css">
+        <link rel="stylesheet" href="/html/css/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="lesson-content">
+                <div class="lesson-nav-top">
+                    <a href="#" class="lesson-back-button inline-load" data-url="/data/projects/kspythontut/index.html">
+                        <span class="lesson-back-icon">←</span>
+                        <span>Back to Table of Contents</span>
+                    </a>
+                </div>
+
+                <div class="lesson-header-content">
+                    <div class="lesson-badge">Lesson 4</div>
+                    <h1 class="lesson-title">Loops</h1>
+                    <p class="lesson-subtitle">While condition is true, keep doing this. (This one may be long)</p>
+                </div>
+
+                <div class="lesson-body">
+                    <h3>Small intro</h3>
+                    <p>Instructions in programming are normally executed sequentially (in the order they're written). There are, however, times where a certain block of code needs to be executed multiple times. In this instance, a loop is required.</p>
+
+                    <h2>Examples</h2>
+
+                    <h3>The <strong><em>for</em></strong> loop</h3>
+                    <div class="code-block">
+                        <pre><code>sample_list = [1,2,3,4]     # Create a list object. These objects can 
+                            # hold multiple items in them.
+
+for item in sample_list:    # Iterates through every item in sample_list
+    print(item)             # prints 1 2 3 4</code></pre>
+                    </div>
+                    <p>The above code goes through (iterates) the provided list.</p>
+
+                    <h3>The <strong><em>while</em></strong> loop</h3>
+                    <p>The while loop will execute a set of commands while the condition provided is True</p>
+                    <div class="code-block">
+                        <pre><code>i = 1                       # Creates a variable i that is
+                            # initiated to a value of 1
+
+while i < 10:               # Iterates while i is less than 10
+    print(i)                # prints 1 2 3 4 5 6 7 8 9 after every
+                            # loop run
+    i += 1                  # Increments the value of i by 1</code></pre>
+                    </div>
+                    <p>The above code in the while loop executes as long as the variable is less than 10.</p>
+
+                    <div class="lesson-note">
+                        <strong>NOTE:</strong> &lt; is not the same as &lt;=
+                    </div>
+
+                    <h3>References:</h3>
+                    <p><a href="/data/projects/kspythontut/references/collections.html">Learn about lists.</a></p>
+                </div>
+
+                <div class="lesson-nav-bottom">
+                    <div class="lesson-nav-group">
+                        <a href="#" class="lesson-nav-link inline-load" data-url="/data/projects/kspythontut/lessons/lesson-3-conditionals.html">← Previous: Conditionals</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
