@@ -38,12 +38,52 @@ async function fetchFromAPI(endpoint) {
     }
 }
 
+// Global cache for projects data
+window.projectsCache = null;
+window.projectsCachePromise = null;
+
+/**
+ * Prefetch projects data on page load
+ * This ensures projects are ready when user navigates to projects page
+ */
+function prefetchProjects() {
+    // Only prefetch if not already cached or in progress
+    if (!window.projectsCache && !window.projectsCachePromise) {
+        window.projectsCachePromise = fetchFromAPI('/api/projects')
+            .then(projects => {
+                window.projectsCache = projects;
+                window.projectsCachePromise = null;
+                return projects;
+            })
+            .catch(error => {
+                console.log('Projects prefetch failed (will fetch on demand):', error);
+                window.projectsCachePromise = null;
+                return null;
+            });
+    }
+    return window.projectsCachePromise;
+}
+
 /**
  * Fetch projects from API
+ * Uses cached data if available, otherwise fetches fresh data
  * @returns {Promise<Array>} - Array of project objects
  */
 async function fetchProjects() {
-    return await fetchFromAPI('/api/projects');
+    // Return cached data if available
+    if (window.projectsCache) {
+        return Promise.resolve(window.projectsCache);
+    }
+    
+    // If prefetch is in progress, wait for it
+    if (window.projectsCachePromise) {
+        return window.projectsCachePromise;
+    }
+    
+    // Otherwise fetch fresh data
+    const projects = await fetchFromAPI('/api/projects');
+    window.projectsCache = projects;
+    return projects;
 }
 
 /**
@@ -107,6 +147,7 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         fetchFromAPI,
         fetchProjects,
+        prefetchProjects,
         fetchMeta,
         fetchStats,
         fetchGitHubActivity,
