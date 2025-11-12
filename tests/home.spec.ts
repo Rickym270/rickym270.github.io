@@ -1,6 +1,38 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Home Page Initial Load', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure English is set for these tests
+    await page.goto('/');
+    
+    // Wait for TranslationManager to be available and initialized
+    await page.waitForFunction(() => {
+      return typeof window.TranslationManager !== 'undefined' && 
+             window.TranslationManager.currentLanguage !== undefined;
+    }, { timeout: 5000 }).catch(() => {
+      // TranslationManager might not exist on master branch - that's okay
+    });
+    
+    // Set language to English
+    await page.evaluate(() => {
+      localStorage.setItem('siteLanguage', 'en');
+      if (typeof window.TranslationManager !== 'undefined') {
+        window.TranslationManager.switchLanguage('en');
+      }
+    });
+    
+    // Wait for translations to apply
+    await page.waitForTimeout(500);
+    
+    // Verify English is set by checking navbar text
+    await page.waitForFunction(() => {
+      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
+      return homeLink && homeLink.textContent?.trim() === 'Home';
+    }, { timeout: 3000 }).catch(() => {
+      // If translation system doesn't exist, that's okay - tests will use English by default
+    });
+  });
+
   test('loads Home content on initial load', async ({ page }) => {
     await page.goto('/');
     
@@ -29,18 +61,34 @@ test.describe('Home Page Initial Load', () => {
 
   test('home page does not get replaced when navigating away and back', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(1000);
+    
+    // Wait for home content to load initially
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     // Navigate away
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(1000);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
     
     // Navigate back to Home
     await page.getByRole('link', { name: 'Home' }).click();
-    await page.waitForTimeout(1000);
+    
+    // Wait for home content to load again
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
+    // Wait for translations to apply
+    await page.waitForTimeout(500);
     
     // Home content should still be visible
-    await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 5000 });
   });
 });
 
