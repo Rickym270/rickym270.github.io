@@ -85,9 +85,14 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
+    // Wait for heading element to exist and translations to apply
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 5000 });
+    await page.waitForTimeout(500);
+    
     // Check that Projects page is in Spanish
     const projectsTitle = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsTitle).toHaveText('Proyectos');
+    await expect(projectsTitle).toBeVisible({ timeout: 3000 });
+    await expect(projectsTitle).toHaveText('Proyectos', { timeout: 3000 });
     
     // Navigate back to Home
     await page.getByRole('link', { name: 'Inicio' }).click();

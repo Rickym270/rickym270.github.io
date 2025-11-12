@@ -118,10 +118,16 @@ test.describe('SPA Navigation', () => {
     // Navigate to Projects multiple times
     for (let i = 0; i < 3; i++) {
       await page.getByRole('link', { name: 'Projects' }).click();
-      await page.waitForTimeout(1500);
       
-      // Wait for translations to apply
-      await page.waitForTimeout(500);
+      // Wait for projects page to load
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress, #ProjComplete');
+      }, { timeout: 15000 });
+      
+      // Wait for translations to apply and heading to be visible
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 5000 });
+      await page.waitForTimeout(300);
       
       // Should only have one Projects heading (use data-translate attribute for reliable selection)
       const projectsHeadings = page.locator('#content h1[data-translate="projects.heading"]');

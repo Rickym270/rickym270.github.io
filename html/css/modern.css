@@ -475,6 +475,7 @@ body[style*="background"] {
     display: flex;
     gap: var(--spacing-md);
     flex-wrap: wrap;
+    color: #ffffff;
 }
 
 .btn-hero-primary {
