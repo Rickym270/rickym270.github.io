@@ -167,7 +167,6 @@
                     element.placeholder = this.t(placeholderKey);
                 }
             });
-            });
 
             // Update page title if it has data-translate-title
             const titleElement = document.querySelector('[data-translate-title]');
