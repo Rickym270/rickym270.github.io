@@ -1678,6 +1678,12 @@ body #main a {
         padding-top: calc(var(--nav-height) + env(safe-area-inset-top) + 20px) !important;
     }
     
+    /* Ensure navbar container doesn't overflow */
+    .navbar .container {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+    
     .skills-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: var(--spacing-md);
