@@ -184,23 +184,146 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form');
     }, { timeout: 15000 });
     
-    // Check translations
+    // Wait a bit for translations to apply
+    await page.waitForTimeout(300);
+    
+    // Check page title and subtitle
     const title = page.locator('#content h1[data-translate="contact.title"]');
     await expect(title).toContainText('Contáctame');
     
+    const subtitle = page.locator('#content p[data-translate="contact.subtitle"]');
+    await expect(subtitle).toContainText('¿Tienes una pregunta');
+    
+    // Check all labels
     const nameLabel = page.locator('#content label[for="name"][data-translate="contact.name"]');
     await expect(nameLabel).toContainText('Nombre');
+    // Verify label preserves HTML (asterisk)
+    const nameLabelHtml = await nameLabel.innerHTML();
+    expect(nameLabelHtml).toContain('<span');
     
     const emailLabel = page.locator('#content label[for="email"][data-translate="contact.email"]');
     await expect(emailLabel).toContainText('Correo electrónico');
     
-    const submitButton = page.locator('#content #submit-text[data-translate="contact.sendMessage"]');
-    await expect(submitButton).toHaveText('Enviar Mensaje');
+    const subjectLabel = page.locator('#content label[for="subject"][data-translate="contact.subject"]');
+    await expect(subjectLabel).toContainText('Asunto');
     
-    // Check placeholders
+    const messageLabel = page.locator('#content label[for="message"][data-translate="contact.message"]');
+    await expect(messageLabel).toContainText('Mensaje');
+    
+    // Check all placeholders
     const nameInput = page.locator('#content input#name');
     const namePlaceholder = await nameInput.getAttribute('placeholder');
     expect(namePlaceholder).toBe('Tu nombre');
+    
+    const emailInput = page.locator('#content input#email');
+    const emailPlaceholder = await emailInput.getAttribute('placeholder');
+    expect(emailPlaceholder).toBe('tu.correo@ejemplo.com');
+    
+    const subjectInput = page.locator('#content input#subject');
+    const subjectPlaceholder = await subjectInput.getAttribute('placeholder');
+    expect(subjectPlaceholder).toBe('¿De qué se trata?');
+    
+    const messageTextarea = page.locator('#content textarea#message');
+    const messagePlaceholder = await messageTextarea.getAttribute('placeholder');
+    expect(messagePlaceholder).toBe('Dime qué tienes en mente...');
+    
+    // Check help text
+    const requiredText = page.locator('#content .form-text[data-translate="contact.required"]');
+    const requiredCount = await requiredText.count();
+    expect(requiredCount).toBeGreaterThan(0);
+    await expect(requiredText.first()).toHaveText('Requerido');
+    
+    const emailNote = page.locator('#content .form-text[data-translate="contact.emailNote"]');
+    await expect(emailNote).toContainText('Nunca compartiremos tu correo electrónico');
+    
+    const messageNote = page.locator('#content .form-text[data-translate="contact.messageNote"]');
+    await expect(messageNote).toContainText('Máximo 2000 caracteres');
+    
+    // Check submit button
+    const submitButton = page.locator('#content #submit-text[data-translate="contact.sendMessage"]');
+    await expect(submitButton).toHaveText('Enviar Mensaje');
+  });
+  
+  test('contact page placeholders translate when switching languages', async ({ page }) => {
+    // Navigate to Contact page first
+    await page.getByRole('link', { name: 'Contact' }).click();
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(300);
+    
+    // Check English placeholders
+    const nameInput = page.locator('#content input#name');
+    let namePlaceholder = await nameInput.getAttribute('placeholder');
+    expect(namePlaceholder).toBe('Your name');
+    
+    // Switch to Spanish
+    const esButton = page.locator('#language-switcher button[data-lang="es"]');
+    await esButton.click();
+    await page.waitForTimeout(500);
+    
+    // Check Spanish placeholders
+    namePlaceholder = await nameInput.getAttribute('placeholder');
+    expect(namePlaceholder).toBe('Tu nombre');
+    
+    const emailInput = page.locator('#content input#email');
+    const emailPlaceholder = await emailInput.getAttribute('placeholder');
+    expect(emailPlaceholder).toBe('tu.correo@ejemplo.com');
+    
+    // Switch back to English
+    const enButton = page.locator('#language-switcher button[data-lang="en"]');
+    await enButton.click();
+    await page.waitForTimeout(500);
+    
+    // Verify placeholders are back to English
+    namePlaceholder = await nameInput.getAttribute('placeholder');
+    expect(namePlaceholder).toBe('Your name');
+  });
+  
+  test('project descriptions translate but names do not', async ({ page }) => {
+    // Switch to Spanish
+    const esButton = page.locator('#language-switcher button[data-lang="es"]');
+    await esButton.click();
+    await page.waitForTimeout(500);
+    
+    // Navigate to Projects
+    await page.getByRole('link', { name: 'Proyectos' }).click();
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+    
+    // Wait for projects to load
+    await page.waitForTimeout(2000);
+    
+    // Check that project names are NOT translated (should remain in English)
+    const projectCards = page.locator('#content .project-card');
+    const cardCount = await projectCards.count();
+    
+    if (cardCount > 0) {
+      const firstCard = projectCards.first();
+      const projectName = firstCard.locator('.card-title[data-no-translate="true"]');
+      const nameText = await projectName.textContent();
+      
+      // Project names should be in English (original), not Spanish
+      // Common project names that shouldn't be translated
+      expect(nameText).toBeTruthy();
+      // Verify it's not a Spanish translation of a common word
+      if (nameText) {
+        expect(nameText).not.toBe('Administrador Azul'); // Should be "Blue Manager"
+        expect(nameText).not.toBe('Tránsito Xpress'); // Should be "Xpress Transit"
+      }
+      
+      // Check that descriptions ARE translated
+      const projectDescription = firstCard.locator('.card-text[data-translate^="projects.descriptions."]');
+      const descriptionText = await projectDescription.textContent();
+      expect(descriptionText).toBeTruthy();
+      // Description should be in Spanish if we're in Spanish mode
+      if (descriptionText && nameText?.includes('Blue Manager')) {
+        expect(descriptionText).toContain('mantenimiento'); // Spanish word
+      }
+    }
   });
 
   test('language preference persists after page reload', async ({ page }) => {
