@@ -231,6 +231,8 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
+    flex-shrink: 0;
+    min-width: fit-content;
 }
 
 .nav-link.dropdown-toggle {
@@ -1730,6 +1732,83 @@ body #main a {
     .hero-title {
         font-size: 2rem;
     }
+}
+
+/* Language switcher styles */
+#language-switcher {
+    flex-shrink: 0;
+    margin-left: var(--spacing-sm);
+}
+
+#language-switcher .btn-group {
+    display: flex;
+    flex-shrink: 0;
+}
+
+#language-switcher button {
+    min-width: 40px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+}
+
+#language-switcher button:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+#language-switcher button.active,
+#language-switcher button[aria-pressed="true"] {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+/* Ensure navbar items don't cause layout shifts */
+.navbar-nav > div {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.navbar-nav > div:nth-child(2) {
+    flex-shrink: 0;
+    margin: 0 var(--spacing-md);
+}
+
+.navbar-nav > div:last-child {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* Prevent navbar from wrapping awkwardly */
+@media (min-width: 992px) {
+    .navbar-nav {
+        flex-wrap: nowrap !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .nav-link {
+        font-size: 0.875rem;
+        padding: var(--spacing-xs) var(--spacing-sm) !important;
+    }
+    
+    #language-switcher button {
+        min-width: 36px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+}
     
     .hero-subtitle {
         font-size: 1rem;
