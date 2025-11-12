@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "skills": "Habilidades",
+    "contact": "Contacto",
+    "docs": "Documentos",
+    "notes": "Notas",
+    "journal": "Diario",
+    "tutorials": "Tutoriales"
+  },
+  "home": {
+    "title": "Ricky Martinez - Inicio",
+    "tagline": "No te repitas. Prueba con precisión.",
+    "name": "RICKY MARTINEZ",
+    "description": "Desarrollador y solucionador de problemas que prospera con la eficiencia, creatividad y automatización. Desde marcos de prueba hasta sistemas full-stack, me encanta construir soluciones que hacen que la tecnología funcione de manera más inteligente, no más difícil.",
+    "connectLinkedIn": "Conectar en LinkedIn",
+    "viewGitHub": "Ver GitHub",
+    "aboutMe": "Acerca de mí",
+    "aboutText1": "Soy un ingeniero de software con sede en NYC con pasión por construir soluciones eficientes y automatizadas. Cuando no estoy programando, me encontrarás explorando la ciudad o jugando con algo nuevo.",
+    "aboutText2": "Tengo un interés crónico en desarrollar software y optimizar flujos de trabajo. Ya sea automatización de redes, automatización de QA o automatización de la vida personal, disfruto encontrar patrones y crear soluciones que faciliten las cosas.",
+    "aboutText3": "Nacido en Queens y criado en el Bronx, siempre he tenido curiosidad por cómo funcionan las cosas. Esta curiosidad me llevó a aprender música, ingeniería y, eventualmente, desarrollo de software. Ahora me enfoco en construir herramientas de automatización y sistemas eficientes—porque ¿por qué no ser eficiente?",
+    "aboutText4": "Este sitio mismo usa automatización que he desarrollado tanto para backend como para frontend. Echa un vistazo al",
+    "repository": "repositorio",
+    "techStack": "Stack Tecnológico",
+    "techStackSubtitle": "Tecnologías y herramientas con las que trabajo",
+    "viewAllSkills": "Ver Todas las Habilidades",
+    "quickStats": "Estadísticas Rápidas",
+    "lastUpdated": "Última Actualización",
+    "languages": "Idiomas"
+  },
+  "projects": {
+    "title": "Proyectos - Ricky Martinez",
+    "subtitle": "Hogar de mis esfuerzos actuales. ¿Qué está haciendo Ricky?",
+    "inProgress": "En Progreso",
+    "complete": "Completado",
+    "ideas": "Ideas",
+    "pleaseWait": "Por favor espere..."
+  },
+  "skills": {
+    "title": "Habilidades y Tecnologías - Ricky Martinez",
+    "subtitle": "Una descripción general completa de las tecnologías y herramientas con las que trabajo",
+    "programmingLanguages": "Lenguajes de Programación",
+    "frameworksLibraries": "Frameworks y Bibliotecas",
+    "testingQA": "Pruebas y Control de Calidad",
+    "devopsCloud": "DevOps y Nube",
+    "webDevelopment": "Desarrollo Web",
+    "databases": "Bases de Datos",
+    "toolsOther": "Herramientas y Otros"
+  },
+  "contact": {
+    "title": "Contáctame - Ricky Martinez",
+    "subtitle": "¿Tienes una pregunta o quieres colaborar? ¡Envíame un mensaje!",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "subject": "Asunto",
+    "message": "Mensaje",
+    "required": "Requerido",
+    "emailPlaceholder": "tu.correo@ejemplo.com",
+    "namePlaceholder": "Tu nombre",
+    "subjectPlaceholder": "¿De qué se trata?",
+    "messagePlaceholder": "Dime qué tienes en mente...",
+    "emailNote": "Requerido - Nunca compartiremos tu correo electrónico",
+    "messageNote": "Requerido - Máximo 2000 caracteres",
+    "sendMessage": "Enviar Mensaje",
+    "success": "✓ ¡Correo enviado con éxito! Gracias por contactarme. Te responderé pronto.",
+    "error": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
+  }
+}
+

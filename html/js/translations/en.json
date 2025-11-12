@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact",
+    "docs": "Docs",
+    "notes": "Notes",
+    "journal": "Journal",
+    "tutorials": "Tutorials"
+  },
+  "home": {
+    "title": "Ricky Martinez - Home",
+    "tagline": "Do Not Repeat Yourself. Test with precision.",
+    "name": "RICKY MARTINEZ",
+    "description": "Developer and problem-solver who thrives on efficiency, creativity, and automation. From test frameworks to full-stack systems, I love building solutions that make technology work smarter, not harder.",
+    "connectLinkedIn": "Connect on LinkedIn",
+    "viewGitHub": "View GitHub",
+    "aboutMe": "About Me",
+    "aboutText1": "I'm a NYC-based software engineer with a passion for building efficient, automated solutions. When I'm not coding, you'll find me exploring the city or tinkering with something new.",
+    "aboutText2": "I have a chronic interest in developing software and optimizing workflows. Whether it's network automation, QA automation, or personal life automation, I enjoy finding patterns and creating solutions that make things easier.",
+    "aboutText3": "Born in Queens and raised in the Bronx, I've always been curious about how things work. This curiosity led me to learn music, engineering, and eventually, software development. Now I focus on building automation tools and efficient systems—because why not be efficient?",
+    "aboutText4": "This site itself uses automation I've developed for both backend and frontend. Check out the",
+    "repository": "repository",
+    "techStack": "Tech Stack",
+    "techStackSubtitle": "Technologies and tools I work with",
+    "viewAllSkills": "View All Skills",
+    "quickStats": "Quick Stats",
+    "lastUpdated": "Last Updated",
+    "languages": "Languages"
+  },
+  "projects": {
+    "title": "Projects - Ricky Martinez",
+    "subtitle": "Home to my current endeavors. What's Ricky up to?",
+    "inProgress": "In Progress",
+    "complete": "Complete",
+    "ideas": "Ideas",
+    "pleaseWait": "Please Wait..."
+  },
+  "skills": {
+    "title": "Skills & Technologies - Ricky Martinez",
+    "subtitle": "A comprehensive overview of the technologies and tools I work with",
+    "programmingLanguages": "Programming Languages",
+    "frameworksLibraries": "Frameworks & Libraries",
+    "testingQA": "Testing & QA",
+    "devopsCloud": "DevOps & Cloud",
+    "webDevelopment": "Web Development",
+    "databases": "Databases",
+    "toolsOther": "Tools & Other"
+  },
+  "contact": {
+    "title": "Contact Me - Ricky Martinez",
+    "subtitle": "Have a question or want to collaborate? Send me a message!",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "required": "Required",
+    "emailPlaceholder": "your.email@example.com",
+    "namePlaceholder": "Your name",
+    "subjectPlaceholder": "What's this about?",
+    "messagePlaceholder": "Tell me what's on your mind...",
+    "emailNote": "Required - We'll never share your email",
+    "messageNote": "Required - Max 2000 characters",
+    "sendMessage": "Send Message",
+    "success": "✓ Email sent successfully! Thank you for reaching out. I'll get back to you soon.",
+    "error": "Failed to send message. Please try again."
+  }
+}
+
