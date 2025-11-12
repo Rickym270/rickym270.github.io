@@ -4,13 +4,33 @@ test.describe('SPA Navigation', () => {
   test.beforeEach(async ({ page }) => {
     // Ensure English is set for these tests
     await page.goto('/');
+    
+    // Wait for TranslationManager to be available and initialized
+    await page.waitForFunction(() => {
+      return typeof window.TranslationManager !== 'undefined' && 
+             window.TranslationManager.currentLanguage !== undefined;
+    }, { timeout: 5000 }).catch(() => {
+      // TranslationManager might not exist on master branch - that's okay
+    });
+    
+    // Set language to English
     await page.evaluate(() => {
       localStorage.setItem('siteLanguage', 'en');
       if (typeof window.TranslationManager !== 'undefined') {
         window.TranslationManager.switchLanguage('en');
       }
     });
-    await page.waitForTimeout(300);
+    
+    // Wait for translations to apply
+    await page.waitForTimeout(500);
+    
+    // Verify English is set by checking navbar text
+    await page.waitForFunction(() => {
+      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
+      return homeLink && homeLink.textContent?.trim() === 'Home';
+    }, { timeout: 3000 }).catch(() => {
+      // If translation system doesn't exist, that's okay - tests will use English by default
+    });
   });
 
   test('navigation loads content into #content without full page reload', async ({ page }) => {
