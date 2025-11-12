@@ -163,7 +163,7 @@
             const placeholderElements = document.querySelectorAll('[data-translate-placeholder]:not([data-translate])');
             placeholderElements.forEach(element => {
                 const placeholderKey = element.getAttribute('data-translate-placeholder');
-                if (placeholderKey) {
+                if (placeholderKey && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
                     element.placeholder = this.t(placeholderKey);
                 }
             });
