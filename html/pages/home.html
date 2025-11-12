@@ -180,10 +180,30 @@
                                 }
                             }
                             
-                            // Format languages as comma-separated list
+                            // Format languages as comma-separated list, sorted by proficiency
                             if (key === 'languages' && Array.isArray(value)) {
-                                displayValue = value.join(', ');
-                                label = 'Languages';
+                                // Sort by proficiency: Python and Testing first, then alphabetically
+                                const proficiencyOrder = ['Python', 'Testing'];
+                                const sorted = [...value].sort((a, b) => {
+                                    const aIndex = proficiencyOrder.indexOf(a);
+                                    const bIndex = proficiencyOrder.indexOf(b);
+                                    
+                                    // If both are in proficiency order, sort by their index
+                                    if (aIndex !== -1 && bIndex !== -1) {
+                                        return aIndex - bIndex;
+                                    }
+                                    // If only a is in proficiency order, it comes first
+                                    if (aIndex !== -1) return -1;
+                                    // If only b is in proficiency order, it comes first
+                                    if (bIndex !== -1) return 1;
+                                    // Otherwise sort alphabetically
+                                    return a.localeCompare(b);
+                                });
+                                displayValue = sorted.join(', ');
+                                // Use translation key for label
+                                label = typeof window !== 'undefined' && window.TranslationManager 
+                                    ? window.TranslationManager.t('home.languages') 
+                                    : 'Technologies';
                             }
                             
                             // Add class for languages card to style differently
