@@ -158,6 +158,36 @@
                     }
                 }
             });
+            
+            // Also process elements that only have data-translate-placeholder (inputs/textarea without data-translate)
+            const placeholderElements = document.querySelectorAll('[data-translate-placeholder]:not([data-translate])');
+            placeholderElements.forEach(element => {
+                const placeholderKey = element.getAttribute('data-translate-placeholder');
+                if (placeholderKey) {
+                    element.placeholder = this.t(placeholderKey);
+                }
+            });
+                    element.innerHTML = translation;
+                } else {
+                    // For labels, preserve HTML like <span class="text-danger">*</span>
+                    if (element.tagName === 'LABEL' && element.innerHTML.includes('<')) {
+                        const htmlContent = element.innerHTML;
+                        // Extract text before first HTML tag and the HTML part
+                        const parts = htmlContent.split(/(<[^>]*>)/);
+                        if (parts.length > 1) {
+                            // Find the first text part (before any HTML)
+                            const textPart = parts[0].trim();
+                            // Reconstruct with translation replacing the text part
+                            const htmlPart = parts.slice(1).join(''); // Everything after first text
+                            element.innerHTML = translation + ' ' + htmlPart;
+                        } else {
+                            element.textContent = translation;
+                        }
+                    } else {
+                        element.textContent = translation;
+                    }
+                }
+            });
 
             // Update page title if it has data-translate-title
             const titleElement = document.querySelector('[data-translate-title]');
