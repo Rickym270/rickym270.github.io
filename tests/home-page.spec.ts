@@ -3,14 +3,19 @@ import { test, expect } from '@playwright/test';
 test.describe('Home page content', () => {
   test('banner image centered with dark background and hero content', async ({ page }) => {
     await page.goto('/');
-    // Ensure Home loaded into #content
+    // Ensure Home loaded into #content and banner is visible
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      const banner = c?.querySelector('#homeBanner');
+      if (!banner) return false;
+      const style = window.getComputedStyle(banner);
+      return (c?.getAttribute('data-content-loaded') === 'true' || banner) &&
+             style.display !== 'none' && style.visibility !== 'hidden';
     }, { timeout: 15000 });
+    await page.waitForTimeout(500);
     // Banner container exists
     const banner = page.locator('#content #homeBanner');
-    await expect(banner).toBeVisible();
+    await expect(banner).toBeVisible({ timeout: 10000 });
 
     // Hero portrait image exists
     const img = page.locator('#content #homeBanner .hero-portrait');

@@ -78,17 +78,22 @@ test.describe('Home Page Initial Load', () => {
     // Navigate back to Home
     await page.getByRole('link', { name: 'Home' }).click();
     
-    // Wait for home content to load again
+    // Wait for home content to load again and be visible
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      const banner = c?.querySelector('#homeBanner');
+      return (c?.getAttribute('data-content-loaded') === 'true' || banner) && 
+             banner && 
+             window.getComputedStyle(banner).display !== 'none' &&
+             window.getComputedStyle(banner).visibility !== 'hidden';
     }, { timeout: 15000 });
     
     // Wait for translations to apply
     await page.waitForTimeout(500);
     
     // Home content should still be visible
-    await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 5000 });
+    const homeBanner = page.locator('#content #homeBanner');
+    await expect(homeBanner).toBeVisible({ timeout: 10000 });
   });
 });
 

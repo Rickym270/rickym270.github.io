@@ -471,8 +471,16 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
+    // Wait for TranslationManager to reinitialize after reload
+    await page.waitForFunction(() => {
+      return typeof window.TranslationManager !== 'undefined' && 
+             window.TranslationManager.currentLanguage !== undefined;
+    }, { timeout: 5000 });
+    await page.waitForTimeout(500);
+    
     // Check that Spanish is still selected
     const esButtonAfterReload = page.locator('#language-switcher button[data-lang="es"]');
+    await expect(esButtonAfterReload).toBeVisible({ timeout: 5000 });
     const isActive = await esButtonAfterReload.getAttribute('aria-pressed');
     expect(isActive).toBe('true');
     
