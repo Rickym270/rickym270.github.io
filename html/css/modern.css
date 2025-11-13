@@ -164,15 +164,15 @@ a:hover {
     opacity: 0.8;
 }
 
-/* Links in light mode should be black */
-[data-theme="light"] a,
-[data-theme="light"] a:visited {
-    color: #fff !important;
+/* Links in hero section should be white (for dark background) */
+#homeBanner a,
+#homeBanner a:visited {
+    color: #ffffff !important;
 }
 
-[data-theme="light"] a:hover {
-    color: #1a1a1a !important;
-    opacity: 0.7;
+#homeBanner a:hover {
+    color: #ffffff !important;
+    opacity: 0.8;
 }
 
 /* Ensure all links use proper colors by default */
