@@ -55,9 +55,9 @@
     --nav-height: 72px;
 }
 
-/* Dark Mode */
+/* Dark Mode - Consolidated to avoid duplication */
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
         --color-bg-primary: #0a0a0a;
         --color-bg-secondary: #111111;
         --color-bg-tertiary: #1a1a1a;
@@ -164,15 +164,15 @@ a:hover {
     opacity: 0.8;
 }
 
-/* Links in light mode should be black */
-[data-theme="light"] a,
-[data-theme="light"] a:visited {
-    color: #1a1a1a !important;
+/* Links in hero section should be white (for dark background) */
+#homeBanner a,
+#homeBanner a:visited {
+    color: #ffffff !important;
 }
 
-[data-theme="light"] a:hover {
-    color: #1a1a1a !important;
-    opacity: 0.7;
+#homeBanner a:hover {
+    color: #ffffff !important;
+    opacity: 0.8;
 }
 
 /* Ensure all links use proper colors by default */
@@ -231,6 +231,8 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
+    flex-shrink: 0;
+    min-width: fit-content;
 }
 
 .nav-link.dropdown-toggle {
@@ -473,6 +475,7 @@ body[style*="background"] {
     display: flex;
     gap: var(--spacing-md);
     flex-wrap: wrap;
+    color: #ffffff;
 }
 
 .btn-hero-primary {
@@ -498,7 +501,7 @@ body[style*="background"] {
 
 .btn-hero-secondary {
     background-color: transparent;
-    color: #ffffff;
+    color: #ffffff !important;
     border: 2px solid #ffffff;
     padding: var(--spacing-md) var(--spacing-xl);
     border-radius: var(--radius-md);
@@ -513,7 +516,7 @@ body[style*="background"] {
     background-color: rgba(255, 255, 255, 0.1);
     border-color: #ffffff;
     transform: translateY(-2px);
-    color: #ffffff;
+    color: #ffffff !important;
     text-decoration: none;
 }
 
@@ -620,6 +623,11 @@ body[style*="background"] {
     border-color: #ffffff !important;
 }
 
+[data-theme="light"] .btn-hero-secondary:hover {
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
 @media (prefers-color-scheme: light) {
     [data-theme="light"] #homeBanner {
         background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
@@ -638,6 +646,11 @@ body[style*="background"] {
     }
     
     [data-theme="light"] .btn-hero-secondary {
+        color: #ffffff !important;
+        border-color: #ffffff !important;
+    }
+    
+    [data-theme="light"] .btn-hero-secondary:hover {
         color: #ffffff !important;
         border-color: #ffffff !important;
     }
@@ -1611,11 +1624,28 @@ body #main a {
     color: var(--color-text-secondary);
 }
 
+/* Utility Classes */
+.container-padding-top {
+    padding-top: var(--spacing-xl) !important;
+}
+
+.container-no-padding {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+.honeypot-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+
+/* Divider - consolidated from multiple definitions */
 .divider {
     height: 1px;
     background-color: var(--color-border);
-    margin: var(--spacing-xl) 0;
     border: none;
+    margin: var(--spacing-xl) 0;
 }
 
 /* Spacing Utilities */
@@ -1729,6 +1759,82 @@ body #main a {
     
     .hero-title {
         font-size: 2rem;
+    }
+}
+
+/* Language switcher styles */
+#language-switcher {
+    flex-shrink: 0;
+    margin-left: var(--spacing-sm);
+}
+
+#language-switcher .btn-group {
+    display: flex;
+    flex-shrink: 0;
+}
+
+#language-switcher button {
+    min-width: 40px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+}
+
+#language-switcher button:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+#language-switcher button.active,
+#language-switcher button[aria-pressed="true"] {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+/* Ensure navbar items don't cause layout shifts */
+.navbar-nav > div {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.navbar-nav > div:nth-child(2) {
+    flex-shrink: 0;
+    margin: 0 var(--spacing-md);
+}
+
+.navbar-nav > div:last-child {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* Prevent navbar from wrapping awkwardly */
+@media (min-width: 992px) {
+    .navbar-nav {
+        flex-wrap: nowrap !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .nav-link {
+        font-size: 0.875rem;
+        padding: var(--spacing-xs) var(--spacing-sm) !important;
+    }
+    
+    #language-switcher button {
+        min-width: 36px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
     }
     
     .hero-subtitle {

@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "skills": "Habilidades",
+    "contact": "Contacto",
+    "docs": "Documentos",
+    "notes": "Notas",
+    "journal": "Diario",
+    "tutorials": "Tutoriales"
+  },
+  "home": {
+    "title": "Ricky Martinez - Inicio",
+    "tagline": "No te repitas. Prueba con precisión.",
+    "name": "RICKY MARTINEZ",
+    "description": "Desarrollador y solucionador de problemas que prospera con la eficiencia, creatividad y automatización. Desde marcos de prueba hasta sistemas full-stack, me encanta construir soluciones que hacen que la tecnología funcione de manera más inteligente, no más difícil.",
+    "connectLinkedIn": "Conectar en LinkedIn",
+    "viewGitHub": "Ver GitHub",
+    "aboutMe": "Acerca de mí",
+    "aboutText1": "Soy un ingeniero de software con sede en NYC con pasión por construir soluciones eficientes y automatizadas. Cuando no estoy programando, me encontrarás explorando la ciudad o jugando con algo nuevo.",
+    "aboutText2": "Tengo un interés crónico en desarrollar software y optimizar flujos de trabajo. Ya sea automatización de redes, automatización de QA o automatización de la vida personal, disfruto encontrar patrones y crear soluciones que faciliten las cosas.",
+    "aboutText3": "Nacido en Queens y criado en el Bronx, siempre he tenido curiosidad por cómo funcionan las cosas. Esta curiosidad me llevó a aprender música, ingeniería y, eventualmente, desarrollo de software. Ahora me enfoco en construir herramientas de automatización y sistemas eficientes—porque ¿por qué no ser eficiente?",
+    "aboutText4": "Este sitio mismo usa automatización que he desarrollado tanto para backend como para frontend. Echa un vistazo al",
+    "repository": "repositorio",
+    "techStack": "Stack Tecnológico",
+    "techStackSubtitle": "Tecnologías y herramientas con las que trabajo",
+    "viewAllSkills": "Ver Todas las Habilidades",
+    "quickStats": "Estadísticas Rápidas",
+    "lastUpdated": "Última Actualización",
+    "languages": "Tecnologías"
+  },
+  "projects": {
+    "title": "Proyectos - Ricky Martinez",
+    "heading": "Proyectos",
+    "subtitle": "Hogar de mis esfuerzos actuales. ¿Qué está haciendo Ricky?",
+    "inProgress": "En Progreso",
+    "complete": "Completado",
+    "ideas": "Ideas",
+    "pleaseWait": "Por favor espere...",
+    "viewGitHub": "Ver en GitHub →",
+    "descriptions": {
+      "blue-manager": "Aplicación de mantenimiento de propiedades con OCR y backend de Supabase.",
+      "personal-website": "Sitio personal para alojar notas, tutoriales y proyectos — originalmente construido como plataforma de enseñanza de Python.",
+      "xpress-transit": "Aplicación de gestión y programación de viajes construida con Django y React para manejar datos de vehículos y pasajeros.",
+      "auth": "Script de autorización simple basado en Python que habilita o restringe funciones según los permisos del nombre de usuario.",
+      "connectivity-monitor": "Monitorea la conectividad de red mediante ping, TCP o UDP y alerta cuando los endpoints se vuelven inaccesibles.",
+      "cr-ip-lookup": "Utilidad para realizar búsquedas de IP y nombre de host para identificar rápidamente y hacer referencias cruzadas de recursos conectados.",
+      "error-checker": "Validador automatizado de scripts que escanea todos los scripts en busca de errores de tiempo de ejecución y envía informes diarios de éxito o fallo por correo electrónico.",
+      "f5-sdk": "Script wrapper que usa el SDK de F5 para extraer y almacenar configuraciones y metadatos de dispositivos de red.",
+      "f5-diffs": "Compara instantáneas de configuración de F5 para identificar y registrar diferencias entre entornos o revisiones.",
+      "f5requests": "Biblioteca Python ligera para interactuar fácilmente con dispositivos F5 a través de APIs REST.",
+      "f5-vip-search": "Utilidad de búsqueda para localizar y analizar configuraciones de IP Virtual (VIP) en múltiples balanceadores de carga F5.",
+      "gen-graph": "Módulo Python para generar gráficos y diagramas a partir de datos estructurados para incrustar en paneles o páginas web.",
+      "g-photography-php": "Sistema de galería y gestión de fotos basado en PHP con mejoras sobre la versión original de Python.",
+      "interface-err-report": "Herramienta para analizar y reportar errores de interfaz en dispositivos de red para ayudar con la solución de problemas.",
+      "intranet-site": "Intranet interna de la empresa construida para centralizar scripts, paneles y documentación para acceso rápido.",
+      "ip-requests": "Kit de herramientas para registrar y analizar solicitudes HTTP basadas en IP con metadatos y utilidades de informes.",
+      "kappasigmahc": "Sitio web estático y repositorio de código para el capítulo del Consejo Superior de Kappa Sigma, mostrando eventos e historia.",
+      "muscribe": "Prototipo temprano de una herramienta impulsada por IA que convierte audio de instrumentos en partituras o notación musical.",
+      "gops": "Prototipo en C++ de un sistema de navegación diseñado para procesar coordenadas y simular lógica de rutas similar a GPS."
+    }
+  },
+  "skills": {
+    "title": "Habilidades y Tecnologías - Ricky Martinez",
+    "subtitle": "Una descripción general completa de las tecnologías y herramientas con las que trabajo",
+    "programmingLanguages": "Lenguajes de Programación",
+    "frameworksLibraries": "Frameworks y Bibliotecas",
+    "testingQA": "Pruebas y Control de Calidad",
+    "devopsCloud": "DevOps y Nube",
+    "webDevelopment": "Desarrollo Web",
+    "databases": "Bases de Datos",
+    "toolsOther": "Herramientas y Otros"
+  },
+  "contact": {
+    "title": "Contáctame - Ricky Martinez",
+    "subtitle": "¿Tienes una pregunta o quieres colaborar? ¡Envíame un mensaje!",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "subject": "Asunto",
+    "message": "Mensaje",
+    "required": "Requerido",
+    "emailPlaceholder": "tu.correo@ejemplo.com",
+    "namePlaceholder": "Tu nombre",
+    "subjectPlaceholder": "¿De qué se trata?",
+    "messagePlaceholder": "Dime qué tienes en mente...",
+    "emailNote": "Requerido - Nunca compartiremos tu correo electrónico",
+    "messageNote": "Requerido - Máximo 2000 caracteres",
+    "sendMessage": "Enviar Mensaje",
+    "success": "✓ ¡Correo enviado con éxito! Gracias por contactarme. Te responderé pronto.",
+    "error": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
+  },
+  "docs": {
+    "title": "Ricky Martinez - Documentos",
+    "notes": "Notas",
+    "clickToStart": "¡Haz clic en cualquier FAQ para comenzar!",
+    "python": "Python",
+    "git": "Git",
+    "misc": "Misc."
+  },
+  "tutorials": {
+    "title": "Ricky Martinez - Tutoriales",
+    "heading": "Tutoriales",
+    "subtitle": "Directorio de todos los tutoriales y proyectos secundarios que me gustaría exhibir.",
+    "pythonTutorial": "Tutorial de Python",
+    "pythonDescription": "Proyecto realizado para enseñar los fundamentos básicos de programación en Python. Perfecto para principiantes que buscan comenzar con los fundamentos de programación.",
+    "viewLessons": "Ver Lecciones →",
+    "codingChallenges": "Desafíos de Programación",
+    "codingDescription": "Básicamente notas de algoritmos donde exploro la traducción \"en inglés\" del código. Sumérgete en enfoques de resolución de problemas y pensamiento algorítmico.",
+    "viewChallenges": "Ver Desafíos →"
+  },
+  "journal": {
+    "title": "Ricky Martinez - Diario"
+  }
+}
+

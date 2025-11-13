@@ -36,6 +36,10 @@ $(document).ready(function(){
             if (typeof jQuery.fn.carousel !== 'undefined') {
                 jQuery('#homeCarousel').carousel();
             }
+            // Re-apply translations after content loads
+            if (typeof window.TranslationManager !== 'undefined') {
+                window.TranslationManager.applyTranslations();
+            }
             // Set active nav item
             updateActiveNavItem('html/pages/home.html');
         });
@@ -169,6 +173,10 @@ $(document).ready(function(){
                             if (typeof jQuery.fn.carousel !== 'undefined') {
                                 jQuery('#homeCarousel').carousel();
                             }
+                            // Re-apply translations after content loads
+                            if (typeof window.TranslationManager !== 'undefined') {
+                                window.TranslationManager.applyTranslations();
+                            }
                             // Re-setup click handlers for newly loaded content
                             setupClickHandlers();
                         } else {
@@ -194,6 +202,10 @@ $(document).ready(function(){
                         // Reinitialize Bootstrap carousel if to ensure its presence
                         if (typeof jQuery.fn.carousel !== 'undefined') {
                             jQuery('#homeCarousel').carousel();
+                        }
+                        // Re-apply translations after content loads
+                        if (typeof window.TranslationManager !== 'undefined') {
+                            window.TranslationManager.applyTranslations();
                         }
                         // Update active nav item
                         updateActiveNavItem(sectionUrl);

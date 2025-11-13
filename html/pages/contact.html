@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Ricky Martinez</title>
+    <title data-translate-title="contact.title">Contact - Ricky Martinez</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
     <link rel="stylesheet" href="/html/css/modern.css" />
     <link rel="stylesheet" href="/html/css/style.css" />
 </head>
 <body>
-    <div class="container" style="padding-top: 2rem;">
+    <div class="container container-padding-top">
         <div class="section">
-            <h1 class="section-title">Contact Me</h1>
-            <p class="section-subtitle">Have a question or want to collaborate? Send me a message!</p>
+            <h1 class="section-title" data-translate="contact.title">Contact Me</h1>
+            <p class="section-subtitle" data-translate="contact.subtitle">Have a question or want to collaborate? Send me a message!</p>
         </div>
 
         <div class="section">
@@ -20,49 +20,49 @@
                 <div class="col-12">
                     <form id="contact-form" class="contact-form">
                         <div class="form-group">
-                            <label for="name">Name <span class="text-danger">*</span></label>
+                            <label for="name" data-translate="contact.name">Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" required 
-                                   minlength="1" maxlength="100" placeholder="Your name">
-                            <small class="form-text text-muted">Required</small>
+                                   minlength="1" maxlength="100" data-translate-placeholder="contact.namePlaceholder" placeholder="Your name">
+                            <small class="form-text text-muted" data-translate="contact.required">Required</small>
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Email <span class="text-danger">*</span></label>
+                            <label for="email" data-translate="contact.email">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" name="email" required 
-                                   placeholder="your.email@example.com">
-                            <small class="form-text text-muted">Required - We'll never share your email</small>
+                                   data-translate-placeholder="contact.emailPlaceholder" placeholder="your.email@example.com">
+                            <small class="form-text text-muted" data-translate="contact.emailNote">Required - We'll never share your email</small>
                         </div>
 
                         <div class="form-group">
-                            <label for="subject">Subject <span class="text-danger">*</span></label>
+                            <label for="subject" data-translate="contact.subject">Subject <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="subject" name="subject" required 
-                                   minlength="1" maxlength="200" placeholder="What's this about?">
-                            <small class="form-text text-muted">Required</small>
+                                   minlength="1" maxlength="200" data-translate-placeholder="contact.subjectPlaceholder" placeholder="What's this about?">
+                            <small class="form-text text-muted" data-translate="contact.required">Required</small>
                         </div>
 
                         <div class="form-group">
-                            <label for="message">Message <span class="text-danger">*</span></label>
+                            <label for="message" data-translate="contact.message">Message <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="message" name="message" rows="6" required 
-                                      minlength="1" maxlength="2000" placeholder="Tell me what's on your mind..."></textarea>
-                            <small class="form-text text-muted">Required - Max 2000 characters</small>
+                                      minlength="1" maxlength="2000" data-translate-placeholder="contact.messagePlaceholder" placeholder="Tell me what's on your mind..."></textarea>
+                            <small class="form-text text-muted" data-translate="contact.messageNote">Required - Max 2000 characters</small>
                         </div>
 
                         <!-- Honeypot field - hidden from users, bots will fill it -->
-                        <div style="position: absolute; left: -9999px; opacity: 0;">
+                        <div class="honeypot-field">
                             <label for="website">Website (leave blank)</label>
                             <input type="text" id="website" name="honeypot" tabindex="-1" autocomplete="off">
                         </div>
 
                         <!-- Cloudflare Turnstile CAPTCHA (only shown if site key is configured) -->
-                        <div id="turnstile-container" class="form-group" style="display: none;">
+                        <div id="turnstile-container" class="form-group d-none">
                             <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY_HERE" data-theme="auto"></div>
                         </div>
 
-                        <div id="form-message" class="alert" role="alert" style="display: none;"></div>
+                        <div id="form-message" class="alert d-none" role="alert"></div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100" id="submit-btn">
-                            <span id="submit-text">Send Message</span>
-                            <span id="submit-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                            <span id="submit-text" data-translate="contact.sendMessage">Send Message</span>
+                            <span id="submit-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                         </button>
                     </form>
                 </div>
