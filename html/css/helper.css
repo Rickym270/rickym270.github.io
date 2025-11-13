@@ -21,7 +21,7 @@
     text-align: center;
 }
 .dotteddivider{ border-bottom: 1px dotted #6C7A89; }
-.divider{ border-bottom: 1px solid #6C7A89; }
+/* .divider moved to modern.css - consolidated definition there */
 .divider-top{ border-top: 1px solid #6C7A89; }
 .divider-height{ height:88vh; }
 .right-divider{ border-right: 1px solid #6C7A89; }
