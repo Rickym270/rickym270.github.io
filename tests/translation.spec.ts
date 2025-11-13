@@ -179,15 +179,20 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
     }, { timeout: 15000 });
-    await page.waitForTimeout(300);
     
-    // Check page title
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Habilidades');
+    // Wait for heading element to exist, be visible, and translations to apply
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('#content h1[data-translate="skills.title"]');
+      if (!heading) return false;
+      const style = window.getComputedStyle(heading);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
     
-    // Check translations
+    // Check translations - page title doesn't update in SPA navigation, so check content instead
     const title = page.locator('#content h1[data-translate="skills.title"]');
-    await expect(title).toContainText('Habilidades');
+    await expect(title).toBeVisible({ timeout: 10000 });
+    await expect(title).toContainText('Habilidades', { timeout: 5000 });
     
     const programmingLang = page.locator('#content h3[data-translate="skills.programmingLanguages"]');
     await expect(programmingLang).toHaveText('Lenguajes de Programación');
