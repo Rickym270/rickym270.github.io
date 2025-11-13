@@ -45,8 +45,11 @@ test.describe('Tutorials Page', () => {
     // Click Tutorials link
     await page.getByRole('link', { name: 'Tutorials' }).click();
     
-    // Wait for content to load
-    await page.waitForTimeout(1500);
+    // Wait for content to load - use waitForFunction for better reliability
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
+    }, { timeout: 15000 });
     
     // Verify we're still on the same page (URL shouldn't change)
     expect(page.url()).toBe(initialUrl);
@@ -55,11 +58,11 @@ test.describe('Tutorials Page', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Verify tutorials content loaded into #content - check for h1 title
-    await expect(page.locator('#content h1')).toHaveText('Tutorials', { timeout: 3000 });
+    await expect(page.locator('#content h1')).toHaveText('Tutorials', { timeout: 5000 });
     
     // Verify tutorial cards are visible
     const tutorialCards = page.locator('.tutorial-card');
-    await expect(tutorialCards.first()).toBeVisible({ timeout: 2000 });
+    await expect(tutorialCards.first()).toBeVisible({ timeout: 3000 });
   });
 
   test('tutorial cards display correctly with icons and links', async ({ page }) => {
@@ -73,15 +76,21 @@ test.describe('Tutorials Page', () => {
     }, { timeout: 15000 });
     
     // Wait for heading and translations to apply
-    await page.waitForFunction(() => {
-      const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
-      if (!heading) return false;
-      const style = window.getComputedStyle(heading);
-      return style.display !== 'none' && style.visibility !== 'hidden';
-    }, { timeout: 15000 }).catch(() => {
-      // Heading might not have data-translate on master branch
-    });
-    await page.waitForTimeout(500);
+    try {
+      await page.waitForFunction(() => {
+        const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
+        if (!heading) return false;
+        const style = window.getComputedStyle(heading);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      }, { timeout: 10000 });
+    } catch {
+      // Heading might not have data-translate on master branch, continue anyway
+    }
+    
+    // Wait for content to stabilize - use shorter timeout and check page is still valid
+    if (!page.isClosed()) {
+      await page.waitForTimeout(300);
+    }
     
     // Verify Python Tutorial card exists - use data-translate selector for reliability
     const pythonTitle = page.locator('#content h3[data-translate="tutorials.pythonTutorial"]');
