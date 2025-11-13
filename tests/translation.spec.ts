@@ -412,15 +412,19 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
     }, { timeout: 15000 });
-    await page.waitForTimeout(300);
+    // Wait for heading element to exist, be visible, and translations to apply
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
+      if (!heading) return false;
+      const style = window.getComputedStyle(heading);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
     
-    // Check page title
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Tutoriales');
-    
-    // Check translations
+    // Check translations - page title doesn't update in SPA navigation, so check content instead
     const title = page.locator('#content h1[data-translate="tutorials.heading"]');
-    await expect(title).toHaveText('Tutoriales');
+    await expect(title).toBeVisible({ timeout: 10000 });
+    await expect(title).toHaveText('Tutoriales', { timeout: 5000 });
     
     const subtitle = page.locator('#content p[data-translate="tutorials.subtitle"]');
     await expect(subtitle).toContainText('Directorio de todos los tutoriales');

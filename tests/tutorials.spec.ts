@@ -67,10 +67,29 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials page
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1500);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
+    }, { timeout: 15000 });
     
-    // Verify Python Tutorial card exists
-    const pythonCard = page.locator('.tutorial-card').filter({ hasText: /Python Tutorial/i }).first();
+    // Wait for heading and translations to apply
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
+      if (!heading) return false;
+      const style = window.getComputedStyle(heading);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    }, { timeout: 15000 }).catch(() => {
+      // Heading might not have data-translate on master branch
+    });
+    await page.waitForTimeout(500);
+    
+    // Verify Python Tutorial card exists - use data-translate selector for reliability
+    const pythonTitle = page.locator('#content h3[data-translate="tutorials.pythonTutorial"]');
+    await expect(pythonTitle).toBeVisible({ timeout: 10000 });
+    await expect(pythonTitle).toContainText('Python', { timeout: 5000 });
+    
+    // Get the card containing the Python Tutorial title - find closest .tutorial-card ancestor
+    const pythonCard = page.locator('#content .tutorial-card').filter({ has: pythonTitle });
     await expect(pythonCard).toBeVisible({ timeout: 2000 });
     
     // Verify icon is present
