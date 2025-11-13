@@ -167,7 +167,7 @@ a:hover {
 /* Links in light mode should be black */
 [data-theme="light"] a,
 [data-theme="light"] a:visited {
-    color: #1a1a1a !important;
+    color: #fff !important;
 }
 
 [data-theme="light"] a:hover {
