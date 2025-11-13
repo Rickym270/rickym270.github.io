@@ -34,27 +34,33 @@ test.describe('Projects Page', () => {
   });
 
   test('navigates to Projects via navbar and renders content', async ({ page }) => {
-  await page.goto('/');
+    await page.goto('/');
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Click Projects link (triggers jQuery load into #content)
     await page.getByRole('link', { name: 'Projects' }).click();
-  // Wait for the projects page content to be loaded into #content
-  await page.waitForFunction(() => {
-    const c = document.querySelector('#content');
-    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
-  }, { timeout: 15000 });
-  
-  // Wait for translations to apply
-  await page.waitForTimeout(500);
-  
-  // Check for Projects heading - use data-translate attribute for more reliable selection
-  const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
-  await expect(projectsHeading).toBeVisible({ timeout: 10000 });
-  await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
+    
+    // Wait for the projects page content to be loaded into #content
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+    
+    // Wait for heading element to exist and translations to apply
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 10000 });
+    await page.waitForTimeout(500);
+    
+    // Check for Projects heading - use data-translate attribute for more reliable selection
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
+    await expect(projectsHeading).toBeVisible({ timeout: 5000 });
+    await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
     
     // Wait for scripts to execute and API call to complete (or fail gracefully)
     // The page will either show project cards OR an error message - both are valid
