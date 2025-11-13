@@ -137,10 +137,13 @@ test.describe('SPA Navigation', () => {
         return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
       }, { timeout: 15000 });
       
-      // Wait for translations to apply and heading to be visible
+      // Wait for heading to exist first, then check visibility
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+      await page.waitForTimeout(500);
+      
+      // Verify heading is visible
       const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
       await expect(projectsHeading).toBeVisible({ timeout: 10000 });
-      await page.waitForTimeout(500);
       
       // Should only have one Projects heading (use data-translate attribute for reliable selection)
       const projectsHeadings = page.locator('#content h1[data-translate="projects.heading"]');

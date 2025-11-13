@@ -88,8 +88,8 @@ test.describe('Tutorials Page', () => {
     await expect(pythonTitle).toBeVisible({ timeout: 10000 });
     await expect(pythonTitle).toContainText('Python', { timeout: 5000 });
     
-    // Get the card containing the Python Tutorial title - find closest .tutorial-card ancestor
-    const pythonCard = page.locator('#content .tutorial-card').filter({ has: pythonTitle });
+    // Get the card containing the Python Tutorial title - use XPath to find parent .tutorial-card
+    const pythonCard = pythonTitle.locator('xpath=ancestor::div[contains(@class, "tutorial-card")]');
     await expect(pythonCard).toBeVisible({ timeout: 2000 });
     
     // Verify icon is present
