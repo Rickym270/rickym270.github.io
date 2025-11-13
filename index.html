@@ -33,6 +33,7 @@
         <script type="text/javascript" src="/html/js/api.js?v=20251110"></script>
         <script type="text/javascript" src="/html/js/projects.js?v=20251110"></script>
         <script type="text/javascript" src="html/js/theme.js"></script>
+        <script type="text/javascript" src="html/js/translation.js"></script>
         <script type="text/javascript">
             // Prefetch projects data on page load so it's ready when user navigates to projects page
             (function() {
@@ -40,6 +41,19 @@
                     prefetchProjects();
                 }
             })();
+            
+            // Language switcher event handlers
+            $(document).ready(function() {
+                $(document).on('click', '#language-switcher button[data-lang]', function(e) {
+                    e.preventDefault();
+                    const lang = $(this).attr('data-lang');
+                    if (typeof window.TranslationManager !== 'undefined') {
+                        window.TranslationManager.switchLanguage(lang).then(() => {
+                            console.log('Language switched to:', lang);
+                        });
+                    }
+                });
+            });
         </script>
 
     </head>
@@ -49,16 +63,16 @@
                 <ul class="navbar-nav mr-auto d-flex flex-row align-items-center justify-content-between w-100" id="navbar-links" style="flex-wrap: wrap;">
                     <div class="d-flex align-items-center">
                         <li class="nav-item active">
-                            <a class="nav-link" href="#" data-url="html/pages/home.html">Home</a>
+                            <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Projects" data-url="html/pages/projects.html">Projects</a>
+                            <a class="nav-link" href="#Projects" data-url="html/pages/projects.html" data-translate="nav.projects">Projects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Skills" data-url="html/pages/skills.html">Skills</a>
+                            <a class="nav-link" href="#Skills" data-url="html/pages/skills.html" data-translate="nav.skills">Skills</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Contact" data-url="html/pages/contact.html">Contact</a>
+                            <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">Contact</a>
                         </li>
                     </div>
                     <div class="d-flex align-items-center">
@@ -68,16 +82,26 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">
                               Docs
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="#" data-url="html/pages/docs.html">Notes</a>
-                                <a class="dropdown-item" href="#" data-url="html/pages/Journal/index.html">Journal</a>
+                                <a class="dropdown-item" href="#" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
+                                <a class="dropdown-item" href="#" data-url="html/pages/Journal/index.html" data-translate="nav.journal">Journal</a>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html">Tutorials</a>
+                            <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
+                        </li>
+                        <li class="nav-item ml-2" id="language-switcher">
+                            <div class="btn-group" role="group" aria-label="Language selector">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="en" aria-pressed="true" title="English">
+                                    EN
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="es" aria-pressed="false" title="Español">
+                                    ES
+                                </button>
+                            </div>
                         </li>
                         <li class="nav-item ml-2">
                             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">

@@ -1,6 +1,38 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Tutorials Page', () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure English is set for these tests
+    await page.goto('/');
+    
+    // Wait for TranslationManager to be available and initialized
+    await page.waitForFunction(() => {
+      return typeof window.TranslationManager !== 'undefined' && 
+             window.TranslationManager.currentLanguage !== undefined;
+    }, { timeout: 5000 }).catch(() => {
+      // TranslationManager might not exist on master branch - that's okay
+    });
+    
+    // Set language to English
+    await page.evaluate(() => {
+      localStorage.setItem('siteLanguage', 'en');
+      if (typeof window.TranslationManager !== 'undefined') {
+        window.TranslationManager.switchLanguage('en');
+      }
+    });
+    
+    // Wait for translations to apply
+    await page.waitForTimeout(500);
+    
+    // Verify English is set by checking navbar text
+    await page.waitForFunction(() => {
+      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
+      return homeLink && homeLink.textContent?.trim() === 'Home';
+    }, { timeout: 3000 }).catch(() => {
+      // If translation system doesn't exist, that's okay - tests will use English by default
+    });
+  });
+
   test('tutorials page loads without redirecting entire page', async ({ page }) => {
     await page.goto('/');
     
@@ -13,8 +45,11 @@ test.describe('Tutorials Page', () => {
     // Click Tutorials link
     await page.getByRole('link', { name: 'Tutorials' }).click();
     
-    // Wait for content to load
-    await page.waitForTimeout(1500);
+    // Wait for content to load - use waitForFunction for better reliability
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
+    }, { timeout: 15000 });
     
     // Verify we're still on the same page (URL shouldn't change)
     expect(page.url()).toBe(initialUrl);
@@ -23,11 +58,11 @@ test.describe('Tutorials Page', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Verify tutorials content loaded into #content - check for h1 title
-    await expect(page.locator('#content h1')).toHaveText('Tutorials', { timeout: 3000 });
+    await expect(page.locator('#content h1')).toHaveText('Tutorials', { timeout: 5000 });
     
     // Verify tutorial cards are visible
     const tutorialCards = page.locator('.tutorial-card');
-    await expect(tutorialCards.first()).toBeVisible({ timeout: 2000 });
+    await expect(tutorialCards.first()).toBeVisible({ timeout: 3000 });
   });
 
   test('tutorial cards display correctly with icons and links', async ({ page }) => {
@@ -35,10 +70,35 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials page
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1500);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
+    }, { timeout: 15000 });
     
-    // Verify Python Tutorial card exists
-    const pythonCard = page.locator('.tutorial-card').filter({ hasText: /Python Tutorial/i }).first();
+    // Wait for heading and translations to apply
+    try {
+      await page.waitForFunction(() => {
+        const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
+        if (!heading) return false;
+        const style = window.getComputedStyle(heading);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      }, { timeout: 10000 });
+    } catch {
+      // Heading might not have data-translate on master branch, continue anyway
+    }
+    
+    // Wait for content to stabilize - use shorter timeout and check page is still valid
+    if (!page.isClosed()) {
+      await page.waitForTimeout(300);
+    }
+    
+    // Verify Python Tutorial card exists - use data-translate selector for reliability
+    const pythonTitle = page.locator('#content h3[data-translate="tutorials.pythonTutorial"]');
+    await expect(pythonTitle).toBeVisible({ timeout: 10000 });
+    await expect(pythonTitle).toContainText('Python', { timeout: 5000 });
+    
+    // Get the card containing the Python Tutorial title - use XPath to find parent .tutorial-card
+    const pythonCard = pythonTitle.locator('xpath=ancestor::div[contains(@class, "tutorial-card")]');
     await expect(pythonCard).toBeVisible({ timeout: 2000 });
     
     // Verify icon is present

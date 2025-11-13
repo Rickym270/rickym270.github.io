@@ -43,6 +43,20 @@ export default defineConfig({
       use: {
         baseURL: 'http://localhost:8080',
       },
+      dependencies: ['api-server'],
+    },
+    // API server startup project
+    {
+      name: 'api-server',
+      testMatch: /$^/, // Match nothing - this is just for server startup
+      webServer: {
+        command: 'cd api && ./mvnw clean package spring-boot:repackage -DskipTests && java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar',
+        url: 'http://localhost:8080/api/health',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      },
     },
   ],
   reporter: [
