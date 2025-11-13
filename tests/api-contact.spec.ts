@@ -5,6 +5,11 @@ const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'test-admin-key';
 
 test.describe('API Contact Endpoint - POST', () => {
   test('POST /api/contact creates a new message', async ({ request }) => {
+    // Wait for API server to be ready
+    await request.get(`${API_BASE_URL}/api/health`, { timeout: 30000 }).catch(() => {
+      // Server might not be ready yet, continue anyway
+    });
+    
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: 'Test User',
@@ -15,9 +20,16 @@ test.describe('API Contact Endpoint - POST', () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 30000,
     });
 
-    expect(response.status()).toBe(201);
+    // Log response for debugging if test fails
+    const status = response.status();
+    if (status !== 201) {
+      const body = await response.text().catch(() => 'Unable to read response body');
+      console.error(`API returned status ${status}. Response body: ${body}`);
+    }
+    expect(status).toBe(201);
     const body = await response.json();
     expect(body).toHaveProperty('id');
     expect(body).toHaveProperty('name', 'Test User');
