@@ -101,11 +101,17 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
-    // Wait for translations to apply
+    // Wait for home content to load and translations to apply
+    await page.waitForFunction(() => {
+      const banner = document.querySelector('#content #homeBanner');
+      const tagline = document.querySelector('#content .hero-title-accent[data-translate="home.tagline"]');
+      return banner && tagline;
+    }, { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Check that Home page is still in Spanish
     const homeTagline = page.locator('#content .hero-title-accent[data-translate="home.tagline"]');
+    await expect(homeTagline).toBeVisible({ timeout: 5000 });
     await expect(homeTagline).toContainText('No te repitas', { timeout: 5000 });
   });
 
