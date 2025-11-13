@@ -147,14 +147,17 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
-    await page.waitForTimeout(300);
     
-    // Check page title
+    // Wait for heading to be visible and translations to apply
+    const title = page.locator('#content h1[data-translate="projects.heading"]');
+    await expect(title).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(500);
+    
+    // Check page title (should be updated by translation system)
     const pageTitle = await page.title();
     expect(pageTitle).toContain('Proyectos');
     
     // Check translations
-    const title = page.locator('#content h1[data-translate="projects.heading"]');
     await expect(title).toHaveText('Proyectos');
     
     const inProgress = page.locator('#content h2[data-translate="projects.inProgress"]');
@@ -277,10 +280,13 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form');
     }, { timeout: 15000 });
-    await page.waitForTimeout(300);
+    
+    // Wait for inputs to be visible and translations to apply
+    const nameInput = page.locator('#content input#name');
+    await expect(nameInput).toBeVisible({ timeout: 5000 });
+    await page.waitForTimeout(500);
     
     // Check English placeholders
-    const nameInput = page.locator('#content input#name');
     let namePlaceholder = await nameInput.getAttribute('placeholder');
     expect(namePlaceholder).toBe('Your name');
     
@@ -294,6 +300,7 @@ test.describe('Translation feature', () => {
     expect(namePlaceholder).toBe('Tu nombre');
     
     const emailInput = page.locator('#content input#email');
+    await expect(emailInput).toBeVisible({ timeout: 5000 });
     const emailPlaceholder = await emailInput.getAttribute('placeholder');
     expect(emailPlaceholder).toBe('tu.correo@ejemplo.com');
     
