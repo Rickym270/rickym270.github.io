@@ -53,13 +53,8 @@ test.describe('Projects Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading element to exist, be visible, and translations to apply
-    await page.waitForFunction(() => {
-      const heading = document.querySelector('#content h1[data-translate="projects.heading"]');
-      if (!heading) return false;
-      const style = window.getComputedStyle(heading);
-      return style.display !== 'none' && style.visibility !== 'hidden';
-    }, { timeout: 15000 });
+    // Wait for heading element to exist first, then check visibility
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Check for Projects heading - use data-translate attribute for more reliable selection

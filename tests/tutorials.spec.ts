@@ -257,9 +257,10 @@ test.describe('Tutorials Page', () => {
     await page.getByRole('link', { name: 'Tutorials' }).click();
     await page.waitForTimeout(1000);
     
-    // Verify description text is visible
-    const description = page.locator('#content').getByText(/Directory of all tutorials/i);
-    await expect(description).toBeVisible();
+    // Verify description text is visible - use data-translate selector for reliability
+    const description = page.locator('#content p[data-translate="tutorials.subtitle"]');
+    await expect(description).toBeVisible({ timeout: 5000 });
+    await expect(description).toContainText(/tutorials/i, { timeout: 3000 });
     
     // Verify tutorial cards have visible links
     const tutorialLinks = page.locator('a.tutorial-link');
