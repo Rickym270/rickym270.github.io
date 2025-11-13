@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/html/css/style.css" />
 </head>
 <body>
-    <div class="container" style="padding-top: 2rem;">
+    <div class="container container-padding-top">
         <div class="section">
             <h1 class="section-title" data-translate="contact.title">Contact Me</h1>
             <p class="section-subtitle" data-translate="contact.subtitle">Have a question or want to collaborate? Send me a message!</p>
@@ -48,21 +48,21 @@
                         </div>
 
                         <!-- Honeypot field - hidden from users, bots will fill it -->
-                        <div style="position: absolute; left: -9999px; opacity: 0;">
+                        <div class="honeypot-field">
                             <label for="website">Website (leave blank)</label>
                             <input type="text" id="website" name="honeypot" tabindex="-1" autocomplete="off">
                         </div>
 
                         <!-- Cloudflare Turnstile CAPTCHA (only shown if site key is configured) -->
-                        <div id="turnstile-container" class="form-group" style="display: none;">
+                        <div id="turnstile-container" class="form-group d-none">
                             <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY_HERE" data-theme="auto"></div>
                         </div>
 
-                        <div id="form-message" class="alert" role="alert" style="display: none;"></div>
+                        <div id="form-message" class="alert d-none" role="alert"></div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100" id="submit-btn">
                             <span id="submit-text" data-translate="contact.sendMessage">Send Message</span>
-                            <span id="submit-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                            <span id="submit-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                         </button>
                     </form>
                 </div>
