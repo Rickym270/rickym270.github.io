@@ -10,10 +10,13 @@ test.describe('API Contact Endpoint - POST', () => {
       // Server might not be ready yet, continue anyway
     });
     
+    // Use unique email to avoid rate limiting (5 min limit per IP+email combo)
+    const uniqueEmail = `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
+    
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: 'Test User',
-        email: 'test@example.com',
+        email: uniqueEmail,
         subject: 'Test Subject',
         message: 'This is a test message',
       },
@@ -33,7 +36,7 @@ test.describe('API Contact Endpoint - POST', () => {
     const body = await response.json();
     expect(body).toHaveProperty('id');
     expect(body).toHaveProperty('name', 'Test User');
-    expect(body).toHaveProperty('email', 'test@example.com');
+    expect(body).toHaveProperty('email', uniqueEmail);
     expect(body).toHaveProperty('subject', 'Test Subject');
     expect(body).toHaveProperty('message', 'This is a test message');
     expect(body).toHaveProperty('receivedAt');
@@ -95,11 +98,13 @@ test.describe('API Contact Endpoint - POST', () => {
   });
 
   test('POST /api/contact validates name length (max 100)', async ({ request }) => {
+    // Use unique email to avoid rate limiting
+    const uniqueEmail = `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
     const longName = 'a'.repeat(101);
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: longName,
-        email: 'test@example.com',
+        email: uniqueEmail,
         subject: 'Test Subject',
         message: 'Test message',
       },
@@ -114,11 +119,13 @@ test.describe('API Contact Endpoint - POST', () => {
   });
 
   test('POST /api/contact validates subject length (max 200)', async ({ request }) => {
+    // Use unique email to avoid rate limiting
+    const uniqueEmail = `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
     const longSubject = 'a'.repeat(201);
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: 'Test User',
-        email: 'test@example.com',
+        email: uniqueEmail,
         subject: longSubject,
         message: 'Test message',
       },
@@ -154,11 +161,13 @@ test.describe('API Contact Endpoint - GET', () => {
   });
 
   test('GET /api/contact returns messages with valid API key', async ({ request }) => {
+    // Use unique email to avoid rate limiting
+    const uniqueEmail = `apitest-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
     // First, create a message
     await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: 'API Test User',
-        email: 'apitest@example.com',
+        email: uniqueEmail,
         subject: 'API Test Subject',
         message: 'Test message for GET endpoint',
       },
