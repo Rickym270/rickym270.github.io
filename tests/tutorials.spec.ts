@@ -58,7 +58,12 @@ test.describe('Tutorials Page', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Verify tutorials content loaded into #content - check for h1 title
-    await expect(page.locator('#content h1')).toHaveText('Tutorials', { timeout: 5000 });
+    // Wait for heading element to exist in DOM first
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000 });
+    await page.waitForTimeout(500);
+    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"]');
+    await expect(tutorialsHeading).toBeVisible({ timeout: 5000 });
+    await expect(tutorialsHeading).toHaveText('Tutorials', { timeout: 5000 });
     
     // Verify tutorial cards are visible
     const tutorialCards = page.locator('.tutorial-card');
