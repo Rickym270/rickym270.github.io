@@ -267,8 +267,12 @@ test.describe('Tutorials Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
     }, { timeout: 15000 });
     
-    // Wait for subtitle element to exist in DOM
-    await page.waitForSelector('#content p[data-translate="tutorials.subtitle"]', { timeout: 15000 });
+    // Wait for heading first to ensure content is loaded
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    await page.waitForTimeout(500);
+    
+    // Wait for subtitle element to exist in DOM - use attached state for better reliability
+    await page.waitForSelector('#content p[data-translate="tutorials.subtitle"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Verify description text is visible - use data-translate selector for reliability

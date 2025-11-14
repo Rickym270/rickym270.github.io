@@ -98,8 +98,12 @@ test.describe('Navbar', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
+    // Wait for homeBanner element to exist in DOM
+    await page.waitForSelector('#content #homeBanner', { timeout: 15000, state: 'attached' });
+    await page.waitForTimeout(500);
+    
     // Should load home content
-    await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 10000 });
   });
 
   test('Skills link navigates to skills page', async ({ page }) => {

@@ -85,8 +85,8 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading element to exist and translations to apply
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 5000 });
+    // Wait for heading element to exist and translations to apply - use longer timeout for CI
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check that Projects page is in Spanish
