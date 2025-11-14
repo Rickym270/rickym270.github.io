@@ -260,7 +260,16 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1000);
+    
+    // Wait for content to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+    }, { timeout: 15000 });
+    
+    // Wait for subtitle element to exist in DOM
+    await page.waitForSelector('#content p[data-translate="tutorials.subtitle"]', { timeout: 15000 });
+    await page.waitForTimeout(500);
     
     // Verify description text is visible - use data-translate selector for reliability
     const description = page.locator('#content p[data-translate="tutorials.subtitle"]');

@@ -134,11 +134,8 @@ test.describe('Projects Page', () => {
     await expect(page.locator('#ProjComplete')).toBeVisible({ timeout: 5000 });
     const comingSoonSection = page.locator('#ProjComingSoon');
     await expect(comingSoonSection).toBeAttached({ timeout: 5000 });
-    // ComingSoon might be hidden if empty, check if visible
-    const comingSoonVisible = await comingSoonSection.isVisible().catch(() => false);
-    if (comingSoonVisible) {
-      await expect(comingSoonSection).toBeVisible({ timeout: 1000 });
-    }
+    // ComingSoon might be hidden if empty - that's expected behavior, just check it exists
+    // Don't assert visibility as it may be hidden when there are no ideas projects
   });
 
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
