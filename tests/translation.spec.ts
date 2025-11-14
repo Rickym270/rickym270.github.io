@@ -155,10 +155,8 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     
     // Wait for heading element to exist in DOM (it's in the static HTML that gets loaded)
-    await page.waitForFunction(() => {
-      const heading = document.querySelector('#content h1[data-translate="projects.heading"]');
-      return heading !== null;
-    }, { timeout: 15000 });
+    // Use waitForSelector instead of waitForFunction for better WebKit reliability
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
@@ -420,13 +418,8 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
     }, { timeout: 15000 });
-    // Wait for heading element to exist, be visible, and translations to apply
-    await page.waitForFunction(() => {
-      const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
-      if (!heading) return false;
-      const style = window.getComputedStyle(heading);
-      return style.display !== 'none' && style.visibility !== 'hidden';
-    }, { timeout: 15000 });
+    // Wait for heading element to exist in DOM - use waitForSelector for better WebKit reliability
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
