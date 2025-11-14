@@ -162,17 +162,15 @@ test.describe('Projects Page', () => {
     // Navigate back to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
     
-    // Wait for projects page to load - wait for either projects to load OR sections to exist
+    // Wait for projects page HTML to load into #content
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      // Check if projects have loaded (cards exist) OR sections exist
-      const hasProjects = !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
-      const hasSections = !!document.querySelector('#ProjInProgress, #ProjComplete, #ProjComingSoon');
-      return c?.getAttribute('data-content-loaded') === 'true' || hasProjects || hasSections;
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait a bit for projects to load or sections to become visible
-    await page.waitForTimeout(2000);
+    // Wait for heading element to exist in DOM (it's in the static HTML)
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+    await page.waitForTimeout(500);
     
     // Projects should still load correctly - use data-translate selector
     const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');

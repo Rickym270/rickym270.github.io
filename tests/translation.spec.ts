@@ -154,8 +154,11 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading to exist first, then check visibility
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+    // Wait for heading element to exist in DOM (it's in the static HTML that gets loaded)
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('#content h1[data-translate="projects.heading"]');
+      return heading !== null;
+    }, { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
