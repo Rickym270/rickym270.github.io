@@ -156,6 +156,10 @@ paths:
         Returns a merged list of projects from GitHub API and curated projects from `data/projects.json`.
         Projects are sorted with featured items first, then alphabetically by name.
         
+        Each project includes a `status` field indicating development activity:
+        - `"in-progress"`: Project has 2+ commits in the last 3 weeks
+        - `"complete"`: Project has no recent activity or explicitly marked as complete
+        
         **Note**: If GitHub API is unavailable or returns empty, only curated projects are returned.
       operationId: getProjects
       tags:
@@ -179,6 +183,7 @@ paths:
                     - "JavaScript"
                     - "Java"
                   featured: true
+                  status: "in-progress"
         '404':
           description: Resource not found
           content:
@@ -328,6 +333,7 @@ paths:
         
         **Spam Protection**:
         - Honeypot field: If `honeypot` field is provided and filled, request is rejected with 400 Bad Request
+        - Cloudflare Turnstile: If `turnstileToken` is provided, it will be verified. Invalid tokens result in 400 Bad Request
         - Rate limiting: 5 minutes per IP address (subsequent requests return 400 Bad Request)
       operationId: createContact
       tags:
@@ -344,6 +350,7 @@ paths:
               subject: "Project Inquiry"
               message: "Hello, I'd like to get in touch!"
               honeypot: ""
+              turnstileToken: ""
       responses:
         '201':
           description: Contact message created successfully
@@ -568,6 +575,13 @@ components:
           description: Whether the project is featured
           default: false
           example: true
+        status:
+          type: string
+          description: Project development status. "in-progress" if there have been 2+ commits in the last 3 weeks, otherwise "complete"
+          enum:
+            - in-progress
+            - complete
+          example: "complete"
 
     StatsResponse:
       type: object
@@ -650,6 +664,10 @@ components:
         honeypot:
           type: string
           description: Spam protection field (should be empty). If filled, request is rejected.
+          example: ""
+        turnstileToken:
+          type: string
+          description: Cloudflare Turnstile token for CAPTCHA verification. Optional - if provided, will be verified against Cloudflare's API.
           example: ""
 
     ContactMessage:

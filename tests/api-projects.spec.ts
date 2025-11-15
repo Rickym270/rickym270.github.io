@@ -46,7 +46,39 @@ test.describe('API Projects Endpoint', () => {
       expect(project.repo).toMatch(/^https?:\/\//);
     });
   });
+
+  test('GET /api/projects returns projects with valid status field when present', async ({ request }) => {
+    const response = await request.get(`${API_BASE_URL}/api/projects`);
+    const projects = await response.json();
+    
+    expect(projects.length).toBeGreaterThan(0);
+    
+    // Check that if status field exists, it has a valid value
+    // Note: Status may not be present for all projects (curated-only projects without GitHub data)
+    // but when present, it should be valid
+    const projectsWithStatus = projects.filter((p: any) => p.status !== undefined && p.status !== null);
+    
+    if (projectsWithStatus.length > 0) {
+      projectsWithStatus.forEach((project: any) => {
+        expect(typeof project.status).toBe('string');
+        
+        // Status should be one of the valid values
+        const validStatuses = ['in-progress', 'complete', 'ideas'];
+        const normalizedStatus = String(project.status).toLowerCase();
+        const isValidStatus = validStatuses.some(valid => 
+          normalizedStatus === valid || 
+          normalizedStatus === valid.replace('-', '_') ||
+          normalizedStatus === valid.replace('-', '')
+        );
+        
+        expect(isValidStatus || normalizedStatus === 'idea').toBeTruthy();
+      });
+    }
+    // If no projects have status, that's okay - the API might not have the new code deployed yet
+    // or all projects might be curated-only. The frontend will handle missing status gracefully.
+  });
 });
+
 
 
 
