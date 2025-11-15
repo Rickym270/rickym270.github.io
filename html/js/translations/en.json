@@ -61,7 +61,7 @@
     }
   },
   "skills": {
-    "title": "Skills & Technologies - Ricky Martinez",
+    "title": "Skills & Technologies",
     "subtitle": "A comprehensive overview of the technologies and tools I work with",
     "programmingLanguages": "Programming Languages",
     "frameworksLibraries": "Frameworks & Libraries",
@@ -72,7 +72,7 @@
     "toolsOther": "Tools & Other"
   },
   "contact": {
-    "title": "Contact Me - Ricky Martinez",
+    "title": "Contact Me",
     "subtitle": "Have a question or want to collaborate? Send me a message!",
     "name": "Name",
     "email": "Email",

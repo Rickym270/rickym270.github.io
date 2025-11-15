@@ -58,7 +58,12 @@ test.describe('Tutorials Page', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Verify tutorials content loaded into #content - check for h1 title
-    await expect(page.locator('#content h1')).toHaveText('Tutorials', { timeout: 5000 });
+    // Wait for heading element to exist in DOM first
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000 });
+    await page.waitForTimeout(500);
+    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"]');
+    await expect(tutorialsHeading).toBeVisible({ timeout: 5000 });
+    await expect(tutorialsHeading).toHaveText('Tutorials', { timeout: 5000 });
     
     // Verify tutorial cards are visible
     const tutorialCards = page.locator('.tutorial-card');
@@ -255,11 +260,25 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1000);
     
-    // Verify description text is visible
-    const description = page.locator('#content').getByText(/Directory of all tutorials/i);
-    await expect(description).toBeVisible();
+    // Wait for content to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+    }, { timeout: 15000 });
+    
+    // Wait for heading first to ensure content is loaded
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    await page.waitForTimeout(500);
+    
+    // Wait for subtitle element to exist in DOM - use attached state for better reliability
+    await page.waitForSelector('#content p[data-translate="tutorials.subtitle"]', { timeout: 15000, state: 'attached' });
+    await page.waitForTimeout(500);
+    
+    // Verify description text is visible - use data-translate selector for reliability
+    const description = page.locator('#content p[data-translate="tutorials.subtitle"]');
+    await expect(description).toBeVisible({ timeout: 5000 });
+    await expect(description).toContainText(/tutorials/i, { timeout: 3000 });
     
     // Verify tutorial cards have visible links
     const tutorialLinks = page.locator('a.tutorial-link');

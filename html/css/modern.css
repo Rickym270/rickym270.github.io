@@ -199,6 +199,11 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     -webkit-backdrop-filter: blur(10px);
     transition: background-color var(--transition-base), border-color var(--transition-base);
     padding: 0 var(--spacing-lg);
+    z-index: 1030;
+    /* Ensure navbar stays on top and accounts for iOS safe area */
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
 .navbar.bg-light {
@@ -1683,6 +1688,32 @@ body #main a {
    Responsive
    ============================================ */
 @media (max-width: 768px) {
+    /* Fix navbar on mobile - ensure it's visible and not cut off */
+    .navbar {
+        /* Add safe area inset for iOS devices (notch, status bar) */
+        padding-top: env(safe-area-inset-top);
+        /* Ensure navbar is fully visible */
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;
+        /* Allow navbar to grow if content wraps */
+        min-height: var(--nav-height);
+        height: auto;
+    }
+    
+    /* Update body padding to account for mobile navbar height + safe area */
+    body {
+        padding-top: calc(var(--nav-height) + env(safe-area-inset-top) + 20px) !important;
+    }
+    
+    /* Ensure navbar container doesn't overflow */
+    .navbar .container {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+    
     .skills-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: var(--spacing-md);

@@ -91,7 +91,8 @@ test.describe('SPA Navigation', () => {
     });
     expect(themeAfter).toBe(themeBefore);
     
-    await page.getByRole('link', { name: 'Skills' }).click();
+    // Use navbar link specifically to avoid ambiguity with "View All Skills" button
+    await page.locator('nav.navbar a[data-translate="nav.skills"]').click();
     await page.waitForTimeout(1000);
     
     themeAfter = await page.evaluate(() => {

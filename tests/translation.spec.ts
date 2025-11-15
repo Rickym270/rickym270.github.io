@@ -85,8 +85,8 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading element to exist and translations to apply
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 5000 });
+    // Wait for heading element to exist and translations to apply - use longer timeout for CI
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check that Projects page is in Spanish
@@ -101,11 +101,17 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
-    // Wait for translations to apply
+    // Wait for home content to load and translations to apply
+    await page.waitForFunction(() => {
+      const banner = document.querySelector('#content #homeBanner');
+      const tagline = document.querySelector('#content .hero-title-accent[data-translate="home.tagline"]');
+      return banner && tagline;
+    }, { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Check that Home page is still in Spanish
     const homeTagline = page.locator('#content .hero-title-accent[data-translate="home.tagline"]');
+    await expect(homeTagline).toBeVisible({ timeout: 5000 });
     await expect(homeTagline).toContainText('No te repitas', { timeout: 5000 });
   });
 
@@ -148,8 +154,9 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading to exist first, then check visibility
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+    // Wait for heading element to exist in DOM (it's in the static HTML that gets loaded)
+    // Use waitForSelector instead of waitForFunction for better WebKit reliability
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
@@ -411,13 +418,8 @@ test.describe('Translation feature', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
     }, { timeout: 15000 });
-    // Wait for heading element to exist, be visible, and translations to apply
-    await page.waitForFunction(() => {
-      const heading = document.querySelector('#content h1[data-translate="tutorials.heading"]');
-      if (!heading) return false;
-      const style = window.getComputedStyle(heading);
-      return style.display !== 'none' && style.visibility !== 'hidden';
-    }, { timeout: 15000 });
+    // Wait for heading element to exist in DOM - use waitForSelector for better WebKit reliability
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead

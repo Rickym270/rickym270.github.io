@@ -88,7 +88,8 @@ test.describe('Home Page Initial Load', () => {
              window.getComputedStyle(banner).visibility !== 'hidden';
     }, { timeout: 15000 });
     
-    // Wait for translations to apply
+    // Wait for homeBanner element to exist in DOM
+    await page.waitForSelector('#content #homeBanner', { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Home content should still be visible
