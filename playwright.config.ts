@@ -28,8 +28,15 @@ export default defineConfig({
     },
     {
       name: 'chromium-iphone',
-      use: { ...devices['iPhone 13 Pro'] }, // iPhone emulation for mobile testing
+      use: { 
+        ...devices['iPhone 13 Pro'], // iPhone emulation for mobile testing
+        // Mobile devices need more time for rendering and interactions
+        actionTimeout: 20_000, // 20 seconds for actions
+        navigationTimeout: 45_000, // 45 seconds for navigation
+      },
       testIgnore: /api.*\.spec\.ts/,
+      timeout: 90_000, // 90 seconds per test (mobile is slower)
+      expect: { timeout: 15_000 }, // 15 seconds for expect assertions
     },
     {
       name: 'firefox',

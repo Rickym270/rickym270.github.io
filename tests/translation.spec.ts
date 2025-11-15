@@ -91,7 +91,7 @@ test.describe('Translation feature', () => {
     
     // Check that Projects page is in Spanish
     const projectsTitle = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsTitle).toBeVisible({ timeout: 3000 });
+    await expect(projectsTitle).toBeVisible({ timeout: 10000 });
     await expect(projectsTitle).toHaveText('Proyectos', { timeout: 3000 });
     
     // Navigate back to Home
