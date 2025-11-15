@@ -33,15 +33,8 @@ export default defineConfig({
     },
     {
       name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'],
-        // Increased timeouts for WebKit due to slower rendering/translation timing
-        actionTimeout: 30_000, // 30 seconds for actions (clicks, fills, etc.)
-        navigationTimeout: 60_000, // 60 seconds for navigation
-      },
+      use: { ...devices['Desktop Safari'] },
       testIgnore: /api.*\.spec\.ts/,
-      timeout: 90_000, // 90 seconds per test (increased from default 60s)
-      expect: { timeout: 20_000 }, // 20 seconds for expect assertions (increased from default 10s)
     },
     // API tests (no browser needed)
     {
