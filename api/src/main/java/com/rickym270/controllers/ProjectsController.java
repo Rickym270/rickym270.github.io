@@ -112,11 +112,16 @@ public class ProjectsController {
                             .findFirst();
                         
                         if (matchingGitHubRepo.isPresent()) {
-                            boolean hasRecentActivity = checkRecentActivity(matchingGitHubRepo.get());
+                            Map<String, Object> ghRepo = matchingGitHubRepo.get();
+                            boolean hasRecentActivity = checkRecentActivity(ghRepo);
                             project.put("hasRecentActivity", hasRecentActivity);
+                            // Calculate status from GitHub data
+                            String status = calculateStatus(ghRepo);
+                            project.put("status", status);
                         } else {
-                            // No GitHub data available, assume no recent activity
+                            // No GitHub data available, assume no recent activity and complete status
                             project.put("hasRecentActivity", false);
+                            project.putIfAbsent("status", "complete");
                         }
                         merged.add(project);
                     } catch (Exception e) {
@@ -124,6 +129,7 @@ public class ProjectsController {
                         e.printStackTrace();
                         // Still add the project without activity info
                         project.put("hasRecentActivity", false);
+                        project.putIfAbsent("status", "complete");
                         merged.add(project);
                     }
                 });
@@ -213,6 +219,10 @@ public class ProjectsController {
         boolean hasRecentActivity = checkRecentActivity(gh);
         project.put("hasRecentActivity", hasRecentActivity);
         
+        // Calculate status based on commit count (2+ commits in last 3 weeks = in-progress)
+        String status = calculateStatus(gh);
+        project.put("status", status);
+        
         return project;
     }
     
@@ -243,12 +253,71 @@ public class ProjectsController {
             return false;
         }
     }
+    
+    /**
+     * Calculate project status based on commit count in last 3 weeks
+     * 2+ commits = "in-progress", otherwise "complete"
+     * @param gh - GitHub repo data
+     * @return Status string: "in-progress" or "complete"
+     */
+    private String calculateStatus(Map<String, Object> gh) {
+        try {
+            String repoName = String.valueOf(gh.getOrDefault("name", ""));
+            if (repoName == null || repoName.trim().isEmpty()) {
+                return "complete";
+            }
+            
+            // Calculate cutoff date (3 weeks ago)
+            Instant threeWeeksAgo = Instant.now().minus(21, ChronoUnit.DAYS);
+            String since = threeWeeksAgo.toString(); // ISO 8601 format
+            
+            // Fetch commits from GitHub API
+            String token = System.getenv("GH_TOKEN");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            headers.set("X-GitHub-Api-Version", "2022-11-28");
+            if (token != null && !token.trim().isEmpty()) {
+                headers.set("Authorization", "Bearer " + token.trim());
+            }
+            
+            HttpEntity<Void> request = new HttpEntity<>(headers);
+            String commitsUrl = String.format("https://api.github.com/repos/%s/%s/commits?since=%s&per_page=100", 
+                GITHUB_USER, repoName, since);
+            
+            try {
+                List<Map<String, Object>> commits = new RestTemplate()
+                    .exchange(commitsUrl, org.springframework.http.HttpMethod.GET, request,
+                        new ParameterizedTypeReference<List<Map<String, Object>>>() {})
+                    .getBody();
+                
+                if (commits != null && commits.size() >= 2) {
+                    return "in-progress";
+                }
+            } catch (Exception e) {
+                // If API call fails, fall back to pushed_at check
+                System.err.println("[ProjectsController] Error fetching commits for " + repoName + ": " + e.getMessage());
+                // Fallback: use hasRecentActivity as proxy
+                if (checkRecentActivity(gh)) {
+                    return "in-progress";
+                }
+            }
+            
+            return "complete";
+        } catch (Exception e) {
+            System.err.println("[ProjectsController] Error calculating status: " + e.getMessage());
+            return "complete";
+        }
+    }
 
     private void overlay(Map<String, Object> base, Map<String, Object> override) {
-        // First, explicitly handle status field - it always takes precedence from curated data
+        // Status from curated data takes precedence over calculated status
+        // Only override if curated data explicitly sets a status
         Object statusValue = override.get("status");
         if (statusValue != null && !String.valueOf(statusValue).trim().isEmpty()) {
             base.put("status", statusValue);
+        } else {
+            // If curated data doesn't have status, keep the calculated one from GitHub
+            base.putIfAbsent("status", "complete");
         }
         
         for (Map.Entry<String, Object> entry : override.entrySet()) {
