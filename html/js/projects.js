@@ -5,6 +5,57 @@
 // API Base URL - fallback if api.js isn't loaded
 const API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
 
+// Cache for project classification
+let projectClassification = null;
+
+/**
+ * Load project classification from JSON file
+ * @returns {Promise<Object>} - Classification object with Ongoing/In Progress, Completed, Discontinued, Ideas arrays
+ */
+async function loadProjectClassification() {
+    if (projectClassification) {
+        return projectClassification;
+    }
+    
+    try {
+        const response = await fetch('/data/ProjectClassification.json');
+        if (!response.ok) {
+            console.warn('Could not load ProjectClassification.json, using default grouping');
+            return null;
+        }
+        projectClassification = await response.json();
+        return projectClassification;
+    } catch (error) {
+        console.warn('Error loading ProjectClassification.json:', error);
+        return null;
+    }
+}
+
+/**
+ * Normalize project name for matching (case-insensitive, handle variations)
+ * @param {string} name - Project name
+ * @returns {string} - Normalized name for comparison
+ */
+function normalizeProjectName(name) {
+    if (!name) return '';
+    // Remove spaces, convert to lowercase for comparison
+    return name.replace(/\s+/g, '').toLowerCase();
+}
+
+/**
+ * Check if a project name matches any name in a classification array
+ * @param {string} projectName - Project name to check
+ * @param {Array} classificationArray - Array of names from classification
+ * @returns {boolean} - True if project matches any name in array
+ */
+function matchesClassification(projectName, classificationArray) {
+    if (!projectName || !classificationArray) return false;
+    const normalizedProject = normalizeProjectName(projectName);
+    return classificationArray.some(classifiedName => 
+        normalizeProjectName(classifiedName) === normalizedProject
+    );
+}
+
 // Fetch projects function - works standalone or with api.js
 async function fetchProjectsFromAPI() {
     if (typeof fetchProjects !== 'undefined') {
@@ -117,12 +168,13 @@ function renderProjectCard(project, containerId) {
 }
 
 /**
- * Group projects by status (featured, in progress, complete, ideas)
- * Projects are grouped by featured flag or status field
+ * Group projects by status using ProjectClassification.json
+ * Projects are grouped by classification file, then fallback to status field or activity
  * @param {Array} projects - Array of project objects
+ * @param {Object} classification - ProjectClassification.json data
  * @returns {Object} - Grouped projects
  */
-function groupProjects(projects) {
+function groupProjects(projects, classification = null) {
     const grouped = {
         inProgress: [],
         complete: [],
@@ -130,21 +182,50 @@ function groupProjects(projects) {
     };
     
     projects.forEach(project => {
-        // Priority 1: Manual status declaration in projects.json takes precedence
-        if (project.status === 'in-progress' || project.status === 'in_progress' || project.status === 'inProgress') {
-            grouped.inProgress.push(project);
-        } 
-        // Priority 2: Automatic detection based on GitHub activity (commits within last month)
-        else if (project.hasRecentActivity === true) {
-            grouped.inProgress.push(project);
-        } 
-        // Ideas section
-        else if (project.status === 'idea' || project.status === 'ideas') {
-            grouped.ideas.push(project);
-        } 
-        // Default: put all other featured projects in "Complete" section
-        else {
-            grouped.complete.push(project);
+        const projectName = project.name || project.slug || '';
+        let classified = false;
+        
+        // Priority 1: Use ProjectClassification.json if available
+        if (classification) {
+            // Check "Ongoing" (newer) or "In Progress" (legacy) for in-progress projects
+            if ((classification['Ongoing'] && matchesClassification(projectName, classification['Ongoing'])) ||
+                (classification['In Progress'] && matchesClassification(projectName, classification['In Progress']))) {
+                grouped.inProgress.push(project);
+                classified = true;
+            }
+            // Check "Completed"
+            else if (classification['Completed'] && matchesClassification(projectName, classification['Completed'])) {
+                grouped.complete.push(project);
+                classified = true;
+            }
+            // Check "Ideas"
+            else if (classification['Ideas'] && matchesClassification(projectName, classification['Ideas'])) {
+                grouped.ideas.push(project);
+                classified = true;
+            }
+            // Skip "Discontinued" projects - don't add them to any group
+            else if (classification['Discontinued'] && matchesClassification(projectName, classification['Discontinued'])) {
+                classified = true; // Mark as classified but don't add anywhere
+            }
+        }
+        
+        // Priority 2: Fallback to manual status declaration in projects.json
+        if (!classified) {
+            if (project.status === 'in-progress' || project.status === 'in_progress' || project.status === 'inProgress') {
+                grouped.inProgress.push(project);
+            } 
+            // Priority 3: Automatic detection based on GitHub activity (commits within last month)
+            else if (project.hasRecentActivity === true) {
+                grouped.inProgress.push(project);
+            } 
+            // Ideas section
+            else if (project.status === 'idea' || project.status === 'ideas') {
+                grouped.ideas.push(project);
+            } 
+            // Default: put all other featured projects in "Complete" section
+            else {
+                grouped.complete.push(project);
+            }
         }
     });
     
@@ -154,8 +235,9 @@ function groupProjects(projects) {
 /**
  * Render all projects
  * @param {Array} projects - Array of project objects
+ * @param {Object} classification - Optional ProjectClassification.json data
  */
-function renderProjects(projects) {
+function renderProjects(projects, classification = null) {
     // Exclude specific projects by slug or name
     const EXCLUDED = new Set([
         'learning-java-2825378',
@@ -203,7 +285,7 @@ function renderProjects(projects) {
     if (completeRow) completeRow.innerHTML = '';
     if (ideasRow) ideasRow.innerHTML = '';
     
-    const grouped = groupProjects(uniqueProjects);
+    const grouped = groupProjects(uniqueProjects, classification);
     
     // Render in-progress projects
     grouped.inProgress.forEach(project => {
@@ -296,12 +378,15 @@ async function initProjects() {
             ideasRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
         }
         
-        // Fetch projects from API
-        const projects = await fetchProjectsFromAPI();
+        // Load project classification and fetch projects in parallel
+        const [classification, projects] = await Promise.all([
+            loadProjectClassification(),
+            fetchProjectsFromAPI()
+        ]);
         
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
-            renderProjects(projects);
+            renderProjects(projects, classification);
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
                 setTimeout(() => {
