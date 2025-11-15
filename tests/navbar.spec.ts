@@ -123,8 +123,9 @@ test.describe('Navbar', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
     }, { timeout: 15000 });
     
-    // Skills page should load - use data-translate selector for better reliability
-    await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'attached' });
+    // Skills page should load - wait for heading to be visible (not just attached)
+    // This ensures CSS has rendered and translations have applied
+    await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'visible' });
     await page.waitForTimeout(500);
     const skillsHeading = page.locator('#content h1[data-translate="skills.title"]');
     await expect(skillsHeading).toBeVisible({ timeout: 10000 });
