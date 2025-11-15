@@ -50,9 +50,9 @@ export default defineConfig({
       name: 'api-server',
       testMatch: /$^/, // Match nothing - this is just for server startup
       webServer: {
-        command: 'cd api && ./mvnw clean package spring-boot:repackage -DskipTests && java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar',
+        command: 'bash scripts/start-api-server.sh',
         url: 'http://localhost:8080/api/health',
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: true, // Reuse existing server - user must restart server with new code for status field
         timeout: 120_000,
         stdout: 'pipe',
         stderr: 'pipe',
