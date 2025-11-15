@@ -209,20 +209,18 @@ function groupProjects(projects, classification = null) {
             }
         }
         
-        // Priority 2: Fallback to manual status declaration in projects.json
+        // Priority 2: Use status field from API (can be "in-progress", "complete", or "ideas")
         if (!classified) {
-            if (project.status === 'in-progress' || project.status === 'in_progress' || project.status === 'inProgress') {
+            const status = project.status ? String(project.status).toLowerCase() : '';
+            
+            if (status === 'in-progress' || status === 'in_progress' || status === 'inprogress') {
                 grouped.inProgress.push(project);
             } 
-            // Priority 3: Automatic detection based on GitHub activity (commits within last month)
-            else if (project.hasRecentActivity === true) {
-                grouped.inProgress.push(project);
-            } 
-            // Ideas section
-            else if (project.status === 'idea' || project.status === 'ideas') {
+            // Ideas section - handle both "ideas" and "idea" for backward compatibility
+            else if (status === 'ideas' || status === 'idea') {
                 grouped.ideas.push(project);
             } 
-            // Default: put all other featured projects in "Complete" section
+            // Default: put all other projects in "Complete" section (status = "complete" or undefined)
             else {
                 grouped.complete.push(project);
             }
