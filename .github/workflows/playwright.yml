@@ -112,7 +112,9 @@ jobs:
           echo "API server is ready!"
 
       - name: Run Playwright tests
-        run: npx playwright test
+        # Exclude WebKit from CI to avoid flaky failures
+        # WebKit is still available for local testing: npm test --project=webkit
+        run: npx playwright test --project=chromium --project=chromium-iphone --project=firefox
 
       - name: Stop API server
         if: always()

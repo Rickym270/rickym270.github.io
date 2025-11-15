@@ -27,6 +27,11 @@ export default defineConfig({
       testIgnore: /api.*\.spec\.ts/,
     },
     {
+      name: 'chromium-iphone',
+      use: { ...devices['iPhone 13 Pro'] }, // iPhone emulation for mobile testing
+      testIgnore: /api.*\.spec\.ts/,
+    },
+    {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
       testIgnore: /api.*\.spec\.ts/,
@@ -36,6 +41,7 @@ export default defineConfig({
       use: { 
         ...devices['Desktop Safari'],
         // Increased timeouts for WebKit due to slower rendering/translation timing
+        // WebKit is excluded from CI but available for local testing: npm test --project=webkit
         actionTimeout: 30_000, // 30 seconds for actions (clicks, fills, etc.)
         navigationTimeout: 60_000, // 60 seconds for navigation
       },
