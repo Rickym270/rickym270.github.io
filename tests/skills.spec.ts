@@ -37,6 +37,8 @@ test.describe('Skills Page', () => {
     
     // Navigate to Skills (disambiguate from "View All Skills" link)
     await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');
@@ -68,6 +70,8 @@ test.describe('Skills Page', () => {
     }, { timeout: 15000 });
     
     await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');

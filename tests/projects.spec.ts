@@ -47,6 +47,9 @@ test.describe('Projects Page', () => {
     // Click Projects link (triggers jQuery load into #content)
     await page.getByRole('link', { name: 'Projects' }).click();
     
+    // Wait for fade transition to complete (150ms fadeOut + 200ms fadeIn = ~350ms)
+    await page.waitForTimeout(400);
+    
     // Wait for the projects page content to be loaded into #content
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -111,6 +114,9 @@ test.describe('Projects Page', () => {
     
     await page.getByRole('link', { name: 'Projects' }).click();
     
+    // Wait for fade transition to complete (150ms fadeOut + 200ms fadeIn = ~350ms)
+    await page.waitForTimeout(400);
+    
     // Wait for content to load first
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -149,17 +155,26 @@ test.describe('Projects Page', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-  await page.waitForFunction(() => {
-    const c = document.querySelector('#content');
-    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
-  }, { timeout: 15000 });
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
     
     // Navigate away
     await page.getByRole('link', { name: 'Home' }).click();
-    await page.waitForTimeout(1000);
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     // Navigate back to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     
     // Wait for projects page HTML to load into #content
     await page.waitForFunction(() => {
@@ -207,10 +222,12 @@ test.describe('Projects Page', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-  await page.waitForFunction(() => {
-    const c = document.querySelector('#content');
-    return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
-  }, { timeout: 15000 });
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
     
     // Check for project images/icons
     const projectImages = page.locator('#content .project-image img, #content .card img');
@@ -244,6 +261,8 @@ test.describe('Projects Page', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     
     // Wait for projects to load
     await page.waitForFunction(() => {

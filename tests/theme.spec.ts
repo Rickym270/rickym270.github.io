@@ -43,7 +43,13 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-    await page.waitForTimeout(1000);
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
     
     // Theme should persist
     const themeAfter = await page.evaluate(() => {

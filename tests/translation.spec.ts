@@ -80,6 +80,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Projects page
     await page.getByRole('link', { name: 'Proyectos' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -96,6 +98,8 @@ test.describe('Translation feature', () => {
     
     // Navigate back to Home
     await page.getByRole('link', { name: 'Inicio' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -149,6 +153,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Proyectos' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -181,6 +187,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Skills (use navbar scoped locator to avoid home page button)
     await page.locator('nav.navbar').getByRole('link', { name: 'Habilidades' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
@@ -215,6 +223,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Contact
     await page.getByRole('link', { name: 'Contacto' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form');
@@ -287,6 +297,8 @@ test.describe('Translation feature', () => {
   test('contact page placeholders translate when switching languages', async ({ page }) => {
     // Navigate to Contact page first
     await page.getByRole('link', { name: 'Contact' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form');
@@ -333,6 +345,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Proyectos' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -379,6 +393,8 @@ test.describe('Translation feature', () => {
     // Navigate to Docs
     await page.getByRole('button', { name: 'Documentos' }).or(page.getByRole('link', { name: 'Documentos' })).hover();
     await page.getByRole('link', { name: 'Notas' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#FAQLinks');
@@ -414,6 +430,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutoriales' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
@@ -452,6 +470,8 @@ test.describe('Translation feature', () => {
     // Navigate to Journal (it's in the Docs dropdown)
     await page.getByRole('button', { name: 'Documentos' }).or(page.getByRole('link', { name: 'Documentos' })).hover();
     await page.getByRole('link', { name: 'Diario' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h2, #main');

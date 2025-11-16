@@ -45,6 +45,9 @@ test.describe('Tutorials Page', () => {
     // Click Tutorials link
     await page.getByRole('link', { name: 'Tutorials' }).click();
     
+    // Wait for fade transition
+    await page.waitForTimeout(400);
+    
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -75,6 +78,8 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials page
     await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Wait for fade transition
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
@@ -121,7 +126,13 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1500);
+    // Wait for fade transition
+    await page.waitForTimeout(400);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
     
     // Click Python Tutorial link
     const pythonLink = page.locator('a.tutorial-link').filter({ hasText: /View Lessons/i }).first();
@@ -152,7 +163,13 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1500);
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
     
     // Navigate to Python tutorial index
     const pythonLink = page.locator('a.tutorial-link').filter({ hasText: /View Lessons/i }).first();
@@ -260,6 +277,8 @@ test.describe('Tutorials Page', () => {
     
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     
     // Wait for content to load
     await page.waitForFunction(() => {

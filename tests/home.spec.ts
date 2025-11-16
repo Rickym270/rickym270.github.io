@@ -70,6 +70,8 @@ test.describe('Home Page Initial Load', () => {
     
     // Navigate away
     await page.getByRole('link', { name: 'Projects' }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -77,6 +79,8 @@ test.describe('Home Page Initial Load', () => {
     
     // Navigate back to Home
     await page.getByRole('link', { name: 'Home' }).click();
+    // Wait for fade transition to complete
+    await page.waitForTimeout(400);
     
     // Wait for home content to load again and be visible
     await page.waitForFunction(() => {
