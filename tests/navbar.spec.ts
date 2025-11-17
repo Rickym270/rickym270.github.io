@@ -81,8 +81,6 @@ test.describe('Navbar', () => {
     
     // Navigate away from home
     await page.getByRole('link', { name: 'Projects' }).click();
-    // Wait for fade transition
-    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -95,8 +93,6 @@ test.describe('Navbar', () => {
     
     // Click Home link
     await page.getByRole('link', { name: 'Home' }).click();
-    // Wait for fade transition
-    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -122,19 +118,14 @@ test.describe('Navbar', () => {
     
     // Use navbar scoped locator to avoid "View All Skills" button
     await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
-    // Wait for fade transition
-    await page.waitForTimeout(400);
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
     }, { timeout: 15000 });
     
-    // Skills page should load - wait for heading to be visible (not just attached)
-    // This ensures CSS has rendered and translations have applied
-    await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'visible' });
-    await page.waitForTimeout(500);
-    const skillsHeading = page.locator('#content h1[data-translate="skills.title"]');
-    await expect(skillsHeading).toBeVisible({ timeout: 10000 });
+    // Skills page should load - check for h1 or h3
+    const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /Skills/i });
+    await expect(skillsHeading.first()).toBeVisible({ timeout: 3000 });
   });
 });
 

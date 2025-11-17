@@ -190,9 +190,9 @@ function groupProjects(projects, classification = null) {
             // Check "Ongoing" (newer) or "In Progress" (legacy) for in-progress projects
             if ((classification['Ongoing'] && matchesClassification(projectName, classification['Ongoing'])) ||
                 (classification['In Progress'] && matchesClassification(projectName, classification['In Progress']))) {
-                grouped.inProgress.push(project);
+            grouped.inProgress.push(project);
                 classified = true;
-            }
+        } 
             // Check "Completed"
             else if (classification['Completed'] && matchesClassification(projectName, classification['Completed'])) {
                 grouped.complete.push(project);
@@ -214,15 +214,15 @@ function groupProjects(projects, classification = null) {
             const status = project.status ? String(project.status).toLowerCase() : '';
             
             if (status === 'in-progress' || status === 'in_progress' || status === 'inprogress') {
-                grouped.inProgress.push(project);
-            } 
+            grouped.inProgress.push(project);
+        } 
             // Ideas section - handle both "ideas" and "idea" for backward compatibility
             else if (status === 'ideas' || status === 'idea') {
-                grouped.ideas.push(project);
-            } 
+            grouped.ideas.push(project);
+        } 
             // Default: put all other projects in "Complete" section (status = "complete" or undefined)
-            else {
-                grouped.complete.push(project);
+        else {
+            grouped.complete.push(project);
             }
         }
     });

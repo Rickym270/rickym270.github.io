@@ -19,39 +19,29 @@ $(document).ready(function(){
     if (isIndexPage && isEmpty) {
         console.log("SPA: Loading home.html, isIndexPage:", isIndexPage, "content empty:", isEmpty);
         // Add cache-busting query to ensure latest HTML (and scripts) load
-        var homeUrl = "html/pages/home.html?v=20251110";
-        jQuery.get(homeUrl, function(data) {
-            var $temp = jQuery('<div>').html(data);
-            var bodyContent = $temp.find('body').html() || $temp.html();
-            
-            if (bodyContent && bodyContent.trim() !== '') {
-                var $contentDiv = jQuery('<div>').html(bodyContent);
-                $contentDiv.find('script').remove();
-                jQuery("#content").html($contentDiv.html());
-                
-                // Mark content as loaded for testing
-                jQuery("#content").attr("data-content-loaded", "true");
-                // Reinitialize theme after content loads
-                if (typeof window.reinitTheme === 'function') {
-                    window.reinitTheme();
-                }
-                // Reinitialize Bootstrap carousel to ensure its presence
-                if (typeof jQuery.fn.carousel !== 'undefined') {
-                    jQuery('#homeCarousel').carousel();
-                }
-                // Re-apply translations after content loads
-                if (typeof window.TranslationManager !== 'undefined') {
-                    window.TranslationManager.applyTranslations();
-                }
-                // Set active nav item
-                updateActiveNavItem('html/pages/home.html');
-            } else {
-                console.error("Failed to load home.html: empty content");
+        jQuery("#content").load("html/pages/home.html?v=20251110", function(response, status, xhr){
+            if (status === "error") {
+                console.error("Failed to load home.html:", xhr && xhr.status, xhr && xhr.statusText);
+                // Mark as failed for testing/diagnostics
                 jQuery("#content").attr("data-content-loaded", "error");
+                return;
             }
-        }).fail(function(xhr) {
-            console.error("Failed to load home.html:", xhr && xhr.status, xhr && xhr.statusText);
-            jQuery("#content").attr("data-content-loaded", "error");
+            // Mark content as loaded for testing
+            jQuery("#content").attr("data-content-loaded", "true");
+            // Reinitialize theme after content loads
+            if (typeof window.reinitTheme === 'function') {
+                window.reinitTheme();
+            }
+            // Reinitialize Bootstrap carousel to ensure its presence
+            if (typeof jQuery.fn.carousel !== 'undefined') {
+                jQuery('#homeCarousel').carousel();
+            }
+            // Re-apply translations after content loads
+            if (typeof window.TranslationManager !== 'undefined') {
+                window.TranslationManager.applyTranslations();
+            }
+            // Set active nav item
+            updateActiveNavItem('html/pages/home.html');
         });
     } else {
         console.log("SPA: Skipping home.html load, isIndexPage:", isIndexPage, "content exists:", !isEmpty);
@@ -196,69 +186,41 @@ $(document).ready(function(){
                         console.error("Failed to fetch " + sectionUrl);
                     });
                 } else {
-                    // Show loading indicator to prevent blank page flash
-                    var $content = jQuery("#content");
-                    var $loadingIndicator = jQuery('<div class="spa-loading-indicator" style="text-align: center; padding: 2rem; opacity: 0.6;"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
-                    
-                    // Fade out current content, then load new content
-                    $content.fadeOut(150, function() {
-                        // Show loading indicator while fetching
-                        $content.html($loadingIndicator).fadeIn(100);
-                        
-                        // Fetch new content
-                        jQuery.get(sectionUrl, function(data) {
-                            // Extract body content if it's a full HTML page
-                            var $temp = jQuery('<div>').html(data);
-                            var bodyContent = $temp.find('body').html() || $temp.html();
-                            
-                            if (bodyContent && bodyContent.trim() !== '') {
-                                // Remove script tags that might cause redirects
-                                var $contentDiv = jQuery('<div>').html(bodyContent);
-                                $contentDiv.find('script').remove();
-                                
-                                // Replace content with fade transition
-                                $content.html($contentDiv.html()).fadeIn(200);
-                                
-                                console.log("Loaded " + sectionUrl);
-                                // Mark content as loaded for testing
-                                $content.attr("data-content-loaded", "true");
-                                
-                                // Reinitialize theme after content loads
-                                if (typeof window.reinitTheme === 'function') {
-                                    window.reinitTheme();
+                jQuery("#content").load(sectionUrl, function(response, status, xhr){
+                    if (status === "error") {
+                        console.error("Failed to load " + sectionUrl + ":", xhr && xhr.status, xhr && xhr.statusText);
+                        jQuery("#content").attr("data-content-loaded", "error");
+                        return;
+                    }
+                    console.log("Loaded " + sectionUrl);
+                    // Mark content as loaded for testing
+                    jQuery("#content").attr("data-content-loaded", "true");
+                        // Reinitialize theme after content loads
+                        if (typeof window.reinitTheme === 'function') {
+                            window.reinitTheme();
+                        }
+                        // Reinitialize Bootstrap carousel if to ensure its presence
+                        if (typeof jQuery.fn.carousel !== 'undefined') {
+                            jQuery('#homeCarousel').carousel();
+                        }
+                        // Re-apply translations after content loads
+                        if (typeof window.TranslationManager !== 'undefined') {
+                            window.TranslationManager.applyTranslations();
+                        }
+                        // Update active nav item
+                        updateActiveNavItem(sectionUrl);
+                        // Re-setup click handlers for newly loaded content
+                        setupClickHandlers();
+                        // Load scripts if projects page
+                        if (sectionUrl.includes('projects.html')) {
+                            // Ensure projects.js runs after content is loaded
+                            setTimeout(function() {
+                                if (typeof initProjects === 'function' && !window.projectsInitialized) {
+                                    initProjects();
                                 }
-                                // Reinitialize Bootstrap carousel if to ensure its presence
-                                if (typeof jQuery.fn.carousel !== 'undefined') {
-                                    jQuery('#homeCarousel').carousel();
-                                }
-                                // Re-apply translations after content loads
-                                if (typeof window.TranslationManager !== 'undefined') {
-                                    window.TranslationManager.applyTranslations();
-                                }
-                                // Update active nav item
-                                updateActiveNavItem(sectionUrl);
-                                // Re-setup click handlers for newly loaded content
-                                setupClickHandlers();
-                                // Load scripts if projects page
-                                if (sectionUrl.includes('projects.html')) {
-                                    // Ensure projects.js runs after content is loaded
-                                    setTimeout(function() {
-                                        if (typeof initProjects === 'function' && !window.projectsInitialized) {
-                                            initProjects();
-                                        }
-                                    }, 100);
-                                }
-                            } else {
-                                console.error("Failed to load content from " + sectionUrl);
-                                $content.attr("data-content-loaded", "error");
-                                $content.fadeIn(200);
-                            }
-                        }).fail(function(xhr) {
-                            console.error("Failed to load " + sectionUrl + ":", xhr && xhr.status, xhr && xhr.statusText);
-                            $content.attr("data-content-loaded", "error");
-                            $content.html('<div class="container"><p class="text-danger">Failed to load content. Please try again.</p></div>').fadeIn(200);
-                        });
-                    });
+                            }, 100);
+                        }
+                });
                 }
             }
         });
