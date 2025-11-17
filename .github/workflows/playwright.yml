@@ -113,8 +113,8 @@ jobs:
 
       - name: Run Playwright tests
         # Exclude WebKit from CI to avoid flaky failures
-        # WebKit is still available for local testing: npm test --project=webkit
-        run: npx playwright test --project=chromium --project=chromium-iphone --project=firefox
+        # Run Chromium, iPhone emulation, Firefox, and API tests only
+        run: npx playwright test --project=chromium --project=chromium-iphone --project=firefox --project=api
 
       - name: Stop API server
         if: always()

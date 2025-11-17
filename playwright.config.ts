@@ -12,8 +12,6 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4321',
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure', // Capture screenshots on test failure for diagnosis
-    video: 'retain-on-failure', // Record video on test failure for better debugging
   },
   webServer: {
     command: 'npx http-server -p 4321 -c-1 .',
