@@ -108,7 +108,12 @@ test.describe('SPA Navigation', () => {
     
     // Click Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
-    await page.waitForTimeout(1000);
+    
+    // Wait for content to load - use waitForFunction for better reliability
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+    }, { timeout: 15000 });
     
     // URL should not change
     expect(page.url()).toBe(initialUrl);
@@ -116,9 +121,14 @@ test.describe('SPA Navigation', () => {
     // Navbar should still be visible
     await expect(page.locator('nav.navbar')).toBeVisible();
     
-    // Tutorials content should load - check for h3 with exact text "Tutorials" or h1
-    const tutorialsHeading = page.locator('#content h3, #content h1').filter({ hasText: /^Tutorials$/ });
-    await expect(tutorialsHeading.first()).toHaveText('Tutorials', { timeout: 3000 });
+    // Wait for heading element to exist in DOM first - use data-translate attribute for reliable selection
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Tutorials content should load - use data-translate attribute for reliable selection
+    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"]');
+    await expect(tutorialsHeading).toBeVisible({ timeout: 10000 });
+    await expect(tutorialsHeading).toHaveText('Tutorials', { timeout: 5000 });
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
