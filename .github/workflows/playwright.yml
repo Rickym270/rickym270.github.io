@@ -71,6 +71,8 @@ jobs:
           SMTP_FROM_EMAIL: ${{ secrets.SMTP_FROM_EMAIL }}
           # GitHub API (optional, for projects endpoint)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Feature flags - disable GitHub project sync in CI to avoid API calls during tests
+          FEATURE_GITHUB_PROJECT_SYNC: "false"
           # Admin API key (optional)
           ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
           # Turnstile (optional, for contact form spam protection)
