@@ -53,13 +53,14 @@ test.describe('Projects Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading element to exist first, then check visibility
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+    // Wait for heading element to exist first (attached state for iPhone emulation)
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check for Projects heading - use data-translate attribute for more reliable selection
+    // Increased timeout for iPhone emulation
     const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsHeading).toBeVisible({ timeout: 10000 });
+    await expect(projectsHeading).toBeVisible({ timeout: 15000 });
     await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });
     
     // Wait for scripts to execute and API call to complete (or fail gracefully)

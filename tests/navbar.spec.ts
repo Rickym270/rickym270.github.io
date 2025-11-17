@@ -93,17 +93,20 @@ test.describe('Navbar', () => {
     
     // Click Home link
     await page.getByRole('link', { name: 'Home' }).click();
+    
+    // Wait for content to load - use waitForFunction for better reliability on iPhone
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
-    // Wait for homeBanner element to exist in DOM
+    // Wait for homeBanner element to exist in DOM first (attached state for iPhone)
     await page.waitForSelector('#content #homeBanner', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
-    // Should load home content
-    await expect(page.locator('#content #homeBanner')).toBeVisible({ timeout: 10000 });
+    // Should load home content - check visibility with increased timeout for iPhone
+    const homeBanner = page.locator('#content #homeBanner');
+    await expect(homeBanner).toBeVisible({ timeout: 15000 });
   });
 
   test('Skills link navigates to skills page', async ({ page }) => {
