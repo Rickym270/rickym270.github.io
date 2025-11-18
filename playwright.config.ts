@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -27,13 +27,31 @@ export default defineConfig({
       testIgnore: /api.*\.spec\.ts/,
     },
     {
+      name: 'chromium-iphone',
+      use: { 
+        ...devices['iPhone 13 Pro'], // iPhone emulation for mobile testing
+        // Mobile devices need more time for rendering and interactions
+        actionTimeout: 20_000, // 20 seconds for actions
+        navigationTimeout: 45_000, // 45 seconds for navigation
+      },
+      testIgnore: /api.*\.spec\.ts/,
+      timeout: 90_000, // 90 seconds per test (mobile is slower)
+      expect: { timeout: 15_000 }, // 15 seconds for expect assertions
+    },
+    {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
       testIgnore: /api.*\.spec\.ts/,
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { 
+        ...devices['Desktop Safari'],
+        // Increased timeouts for WebKit due to slower rendering/translation timing
+        // WebKit is excluded from CI but available for local testing: npm test --project=webkit
+        actionTimeout: 30_000, // 30 seconds for actions (clicks, fills, etc.)
+        navigationTimeout: 60_000, // 60 seconds for navigation
+      },
       testIgnore: /api.*\.spec\.ts/,
     },
     // API tests (no browser needed)
@@ -49,14 +67,7 @@ export default defineConfig({
     {
       name: 'api-server',
       testMatch: /$^/, // Match nothing - this is just for server startup
-      webServer: {
-        command: 'cd api && ./mvnw clean package spring-boot:repackage -DskipTests && java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar',
-        url: 'http://localhost:8080/api/health',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-        stdout: 'pipe',
-        stderr: 'pipe',
-      },
+      // Run: bash scripts/start-api-server.sh (or use the CI workflow approach)
     },
   ],
   reporter: [

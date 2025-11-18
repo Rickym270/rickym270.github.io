@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["ES2022", "DOM"],
-    "types": ["@playwright/test"],
+    "types": ["@playwright/test", "node"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

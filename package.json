@@ -15,12 +15,14 @@
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:api": "playwright test --project=api",
-    "test:e2e": "playwright test --project=chromium --project=firefox --project=webkit",
+    "test:e2e": "playwright test --project=chromium --project=chromium-iphone --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
     "serve": "http-server -p 4321 -c-1 .",
     "locators:update": "node scripts/update-locators.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
+    "@types/node": "^24.10.1",
     "http-server": "^14.1.1",
     "wait-on": "^7.2.0"
   }

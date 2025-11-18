@@ -361,11 +361,7 @@ public class ProjectsService {
             String since = threeWeeksAgo.toString(); // ISO 8601 format
             
             // Fetch commits from GitHub API
-            // Check both GH_TOKEN and GITHUB_TOKEN (GitHub Actions uses GITHUB_TOKEN)
             String token = System.getenv("GH_TOKEN");
-            if (token == null || token.trim().isEmpty()) {
-                token = System.getenv("GITHUB_TOKEN");
-            }
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             headers.set("X-GitHub-Api-Version", "2022-11-28");

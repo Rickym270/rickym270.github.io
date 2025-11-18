@@ -84,18 +84,14 @@ public class GitHubClient {
 	
 	/**
 	 * Create HTTP headers with authentication token if available
-	 * Checks both GH_TOKEN and GITHUB_TOKEN environment variables
+	 * Uses GH_TOKEN environment variable
 	 */
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.set("X-GitHub-Api-Version", "2022-11-28");
 		
-		// Check both GH_TOKEN and GITHUB_TOKEN (GitHub Actions uses GITHUB_TOKEN)
 		String token = System.getenv("GH_TOKEN");
-		if (token == null || token.trim().isEmpty()) {
-			token = System.getenv("GITHUB_TOKEN");
-		}
 		if (token != null && !token.trim().isEmpty()) {
 			headers.set("Authorization", "Bearer " + token.trim());
 		}
