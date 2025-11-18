@@ -70,10 +70,11 @@ test.describe('Skills Page', () => {
     await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h2, h3');
     }, { timeout: 15000 });
     
-    // Wait for translations to apply
+    // Wait for heading element to exist in DOM first - use attached state for better reliability
+    await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Verify skills heading is visible

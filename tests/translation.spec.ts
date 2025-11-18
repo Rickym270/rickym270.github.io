@@ -185,17 +185,20 @@ test.describe('Translation feature', () => {
     await page.locator('nav.navbar').getByRole('link', { name: 'Habilidades' }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h3');
     }, { timeout: 15000 });
     
-    // Wait for heading element to exist, be visible, and translations to apply
+    // Wait for heading element to exist in DOM first - use attached state for better reliability
+    await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'attached' });
+    
+    // Wait for translation to be applied - check that it's actually in Spanish
     await page.waitForFunction(() => {
       const heading = document.querySelector('#content h1[data-translate="skills.title"]');
       if (!heading) return false;
-      const style = window.getComputedStyle(heading);
-      return style.display !== 'none' && style.visibility !== 'hidden';
-    }, { timeout: 15000 });
-    await page.waitForTimeout(500);
+      const text = heading.textContent?.trim() || '';
+      // Wait until it's translated to Spanish (contains "Habilidades")
+      return text.includes('Habilidades');
+    }, { timeout: 10000 });
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
     const title = page.locator('#content h1[data-translate="skills.title"]');
