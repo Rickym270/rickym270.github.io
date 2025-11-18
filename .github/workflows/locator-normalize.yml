@@ -53,7 +53,7 @@ jobs:
         if: steps.commit_pr.outputs.skip != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           branch: ${{ steps.commit_pr.outputs.branch }}
           title: "Self-healing: normalize Playwright link locators"
           body: |
