@@ -33,11 +33,15 @@ test.describe('Docs/Notes Page', () => {
       const articleLink = page.locator('#FAQMain a').first();
       if (await articleLink.isVisible({ timeout: 2000 })) {
         await articleLink.click();
-        await page.waitForTimeout(1500);
+        
+        // Wait for article content to load via AJAX
+        // The back button is part of the dynamically loaded content
+        await page.waitForSelector('#docsNavigatrior', { timeout: 10000, state: 'attached' });
+        await page.waitForTimeout(500); // Give setupBackButton() time to run
         
         // Now Back button SHOULD be visible
         const backButtonOnArticle = page.locator('#docsNavigatrior');
-        await expect(backButtonOnArticle).toBeVisible({ timeout: 2000 });
+        await expect(backButtonOnArticle).toBeVisible({ timeout: 5000 });
         
         // Back button should work
         const backLink = backButtonOnArticle.locator('a');
