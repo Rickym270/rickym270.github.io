@@ -115,13 +115,13 @@ test.describe('Projects Page', () => {
     // Wait for content to load first
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for sections to exist in DOM first (more reliable than checking visibility immediately)
-    await page.waitForSelector('#ProjInProgress', { timeout: 15000, state: 'attached' });
-    await page.waitForSelector('#ProjComplete', { timeout: 15000, state: 'attached' });
-    await page.waitForSelector('#ProjComingSoon', { timeout: 15000, state: 'attached' });
+    await page.waitForSelector('#content #ProjInProgress', { timeout: 15000, state: 'attached' });
+    await page.waitForSelector('#content #ProjComplete', { timeout: 15000, state: 'attached' });
+    await page.waitForSelector('#content #ProjComingSoon', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check that loading messages appear (may be brief, so check quickly)
