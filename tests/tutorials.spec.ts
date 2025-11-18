@@ -258,16 +258,20 @@ test.describe('Tutorials Page', () => {
   test('tutorial page text and links are visible and clickable', async ({ page }) => {
     await page.goto('/');
     
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForTimeout(500);
+    
     // Navigate to Tutorials
     await page.getByRole('link', { name: 'Tutorials' }).click();
     
-    // Wait for content to load
+    // Wait for content to load - use waitForFunction for better reliability on iPhone
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1[data-translate="tutorials.heading"]');
     }, { timeout: 15000 });
     
-    // Wait for heading first to ensure content is loaded
+    // Wait for heading first to ensure content is loaded (attached state for iPhone emulation)
     await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
