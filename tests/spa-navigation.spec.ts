@@ -112,7 +112,7 @@ test.describe('SPA Navigation', () => {
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1[data-translate="tutorials.heading"]');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1[data-translate="tutorials.heading"]');
     }, { timeout: 15000 });
     
     // URL should not change
