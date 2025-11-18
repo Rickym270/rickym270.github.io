@@ -165,11 +165,11 @@ test.describe('Projects Page', () => {
     // Wait for projects page HTML to load into #content
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for heading element to exist in DOM (it's in the static HTML)
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Projects should still load correctly - use data-translate selector
