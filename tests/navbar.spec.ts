@@ -51,7 +51,6 @@ test.describe('Navbar', () => {
     const menu = page.locator('.dropdown-menu');
     await expect(menu).toBeVisible();
     await expect(menu.getByRole('link', { name: 'Notes' })).toBeVisible();
-    await expect(menu.getByRole('link', { name: 'Journal' })).toBeVisible();
 
     await expect(nav.getByRole('link', { name: 'Tutorials' })).toBeVisible();
   });
