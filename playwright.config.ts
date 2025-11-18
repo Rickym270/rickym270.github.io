@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -67,14 +67,7 @@ export default defineConfig({
     {
       name: 'api-server',
       testMatch: /$^/, // Match nothing - this is just for server startup
-      webServer: {
-        command: 'bash scripts/start-api-server.sh',
-        url: 'http://localhost:8080/api/health',
-        reuseExistingServer: true, // Reuse existing server - user must restart server with new code for status field
-        timeout: 120_000,
-        stdout: 'pipe',
-        stderr: 'pipe',
-      },
+      // Run: bash scripts/start-api-server.sh (or use the CI workflow approach)
     },
   ],
   reporter: [
