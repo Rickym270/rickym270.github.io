@@ -48,7 +48,7 @@ test.describe('Tutorials Page', () => {
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, .tutorial-card');
     }, { timeout: 15000 });
     
     // Verify we're still on the same page (URL shouldn't change)
@@ -59,7 +59,7 @@ test.describe('Tutorials Page', () => {
     
     // Verify tutorials content loaded into #content - check for h1 title
     // Wait for heading element to exist in DOM first
-    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000 });
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"]');
     await expect(tutorialsHeading).toBeVisible({ timeout: 5000 });
@@ -77,7 +77,7 @@ test.describe('Tutorials Page', () => {
     await page.getByRole('link', { name: 'Tutorials' }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content .tutorial-card');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, .tutorial-card');
     }, { timeout: 15000 });
     
     // Wait for heading and translations to apply
@@ -96,6 +96,10 @@ test.describe('Tutorials Page', () => {
     if (!page.isClosed()) {
       await page.waitForTimeout(300);
     }
+    
+    // Wait for Python Tutorial element to be attached first (for WebKit reliability)
+    await page.waitForSelector('#content h3[data-translate="tutorials.pythonTutorial"]', { timeout: 15000, state: 'attached' });
+    await page.waitForTimeout(500);
     
     // Verify Python Tutorial card exists - use data-translate selector for reliability
     const pythonTitle = page.locator('#content h3[data-translate="tutorials.pythonTutorial"]');

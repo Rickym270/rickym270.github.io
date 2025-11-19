@@ -142,8 +142,12 @@ test.describe('Navbar', () => {
     await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h3');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h3');
     }, { timeout: 15000 });
+    
+    // Wait for skills heading to be attached first (for WebKit reliability)
+    await page.waitForSelector('#content h1[data-translate="skills.title"], #content h3', { timeout: 15000, state: 'attached' });
+    await page.waitForTimeout(500);
     
     // Skills page should load - check for h1 or h3
     const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /Skills/i });
