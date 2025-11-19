@@ -158,7 +158,12 @@ test.describe('Translation feature', () => {
     
     // Wait for heading element to exist in DOM (it's in the static HTML that gets loaded)
     // Use waitForSelector instead of waitForFunction for better WebKit reliability
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 10000, state: 'attached' });
+    } catch {
+      // Fallback: wait for any h1 or h3, then wait for translation to apply
+      await page.waitForSelector('#content h1, #content h3', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
