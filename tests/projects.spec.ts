@@ -50,11 +50,15 @@ test.describe('Projects Page', () => {
     // Wait for the projects page content to be loaded into #content
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for heading element to exist first (attached state for iPhone emulation)
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
     // Check for Projects heading - use data-translate attribute for more reliable selection
