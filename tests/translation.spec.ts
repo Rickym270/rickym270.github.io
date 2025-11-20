@@ -328,13 +328,24 @@ test.describe('Translation feature', () => {
   });
 
   test('skills page translates correctly', async ({ page }) => {
-    // Switch to Spanish
-    const esButton = page.locator('#language-switcher button[data-lang="es"]');
-    await esButton.click();
-    await page.waitForTimeout(500);
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
-    // Navigate to Skills (use navbar scoped locator to avoid home page button)
-    await page.locator('nav.navbar').getByRole('link', { name: 'Habilidades' }).click();
+    // Switch to Spanish
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
+      await esButton.click();
+      await page.waitForTimeout(300);
+      // Navigate to Skills
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      const esButton = page.locator('#language-switcher button[data-lang="es"]');
+      await esButton.click();
+      await page.waitForTimeout(500);
+      // Navigate to Skills (use navbar scoped locator to avoid home page button)
+      await page.locator('nav.navbar').getByRole('link', { name: 'Habilidades' }).click();
+    }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h3');
@@ -717,6 +728,13 @@ test.describe('Translation feature', () => {
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButtonAfterReload = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await expect(esButtonAfterReload).toBeVisible({ timeout: 5000 });
+      
+      // Wait for language to be properly restored and applied
+      await page.waitForFunction(() => {
+        const button = document.querySelector('#mobile-language-switcher button[data-lang="es"]');
+        return button && button.getAttribute('aria-pressed') === 'true';
+      }, { timeout: 5000 });
+      
       const isActive = await esButtonAfterReload.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
       
@@ -726,6 +744,13 @@ test.describe('Translation feature', () => {
     } else {
       const esButtonAfterReload = page.locator('#language-switcher button[data-lang="es"]');
       await expect(esButtonAfterReload).toBeVisible({ timeout: 5000 });
+      
+      // Wait for language to be properly restored and applied
+      await page.waitForFunction(() => {
+        const button = document.querySelector('#language-switcher button[data-lang="es"]');
+        return button && button.getAttribute('aria-pressed') === 'true';
+      }, { timeout: 5000 });
+      
       const isActive = await esButtonAfterReload.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
       
