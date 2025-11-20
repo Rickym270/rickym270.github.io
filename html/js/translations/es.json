@@ -141,20 +141,33 @@
       "introText": "Publicaré aquí en su lugar porque es mucho más conveniente",
       "lessonsTitle": "Lecciones",
       "backToContents": "Volver a la Tabla de Contenidos",
+      "nextLesson": "Siguiente Lección:",
       "lesson0": {
         "title": "Introducción",
         "description": "Comienza con esta serie de tutoriales de Python",
-        "link": "Empezar Aquí →"
+        "link": "Empezar Aquí →",
+        "badge": "Introducción",
+        "subtitle": "Bienvenido a la serie de tutoriales de Python",
+        "content": "Publicaré aquí en su lugar porque es mucho más conveniente"
       },
       "lesson1": {
         "title": "Configuración",
         "description": "Instala Python y PyCharm en Windows o Mac",
-        "link": "Ver Lección →"
+        "link": "Ver Lección →",
+        "badge": "Lección 1",
+        "subtitle": "Esta va a ser molesta.",
+        "windowsTitle": "Windows:",
+        "navTitle": "1: Configuración →"
       },
       "lesson2": {
         "title": "¡Hola Mundo!",
         "description": "Crea tu primer programa en Python",
-        "link": "Ver Lección →"
+        "link": "Ver Lección →",
+        "badge": "Lección 2",
+        "subtitle": "Extremadamente corto pero recuerda, esto sigue siendo una introducción",
+        "createProjectTitle": "Crear proyecto",
+        "createProjectText": "Inicia PyCharm y crea un nuevo Proyecto y nómbralo PythonTutorial",
+        "createFileTitle": "¡Crear archivo y código!"
       },
       "lesson3": {
         "title": "Condicionales",
@@ -172,7 +185,13 @@
       "lesson4": {
         "title": "Bucles",
         "description": "Domina los bucles for y while",
-        "link": "Ver Lección →"
+        "link": "Ver Lección →",
+        "badge": "Lección 4",
+        "subtitle": "Mientras la condición sea verdadera, sigue haciendo esto. (Esta puede ser larga)",
+        "smallIntroTitle": "Pequeña introducción",
+        "smallIntroText": "Las instrucciones en programación normalmente se ejecutan secuencialmente (en el orden en que están escritas). Sin embargo, hay veces donde un cierto bloque de código necesita ser ejecutado múltiples veces. En esta instancia, se requiere un bucle.",
+        "examplesTitle": "Ejemplos",
+        "forLoopTitle": "El bucle for"
       }
     },
     "codingChallenges": {

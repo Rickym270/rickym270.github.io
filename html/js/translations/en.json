@@ -141,20 +141,33 @@
       "introText": "I'll post here instead because it's way more convenient",
       "lessonsTitle": "Lessons",
       "backToContents": "Back to Table of Contents",
+      "nextLesson": "Next Lesson:",
       "lesson0": {
         "title": "Introduction",
         "description": "Get started with this Python tutorial series",
-        "link": "Start Here →"
+        "link": "Start Here →",
+        "badge": "Introduction",
+        "subtitle": "Welcome to the Python Tutorial series",
+        "content": "I'll post here instead because it's way more convenient"
       },
       "lesson1": {
         "title": "Setting Up",
         "description": "Install Python and PyCharm on Windows or Mac",
-        "link": "View Lesson →"
+        "link": "View Lesson →",
+        "badge": "Lesson 1",
+        "subtitle": "This one is going to be annoying.",
+        "windowsTitle": "Windows:",
+        "navTitle": "1: Setting Up →"
       },
       "lesson2": {
         "title": "Hello World!",
         "description": "Create your first Python program",
-        "link": "View Lesson →"
+        "link": "View Lesson →",
+        "badge": "Lesson 2",
+        "subtitle": "Extremely short but remember, this is an intro still",
+        "createProjectTitle": "Create project",
+        "createProjectText": "Start up PyCharm and create a new Project and name it PythonTutorial",
+        "createFileTitle": "Create file and code!"
       },
       "lesson3": {
         "title": "Conditionals",
@@ -172,7 +185,13 @@
       "lesson4": {
         "title": "Loops",
         "description": "Master for and while loops",
-        "link": "View Lesson →"
+        "link": "View Lesson →",
+        "badge": "Lesson 4",
+        "subtitle": "While condition is true, keep doing this. (This one may be long)",
+        "smallIntroTitle": "Small intro",
+        "smallIntroText": "Instructions in programming are normally executed sequentially (in the order they're written). There are, however, times where a certain block of code needs to be executed multiple times. In this instance, a loop is required.",
+        "examplesTitle": "Examples",
+        "forLoopTitle": "The for loop"
       }
     },
     "codingChallenges": {
