@@ -44,8 +44,17 @@ test.describe('Projects Page', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
     
-    // Click Projects link (triggers jQuery load into #content)
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Click Projects link - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     
     // Wait for the projects page content to be loaded into #content
     await page.waitForFunction(() => {
@@ -110,7 +119,17 @@ test.describe('Projects Page', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     
     // Wait for content to load first
     await page.waitForFunction(() => {
@@ -148,19 +167,38 @@ test.describe('Projects Page', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Navigate away
-    await page.getByRole('link', { name: 'Home' }).click();
+    // Navigate away - handle mobile
+    if (isMobile) {
+      await page.locator('.navbar-brand-name').click(); // Use RM brand
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
+    }
     await page.waitForTimeout(1000);
     
-    // Navigate back to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Navigate back to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     
     // Wait for projects page HTML to load into #content
     await page.waitForFunction(() => {
@@ -215,13 +253,28 @@ test.describe('Projects Page', () => {
   test('project icons are visible in dark mode', async ({ page }) => {
     await page.goto('/');
     
-    // Set dark mode
-    const themeToggle = page.locator('#theme-toggle');
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Set dark mode - handle mobile
+    let themeToggle;
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      themeToggle = page.locator('#mobile-theme-toggle');
+    } else {
+      themeToggle = page.locator('#theme-toggle');
+    }
     await themeToggle.click();
     await page.waitForTimeout(300);
     
-    // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      // Sidebar should still be open
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
   await page.waitForFunction(() => {
     const c = document.querySelector('#content');
     return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');

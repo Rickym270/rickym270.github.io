@@ -48,9 +48,11 @@ $(document).ready(function(){
     }
     
     // Function to update active nav item based on current page
-    function updateActiveNavItem(url) {
-        // Remove active class from all nav items
+    // Make it globally accessible
+    window.updateActiveNavItem = function updateActiveNavItem(url) {
+        // Remove active class from all nav items (desktop and mobile)
         jQuery("li.nav-item").removeClass("active");
+        jQuery(".mobile-nav-item").removeClass("active");
         
         // Map URLs to nav items
         var navMapping = {
@@ -67,7 +69,10 @@ $(document).ready(function(){
                 var selector = navMapping[mappedUrl];
                 var navLink = jQuery(selector);
                 if (navLink.length) {
+                    // Update desktop navbar
                     navLink.closest('li.nav-item').addClass('active');
+                    // Update mobile sidebar
+                    navLink.addClass('active');
                     break;
                 }
             }
@@ -207,6 +212,7 @@ $(document).ready(function(){
                             window.TranslationManager.applyTranslations();
                         }
                         // Update active nav item
+                        // Update active nav items
                         updateActiveNavItem(sectionUrl);
                         // Re-setup click handlers for newly loaded content
                         setupClickHandlers();

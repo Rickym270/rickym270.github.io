@@ -46,8 +46,17 @@ test.describe('SPA Navigation', () => {
     const initialUrl = page.url();
     await expect(page.locator('#content')).toBeVisible();
     
-    // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     
     // Wait for projects page to load
     await page.waitForFunction(() => {
@@ -73,8 +82,18 @@ test.describe('SPA Navigation', () => {
   test('theme persists across SPA navigation', async ({ page }) => {
     await page.goto('/');
     
-    // Set theme to dark
-    const themeToggle = page.locator('#theme-toggle');
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Set theme to dark - handle mobile
+    let themeToggle;
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      themeToggle = page.locator('#mobile-theme-toggle');
+    } else {
+      themeToggle = page.locator('#theme-toggle');
+    }
     await themeToggle.click();
     await page.waitForTimeout(300);
     
@@ -82,8 +101,13 @@ test.describe('SPA Navigation', () => {
       return document.documentElement.getAttribute('data-theme');
     });
     
-    // Navigate to different pages
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Navigate to different pages - handle mobile
+    if (isMobile) {
+      // Sidebar should still be open
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     await page.waitForTimeout(1000);
     
     let themeAfter = await page.evaluate(() => {
@@ -91,8 +115,14 @@ test.describe('SPA Navigation', () => {
     });
     expect(themeAfter).toBe(themeBefore);
     
-    // Use navbar link specifically to avoid ambiguity with "View All Skills" button
-    await page.locator('nav.navbar a[data-translate="nav.skills"]').click();
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links a[data-translate="nav.skills"]').first().click();
+    }
     await page.waitForTimeout(1000);
     
     themeAfter = await page.evaluate(() => {
@@ -106,8 +136,17 @@ test.describe('SPA Navigation', () => {
     
     const initialUrl = page.url();
     
-    // Click Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Click Tutorials - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
@@ -138,9 +177,18 @@ test.describe('SPA Navigation', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    // Navigate to Projects multiple times
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects multiple times - handle mobile
     for (let i = 0; i < 3; i++) {
-      await page.getByRole('link', { name: 'Projects' }).click();
+      if (isMobile) {
+        await page.locator('#mobile-menu-toggle').click();
+        await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+        await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+      } else {
+        await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+      }
       
       // Wait for projects page to load
       await page.waitForFunction(() => {

@@ -4,8 +4,19 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   test('theme toggle button is visible and functional', async ({ page }) => {
     await page.goto('/');
     
-    // Theme toggle button should be visible
-    const themeToggle = page.locator('#theme-toggle');
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Theme toggle button should be visible (desktop or mobile)
+    let themeToggle;
+    if (isMobile) {
+      // On mobile, open sidebar to access theme toggle
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      themeToggle = page.locator('#mobile-theme-toggle');
+    } else {
+      themeToggle = page.locator('#theme-toggle');
+    }
     await expect(themeToggle).toBeVisible();
     
     // Check initial theme (should respect system preference or default)
@@ -32,8 +43,18 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   test('theme persists across page navigation', async ({ page }) => {
     await page.goto('/');
     
-    // Toggle to dark mode
-    const themeToggle = page.locator('#theme-toggle');
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Toggle to dark mode - handle mobile
+    let themeToggle;
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      themeToggle = page.locator('#mobile-theme-toggle');
+    } else {
+      themeToggle = page.locator('#theme-toggle');
+    }
     await themeToggle.click();
     await page.waitForTimeout(300);
     
@@ -41,8 +62,13 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
       return document.documentElement.getAttribute('data-theme');
     });
     
-    // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      // Sidebar should still be open
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     await page.waitForTimeout(1000);
     
     // Theme should persist

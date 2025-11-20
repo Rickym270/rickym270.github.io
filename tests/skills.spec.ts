@@ -35,8 +35,17 @@ test.describe('Skills Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
-    // Navigate to Skills (disambiguate from "View All Skills" link)
-    await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Skills', exact: true }).first().click();
+    }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1, #content h2, #content h3');
@@ -67,7 +76,17 @@ test.describe('Skills Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
-    await page.locator('nav.navbar').getByRole('link', { name: 'Skills', exact: true }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Skills', exact: true }).first().click();
+    }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h2, h3');

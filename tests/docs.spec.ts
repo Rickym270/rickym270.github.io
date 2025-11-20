@@ -4,9 +4,22 @@ test.describe('Docs/Notes Page', () => {
   test('Back button appears only on article pages, not on index pages', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Docs > Notes
-    await page.getByRole('button', { name: 'Docs' }).or(page.getByRole('link', { name: 'Docs' })).hover();
-    await page.getByRole('link', { name: 'Notes' }).click();
+    // Check if we're on mobile (docs dropdown only exists on desktop)
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs directly (no dropdown)
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector for Docs dropdown
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
     await page.waitForTimeout(1000);
     
     // Should see initial message or index page
@@ -63,9 +76,22 @@ test.describe('Docs/Notes Page', () => {
   test('code snippets are single spaced with proper indentation', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Docs > Notes > Python (or any category with code)
-    await page.getByRole('button', { name: 'Docs' }).or(page.getByRole('link', { name: 'Docs' })).hover();
-    await page.getByRole('link', { name: 'Notes' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
     await page.waitForTimeout(1000);
     
     // Try to find and click an article with code
@@ -120,11 +146,23 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    // Navigate to Docs
-    const docsButton = page.getByRole('button', { name: 'Docs' }).or(page.getByRole('link', { name: 'Docs' }));
-    await docsButton.hover();
-    await page.waitForTimeout(300);
-    await page.getByRole('link', { name: 'Notes' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.waitForTimeout(300);
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
     await page.waitForTimeout(1500);
     
     // Check that text has proper font size (not tiny)
@@ -150,7 +188,16 @@ test.describe('Docs/Notes Page', () => {
   test('dropdown menu stays visible on hover', async ({ page }) => {
     await page.goto('/');
     
-    const docsButton = page.getByRole('button', { name: 'Docs' }).or(page.getByRole('link', { name: 'Docs' }));
+    // Skip on mobile - dropdown menu doesn't exist
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      test.skip();
+    }
+    
+    // Desktop: use navbar scoped selector
+    const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+      page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+    );
     await expect(docsButton).toBeVisible();
     
     // Hover over Docs

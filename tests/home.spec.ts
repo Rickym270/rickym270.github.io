@@ -68,15 +68,29 @@ test.describe('Home Page Initial Load', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
     // Navigate away
-    await page.getByRole('link', { name: 'Projects' }).click();
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Navigate back to Home
-    await page.getByRole('link', { name: 'Home' }).click();
+    if (isMobile) {
+      // Use RM brand to go home on mobile
+      await page.locator('.navbar-brand-name').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
+    }
     
     // Wait for home content to load again and be visible
     await page.waitForFunction(() => {

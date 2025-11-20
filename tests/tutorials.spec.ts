@@ -42,8 +42,17 @@ test.describe('Tutorials Page', () => {
     
     const initialUrl = page.url();
     
-    // Click Tutorials link
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Click Tutorials link - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
@@ -73,8 +82,17 @@ test.describe('Tutorials Page', () => {
   test('tutorial cards display correctly with icons and links', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Tutorials page
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Tutorials page - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, .tutorial-card');
@@ -131,8 +149,17 @@ test.describe('Tutorials Page', () => {
   test('Python tutorial index page loads with lesson cards', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Tutorials - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     await page.waitForTimeout(1500);
     
     // Click Python Tutorial link
@@ -162,8 +189,17 @@ test.describe('Tutorials Page', () => {
   test('lesson pages load with back button and navigation', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Tutorials - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     await page.waitForTimeout(1500);
     
     // Navigate to Python tutorial index
@@ -199,8 +235,17 @@ test.describe('Tutorials Page', () => {
   test('back button navigates to lesson index', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Tutorials -> Python Tutorial -> First Lesson
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Tutorials -> Python Tutorial -> First Lesson - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     await page.waitForTimeout(1500);
     
     const pythonLink = page.locator('a.tutorial-link').filter({ hasText: /View Lessons/i }).first();
@@ -233,8 +278,17 @@ test.describe('Tutorials Page', () => {
   test('lesson navigation links work correctly', async ({ page }) => {
     await page.goto('/');
     
-    // Navigate to Tutorials -> Python Tutorial -> Introduction
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Tutorials -> Python Tutorial -> Introduction - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     await page.waitForTimeout(1500);
     
     const pythonLink = page.locator('a.tutorial-link').filter({ hasText: /View Lessons/i }).first();
@@ -274,8 +328,17 @@ test.describe('Tutorials Page', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    // Navigate to Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Tutorials - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+    }
     
     // Wait for content to load - use waitForFunction for better reliability on iPhone
     // Check for multiple possible indicators that content has loaded
