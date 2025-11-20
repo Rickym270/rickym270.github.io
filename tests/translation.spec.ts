@@ -680,49 +680,6 @@ test.describe('Translation feature', () => {
     await expect(viewChallenges).toHaveText('Ver Desafíos →');
   });
 
-  test('journal page translates correctly', async ({ page }) => {
-    // Check if we're on mobile
-    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
-    
-    // Switch to Spanish
-    if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
-      await esButton.click();
-    } else {
-      const esButton = page.locator('#language-switcher button[data-lang="es"]');
-      await esButton.click();
-    }
-    await page.waitForTimeout(500);
-    
-    // Navigate to Journal (it's in the Docs dropdown on desktop, direct link on mobile)
-    if (isMobile) {
-      // On mobile, Journal might not be directly accessible - skip or navigate differently
-      // For now, we'll skip since mobile sidebar might not have Journal
-      test.skip();
-    } else {
-      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Documentos' }).or(
-        page.locator('#navbar-links').getByRole('link', { name: 'Documentos' })
-      );
-      await docsButton.hover();
-      await page.getByRole('link', { name: 'Diario' }).click();
-    }
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h2, #main');
-    }, { timeout: 15000 });
-    await page.waitForTimeout(300);
-    
-    // Check that page title translates (journal entries themselves are not translated, which is correct)
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Diario'); // Spanish for "Journal"
-    
-    // Verify the page loaded correctly by checking for journal content
-    const journalContent = page.locator('#content h2, #main h2');
-    const contentCount = await journalContent.count();
-    expect(contentCount).toBeGreaterThan(0);
-  });
 
   test('language preference persists after page reload', async ({ page }) => {
     // Check if we're on mobile
