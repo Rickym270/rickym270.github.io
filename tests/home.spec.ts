@@ -69,14 +69,14 @@ test.describe('Home Page Initial Load', () => {
     }, { timeout: 15000 });
     
     // Navigate away
-    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Navigate back to Home
-    await page.getByRole('link', { name: 'Home' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     
     // Wait for home content to load again and be visible
     await page.waitForFunction(() => {

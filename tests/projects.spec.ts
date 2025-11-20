@@ -45,7 +45,7 @@ test.describe('Projects Page', () => {
     await page.waitForTimeout(500);
     
     // Click Projects link (triggers jQuery load into #content)
-    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     
     // Wait for the projects page content to be loaded into #content
     await page.waitForFunction(() => {
@@ -110,7 +110,7 @@ test.describe('Projects Page', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     
     // Wait for content to load first
     await page.waitForFunction(() => {
@@ -149,18 +149,18 @@ test.describe('Projects Page', () => {
     await page.waitForTimeout(500);
     
     // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Navigate away
-    await page.getByRole('link', { name: 'Home' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     await page.waitForTimeout(1000);
     
     // Navigate back to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     
     // Wait for projects page HTML to load into #content
     await page.waitForFunction(() => {
@@ -221,7 +221,7 @@ test.describe('Projects Page', () => {
     await page.waitForTimeout(300);
     
     // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
   await page.waitForFunction(() => {
     const c = document.querySelector('#content');
     return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');

@@ -46,8 +46,8 @@ test.describe('SPA Navigation', () => {
     const initialUrl = page.url();
     await expect(page.locator('#content')).toBeVisible();
     
-    // Navigate to Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Navigate to Projects - use navbar scoped selector to avoid mobile sidebar duplicates
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     
     // Wait for projects page to load
     await page.waitForFunction(() => {
@@ -82,8 +82,8 @@ test.describe('SPA Navigation', () => {
       return document.documentElement.getAttribute('data-theme');
     });
     
-    // Navigate to different pages
-    await page.getByRole('link', { name: 'Projects' }).click();
+    // Navigate to different pages - use navbar scoped selector
+    await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     await page.waitForTimeout(1000);
     
     let themeAfter = await page.evaluate(() => {
@@ -106,8 +106,8 @@ test.describe('SPA Navigation', () => {
     
     const initialUrl = page.url();
     
-    // Click Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    // Click Tutorials - use navbar scoped selector to avoid mobile sidebar duplicates
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
@@ -138,9 +138,9 @@ test.describe('SPA Navigation', () => {
     await page.waitForSelector('#content', { state: 'attached' });
     await page.waitForTimeout(500);
     
-    // Navigate to Projects multiple times
+    // Navigate to Projects multiple times - use navbar scoped selector
     for (let i = 0; i < 3; i++) {
-      await page.getByRole('link', { name: 'Projects' }).click();
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
       
       // Wait for projects page to load
       await page.waitForFunction(() => {

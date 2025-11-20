@@ -43,7 +43,7 @@ test.describe('Tutorials Page', () => {
     const initialUrl = page.url();
     
     // Click Tutorials link
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
@@ -74,7 +74,7 @@ test.describe('Tutorials Page', () => {
     await page.goto('/');
     
     // Navigate to Tutorials page
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, .tutorial-card');
@@ -132,7 +132,7 @@ test.describe('Tutorials Page', () => {
     await page.goto('/');
     
     // Navigate to Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     await page.waitForTimeout(1500);
     
     // Click Python Tutorial link
@@ -163,7 +163,7 @@ test.describe('Tutorials Page', () => {
     await page.goto('/');
     
     // Navigate to Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     await page.waitForTimeout(1500);
     
     // Navigate to Python tutorial index
@@ -200,7 +200,7 @@ test.describe('Tutorials Page', () => {
     await page.goto('/');
     
     // Navigate to Tutorials -> Python Tutorial -> First Lesson
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     await page.waitForTimeout(1500);
     
     const pythonLink = page.locator('a.tutorial-link').filter({ hasText: /View Lessons/i }).first();
@@ -234,7 +234,7 @@ test.describe('Tutorials Page', () => {
     await page.goto('/');
     
     // Navigate to Tutorials -> Python Tutorial -> Introduction
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     await page.waitForTimeout(1500);
     
     const pythonLink = page.locator('a.tutorial-link').filter({ hasText: /View Lessons/i }).first();
@@ -275,7 +275,7 @@ test.describe('Tutorials Page', () => {
     await page.waitForTimeout(500);
     
     // Navigate to Tutorials
-    await page.getByRole('link', { name: 'Tutorials' }).click();
+    await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
     
     // Wait for content to load - use waitForFunction for better reliability on iPhone
     // Check for multiple possible indicators that content has loaded
