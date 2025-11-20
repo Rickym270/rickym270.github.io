@@ -62,7 +62,7 @@ test.describe('Translation feature', () => {
       expect(isActive).toBe('true');
       
       // Check that English text is displayed in sidebar
-      const homeLink = page.locator('.mobile-nav-item .mobile-nav-label[data-translate="nav.home"]');
+      const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
       await expect(homeLink).toHaveText('Home');
     } else {
       const enButton = page.locator('#language-switcher button[data-lang="en"]');
@@ -93,7 +93,7 @@ test.describe('Translation feature', () => {
       await page.waitForTimeout(500);
       
       // Check that Spanish text is displayed in sidebar
-      const homeLink = page.locator('.mobile-nav-item .mobile-nav-label[data-translate="nav.home"]');
+      const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
       await expect(homeLink).toHaveText('Inicio');
       
       // Check that ES button is now active
@@ -141,7 +141,7 @@ test.describe('Translation feature', () => {
       await page.waitForTimeout(500);
       
       // Check that English text is displayed in sidebar
-      const homeLink = page.locator('.mobile-nav-item .mobile-nav-label[data-translate="nav.home"]');
+      const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
       await expect(homeLink).toHaveText('Home');
       
       const isActive = await enButton.getAttribute('aria-pressed');
@@ -739,7 +739,7 @@ test.describe('Translation feature', () => {
       expect(isActive).toBe('true');
       
       // Check that content is in Spanish
-      const homeLink = page.locator('.mobile-nav-item .mobile-nav-label[data-translate="nav.home"]');
+      const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
       await expect(homeLink).toHaveText('Inicio');
     } else {
       const esButtonAfterReload = page.locator('#language-switcher button[data-lang="es"]');
