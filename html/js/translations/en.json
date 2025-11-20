@@ -92,9 +92,26 @@
     "title": "Ricky Martinez - Docs",
     "notes": "Notes",
     "clickToStart": "Click any FAQ to get started!",
+    "contents": "Contents",
     "python": "Python",
     "git": "Git",
-    "misc": "Misc."
+    "misc": "Misc.",
+    "pythonTopics": {
+      "executingCommands": "Executing Commands",
+      "jinjaUsage": "Jinja Usage",
+      "multiprocessing": "Multiprocessing",
+      "accessControl": "Python Access Control",
+      "databaseConnect": "Python Database Connect",
+      "logger": "Python Logger",
+      "sendEmail": "Send Email",
+      "sshDevice": "SSH Device"
+    },
+    "gitTopics": {
+      "gitInfo": "Git Info"
+    },
+    "miscTopics": {
+      "fontAwesome": "Font Awesome Icons"
+    }
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutorials",
