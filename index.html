@@ -26,6 +26,194 @@
                    $("li.nav-item.active").removeClass("active");
                    $(this).addClass("active");
                 });
+                
+                // Mobile navbar scroll shrink behavior
+                let lastScrollTop = 0;
+                const navbar = document.querySelector('.navbar');
+                const body = document.body;
+                const scrollThreshold = 50; // Start shrinking after 50px scroll
+                
+                function handleScroll() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    // Only apply on mobile (max-width: 768px)
+                    if (window.innerWidth <= 768) {
+                        if (scrollTop > scrollThreshold) {
+                            navbar.classList.add('scrolled');
+                            body.classList.add('navbar-scrolled');
+                        } else {
+                            navbar.classList.remove('scrolled');
+                            body.classList.remove('navbar-scrolled');
+                        }
+                    } else {
+                        // Reset on desktop
+                        navbar.classList.remove('scrolled');
+                        body.classList.remove('navbar-scrolled');
+                    }
+                    
+                    lastScrollTop = scrollTop;
+                }
+                
+                // Throttle scroll events for better performance
+                let ticking = false;
+                window.addEventListener('scroll', function() {
+                    if (!ticking) {
+                        window.requestAnimationFrame(function() {
+                            handleScroll();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                }, { passive: true });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    handleScroll();
+                });
+                
+                // Initial check
+                handleScroll();
+            });
+            
+            // Mobile sidebar toggle functionality
+            $(document).ready(function() {
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                const mobileSidebar = document.getElementById('mobile-sidebar');
+                const mobileSidebarClose = document.getElementById('mobile-sidebar-close');
+                const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+                const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+                const mobileLangBtns = document.querySelectorAll('.mobile-lang-btn');
+                const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+                const desktopThemeToggle = document.getElementById('theme-toggle');
+                
+                function openSidebar() {
+                    mobileSidebar.classList.add('active');
+                    mobileNavOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                function closeSidebar() {
+                    mobileSidebar.classList.remove('active');
+                    mobileNavOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                
+                if (mobileMenuToggle) {
+                    mobileMenuToggle.addEventListener('click', openSidebar);
+                }
+                
+                if (mobileSidebarClose) {
+                    mobileSidebarClose.addEventListener('click', closeSidebar);
+                }
+                
+                if (mobileNavOverlay) {
+                    mobileNavOverlay.addEventListener('click', closeSidebar);
+                }
+                
+                // Handle mobile nav item clicks
+                mobileNavItems.forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        // Handle SPA navigation
+                        const url = this.getAttribute('data-url');
+                        if (url) {
+                            e.preventDefault();
+                            // Use jQuery SPA navigation if available
+                            if (typeof jQuery !== 'undefined' && jQuery.fn.load) {
+                                jQuery('#content').load(url + '?v=20251110', function() {
+                                    // Update active nav items using the SPA function
+                                    if (typeof window.updateActiveNavItem === 'function') {
+                                        window.updateActiveNavItem(url);
+                                    } else {
+                                        // Fallback: update manually
+                                        jQuery('li.nav-item').removeClass('active');
+                                        jQuery('.mobile-nav-item').removeClass('active');
+                                        jQuery(`a[data-url="${url}"]`).closest('li.nav-item').addClass('active');
+                                        jQuery(`a[data-url="${url}"]`).addClass('active');
+                                    }
+                                    
+                                    // Reinitialize theme and translations
+                                    if (typeof window.reinitTheme === 'function') {
+                                        window.reinitTheme();
+                                    }
+                                    if (typeof window.TranslationManager !== 'undefined') {
+                                        window.TranslationManager.applyTranslations();
+                                    }
+                                    
+                                    // Reinitialize page-specific scripts
+                                    if (url.includes('projects.html') && typeof window.initProjects === 'function') {
+                                        window.resetProjectsInit();
+                                        window.initProjects();
+                                    }
+                                });
+                            }
+                            closeSidebar();
+                        }
+                    });
+                });
+                
+                
+                // Sync language switcher
+                if (mobileLangBtns.length > 0) {
+                    mobileLangBtns.forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const lang = this.getAttribute('data-lang');
+                            mobileLangBtns.forEach(b => {
+                                b.classList.remove('active');
+                                b.setAttribute('aria-pressed', 'false');
+                            });
+                            this.classList.add('active');
+                            this.setAttribute('aria-pressed', 'true');
+                            
+                            // Sync with desktop language switcher
+                            const desktopBtn = document.querySelector(`#language-switcher button[data-lang="${lang}"]`);
+                            if (desktopBtn) {
+                                document.querySelectorAll('#language-switcher button').forEach(b => {
+                                    b.classList.remove('active');
+                                    b.setAttribute('aria-pressed', 'false');
+                                });
+                                desktopBtn.classList.add('active');
+                                desktopBtn.setAttribute('aria-pressed', 'true');
+                            }
+                            
+                            // Trigger language change
+                            if (typeof window.TranslationManager !== 'undefined') {
+                                window.TranslationManager.switchLanguage(lang);
+                            }
+                        });
+                    });
+                }
+                
+                // Sync theme toggle
+                if (mobileThemeToggle && desktopThemeToggle) {
+                    mobileThemeToggle.addEventListener('click', function() {
+                        desktopThemeToggle.click();
+                    });
+                    
+                    // Update mobile theme icon when theme changes
+                    const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+                    const desktopThemeIcon = document.getElementById('theme-icon');
+                    
+                    if (mobileThemeIcon && desktopThemeIcon) {
+                        const observer = new MutationObserver(function(mutations) {
+                            mobileThemeIcon.textContent = desktopThemeIcon.textContent;
+                        });
+                        
+                        observer.observe(desktopThemeIcon, {
+                            childList: true,
+                            characterData: true
+                        });
+                        
+                        // Initial sync
+                        mobileThemeIcon.textContent = desktopThemeIcon.textContent;
+                    }
+                }
+                
+                // Close sidebar on window resize if it becomes desktop
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        closeSidebar();
+                    }
+                });
             });
         </script>
         <script type="text/javascript" src="html/js/SPAHack.js"></script>
@@ -58,8 +246,69 @@
 
     </head>
     <body class="d-flex flex-column min-vh-100">
+        <!-- Mobile Sidebar Navigation -->
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+        <nav class="mobile-sidebar" id="mobile-sidebar">
+            <div class="mobile-sidebar-header">
+                <div class="mobile-sidebar-logo">
+                    <div class="mobile-logo-circle">RM</div>
+                    <span class="mobile-logo-text">Ricky Martinez</span>
+                </div>
+                <button class="mobile-sidebar-close" id="mobile-sidebar-close" aria-label="Close menu">
+                    <span>×</span>
+                </button>
+            </div>
+            <nav class="mobile-sidebar-nav">
+                <a href="#" class="mobile-nav-item active" data-url="html/pages/home.html" data-translate="nav.home" id="mobile-home-link">
+                    <span class="mobile-nav-icon">🏠</span>
+                    <span class="mobile-nav-label">Home</span>
+                </a>
+                <a href="#Projects" class="mobile-nav-item" data-url="html/pages/projects.html" data-translate="nav.projects">
+                    <span class="mobile-nav-icon">📁</span>
+                    <span class="mobile-nav-label">Projects</span>
+                </a>
+                <a href="#Skills" class="mobile-nav-item" data-url="html/pages/skills.html" data-translate="nav.skills">
+                    <span class="mobile-nav-icon">⚡</span>
+                    <span class="mobile-nav-label">Skills</span>
+                </a>
+                <a href="#Contact" class="mobile-nav-item" data-url="html/pages/contact.html" data-translate="nav.contact">
+                    <span class="mobile-nav-icon">✉️</span>
+                    <span class="mobile-nav-label">Contact</span>
+                </a>
+                <a href="#tutorials" class="mobile-nav-item" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">
+                    <span class="mobile-nav-icon">📚</span>
+                    <span class="mobile-nav-label">Tutorials</span>
+                </a>
+                <a href="#" class="mobile-nav-item" data-url="html/pages/docs.html" data-translate="nav.docs">
+                    <span class="mobile-nav-icon">📝</span>
+                    <span class="mobile-nav-label">Docs</span>
+                </a>
+            </nav>
+            <div class="mobile-sidebar-footer">
+                <div class="mobile-sidebar-divider"></div>
+                <div class="mobile-sidebar-actions">
+                    <div class="mobile-language-switcher" id="mobile-language-switcher">
+                        <button type="button" class="mobile-lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+                        <button type="button" class="mobile-lang-btn" data-lang="es" aria-pressed="false">ES</button>
+                    </div>
+                    <button class="mobile-theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
+                        <span class="mobile-theme-icon" id="mobile-theme-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
         <nav class="navbar fixed-top navbar-expand navbar-light">
             <div class="container">
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <a class="navbar-brand-name" href="#" data-url="html/pages/home.html">
+                    <p class="navbar-brand-full" style="margin: 0;">Ricky Martinez</p>
+                    <p class="navbar-brand-mobile" style="margin: 0;">RM</p>
+                </a>
                 <ul class="navbar-nav mr-auto d-flex flex-row align-items-center justify-content-between w-100" id="navbar-links" style="flex-wrap: wrap;">
                     <div class="d-flex align-items-center">
                         <li class="nav-item active">
@@ -76,10 +325,6 @@
                         </li>
                     </div>
                     <div class="d-flex align-items-center">
-                        <li class="nav-item">
-                            <a class="navbar-brand-name" href="index.html"><p style="margin: 0;">Ricky Martinez</p></a>
-                        </li>
-                    </div>
                     <div class="d-flex align-items-center">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">
