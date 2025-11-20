@@ -93,6 +93,7 @@
     "notes": "Notes",
     "clickToStart": "Click any FAQ to get started!",
     "contents": "Contents",
+    "back": "Back",
     "python": "Python",
     "git": "Git",
     "misc": "Misc.",
@@ -108,6 +109,14 @@
     },
     "gitTopics": {
       "gitInfo": "Git Info"
+    },
+    "git": {
+      "githubInformation": "Github Information",
+      "intro": "Intro",
+      "introText": "Git is an incredibly useful tool that is used for version control. It is a standard and is commonly used by web developers to keep track of changes made in a project. The repository has two areas: staging, working:",
+      "workingArea": "working area - this is your local directory where files are being changed and testing",
+      "stagingArea": "staging area - where changes are kept, ready to be pushed into the repository",
+      "usefulCommands": "Useful Commands"
     },
     "miscTopics": {
       "fontAwesome": "Font Awesome Icons"
