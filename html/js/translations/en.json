@@ -106,6 +106,55 @@
     "codingChallenges": "Coding Challenges",
     "codingDescription": "Essentially algorithm notes where I explore the \"English\" translation of code. Dive into problem-solving approaches and algorithmic thinking.",
     "viewChallenges": "View Challenges →"
+  },
+  "lessons": {
+    "pythonTutorial": {
+      "title": "Python Tutorial",
+      "subtitle": "Learn the basics of programming in Python. Start from the beginning and work your way through each lesson.",
+      "introTitle": "Introduction",
+      "introText": "I'll post here instead because it's way more convenient",
+      "lessonsTitle": "Lessons",
+      "lesson0": {
+        "title": "Introduction",
+        "description": "Get started with this Python tutorial series",
+        "link": "Start Here →"
+      },
+      "lesson1": {
+        "title": "Setting Up",
+        "description": "Install Python and PyCharm on Windows or Mac",
+        "link": "View Lesson →"
+      },
+      "lesson2": {
+        "title": "Hello World!",
+        "description": "Create your first Python program",
+        "link": "View Lesson →"
+      },
+      "lesson3": {
+        "title": "Conditionals",
+        "description": "Learn if/else statements and control flow",
+        "link": "View Lesson →"
+      },
+      "lesson4": {
+        "title": "Loops",
+        "description": "Master for and while loops",
+        "link": "View Lesson →"
+      }
+    },
+    "codingChallenges": {
+      "title": "Understanding \"My\" Way",
+      "quote": "if you can't explain it in your own words, you don't really know it.",
+      "description": "The following are in categories instead of \"lesson\" number. There will also be a little explanation/ description to explain the code/concept.",
+      "trie": {
+        "title": "Trie",
+        "intro": "Tries are very useful and are useful when implementing an autocorrect feature.",
+        "example1": "For exmaple, on the left we start with no letter. But then we branch of into the letters <b>t</b>, <b>A</b>, <b>i</b>. Let's focus on the <b>t</b> for now.",
+        "example2": "<b>t</b> branches off into <b>to</b> and <b>te</b>. <b>to</b> is its own word (for all that we know) so that's it for that specific word.",
+        "example3": "<b>te</b> branches off into <b>tea</b>, <b>ted</b>, <b>ten</b>",
+        "explanation1": "Lets understand that a bit, just in case:",
+        "explanation2": "<b>te</b> banches off into those words <i>(child nodes)</i> because, for all we know, those are the words that can be formulated using that <b>te</b> <i>(parent node)</i>.",
+        "readMore": "Read more"
+      }
+    }
   }
 }
 

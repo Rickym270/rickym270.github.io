@@ -106,6 +106,55 @@
     "codingChallenges": "Desafíos de Programación",
     "codingDescription": "Básicamente notas de algoritmos donde exploro la traducción \"en inglés\" del código. Sumérgete en enfoques de resolución de problemas y pensamiento algorítmico.",
     "viewChallenges": "Ver Desafíos →"
+  },
+  "lessons": {
+    "pythonTutorial": {
+      "title": "Tutorial de Python",
+      "subtitle": "Aprende los fundamentos de la programación en Python. Comienza desde el principio y avanza a través de cada lección.",
+      "introTitle": "Introducción",
+      "introText": "Publicaré aquí en su lugar porque es mucho más conveniente",
+      "lessonsTitle": "Lecciones",
+      "lesson0": {
+        "title": "Introducción",
+        "description": "Comienza con esta serie de tutoriales de Python",
+        "link": "Empezar Aquí →"
+      },
+      "lesson1": {
+        "title": "Configuración",
+        "description": "Instala Python y PyCharm en Windows o Mac",
+        "link": "Ver Lección →"
+      },
+      "lesson2": {
+        "title": "¡Hola Mundo!",
+        "description": "Crea tu primer programa en Python",
+        "link": "Ver Lección →"
+      },
+      "lesson3": {
+        "title": "Condicionales",
+        "description": "Aprende declaraciones if/else y flujo de control",
+        "link": "Ver Lección →"
+      },
+      "lesson4": {
+        "title": "Bucles",
+        "description": "Domina los bucles for y while",
+        "link": "Ver Lección →"
+      }
+    },
+    "codingChallenges": {
+      "title": "Entendiendo \"Mi\" Manera",
+      "quote": "si no puedes explicarlo con tus propias palabras, realmente no lo sabes.",
+      "description": "Los siguientes están en categorías en lugar de número de \"lección\". También habrá una pequeña explicación/descripción para explicar el código/concepto.",
+      "trie": {
+        "title": "Trie",
+        "intro": "Los Tries son muy útiles y son útiles al implementar una función de autocorrección.",
+        "example1": "Por ejemplo, a la izquierda comenzamos sin ninguna letra. Pero luego nos ramificamos en las letras <b>t</b>, <b>A</b>, <b>i</b>. Concentrémonos en la <b>t</b> por ahora.",
+        "example2": "<b>t</b> se ramifica en <b>to</b> y <b>te</b>. <b>to</b> es su propia palabra (por lo que sabemos) así que eso es todo para esa palabra específica.",
+        "example3": "<b>te</b> se ramifica en <b>tea</b>, <b>ted</b>, <b>ten</b>",
+        "explanation1": "Entendamos eso un poco, por si acaso:",
+        "explanation2": "<b>te</b> se ramifica en esas palabras <i>(nodos hijos)</i> porque, por lo que sabemos, esas son las palabras que se pueden formular usando ese <b>te</b> <i>(nodo padre)</i>.",
+        "readMore": "Leer más"
+      }
+    }
   }
 }
 
