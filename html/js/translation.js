@@ -203,10 +203,27 @@
          * Update language switcher UI
          */
         updateLanguageSwitcher: function() {
+            // Update desktop language switcher
             const switcher = document.getElementById('language-switcher');
             if (switcher) {
                 const buttons = switcher.querySelectorAll('button[data-lang]');
                 buttons.forEach(btn => {
+                    const btnLang = btn.getAttribute('data-lang');
+                    if (btnLang === this.currentLanguage) {
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-pressed', 'true');
+                    } else {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-pressed', 'false');
+                    }
+                });
+            }
+            
+            // Update mobile language switcher
+            const mobileSwitcher = document.getElementById('mobile-language-switcher');
+            if (mobileSwitcher) {
+                const mobileButtons = mobileSwitcher.querySelectorAll('button[data-lang]');
+                mobileButtons.forEach(btn => {
                     const btnLang = btn.getAttribute('data-lang');
                     if (btnLang === this.currentLanguage) {
                         btn.classList.add('active');
