@@ -122,7 +122,7 @@ test.describe('SPA Navigation', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
     
     // Wait for heading element to exist in DOM first - use data-translate attribute for reliable selection
-    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000 });
+    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Tutorials content should load - use data-translate attribute for reliable selection
@@ -149,7 +149,7 @@ test.describe('SPA Navigation', () => {
       }, { timeout: 15000 });
       
       // Wait for heading to exist first, then check visibility
-      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000 });
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
       await page.waitForTimeout(500);
       
       // Verify heading is visible

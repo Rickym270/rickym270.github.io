@@ -6,7 +6,6 @@
     "contact": "Contact",
     "docs": "Docs",
     "notes": "Notes",
-    "journal": "Journal",
     "tutorials": "Tutorials"
   },
   "home": {
@@ -107,9 +106,6 @@
     "codingChallenges": "Coding Challenges",
     "codingDescription": "Essentially algorithm notes where I explore the \"English\" translation of code. Dive into problem-solving approaches and algorithmic thinking.",
     "viewChallenges": "View Challenges →"
-  },
-  "journal": {
-    "title": "Ricky Martinez - Journal"
   }
 }
 

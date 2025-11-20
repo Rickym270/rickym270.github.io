@@ -170,7 +170,6 @@ test.describe('Docs/Notes Page', () => {
     
     // Menu items should be visible
     await expect(dropdownMenu.getByRole('link', { name: 'Notes' })).toBeVisible();
-    await expect(dropdownMenu.getByRole('link', { name: 'Journal' })).toBeVisible();
   });
 });
 

@@ -6,7 +6,6 @@
     "contact": "Contacto",
     "docs": "Documentos",
     "notes": "Notas",
-    "journal": "Diario",
     "tutorials": "Tutoriales"
   },
   "home": {
@@ -107,9 +106,6 @@
     "codingChallenges": "Desafíos de Programación",
     "codingDescription": "Básicamente notas de algoritmos donde exploro la traducción \"en inglés\" del código. Sumérgete en enfoques de resolución de problemas y pensamiento algorítmico.",
     "viewChallenges": "Ver Desafíos →"
-  },
-  "journal": {
-    "title": "Ricky Martinez - Diario"
   }
 }
 

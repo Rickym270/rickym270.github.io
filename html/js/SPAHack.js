@@ -58,8 +58,7 @@ $(document).ready(function(){
             'html/pages/projects.html': 'a[data-url="html/pages/projects.html"]',
             'html/pages/skills.html': 'a[data-url="html/pages/skills.html"]',
             'html/pages/docs.html': 'a[data-url="html/pages/docs.html"]',
-            'html/pages/tutorials.html': 'a[data-url="html/pages/tutorials.html"]',
-            'html/pages/Journal/index.html': 'a[data-url="html/pages/Journal/index.html"]'
+            'html/pages/tutorials.html': 'a[data-url="html/pages/tutorials.html"]'
         };
         
         // Find matching nav item and add active class

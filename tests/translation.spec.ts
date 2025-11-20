@@ -4,10 +4,18 @@ test.describe('Translation feature', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     // Wait for content to load
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 15000 });
+    try {
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        if (!c) return false;
+        const dataLoaded = c.getAttribute('data-content-loaded') === 'true';
+        const hasBanner = !!c.querySelector('#homeBanner');
+        const hasHero = !!c.querySelector('.hero-content, .hero-text-column');
+        return dataLoaded || hasBanner || hasHero;
+      }, { timeout: 10000 });
+    } catch {
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
   });
 
   test('language switcher is visible in navbar', async ({ page }) => {
@@ -82,7 +90,7 @@ test.describe('Translation feature', () => {
     await page.getByRole('link', { name: 'Proyectos' }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for heading element to exist and translations to apply - use longer timeout for CI
@@ -103,16 +111,13 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
-    // Wait for homeBanner element - be lenient for WebKit/iPhone emulation
-    // Try homeBanner first, but fall back to other home indicators
+    // Wait for homeBanner element to exist in DOM first (attached state for iPhone)
     try {
-      await page.waitForSelector('#content #homeBanner', { timeout: 10000, state: 'attached' });
+      await page.waitForSelector('#content #homeBanner', { timeout: 15000, state: 'attached' });
     } catch {
-      // If homeBanner doesn't appear, try other home page indicators
       try {
         await page.waitForSelector('#content .hero-content, #content .hero-text-column', { timeout: 10000, state: 'attached' });
       } catch {
-        // Last resort: just wait a bit and continue
         await page.waitForTimeout(1000);
       }
     }
@@ -160,17 +165,12 @@ test.describe('Translation feature', () => {
     await page.getByRole('link', { name: 'Proyectos' }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for heading element to exist in DOM (it's in the static HTML that gets loaded)
     // Use waitForSelector instead of waitForFunction for better WebKit reliability
-    try {
-      await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 10000, state: 'attached' });
-    } catch {
-      // Fallback: wait for any h1 or h3, then wait for translation to apply
-      await page.waitForSelector('#content h1, #content h3', { timeout: 10000, state: 'attached' });
-    }
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
@@ -352,7 +352,7 @@ test.describe('Translation feature', () => {
     await page.getByRole('link', { name: 'Proyectos' }).click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for projects to load
@@ -458,31 +458,6 @@ test.describe('Translation feature', () => {
     
     const viewChallenges = page.locator('#content a[data-translate="tutorials.viewChallenges"]');
     await expect(viewChallenges).toHaveText('Ver Desafíos →');
-  });
-
-  test('journal page translates correctly', async ({ page }) => {
-    // Switch to Spanish
-    const esButton = page.locator('#language-switcher button[data-lang="es"]');
-    await esButton.click();
-    await page.waitForTimeout(500);
-    
-    // Navigate to Journal (it's in the Docs dropdown)
-    await page.getByRole('button', { name: 'Documentos' }).or(page.getByRole('link', { name: 'Documentos' })).hover();
-    await page.getByRole('link', { name: 'Diario' }).click();
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h2, #main');
-    }, { timeout: 15000 });
-    await page.waitForTimeout(300);
-    
-    // Check that page title translates (journal entries themselves are not translated, which is correct)
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Diario'); // Spanish for "Journal"
-    
-    // Verify the page loaded correctly by checking for journal content
-    const journalContent = page.locator('#content h2, #main h2');
-    const contentCount = await journalContent.count();
-    expect(contentCount).toBeGreaterThan(0);
   });
 
   test('language preference persists after page reload', async ({ page }) => {
