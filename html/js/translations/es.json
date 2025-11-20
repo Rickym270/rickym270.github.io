@@ -140,6 +140,7 @@
       "introTitle": "Introducción",
       "introText": "Publicaré aquí en su lugar porque es mucho más conveniente",
       "lessonsTitle": "Lecciones",
+      "backToContents": "Volver a la Tabla de Contenidos",
       "lesson0": {
         "title": "Introducción",
         "description": "Comienza con esta serie de tutoriales de Python",
@@ -158,7 +159,15 @@
       "lesson3": {
         "title": "Condicionales",
         "description": "Aprende declaraciones if/else y flujo de control",
-        "link": "Ver Lección →"
+        "link": "Ver Lección →",
+        "badge": "Lección 3",
+        "subtitle": "Si esto es verdadero, entonces esto sucede/es verdadero.",
+        "smallIntroTitle": "Pequeña introducción",
+        "smallIntroText": "Los condicionales son una estructura de control. Las estructuras de control se utilizan para cambiar el flujo del código para ejecutar instrucciones.",
+        "ifElseTitle": "Las declaraciones if/else",
+        "ifExplanation": "La declaración if es una de las estructuras de control más simples. Asumiendo que condición es una condición válida, si la condición se evalúa como verdadera, entonces la instrucción se ejecuta. Si la condición se evalúa como falsa, la instrucción se omite y no se ejecuta (si la condición else no está especificada/presente)",
+        "elseExplanation": "La declaración else se usa con la declaración if. Else se usa para decirle al código qué hacer si la condición es Falsa.",
+        "examplesTitle": "Ejemplos"
       },
       "lesson4": {
         "title": "Bucles",

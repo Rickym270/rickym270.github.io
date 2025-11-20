@@ -140,6 +140,7 @@
       "introTitle": "Introduction",
       "introText": "I'll post here instead because it's way more convenient",
       "lessonsTitle": "Lessons",
+      "backToContents": "Back to Table of Contents",
       "lesson0": {
         "title": "Introduction",
         "description": "Get started with this Python tutorial series",
@@ -158,7 +159,15 @@
       "lesson3": {
         "title": "Conditionals",
         "description": "Learn if/else statements and control flow",
-        "link": "View Lesson →"
+        "link": "View Lesson →",
+        "badge": "Lesson 3",
+        "subtitle": "If this is true, then this happens/is true.",
+        "smallIntroTitle": "Small intro",
+        "smallIntroText": "Conditionals are a control structure. Control structures are used to change the flow of the code to execute instructions.",
+        "ifElseTitle": "The if/else statements",
+        "ifExplanation": "The if statement is one of the simplest control structures. Assuming condition is a valid condition, if the condition evaluates to true, then instruction executes. If condition evaluates to false, instruction is skipped over and doesn't execute (if else condition isn't specified/ present)",
+        "elseExplanation": "The else statement is used with the if statement. Else is used to tell the code what to do if condition is False.",
+        "examplesTitle": "Examples"
       },
       "lesson4": {
         "title": "Loops",
