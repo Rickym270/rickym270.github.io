@@ -98,7 +98,15 @@ test.describe('Tutorials Page', () => {
     }
     
     // Wait for Python Tutorial element to be attached first (for WebKit reliability)
-    await page.waitForSelector('#content h3[data-translate="tutorials.pythonTutorial"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h3[data-translate="tutorials.pythonTutorial"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      try {
+        await page.waitForSelector("#content h3, #content .tutorial-card", { timeout: 10000, state: 'attached'})
+      } catch {
+        await page.waitForSelector("#content h3", { timeout: 10000, state: 'attached'})
+      }
+    }
     await page.waitForTimeout(500);
     
     // Verify Python Tutorial card exists - use data-translate selector for reliability

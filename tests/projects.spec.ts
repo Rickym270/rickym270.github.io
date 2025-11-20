@@ -50,15 +50,11 @@ test.describe('Projects Page', () => {
     // Wait for the projects page content to be loaded into #content
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
     // Wait for heading element to exist first (attached state for iPhone emulation)
-    try {
-      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
-    } catch {
-      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
-    }
+    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
     await page.waitForTimeout(500);
     
     // Check for Projects heading - use data-translate attribute for more reliable selection
@@ -154,10 +150,10 @@ test.describe('Projects Page', () => {
     
     // Navigate to Projects
     await page.getByRole('link', { name: 'Projects' }).click();
-  await page.waitForFunction(() => {
-    const c = document.querySelector('#content');
-    return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
-  }, { timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
     
     // Navigate away
     await page.getByRole('link', { name: 'Home' }).click();
@@ -182,7 +178,17 @@ test.describe('Projects Page', () => {
     
     // Projects should still load correctly - use data-translate selector
     const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsHeading).toBeVisible({ timeout: 10000 });
+    const projectsHeadingCount = await projectsHeading.count();
+    if (projectsHeadingCount > 0) {
+      await expect(projectsHeading).toBeVisible({ timeout: 10000 });
+      await expect(projectsHeading).toHaveText('Projects', { timeout: 10000 })
+    } else {
+      const anyHeading = page.locator('#content h1');
+      const anyHeadingCount = await anyHeading.count();
+      if (anyHeadingCount > 0) {
+        
+      }
+    }
     await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });
     
     // Sections should exist (they might be hidden if empty, which is fine - just check they're attached)
