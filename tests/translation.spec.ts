@@ -204,8 +204,8 @@ test.describe('Translation feature', () => {
     
     // Navigate back to Home - use navbar-links for desktop, RM brand or mobile sidebar for mobile
     if (isMobile) {
-      // Close sidebar first
-      await page.locator('#mobile-sidebar-close, #mobile-nav-overlay').first().click();
+      // Sidebar auto-closes when clicking nav items (confirmed in index.html line 149)
+      // So we don't need to close it - just wait a bit and click RM brand
       await page.waitForTimeout(300);
       // Use RM brand to go home
       await page.locator('.navbar-brand-name').click();
