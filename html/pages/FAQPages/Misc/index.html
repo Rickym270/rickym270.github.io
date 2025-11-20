@@ -25,7 +25,12 @@
                     e.preventDefault();
                     var attr = $(this).attr('href');
                     if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
-                        $('#FAQMain').load(attr);
+                        $('#FAQMain').load(attr, function() {
+                            // Re-apply translations after content loads
+                            if (typeof window.TranslationManager !== 'undefined') {
+                                window.TranslationManager.applyTranslations();
+                            }
+                        });
                     }
                 });
             });
@@ -33,10 +38,10 @@
     </head>
     <body id="FAQMain">
         <div>
-            <p class="toc_title">Contents</p>
+            <p class="toc_title" data-translate="docs.contents">Contents</p>
             <ol class="toc_list">
                 <li>
-                    <a href="html/pages/FAQPages/Misc/FontAwesomeIcons.html">Font Awesome Icons</a>
+                    <a href="html/pages/FAQPages/Misc/FontAwesomeIcons.html" data-translate="docs.miscTopics.fontAwesome">Font Awesome Icons</a>
                     <!--
                     <ul>
                         <li><a href="#First_Sub_Point_1">1.1 First Sub Point 1</a></li>

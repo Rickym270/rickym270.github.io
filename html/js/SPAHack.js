@@ -209,7 +209,10 @@ $(document).ready(function(){
                         }
                         // Re-apply translations after content loads
                         if (typeof window.TranslationManager !== 'undefined') {
-                            window.TranslationManager.applyTranslations();
+                            // Add a small delay to ensure DOM is fully updated
+                            setTimeout(() => {
+                                window.TranslationManager.applyTranslations();
+                            }, 50);
                         }
                         // Update active nav item
                         // Update active nav items

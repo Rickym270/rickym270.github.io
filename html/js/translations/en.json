@@ -92,9 +92,33 @@
     "title": "Ricky Martinez - Docs",
     "notes": "Notes",
     "clickToStart": "Click any FAQ to get started!",
+    "contents": "Contents",
+    "back": "Back",
     "python": "Python",
     "git": "Git",
-    "misc": "Misc."
+    "misc": "Misc.",
+    "pythonTopics": {
+      "executingCommands": "Executing Commands",
+      "jinjaUsage": "Jinja Usage",
+      "multiprocessing": "Multiprocessing",
+      "accessControl": "Python Access Control",
+      "databaseConnect": "Python Database Connect",
+      "logger": "Python Logger",
+      "sendEmail": "Send Email",
+      "sshDevice": "SSH Device"
+    },
+    "gitTopics": {
+      "gitInfo": "Git Info",
+      "githubInformation": "Github Information",
+      "intro": "Intro",
+      "introText": "Git is an incredibly useful tool that is used for version control. It is a standard and is commonly used by web developers to keep track of changes made in a project. The repository has two areas: staging, working:",
+      "workingArea": "working area - this is your local directory where files are being changed and testing",
+      "stagingArea": "staging area - where changes are kept, ready to be pushed into the repository",
+      "usefulCommands": "Useful Commands"
+    },
+    "miscTopics": {
+      "fontAwesome": "Font Awesome Icons"
+    }
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutorials",
@@ -106,6 +130,83 @@
     "codingChallenges": "Coding Challenges",
     "codingDescription": "Essentially algorithm notes where I explore the \"English\" translation of code. Dive into problem-solving approaches and algorithmic thinking.",
     "viewChallenges": "View Challenges →"
+  },
+  "lessons": {
+    "pythonTutorial": {
+      "title": "Python Tutorial",
+      "subtitle": "Learn the basics of programming in Python. Start from the beginning and work your way through each lesson.",
+      "introTitle": "Introduction",
+      "introText": "I'll post here instead because it's way more convenient",
+      "lessonsTitle": "Lessons",
+      "backToContents": "Back to Table of Contents",
+      "nextLesson": "Next Lesson:",
+      "lesson0": {
+        "title": "Introduction",
+        "description": "Get started with this Python tutorial series",
+        "link": "Start Here →",
+        "badge": "Introduction",
+        "subtitle": "Welcome to the Python Tutorial series",
+        "content": "I'll post here instead because it's way more convenient"
+      },
+      "lesson1": {
+        "title": "Setting Up",
+        "description": "Install Python and PyCharm on Windows or Mac",
+        "link": "View Lesson →",
+        "badge": "Lesson 1",
+        "subtitle": "This one is going to be annoying.",
+        "windowsTitle": "Windows:",
+        "navTitle": "1: Setting Up →"
+      },
+      "lesson2": {
+        "title": "Hello World!",
+        "description": "Create your first Python program",
+        "link": "View Lesson →",
+        "badge": "Lesson 2",
+        "subtitle": "Extremely short but remember, this is an intro still",
+        "createProjectTitle": "Create project",
+        "createProjectText": "Start up PyCharm and create a new Project and name it PythonTutorial",
+        "createFileTitle": "Create file and code!"
+      },
+      "lesson3": {
+        "title": "Conditionals",
+        "description": "Learn if/else statements and control flow",
+        "link": "View Lesson →",
+        "badge": "Lesson 3",
+        "subtitle": "If this is true, then this happens/is true.",
+        "smallIntroTitle": "Small intro",
+        "smallIntroText": "Conditionals are a control structure. Control structures are used to change the flow of the code to execute instructions.",
+        "ifElseTitle": "The if/else statements",
+        "ifExplanation": "The if statement is one of the simplest control structures. Assuming condition is a valid condition, if the condition evaluates to true, then instruction executes. If condition evaluates to false, instruction is skipped over and doesn't execute (if else condition isn't specified/ present)",
+        "elseExplanation": "The else statement is used with the if statement. Else is used to tell the code what to do if condition is False.",
+        "examplesTitle": "Examples"
+      },
+      "lesson4": {
+        "title": "Loops",
+        "description": "Master for and while loops",
+        "link": "View Lesson →",
+        "badge": "Lesson 4",
+        "subtitle": "While condition is true, keep doing this. (This one may be long)",
+        "smallIntroTitle": "Small intro",
+        "smallIntroText": "Instructions in programming are normally executed sequentially (in the order they're written). There are, however, times where a certain block of code needs to be executed multiple times. In this instance, a loop is required.",
+        "examplesTitle": "Examples",
+        "forLoopTitle": "The for loop"
+      }
+    },
+    "codingChallenges": {
+      "title": "Understanding \"My\" Way",
+      "quote": "if you can't explain it in your own words, you don't really know it.",
+      "description": "The following are in categories instead of \"lesson\" number. There will also be a little explanation/ description to explain the code/concept.",
+      "trie": {
+        "title": "Trie",
+        "intro": "Tries are very useful and are useful when implementing an autocorrect feature.",
+        "example1": "For exmaple, on the left we start with no letter. But then we branch of into the letters <b>t</b>, <b>A</b>, <b>i</b>. Let's focus on the <b>t</b> for now.",
+        "example2": "<b>t</b> branches off into <b>to</b> and <b>te</b>. <b>to</b> is its own word (for all that we know) so that's it for that specific word.",
+        "example3": "<b>te</b> branches off into <b>tea</b>, <b>ted</b>, <b>ten</b>",
+        "explanation1": "Lets understand that a bit, just in case:",
+        "explanation2": "<b>te</b> banches off into those words <i>(child nodes)</i> because, for all we know, those are the words that can be formulated using that <b>te</b> <i>(parent node)</i>.",
+        "readMore": "Read more"
+      }
+    }
   }
 }
 

@@ -25,7 +25,12 @@
                     e.preventDefault();
                     var attr = $(this).attr('href');
                     if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
-                        $('#FAQMain').load(attr);
+                        $('#FAQMain').load(attr, function() {
+                            // Re-apply translations after content loads
+                            if (typeof window.TranslationManager !== 'undefined') {
+                                window.TranslationManager.applyTranslations();
+                            }
+                        });
                     }
                 });
             });
@@ -33,10 +38,10 @@
     </head>
     <body id="FAQMain">
         <div>
-            <p class="toc_title">Contents</p>
+            <p class="toc_title" data-translate="docs.contents">Contents</p>
             <ol class="toc_list">
                 <li>
-                    <a href="html/pages/FAQPages/Python/Executing_CMDs.html">Executing Commands</a>
+                    <a href="html/pages/FAQPages/Python/Executing_CMDs.html" data-translate="docs.pythonTopics.executingCommands">Executing Commands</a>
                     <!--
                     <ul>
                         <li><a href="#First_Sub_Point_1">1.1 First Sub Point 1</a></li>
@@ -44,13 +49,13 @@
                     </ul>
                     -->
                 </li>
-                <li><a href="html/pages/FAQPages/Python/Jinja_Usage.html">Jinja Usage</a></li>
-                <li><a href="../html/pages/FAQPages/Python/Multiprocessing_with_Python.html">Multiprocessing</a></li>
-                <li><a href="../html/pages/FAQPages/Python/Multiprocessing_with_Python.html">Python Access Control</a></li>
-                <li><a href="../html/pages/FAQPages/Python/Python_Database_Connect.html">Python Database Connect</a></li>
-                <li><a href="../html/pages/FAQPages/Python/Python_Logger.html">Python Logger</a></li>
-                <li><a href="../html/pages/FAQPages/Python/Send_Email.html">Send Email</a></li>
-                <li><a href="../html/pages/FAQPages/Python/SSH_Device.html">SSH Device</a></li>
+                <li><a href="html/pages/FAQPages/Python/Jinja_Usage.html" data-translate="docs.pythonTopics.jinjaUsage">Jinja Usage</a></li>
+                <li><a href="../html/pages/FAQPages/Python/Multiprocessing_with_Python.html" data-translate="docs.pythonTopics.multiprocessing">Multiprocessing</a></li>
+                <li><a href="../html/pages/FAQPages/Python/Multiprocessing_with_Python.html" data-translate="docs.pythonTopics.accessControl">Python Access Control</a></li>
+                <li><a href="../html/pages/FAQPages/Python/Python_Database_Connect.html" data-translate="docs.pythonTopics.databaseConnect">Python Database Connect</a></li>
+                <li><a href="../html/pages/FAQPages/Python/Python_Logger.html" data-translate="docs.pythonTopics.logger">Python Logger</a></li>
+                <li><a href="../html/pages/FAQPages/Python/Send_Email.html" data-translate="docs.pythonTopics.sendEmail">Send Email</a></li>
+                <li><a href="../html/pages/FAQPages/Python/SSH_Device.html" data-translate="docs.pythonTopics.sshDevice">SSH Device</a></li>
             </ol>
         </div>
     </body>

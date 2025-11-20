@@ -92,9 +92,33 @@
     "title": "Ricky Martinez - Documentos",
     "notes": "Notas",
     "clickToStart": "¡Haz clic en cualquier FAQ para comenzar!",
+    "contents": "Contenidos",
+    "back": "Atrás",
     "python": "Python",
     "git": "Git",
-    "misc": "Misc."
+    "misc": "Misc.",
+    "pythonTopics": {
+      "executingCommands": "Ejecutar Comandos",
+      "jinjaUsage": "Uso de Jinja",
+      "multiprocessing": "Multiprocesamiento",
+      "accessControl": "Control de Acceso Python",
+      "databaseConnect": "Conexión Base de Datos Python",
+      "logger": "Logger Python",
+      "sendEmail": "Enviar Email",
+      "sshDevice": "Dispositivo SSH"
+    },
+    "gitTopics": {
+      "gitInfo": "Información Git",
+      "githubInformation": "Información de Github",
+      "intro": "Introducción",
+      "introText": "Git es una herramienta increíblemente útil que se utiliza para el control de versiones. Es un estándar y es comúnmente utilizado por desarrolladores web para realizar un seguimiento de los cambios realizados en un proyecto. El repositorio tiene dos áreas: staging, working:",
+      "workingArea": "área de trabajo - este es tu directorio local donde los archivos están siendo cambiados y probados",
+      "stagingArea": "área de staging - donde se mantienen los cambios, listos para ser enviados al repositorio",
+      "usefulCommands": "Comandos Útiles"
+    },
+    "miscTopics": {
+      "fontAwesome": "Iconos Font Awesome"
+    }
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutoriales",
@@ -106,6 +130,83 @@
     "codingChallenges": "Desafíos de Programación",
     "codingDescription": "Básicamente notas de algoritmos donde exploro la traducción \"en inglés\" del código. Sumérgete en enfoques de resolución de problemas y pensamiento algorítmico.",
     "viewChallenges": "Ver Desafíos →"
+  },
+  "lessons": {
+    "pythonTutorial": {
+      "title": "Tutorial de Python",
+      "subtitle": "Aprende los fundamentos de la programación en Python. Comienza desde el principio y avanza a través de cada lección.",
+      "introTitle": "Introducción",
+      "introText": "Publicaré aquí en su lugar porque es mucho más conveniente",
+      "lessonsTitle": "Lecciones",
+      "backToContents": "Volver a la Tabla de Contenidos",
+      "nextLesson": "Siguiente Lección:",
+      "lesson0": {
+        "title": "Introducción",
+        "description": "Comienza con esta serie de tutoriales de Python",
+        "link": "Empezar Aquí →",
+        "badge": "Introducción",
+        "subtitle": "Bienvenido a la serie de tutoriales de Python",
+        "content": "Publicaré aquí en su lugar porque es mucho más conveniente"
+      },
+      "lesson1": {
+        "title": "Configuración",
+        "description": "Instala Python y PyCharm en Windows o Mac",
+        "link": "Ver Lección →",
+        "badge": "Lección 1",
+        "subtitle": "Esta va a ser molesta.",
+        "windowsTitle": "Windows:",
+        "navTitle": "1: Configuración →"
+      },
+      "lesson2": {
+        "title": "¡Hola Mundo!",
+        "description": "Crea tu primer programa en Python",
+        "link": "Ver Lección →",
+        "badge": "Lección 2",
+        "subtitle": "Extremadamente corto pero recuerda, esto sigue siendo una introducción",
+        "createProjectTitle": "Crear proyecto",
+        "createProjectText": "Inicia PyCharm y crea un nuevo Proyecto y nómbralo PythonTutorial",
+        "createFileTitle": "¡Crear archivo y código!"
+      },
+      "lesson3": {
+        "title": "Condicionales",
+        "description": "Aprende declaraciones if/else y flujo de control",
+        "link": "Ver Lección →",
+        "badge": "Lección 3",
+        "subtitle": "Si esto es verdadero, entonces esto sucede/es verdadero.",
+        "smallIntroTitle": "Pequeña introducción",
+        "smallIntroText": "Los condicionales son una estructura de control. Las estructuras de control se utilizan para cambiar el flujo del código para ejecutar instrucciones.",
+        "ifElseTitle": "Las declaraciones if/else",
+        "ifExplanation": "La declaración if es una de las estructuras de control más simples. Asumiendo que condición es una condición válida, si la condición se evalúa como verdadera, entonces la instrucción se ejecuta. Si la condición se evalúa como falsa, la instrucción se omite y no se ejecuta (si la condición else no está especificada/presente)",
+        "elseExplanation": "La declaración else se usa con la declaración if. Else se usa para decirle al código qué hacer si la condición es Falsa.",
+        "examplesTitle": "Ejemplos"
+      },
+      "lesson4": {
+        "title": "Bucles",
+        "description": "Domina los bucles for y while",
+        "link": "Ver Lección →",
+        "badge": "Lección 4",
+        "subtitle": "Mientras la condición sea verdadera, sigue haciendo esto. (Esta puede ser larga)",
+        "smallIntroTitle": "Pequeña introducción",
+        "smallIntroText": "Las instrucciones en programación normalmente se ejecutan secuencialmente (en el orden en que están escritas). Sin embargo, hay veces donde un cierto bloque de código necesita ser ejecutado múltiples veces. En esta instancia, se requiere un bucle.",
+        "examplesTitle": "Ejemplos",
+        "forLoopTitle": "El bucle for"
+      }
+    },
+    "codingChallenges": {
+      "title": "Entendiendo \"Mi\" Manera",
+      "quote": "si no puedes explicarlo con tus propias palabras, realmente no lo sabes.",
+      "description": "Los siguientes están en categorías en lugar de número de \"lección\". También habrá una pequeña explicación/descripción para explicar el código/concepto.",
+      "trie": {
+        "title": "Trie",
+        "intro": "Los Tries son muy útiles y son útiles al implementar una función de autocorrección.",
+        "example1": "Por ejemplo, a la izquierda comenzamos sin ninguna letra. Pero luego nos ramificamos en las letras <b>t</b>, <b>A</b>, <b>i</b>. Concentrémonos en la <b>t</b> por ahora.",
+        "example2": "<b>t</b> se ramifica en <b>to</b> y <b>te</b>. <b>to</b> es su propia palabra (por lo que sabemos) así que eso es todo para esa palabra específica.",
+        "example3": "<b>te</b> se ramifica en <b>tea</b>, <b>ted</b>, <b>ten</b>",
+        "explanation1": "Entendamos eso un poco, por si acaso:",
+        "explanation2": "<b>te</b> se ramifica en esas palabras <i>(nodos hijos)</i> porque, por lo que sabemos, esas son las palabras que se pueden formular usando ese <b>te</b> <i>(nodo padre)</i>.",
+        "readMore": "Leer más"
+      }
+    }
   }
 }
 
