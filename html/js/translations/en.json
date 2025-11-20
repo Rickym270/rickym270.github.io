@@ -108,9 +108,7 @@
       "sshDevice": "SSH Device"
     },
     "gitTopics": {
-      "gitInfo": "Git Info"
-    },
-    "git": {
+      "gitInfo": "Git Info",
       "githubInformation": "Github Information",
       "intro": "Intro",
       "introText": "Git is an incredibly useful tool that is used for version control. It is a standard and is commonly used by web developers to keep track of changes made in a project. The repository has two areas: staging, working:",

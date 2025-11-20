@@ -108,9 +108,7 @@
       "sshDevice": "Dispositivo SSH"
     },
     "gitTopics": {
-      "gitInfo": "Información Git"
-    },
-    "git": {
+      "gitInfo": "Información Git",
       "githubInformation": "Información de Github",
       "intro": "Introducción",
       "introText": "Git es una herramienta increíblemente útil que se utiliza para el control de versiones. Es un estándar y es comúnmente utilizado por desarrolladores web para realizar un seguimiento de los cambios realizados en un proyecto. El repositorio tiene dos áreas: staging, working:",
