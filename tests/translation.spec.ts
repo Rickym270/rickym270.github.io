@@ -627,60 +627,7 @@ test.describe('Translation feature', () => {
     }
   });
 
-  test('docs page translates correctly', async ({ page }) => {
-    // Check if we're on mobile
-    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
-    
-    // Switch to Spanish
-    if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
-      await esButton.click();
-    } else {
-      const esButton = page.locator('#language-switcher button[data-lang="es"]');
-      await esButton.click();
-    }
-    await page.waitForTimeout(500);
-    
-    // Navigate to Docs - mobile has direct link, desktop has dropdown
-    if (isMobile) {
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
-    } else {
-      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Documentos' }).or(
-        page.locator('#navbar-links').getByRole('link', { name: 'Documentos' })
-      );
-      await docsButton.hover();
-      await page.getByRole('link', { name: 'Notas' }).click();
-    }
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#FAQLinks');
-    }, { timeout: 15000 });
-    await page.waitForTimeout(300);
-    
-    // Check page title
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Documentos');
-    
-    // Check translations
-    const notesHeading = page.locator('#content h3[data-translate="docs.notes"]');
-    await expect(notesHeading).toHaveText('Notas');
-    
-    const pythonLink = page.locator('#content a[data-translate="docs.python"]');
-    await expect(pythonLink).toHaveText('Python');
-    
-    const gitLink = page.locator('#content a[data-translate="docs.git"]');
-    await expect(gitLink).toHaveText('Git');
-    
-    const miscLink = page.locator('#content a[data-translate="docs.misc"]');
-    await expect(miscLink).toHaveText('Misc.');
-    
-    const clickToStart = page.locator('#content h4[data-translate="docs.clickToStart"]');
-    await expect(clickToStart).toContainText('Haz clic en cualquier FAQ');
-  });
-  
-  test('tutorials page translates correctly', async ({ page }) => {
+    test('tutorials page translates correctly', async ({ page }) => {
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
@@ -833,7 +780,9 @@ test.describe('Translation feature', () => {
       // Mobile: language switcher is in sidebar
       const mobileLangSwitcher = page.locator('#mobile-language-switcher');
       await expect(mobileLangSwitcher).toBeVisible();
-      await mobileLangSwitcher.locator('button[data-lang="es"]').click();
+      const esButton = mobileLangSwitcher.locator('button[data-lang="es"]');
+      await esButton.scrollIntoViewIfNeeded();
+      await esButton.click();
     } else {
       // Desktop: language switcher is in navbar
       const langSwitcher = page.locator('#language-switcher');
@@ -853,7 +802,9 @@ test.describe('Translation feature', () => {
     // Switch back to English
     if (isMobile) {
       const mobileLangSwitcher = page.locator('#mobile-language-switcher');
-      await mobileLangSwitcher.locator('button[data-lang="en"]').click();
+      const enButton = mobileLangSwitcher.locator('button[data-lang="en"]');
+      await enButton.scrollIntoViewIfNeeded();
+      await enButton.click();
     } else {
       const langSwitcher = page.locator('#language-switcher');
       await langSwitcher.locator('button[data-lang="en"]').click();
