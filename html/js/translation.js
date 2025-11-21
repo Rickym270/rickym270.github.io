@@ -175,6 +175,16 @@
                 document.title = this.t(titleKey);
             }
             
+            // Update element title attributes (tooltips) with data-translate-title
+            const tooltipElements = document.querySelectorAll('[data-translate-title]:not(html):not(head):not(title)');
+            tooltipElements.forEach(element => {
+                const titleKey = element.getAttribute('data-translate-title');
+                if (titleKey) {
+                    const translation = this.t(titleKey);
+                    element.setAttribute('title', translation);
+                }
+            });
+            
             this.isApplying = false;
         },
 
