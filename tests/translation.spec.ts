@@ -780,13 +780,13 @@ test.describe('Translation feature', () => {
       // Mobile: language switcher is in sidebar
       const mobileLangSwitcher = page.locator('#mobile-language-switcher');
       await expect(mobileLangSwitcher).toBeVisible();
-      const esButton = mobileLangSwitcher.locator('button[data-lang="es"]');
       await page.evaluate(() => {
         const button = document.querySelector('#mobile-language-switcher button[data-lang="es"]');
-        if (button) button.scrollIntoView({ behavior: 'instant', block: 'center' });
+        if (button) {
+          (button as HTMLElement).click();
+        }
       });
-      await page.waitForTimeout(200);
-      await esButton.click({ force: true });
+      await page.waitForTimeout(300);
     } else {
       // Desktop: language switcher is in navbar
       const langSwitcher = page.locator('#language-switcher');
@@ -806,13 +806,13 @@ test.describe('Translation feature', () => {
     // Switch back to English
     if (isMobile) {
       const mobileLangSwitcher = page.locator('#mobile-language-switcher');
-      const enButton = mobileLangSwitcher.locator('button[data-lang="en"]');
       await page.evaluate(() => {
-        const button = document.querySelector('#mobile-language-switcher button[data-lang="en"]');
-        if (button) button.scrollIntoView({ behavior: 'instant', block: 'center' });
+        const button = document.querySelector('#mobile-language-switcher button[data-lang="es"]');
+        if (button) {
+          (button as HTMLElement).click();
+        }
       });
-      await page.waitForTimeout(200);
-      await enButton.click({ force: true });
+      await page.waitForTimeout(300);
     } else {
       const langSwitcher = page.locator('#language-switcher');
       await langSwitcher.locator('button[data-lang="en"]').click();

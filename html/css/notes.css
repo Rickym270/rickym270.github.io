@@ -2,6 +2,7 @@
 
 /* Hero Section */
 .notes-hero {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
     color: white;
     padding: var(--spacing-xl) var(--spacing-lg);
     border-radius: var(--radius-lg);
