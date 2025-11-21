@@ -8,7 +8,6 @@
         <!-- <link rel="stylesheet" type="text/css" href="../css/style.css"> -->
         <link rel="stylesheet" type="text/css" href="/html/css/style.css">
         <link rel="stylesheet" type="text/css" href="/html/css/modern.css">
-        <link rel="stylesheet" type="text/css" href="/html/css/notes.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -26,49 +25,23 @@
                 $.ajaxSetup({
                     cache: false
                 });
-
-                // Handle category card clicks
-                $('.notes-card-button').on('click', function(e){
-                    e.preventDefault();
-                    var url = $(this).attr('data-url');
-                    var category = $(this).closest('.notes-category-card').attr('data-category');
-                    
-                    // Add active state to clicked card
-                    $('.notes-category-card').removeClass('active');
-                    $(this).closest('.notes-category-card').addClass('active');
-                    
-                    // Hide welcome message and show content
-                    $('.notes-welcome').fadeOut(200);
-                    
-                    if(url && url !== '#'){
-                        $('#FAQMain').fadeOut(200, function() {
-                            $(this).load(url, function() {
-                                // After loading, setup Back button handler
-                                setupBackButton();
-                                // Re-apply translations after content loads
-                                if (typeof window.TranslationManager !== 'undefined') {
-                                    window.TranslationManager.applyTranslations();
-                                }
-                                $(this).fadeIn(300);
-                            });
-                        });
-                    }
+                $('#FAQLinks div.list-group a').click(function(e){
+                    // handles switching what link is active
+                    $('#FAQLinks a').removeClass('active');
+                    $(this).addClass('active');
+                    e.preventDefault();       // Prevents default re-direct of the anchor tag
                 });
-
-                // Handle clicks within loaded content (for topic lists)
-                $(document).on('click', 'ol > li a', function(e){
+                $("div.list-group a").on('click',function(e){
                     e.preventDefault();
                     var attr = $(this).attr('href');
-                    if(attr && attr !== '#' && (typeof attr !== typeof undefined && attr !== false)){
-                        $('#FAQMain').fadeOut(200, function() {
-                            $(this).load(attr, function() {
-                                setupBackButton();
-                                // Re-apply translations after content loads
-                                if (typeof window.TranslationManager !== 'undefined') {
-                                    window.TranslationManager.applyTranslations();
-                                }
-                                $(this).fadeIn(300);
-                            });
+                    if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
+                        $('#FAQMain').load(attr, function() {
+                            // After loading, setup Back button handler
+                            setupBackButton();
+                            // Re-apply translations after content loads
+                            if (typeof window.TranslationManager !== 'undefined') {
+                                window.TranslationManager.applyTranslations();
+                            }
                         });
                     }
                 });
@@ -78,9 +51,9 @@
                     // Hide Back button on index pages (those with toc_list or toc_title)
                     var hasTocList = $('#FAQMain .toc_list').length > 0;
                     var hasTocTitle = $('#FAQMain .toc_title').length > 0;
-                    var hasWelcome = $('#FAQMain .notes-welcome').length > 0;
+                    var hasInitialMessage = $('#FAQMain h4:contains("Click any FAQ")').length > 0;
                     
-                    if (hasTocList || hasTocTitle || hasWelcome) {
+                    if (hasTocList || hasTocTitle || hasInitialMessage) {
                         $('#FAQMain #docsNavigatrior').hide();
                     } else {
                         // Show Back button on article pages
@@ -93,16 +66,13 @@
                         e.preventDefault();
                         var backUrl = $(this).attr('href');
                         if(backUrl && backUrl !== '#'){
-                            $('#FAQMain').fadeOut(200, function() {
-                                $(this).load(backUrl, function() {
-                                    // Re-setup Back button after loading index page
-                                    setupBackButton();
-                                    // Re-apply translations after content loads
-                                    if (typeof window.TranslationManager !== 'undefined') {
-                                        window.TranslationManager.applyTranslations();
-                                    }
-                                    $(this).fadeIn(300);
-                                });
+                            $('#FAQMain').load(backUrl, function() {
+                                // Re-setup Back button after loading index page
+                                setupBackButton();
+                                // Re-apply translations after content loads
+                                if (typeof window.TranslationManager !== 'undefined') {
+                                    window.TranslationManager.applyTranslations();
+                                }
                             });
                         }
                     });
@@ -110,138 +80,37 @@
                 
                 // Initial setup
                 setupBackButton();
-
-                // Add hover effects to cards
-                $('.notes-category-card').hover(
-                    function() {
-                        $(this).addClass('hover');
-                    },
-                    function() {
-                        $(this).removeClass('hover');
-                    }
-                );
             });
         </script>
     </head>
     <body>
         <div class="container" id="main">
-            <!-- Header Section -->
-            <div class="notes-header">
-                <div class="notes-hero">
-                    <div class="notes-hero-content">
-                        <h1 class="notes-title" data-translate="docs.notes">Notes</h1>
-                        <p class="notes-subtitle" data-translate="docs.notesSubtitle">Technical documentation and quick reference guides</p>
-                    </div>
-                    <div class="notes-hero-icon">
-                        📚
+            <div class="push3"></div>
+            <div class="row">
+                <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2 right-divider divider-height" id="FAQLinks">
+                    <h3 data-translate="docs.notes">Notes</h3>
+        
+                    <div class="push3"></div>
+                    <div class="list-group" id="FAQLinks">
+                         
+                        <a class="list-group-item list-group-item-action" href="../html/pages/FAQPages/Python/index.html" data-translate="docs.python">Python</a>
+
+                        <a class="list-group-item list-group-item-action" href="../html/pages/FAQPages/Git/index.html" data-translate="docs.git">Git</a>
+
+                        <a class="list-group-item list-group-item-action" href="../html/pages/FAQPages/Misc/index.html" data-translate="docs.misc">Misc.</a>
+                        
                     </div>
                 </div>
-            </div>
-
-            <!-- Notes Categories -->
-            <div class="notes-categories">
-                <div class="row">
-                    <!-- Python Category -->
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="notes-category-card" data-category="python">
-                            <div class="notes-card-header">
-                                <div class="notes-card-icon python-icon">
-                                    🐍
-                                </div>
-                                <h3 class="notes-card-title" data-translate="docs.python">Python</h3>
-                            </div>
-                            <div class="notes-card-body">
-                                <p class="notes-card-description" data-translate="docs.pythonDescription">
-                                    Scripts, automation, and development techniques
-                                </p>
-                                <div class="notes-card-stats">
-                                    <span class="notes-stat">
-                                        <span class="notes-stat-number">8</span>
-                                        <span class="notes-stat-label" data-translate="docs.articles">articles</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="notes-card-footer">
-                                <a href="#" class="notes-card-button" data-url="../html/pages/FAQPages/Python/index.html">
-                                    <span data-translate="docs.explore">Explore</span>
-                                    <span class="notes-button-arrow">→</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Git Category -->
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="notes-category-card" data-category="git">
-                            <div class="notes-card-header">
-                                <div class="notes-card-icon git-icon">
-                                    🔧
-                                </div>
-                                <h3 class="notes-card-title" data-translate="docs.git">Git</h3>
-                            </div>
-                            <div class="notes-card-body">
-                                <p class="notes-card-description" data-translate="docs.gitDescription">
-                                    Version control workflows and best practices
-                                </p>
-                                <div class="notes-card-stats">
-                                    <span class="notes-stat">
-                                        <span class="notes-stat-number">1</span>
-                                        <span class="notes-stat-label" data-translate="docs.articles">articles</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="notes-card-footer">
-                                <a href="#" class="notes-card-button" data-url="../html/pages/FAQPages/Git/index.html">
-                                    <span data-translate="docs.explore">Explore</span>
-                                    <span class="notes-button-arrow">→</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Misc Category -->
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="notes-category-card" data-category="misc">
-                            <div class="notes-card-header">
-                                <div class="notes-card-icon misc-icon">
-                                    ⚡
-                                </div>
-                                <h3 class="notes-card-title" data-translate="docs.misc">Misc.</h3>
-                            </div>
-                            <div class="notes-card-body">
-                                <p class="notes-card-description" data-translate="docs.miscDescription">
-                                    Tips, tricks, and miscellaneous technical notes
-                                </p>
-                                <div class="notes-card-stats">
-                                    <span class="notes-stat">
-                                        <span class="notes-stat-number">1</span>
-                                        <span class="notes-stat-label" data-translate="docs.articles">articles</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="notes-card-footer">
-                                <a href="#" class="notes-card-button" data-url="../html/pages/FAQPages/Misc/index.html">
-                                    <span data-translate="docs.explore">Explore</span>
-                                    <span class="notes-button-arrow">→</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Area -->
-            <div class="notes-content-area">
-                <div id="FAQMain" class="notes-main-content">
-                    <div class="notes-welcome">
-                        <div class="notes-welcome-icon">📖</div>
-                        <h4 class="notes-welcome-title" data-translate="docs.clickToStart">Click any category to get started!</h4>
-                        <p class="notes-welcome-subtitle" data-translate="docs.welcomeText">
-                            Browse through organized technical documentation and reference materials.
-                        </p>
+        
+                <div class="col-xs-8 col-sm-8 col-md-9 col-lg-10">
+                    <div class="container container-no-padding" id="FAQMain">
+                        <h4 data-translate="docs.clickToStart">Click any FAQ to get started!</h4>
+                        <div class="push2"></div>
+                        
                     </div>
                 </div>
             </div>
         </div>
+        <div class="push5"></div>
     </body>
 </html>

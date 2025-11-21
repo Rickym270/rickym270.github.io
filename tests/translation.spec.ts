@@ -19,7 +19,7 @@ test.describe('Translation feature', () => {
     if (isMobile) {
       // On mobile, language switcher is in sidebar - open it first
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       
       const languageSwitcher = page.locator('#mobile-language-switcher');
       await expect(languageSwitcher).toBeVisible();
@@ -95,7 +95,7 @@ test.describe('Translation feature', () => {
     if (isMobile) {
       // On mobile, open sidebar to access language switcher
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       
       const enButton = page.locator('#mobile-language-switcher button[data-lang="en"]');
       const isActive = await enButton.getAttribute('aria-pressed');
@@ -124,7 +124,7 @@ test.describe('Translation feature', () => {
     if (isMobile) {
       // On mobile, open sidebar to access language switcher
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
@@ -168,7 +168,7 @@ test.describe('Translation feature', () => {
     if (isMobile) {
       // On mobile, open sidebar to access language switcher
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       
       // Switch to Spanish first
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
@@ -213,7 +213,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -287,7 +287,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -323,7 +323,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -373,7 +373,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
       await page.waitForTimeout(300);
@@ -422,7 +422,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -513,7 +513,7 @@ test.describe('Translation feature', () => {
     // Navigate to Contact page first - use navbar-links for desktop, mobile sidebar for mobile
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
@@ -535,7 +535,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish - handle mobile (sidebar might be closed after navigation)
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -575,7 +575,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -634,7 +634,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -655,7 +655,7 @@ test.describe('Translation feature', () => {
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('.notes-category-card');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#FAQLinks');
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
     
@@ -663,21 +663,21 @@ test.describe('Translation feature', () => {
     const pageTitle = await page.title();
     expect(pageTitle).toContain('Documentos');
     
-    // Check translations in the new card-based design
-    const notesTitle = page.locator('#content .notes-title[data-translate="docs.notes"]');
-    await expect(notesTitle).toHaveText('Notas');
+    // Check translations
+    const notesHeading = page.locator('#content h3[data-translate="docs.notes"]');
+    await expect(notesHeading).toHaveText('Notas');
     
-    const pythonCardTitle = page.locator('#content .notes-card-title[data-translate="docs.python"]');
-    await expect(pythonCardTitle).toHaveText('Python');
+    const pythonLink = page.locator('#content a[data-translate="docs.python"]');
+    await expect(pythonLink).toHaveText('Python');
     
-    const gitCardTitle = page.locator('#content .notes-card-title[data-translate="docs.git"]');
-    await expect(gitCardTitle).toHaveText('Git');
+    const gitLink = page.locator('#content a[data-translate="docs.git"]');
+    await expect(gitLink).toHaveText('Git');
     
-    const miscCardTitle = page.locator('#content .notes-card-title[data-translate="docs.misc"]');
-    await expect(miscCardTitle).toHaveText('Misc.');
+    const miscLink = page.locator('#content a[data-translate="docs.misc"]');
+    await expect(miscLink).toHaveText('Misc.');
     
-    const welcomeTitle = page.locator('#content .notes-welcome-title[data-translate="docs.clickToStart"]');
-    await expect(welcomeTitle).toContainText('Haz clic en cualquier categoría');
+    const clickToStart = page.locator('#content h4[data-translate="docs.clickToStart"]');
+    await expect(clickToStart).toContainText('Haz clic en cualquier FAQ');
   });
   
   test('tutorials page translates correctly', async ({ page }) => {
@@ -687,7 +687,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -739,7 +739,7 @@ test.describe('Translation feature', () => {
     // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await esButton.click();
     } else {
@@ -765,7 +765,7 @@ test.describe('Translation feature', () => {
     // Check that Spanish is still selected
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       const esButtonAfterReload = page.locator('#mobile-language-switcher button[data-lang="es"]');
       await expect(esButtonAfterReload).toBeVisible({ timeout: 5000 });
       
