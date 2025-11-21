@@ -146,7 +146,7 @@ function renderProjectCard(project, containerId) {
     const privateClass = isPrivate ? 'project-card-private' : '';
     const privateIcon = isPrivate ? '<span class="private-repo-icon" title="" data-translate-title="projects.privateTooltip">🔒</span>' : '';
     const linkAttributes = isPrivate 
-        ? 'class="card-link mt-auto disabled" title="" data-translate-title="projects.privateTooltip"'
+        ? 'class="card-link mt-auto disabled private-repo-link" data-private="true" title="" data-translate-title="projects.privateTooltip"'
         : `href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer"`;
     const linkText = isPrivate ? 'projects.privateRepo' : 'projects.viewGitHub';
     
@@ -178,6 +178,24 @@ function renderProjectCard(project, containerId) {
             container.insertAdjacentHTML('beforeend', cardHtml);
         }
     }
+}
+
+/**
+ * Setup event handlers for private repository links
+ * Prevents any navigation or interaction with private repo links
+ */
+function setupPrivateRepoHandlers() {
+    // Use event delegation to handle dynamically added private repo links
+    document.addEventListener('click', function(e) {
+        // Check if the clicked element or its parent is a private repo link
+        const privateLink = e.target.closest('.private-repo-link, [data-private="true"]');
+        if (privateLink) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }, true); // Use capture phase to intercept before other handlers
 }
 
 /**
@@ -398,6 +416,8 @@ async function initProjects() {
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
+            // Setup private repository link handlers
+            setupPrivateRepoHandlers();
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
                 setTimeout(() => {

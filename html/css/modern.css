@@ -1586,18 +1586,24 @@ body #main a {
     cursor: help;
 }
 
-.card-link.disabled {
+.card-link.disabled,
+.private-repo-link {
     color: var(--color-text-tertiary) !important;
     cursor: not-allowed !important;
     pointer-events: none !important;
     text-decoration: none !important;
+    user-select: none !important;
 }
 
 .card-link.disabled:hover,
 .card-link.disabled:focus,
-.card-link.disabled:active {
+.card-link.disabled:active,
+.private-repo-link:hover,
+.private-repo-link:focus,
+.private-repo-link:active {
     color: var(--color-text-tertiary) !important;
     text-decoration: none !important;
+    cursor: not-allowed !important;
 }
 
 /* ============================================
