@@ -373,6 +373,51 @@ test.describe('Docs/Notes Page', () => {
     }
   });
 
+  test('notes CSS styling is properly applied', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Check that notes.css styles are applied
+    const heroSection = page.locator('.notes-hero');
+    await expect(heroSection).toBeVisible();
+    
+    // Check hero has gradient background
+    const heroBackground = await heroSection.evaluate((el) => {
+      return window.getComputedStyle(el).background;
+    });
+    expect(heroBackground).toContain('linear-gradient');
+    
+    // Check category cards have proper styling
+    const pythonCard = page.locator('.notes-category-card.python');
+    const cardBorderRadius = await pythonCard.evaluate((el) => {
+      return window.getComputedStyle(el).borderRadius;
+    });
+    expect(parseFloat(cardBorderRadius)).toBeGreaterThan(0);
+    
+    // Check card has transition property
+    const cardTransition = await pythonCard.evaluate((el) => {
+      return window.getComputedStyle(el).transition;
+    });
+    expect(cardTransition).toContain('all');
+  });
+
   test('dropdown menu stays visible on hover', async ({ page }) => {
     await page.goto('/');
     

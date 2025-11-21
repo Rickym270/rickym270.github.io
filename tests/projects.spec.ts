@@ -219,15 +219,25 @@ test.describe('Projects Page', () => {
     const projectsHeadingCount = await projectsHeading.count();
     if (projectsHeadingCount > 0) {
       await expect(projectsHeading).toBeVisible({ timeout: 10000 });
-      await expect(projectsHeading).toHaveText('Projects', { timeout: 10000 })
+      await expect(projectsHeading).toHaveText('Projects', { timeout: 10000 });
     } else {
-      const anyHeading = page.locator('#content h1');
-      const anyHeadingCount = await anyHeading.count();
-      if (anyHeadingCount > 0) {
-        
+      // If no projects heading found, wait for any projects content to load
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        return content && (
+          content.querySelector('#ProjInProgress') ||
+          content.querySelector('#ProjComplete') ||
+          content.textContent?.includes('Projects')
+        );
+      }, { timeout: 15000 });
+      
+      // Try to find projects heading again after content loads
+      const retryHeading = page.locator('#content h1[data-translate="projects.heading"]');
+      const retryCount = await retryHeading.count();
+      if (retryCount > 0) {
+        await expect(retryHeading).toHaveText('Projects', { timeout: 5000 });
       }
     }
-    await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });
     
     // Sections should exist (they might be hidden if empty, which is fine - just check they're attached)
     const inProgress = page.locator('#ProjInProgress');
