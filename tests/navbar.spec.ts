@@ -316,6 +316,60 @@ test.describe('Navbar', () => {
       await expect(homeBanner).toBeVisible({ timeout: 5000 });
     }
   });
+
+  test('mobile sidebar footer has organized settings structure', async ({ page }) => {
+    // Set mobile viewport
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    
+    // Wait for page to load
+    await page.waitForSelector('nav.navbar', { state: 'attached' });
+    
+    // Open mobile sidebar
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+    
+    // Check that footer structure exists
+    const footer = page.locator('.mobile-sidebar-footer');
+    await expect(footer).toBeVisible();
+    
+    // Check that settings container exists
+    const settings = page.locator('.mobile-sidebar-settings');
+    await expect(settings).toBeVisible();
+    
+    // Check that setting groups exist
+    const settingGroups = page.locator('.mobile-setting-group');
+    await expect(settingGroups).toHaveCount(2);
+    
+    // Check language setting group
+    const languageGroup = settingGroups.first();
+    await expect(languageGroup.locator('.mobile-setting-label')).toHaveText('Language');
+    await expect(languageGroup.locator('#mobile-language-switcher')).toBeVisible();
+    await expect(languageGroup.locator('.mobile-lang-btn')).toHaveCount(2);
+    
+    // Check theme setting group
+    const themeGroup = settingGroups.last();
+    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Theme');
+    await expect(themeGroup.locator('#mobile-theme-toggle')).toBeVisible();
+    
+    // Verify controls are functional
+    const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
+    await esButton.click();
+    await page.waitForTimeout(300);
+    
+    // Language label should be translated
+    await expect(languageGroup.locator('.mobile-setting-label')).toHaveText('Idioma');
+    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Tema');
+    
+    // Theme toggle should work
+    const themeToggle = page.locator('#mobile-theme-toggle');
+    await themeToggle.click();
+    await page.waitForTimeout(300);
+    
+    // Verify theme changed (check data-theme attribute)
+    const themeAttr = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+    expect(themeAttr).toBeTruthy();
+  });
 });
 
 

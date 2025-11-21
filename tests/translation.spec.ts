@@ -46,6 +46,46 @@ test.describe('Translation feature', () => {
     }
   });
 
+  test('mobile sidebar setting labels are visible and translated', async ({ page }) => {
+    // Set mobile viewport
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    
+    // Wait for page to load
+    await page.waitForSelector('nav.navbar', { state: 'attached' });
+    
+    // Open mobile sidebar
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+    
+    // Check that setting labels are visible in English (default)
+    const languageLabel = page.locator('.mobile-setting-label[data-translate="settings.language"]');
+    const themeLabel = page.locator('.mobile-setting-label[data-translate="settings.theme"]');
+    
+    await expect(languageLabel).toBeVisible();
+    await expect(themeLabel).toBeVisible();
+    await expect(languageLabel).toHaveText('Language');
+    await expect(themeLabel).toHaveText('Theme');
+    
+    // Switch to Spanish
+    const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
+    await esButton.click();
+    await page.waitForTimeout(500);
+    
+    // Check that labels are translated to Spanish
+    await expect(languageLabel).toHaveText('Idioma');
+    await expect(themeLabel).toHaveText('Tema');
+    
+    // Switch back to English
+    const enButton = page.locator('#mobile-language-switcher button[data-lang="en"]');
+    await enButton.click();
+    await page.waitForTimeout(500);
+    
+    // Check that labels are back to English
+    await expect(languageLabel).toHaveText('Language');
+    await expect(themeLabel).toHaveText('Theme');
+  });
+
   test('default language is English', async ({ page }) => {
     await page.goto('/');
     
