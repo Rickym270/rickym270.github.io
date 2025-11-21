@@ -8,6 +8,10 @@
     "notes": "Notas",
     "tutorials": "Tutoriales"
   },
+  "settings": {
+    "language": "Idioma",
+    "theme": "Tema"
+  },
   "home": {
     "title": "Ricky Martinez - Inicio",
     "tagline": "No te repitas. Prueba con precisión.",
