@@ -799,5 +799,70 @@ test.describe('Translation feature', () => {
       await expect(homeLink).toHaveText('Inicio');
     }
   });
+
+  test('docs page translations work correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Test English content
+    await expect(page.locator('.notes-hero-title')).toContainText('Technical Documentation');
+    await expect(page.locator('.notes-category-card.python .notes-card-title')).toContainText('Python');
+    await expect(page.locator('.notes-category-card.git .notes-card-title')).toContainText('Git');
+    await expect(page.locator('.notes-category-card.misc .notes-card-title')).toContainText('Misc');
+    await expect(page.locator('.notes-welcome h4')).toContainText('Browse through organized');
+    
+    // Switch to Spanish
+    if (isMobile) {
+      // Mobile: language switcher is in sidebar
+      const mobileLangSwitcher = page.locator('#mobile-language-switcher');
+      await expect(mobileLangSwitcher).toBeVisible();
+      await mobileLangSwitcher.locator('button[data-lang="es"]').click();
+    } else {
+      // Desktop: language switcher is in navbar
+      const langSwitcher = page.locator('#language-switcher');
+      await expect(langSwitcher).toBeVisible();
+      await langSwitcher.locator('button[data-lang="es"]').click();
+    }
+    
+    await page.waitForTimeout(500);
+    
+    // Test Spanish content
+    await expect(page.locator('.notes-hero-title')).toContainText('Documentación Técnica');
+    await expect(page.locator('.notes-category-card.python .notes-card-title')).toContainText('Python');
+    await expect(page.locator('.notes-category-card.git .notes-card-title')).toContainText('Git');
+    await expect(page.locator('.notes-category-card.misc .notes-card-title')).toContainText('Misc');
+    await expect(page.locator('.notes-welcome h4')).toContainText('Navega por documentación');
+    
+    // Switch back to English
+    if (isMobile) {
+      const mobileLangSwitcher = page.locator('#mobile-language-switcher');
+      await mobileLangSwitcher.locator('button[data-lang="en"]').click();
+    } else {
+      const langSwitcher = page.locator('#language-switcher');
+      await langSwitcher.locator('button[data-lang="en"]').click();
+    }
+    
+    await page.waitForTimeout(500);
+    
+    // Verify back to English
+    await expect(page.locator('.notes-hero-title')).toContainText('Technical Documentation');
+  });
 });
 
