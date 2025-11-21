@@ -146,7 +146,7 @@ function renderProjectCard(project, containerId) {
     const privateClass = isPrivate ? 'project-card-private' : '';
     const privateIcon = isPrivate ? '<span class="private-repo-icon" title="" data-translate-title="projects.privateTooltip">🔒</span>' : '';
     const linkAttributes = isPrivate 
-        ? 'href="#" class="card-link mt-auto disabled" onclick="return false;" title="" data-translate-title="projects.privateTooltip"'
+        ? 'class="card-link mt-auto disabled" title="" data-translate-title="projects.privateTooltip"'
         : `href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer"`;
     const linkText = isPrivate ? 'projects.privateRepo' : 'projects.viewGitHub';
     

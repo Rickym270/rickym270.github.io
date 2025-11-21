@@ -1587,14 +1587,17 @@ body #main a {
 }
 
 .card-link.disabled {
-    color: var(--color-text-tertiary);
-    cursor: not-allowed;
-    pointer-events: none;
-    text-decoration: none;
+    color: var(--color-text-tertiary) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    text-decoration: none !important;
 }
 
-.card-link.disabled:hover {
-    color: var(--color-text-tertiary);
+.card-link.disabled:hover,
+.card-link.disabled:focus,
+.card-link.disabled:active {
+    color: var(--color-text-tertiary) !important;
+    text-decoration: none !important;
 }
 
 /* ============================================

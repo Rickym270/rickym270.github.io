@@ -88,7 +88,14 @@
     "messageNote": "Required - Max 2000 characters",
     "sendMessage": "Send Message",
     "success": "✓ Email sent successfully! Thank you for reaching out. I'll get back to you soon.",
-    "error": "Failed to send message. Please try again."
+    "error": "Failed to send message. Please try again.",
+    "errorRateLimit": "Please wait before submitting another message.",
+    "errorValidation": "Please fill in all required fields.",
+    "errorEmail": "Please enter a valid email address.",
+    "errorSpam": "Spam detected. Message not sent.",
+    "errorCaptcha": "CAPTCHA verification failed. Please try again.",
+    "errorTimeout": "Request timed out. Please check your connection and try again.",
+    "errorServer": "Server error occurred. Please try again later."
   },
   "docs": {
     "title": "Ricky Martinez - Docs",
