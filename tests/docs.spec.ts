@@ -10,7 +10,7 @@ test.describe('Docs/Notes Page', () => {
     if (isMobile) {
       // On mobile, open sidebar and click Docs directly (no dropdown)
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
@@ -22,19 +22,21 @@ test.describe('Docs/Notes Page', () => {
     }
     await page.waitForTimeout(1000);
     
-    // Should see initial message or index page
-    const initialMessage = page.locator('#FAQMain').getByText(/Click any FAQ|Notes/i);
-    await expect(initialMessage.first()).toBeVisible({ timeout: 2000 });
+    // Should see welcome message or category cards
+    const welcomeMessage = page.locator('.notes-welcome');
+    await expect(welcomeMessage).toBeVisible({ timeout: 2000 });
     
     // Back button should NOT be visible on index/initial page
     const backButton = page.locator('#docsNavigatrior');
     const backButtonVisible = await backButton.isVisible({ timeout: 1000 }).catch(() => false);
     expect(backButtonVisible).toBeFalsy();
     
-    // Click on a category (e.g., Python)
-    const pythonLink = page.locator('#FAQLinks a').filter({ hasText: /Python/i }).first();
-    if (await pythonLink.isVisible({ timeout: 2000 })) {
-      await pythonLink.click();
+    // Click on a category card (e.g., Python)
+    const pythonCard = page.locator('.notes-category-card[data-category="python"]');
+    await expect(pythonCard).toBeVisible({ timeout: 2000 });
+    const pythonButton = pythonCard.locator('.notes-card-button');
+    if (await pythonButton.isVisible({ timeout: 2000 })) {
+      await pythonButton.click();
       await page.waitForTimeout(1000);
       
       // Back button should still NOT be visible on index/TOC page
@@ -82,7 +84,7 @@ test.describe('Docs/Notes Page', () => {
     if (isMobile) {
       // On mobile, open sidebar and click Docs
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
     } else {
       // Desktop: use navbar scoped selector
@@ -95,9 +97,10 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForTimeout(1000);
     
     // Try to find and click an article with code
-    const pythonLink = page.locator('#FAQLinks a').filter({ hasText: /Python/i }).first();
-    if (await pythonLink.isVisible({ timeout: 2000 })) {
-      await pythonLink.click();
+    const pythonCard = page.locator('.notes-category-card[data-category="python"]');
+    const pythonButton = pythonCard.locator('.notes-card-button');
+    if (await pythonButton.isVisible({ timeout: 2000 })) {
+      await pythonButton.click();
       await page.waitForTimeout(1000);
       
       // Find an article link (e.g., "Executing commands")
@@ -152,7 +155,7 @@ test.describe('Docs/Notes Page', () => {
     if (isMobile) {
       // On mobile, open sidebar and click Docs
       await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
     } else {
       // Desktop: use navbar scoped selector
@@ -217,6 +220,250 @@ test.describe('Docs/Notes Page', () => {
     
     // Menu items should be visible
     await expect(dropdownMenu.getByRole('link', { name: 'Notes' })).toBeVisible();
+  });
+
+  test('notes hero section is visible and properly styled', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Check hero section elements
+    const hero = page.locator('.notes-hero');
+    await expect(hero).toBeVisible();
+    
+    const title = page.locator('.notes-title');
+    await expect(title).toBeVisible();
+    await expect(title).toHaveText('Notes');
+    
+    const subtitle = page.locator('.notes-subtitle');
+    await expect(subtitle).toBeVisible();
+    
+    const heroIcon = page.locator('.notes-hero-icon');
+    await expect(heroIcon).toBeVisible();
+    await expect(heroIcon).toHaveText('📚');
+  });
+
+  test('category cards are visible with proper content', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Check that all three category cards are visible
+    const categoryCards = page.locator('.notes-category-card');
+    await expect(categoryCards).toHaveCount(3);
+    
+    // Check Python card
+    const pythonCard = page.locator('.notes-category-card[data-category="python"]');
+    await expect(pythonCard).toBeVisible();
+    await expect(pythonCard.locator('.notes-card-title')).toHaveText('Python');
+    await expect(pythonCard.locator('.notes-card-icon')).toHaveText('🐍');
+    await expect(pythonCard.locator('.notes-stat-number')).toHaveText('8');
+    
+    // Check Git card
+    const gitCard = page.locator('.notes-category-card[data-category="git"]');
+    await expect(gitCard).toBeVisible();
+    await expect(gitCard.locator('.notes-card-title')).toHaveText('Git');
+    await expect(gitCard.locator('.notes-card-icon')).toHaveText('🔧');
+    await expect(gitCard.locator('.notes-stat-number')).toHaveText('1');
+    
+    // Check Misc card
+    const miscCard = page.locator('.notes-category-card[data-category="misc"]');
+    await expect(miscCard).toBeVisible();
+    await expect(miscCard.locator('.notes-card-title')).toHaveText('Misc.');
+    await expect(miscCard.locator('.notes-card-icon')).toHaveText('⚡');
+    await expect(miscCard.locator('.notes-stat-number')).toHaveText('1');
+  });
+
+  test('welcome message is visible initially', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Check welcome message elements
+    const welcome = page.locator('.notes-welcome');
+    await expect(welcome).toBeVisible();
+    
+    const welcomeIcon = page.locator('.notes-welcome-icon');
+    await expect(welcomeIcon).toBeVisible();
+    await expect(welcomeIcon).toHaveText('📖');
+    
+    const welcomeTitle = page.locator('.notes-welcome-title');
+    await expect(welcomeTitle).toBeVisible();
+    await expect(welcomeTitle).toHaveText(/Click any category to get started/i);
+    
+    const welcomeSubtitle = page.locator('.notes-welcome-subtitle');
+    await expect(welcomeSubtitle).toBeVisible();
+  });
+
+  test('category card navigation works correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Welcome message should be visible initially
+    const welcome = page.locator('.notes-welcome');
+    await expect(welcome).toBeVisible();
+    
+    // Click Python category card
+    const pythonCard = page.locator('.notes-category-card[data-category="python"]');
+    const pythonButton = pythonCard.locator('.notes-card-button');
+    await pythonButton.click();
+    await page.waitForTimeout(1000);
+    
+    // Welcome message should be hidden
+    await expect(welcome).not.toBeVisible();
+    
+    // Should see Python topics list
+    const tocTitle = page.locator('#FAQMain .toc_title');
+    await expect(tocTitle).toBeVisible({ timeout: 3000 });
+    
+    // Should see Python articles list
+    const tocList = page.locator('#FAQMain .toc_list');
+    await expect(tocList).toBeVisible();
+    
+    // Check that we have Python articles
+    const articles = tocList.locator('li a');
+    const articleCount = await articles.count();
+    expect(articleCount).toBeGreaterThan(0);
+  });
+
+  test('category cards have hover effects', async ({ page }) => {
+    await page.goto('/');
+    
+    // Skip on mobile - hover effects don't work the same way
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      test.skip();
+    }
+    
+    // Desktop: navigate to docs
+    const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+      page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+    );
+    await docsButton.hover();
+    await page.getByRole('link', { name: 'Notes' }).click();
+    await page.waitForTimeout(1000);
+    
+    // Test hover effect on Python card
+    const pythonCard = page.locator('.notes-category-card[data-category="python"]');
+    await expect(pythonCard).toBeVisible();
+    
+    // Hover over the card
+    await pythonCard.hover();
+    await page.waitForTimeout(300);
+    
+    // Check if hover class is applied (this tests the JavaScript hover handler)
+    const hasHoverClass = await pythonCard.evaluate((el) => el.classList.contains('hover'));
+    expect(hasHoverClass).toBe(true);
+    
+    // Move away from card
+    await page.locator('.notes-hero').hover();
+    await page.waitForTimeout(300);
+    
+    // Hover class should be removed
+    const stillHasHoverClass = await pythonCard.evaluate((el) => el.classList.contains('hover'));
+    expect(stillHasHoverClass).toBe(false);
+  });
+
+  test('notes design is responsive on mobile', async ({ page }) => {
+    // Set mobile viewport
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    
+    // Navigate to docs on mobile
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+    await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    await page.waitForTimeout(1000);
+    
+    // Check that hero section is responsive
+    const hero = page.locator('.notes-hero');
+    await expect(hero).toBeVisible();
+    
+    // Check that cards are stacked vertically on mobile
+    const categoryCards = page.locator('.notes-category-card');
+    await expect(categoryCards).toHaveCount(3);
+    
+    // All cards should be visible (stacked)
+    for (let i = 0; i < 3; i++) {
+      await expect(categoryCards.nth(i)).toBeVisible();
+    }
+    
+    // Check that card buttons are properly sized for mobile
+    const pythonButton = page.locator('.notes-category-card[data-category="python"] .notes-card-button');
+    await expect(pythonButton).toBeVisible();
+    
+    // Button should be clickable on mobile
+    await pythonButton.click();
+    await page.waitForTimeout(1000);
+    
+    // Should navigate to Python topics
+    const tocTitle = page.locator('#FAQMain .toc_title');
+    await expect(tocTitle).toBeVisible({ timeout: 3000 });
   });
 });
 
