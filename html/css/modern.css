@@ -1550,6 +1550,54 @@ body #main a {
 }
 
 /* ============================================
+   Private Repository Styles
+   ============================================ */
+.project-card-private {
+    opacity: 0.6;
+    filter: grayscale(0.3);
+    background-color: var(--color-bg-secondary);
+}
+
+.project-card-private:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.project-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.private-repo-icon {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    font-size: 1rem;
+    opacity: 0.7;
+    z-index: 1;
+    background-color: var(--color-bg-primary);
+    border-radius: 50%;
+    padding: var(--spacing-xs);
+    border: 1px solid var(--color-border);
+    cursor: help;
+}
+
+.card-link.disabled {
+    color: var(--color-text-tertiary);
+    cursor: not-allowed;
+    pointer-events: none;
+    text-decoration: none;
+}
+
+.card-link.disabled:hover {
+    color: var(--color-text-tertiary);
+}
+
+/* ============================================
    Hero Section
    ============================================ */
 .hero {

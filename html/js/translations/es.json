@@ -37,6 +37,8 @@
     "ideas": "Ideas",
     "pleaseWait": "Por favor espere...",
     "viewGitHub": "Ver en GitHub →",
+    "privateRepo": "Repositorio Privado",
+    "privateTooltip": "Este repositorio es privado y no es accesible públicamente",
     "descriptions": {
       "blue-manager": "Aplicación de mantenimiento de propiedades con OCR y backend de Supabase.",
       "personal-website": "Sitio personal para alojar notas, tutoriales y proyectos — originalmente construido como plataforma de enseñanza de Python.",
