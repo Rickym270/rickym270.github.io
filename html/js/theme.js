@@ -34,6 +34,12 @@
         if (themeIcon) {
             themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
         }
+        
+        // Update mobile theme icon
+        const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+        if (mobileThemeIcon) {
+            mobileThemeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
     }
     
     // Toggle theme
@@ -96,11 +102,21 @@
     // Use event delegation for the toggle button (works even if button is dynamically added)
     document.addEventListener('click', function(e) {
         const target = e.target;
-        // Check if click is on the button or its children (like the icon span)
+        // Check if click is on the desktop button or its children
         if (target && (
             target.id === 'theme-toggle' || 
             target.id === 'theme-icon' ||
             (target.parentElement && target.parentElement.id === 'theme-toggle')
+        )) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleTheme(e);
+        }
+        // Check if click is on the mobile button or its children
+        if (target && (
+            target.id === 'mobile-theme-toggle' || 
+            target.id === 'mobile-theme-icon' ||
+            (target.parentElement && target.parentElement.id === 'mobile-theme-toggle')
         )) {
             e.preventDefault();
             e.stopPropagation();

@@ -1745,6 +1745,7 @@ body #main a {
     left: 0;
     width: 280px;
     height: 100vh;
+    max-height: 100vh;
     background-color: var(--color-bg-primary);
     z-index: 1040;
     transform: translateX(-100%);
@@ -1753,6 +1754,7 @@ body #main a {
     flex-direction: column;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     padding-top: env(safe-area-inset-top);
+    overflow: hidden;
 }
 
 .mobile-sidebar.active {
@@ -1860,6 +1862,9 @@ body #main a {
     border-top: 1px solid var(--color-border);
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
     background-color: var(--color-bg-secondary);
+    display: block;
+    visibility: visible;
+    flex-shrink: 0;
 }
 
 .mobile-sidebar-divider {
@@ -1872,6 +1877,7 @@ body #main a {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    visibility: visible;
 }
 
 .mobile-setting-group {
@@ -1879,6 +1885,8 @@ body #main a {
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-sm);
+    visibility: visible;
+    min-height: 40px;
 }
 
 .mobile-setting-label {
