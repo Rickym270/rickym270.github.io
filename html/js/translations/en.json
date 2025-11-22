@@ -122,7 +122,30 @@
     },
     "miscTopics": {
       "fontAwesome": "Font Awesome Icons"
-    }
+    },
+    "notesHero": {
+      "title": "Technical Documentation",
+      "subtitle": "Browse through organized technical documentation and reference materials.",
+      "pythonCard": {
+        "title": "Python",
+        "description": "Scripts, automation, and development techniques",
+        "count": "8 articles",
+        "explore": "Explore"
+      },
+      "gitCard": {
+        "title": "Git",
+        "description": "Version control workflows and best practices",
+        "count": "2 articles",
+        "explore": "Explore"
+      },
+      "miscCard": {
+        "title": "Misc.",
+        "description": "Tips, tricks, and miscellaneous technical notes",
+        "count": "1 articles",
+        "explore": "Explore"
+      }
+    },
+    "welcomeText": "Browse through organized technical documentation and reference materials."
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutorials",
