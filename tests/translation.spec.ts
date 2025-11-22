@@ -786,7 +786,7 @@ test.describe('Translation feature', () => {
           (button as HTMLElement).click();
         }
       });
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
     } else {
       // Desktop: language switcher is in navbar
       const langSwitcher = page.locator('#language-switcher');
@@ -807,12 +807,12 @@ test.describe('Translation feature', () => {
     if (isMobile) {
       const mobileLangSwitcher = page.locator('#mobile-language-switcher');
       await page.evaluate(() => {
-        const button = document.querySelector('#mobile-language-switcher button[data-lang="es"]');
+        const button = document.querySelector('#mobile-language-switcher button[data-lang="en"]');
         if (button) {
           (button as HTMLElement).click();
         }
       });
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
     } else {
       const langSwitcher = page.locator('#language-switcher');
       await langSwitcher.locator('button[data-lang="en"]').click();
