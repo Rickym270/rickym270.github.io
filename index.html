@@ -185,10 +185,6 @@
                 
                 // Sync theme toggle
                 if (mobileThemeToggle && desktopThemeToggle) {
-                    mobileThemeToggle.addEventListener('click', function() {
-                        desktopThemeToggle.click();
-                    });
-                    
                     // Update mobile theme icon when theme changes
                     const mobileThemeIcon = document.getElementById('mobile-theme-icon');
                     const desktopThemeIcon = document.getElementById('theme-icon');
@@ -232,7 +228,19 @@
             
             // Language switcher event handlers
             $(document).ready(function() {
+                // Desktop language switcher
                 $(document).on('click', '#language-switcher button[data-lang]', function(e) {
+                    e.preventDefault();
+                    const lang = $(this).attr('data-lang');
+                    if (typeof window.TranslationManager !== 'undefined') {
+                        window.TranslationManager.switchLanguage(lang).then(() => {
+                            console.log('Language switched to:', lang);
+                        });
+                    }
+                });
+                
+                // Mobile language switcher
+                $(document).on('click', '#mobile-language-switcher button[data-lang]', function(e) {
                     e.preventDefault();
                     const lang = $(this).attr('data-lang');
                     if (typeof window.TranslationManager !== 'undefined') {
