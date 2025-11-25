@@ -87,18 +87,20 @@
                 const desktopThemeToggle = document.getElementById('theme-toggle');
                 
                 // Update sidebar height dynamically for Chrome iOS address bar
-                let lastKnownHeight = window.innerHeight;
+                let lastKnownHeight = 0;
                 let heightUpdateInterval = null;
                 
-                function updateSidebarHeight() {
+                function updateSidebarHeight(force = false) {
                     if (window.innerWidth <= 768 && mobileSidebar) {
                         const currentHeight = window.innerHeight;
                         // Use actual viewport height which updates as address bar shows/hides
                         // Also check visualViewport if available (better for mobile)
                         const viewportHeight = window.visualViewport ? window.visualViewport.height : currentHeight;
-                        const heightToUse = Math.max(currentHeight, viewportHeight);
+                        // Use the larger of the two, or screen.height as fallback for initial load
+                        const screenHeight = window.screen ? window.screen.height : currentHeight;
+                        const heightToUse = Math.max(currentHeight, viewportHeight, screenHeight * 0.9);
                         
-                        if (heightToUse !== lastKnownHeight) {
+                        if (force || heightToUse !== lastKnownHeight) {
                             mobileSidebar.style.height = heightToUse + 'px';
                             mobileSidebar.style.maxHeight = heightToUse + 'px';
                             lastKnownHeight = heightToUse;
@@ -107,28 +109,46 @@
                 }
                 
                 // Update on resize and orientation change
-                window.addEventListener('resize', updateSidebarHeight);
+                window.addEventListener('resize', function() {
+                    updateSidebarHeight(true);
+                });
                 window.addEventListener('orientationchange', function() {
-                    setTimeout(updateSidebarHeight, 100); // Small delay for orientation to complete
+                    setTimeout(function() { updateSidebarHeight(true); }, 100);
                 });
                 
                 // Use visualViewport API if available (better for mobile address bar detection)
                 if (window.visualViewport) {
-                    window.visualViewport.addEventListener('resize', updateSidebarHeight);
-                    window.visualViewport.addEventListener('scroll', updateSidebarHeight);
+                    window.visualViewport.addEventListener('resize', function() {
+                        updateSidebarHeight(true);
+                    });
+                    window.visualViewport.addEventListener('scroll', function() {
+                        updateSidebarHeight(true);
+                    });
                 }
                 
                 // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
-                    updateSidebarHeight();
+                    // Update height BEFORE showing sidebar to ensure correct initial size
+                    updateSidebarHeight(true);
+                    
+                    // Force a reflow to ensure height is applied
+                    if (mobileSidebar) {
+                        mobileSidebar.offsetHeight; // Trigger reflow
+                    }
+                    
                     mobileSidebar.classList.add('active');
                     mobileNavOverlay.classList.add('active');
                     document.body.style.overflow = 'hidden';
                     
-                    // Update multiple times to catch address bar changes
-                    setTimeout(updateSidebarHeight, 50);
-                    setTimeout(updateSidebarHeight, 150);
-                    setTimeout(updateSidebarHeight, 300);
+                    // Update multiple times aggressively to catch address bar changes
+                    // Use requestAnimationFrame for smoother updates
+                    requestAnimationFrame(function() {
+                        updateSidebarHeight(true);
+                        setTimeout(function() { updateSidebarHeight(true); }, 50);
+                        setTimeout(function() { updateSidebarHeight(true); }, 150);
+                        setTimeout(function() { updateSidebarHeight(true); }, 300);
+                        setTimeout(function() { updateSidebarHeight(true); }, 500);
+                    });
                     
                     // Continuously check for height changes while sidebar is open
                     // This handles cases where address bar shows/hides after sidebar opens
@@ -137,7 +157,7 @@
                     }
                     heightUpdateInterval = setInterval(function() {
                         if (mobileSidebar && mobileSidebar.classList.contains('active')) {
-                            updateSidebarHeight();
+                            updateSidebarHeight(true);
                         } else {
                             clearInterval(heightUpdateInterval);
                             heightUpdateInterval = null;
@@ -157,8 +177,24 @@
                     }
                 }
                 
-                // Initial height update
-                updateSidebarHeight();
+                // Initial height update - wait a bit for viewport to settle
+                // This is important for Chrome iOS where address bar affects initial height
+                setTimeout(function() {
+                    updateSidebarHeight(true);
+                }, 100);
+                
+                // Also update after page load completes
+                if (document.readyState === 'complete') {
+                    setTimeout(function() {
+                        updateSidebarHeight(true);
+                    }, 300);
+                } else {
+                    window.addEventListener('load', function() {
+                        setTimeout(function() {
+                            updateSidebarHeight(true);
+                        }, 300);
+                    });
+                }
                 
                 if (mobileMenuToggle) {
                     mobileMenuToggle.addEventListener('click', openSidebar);
