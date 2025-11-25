@@ -9,7 +9,10 @@ if (typeof API_BASE_URL_FALLBACK === 'undefined') {
 }
 
 // Cache for project classification
-let projectClassification = null;
+// Check if already defined to prevent redeclaration errors in SPA navigation
+if (typeof projectClassification === 'undefined') {
+    var projectClassification = null;
+}
 
 /**
  * Load project classification from JSON file
@@ -344,7 +347,10 @@ function deduplicateProjects(projects) {
 }
 
 // Flag to prevent double initialization
-let projectsInitialized = false;
+// Check if already defined to prevent redeclaration errors in SPA navigation
+if (typeof projectsInitialized === 'undefined') {
+    var projectsInitialized = false;
+}
 // Make it accessible globally for SPA navigation
 window.projectsInitialized = false;
 // Provide a safe reset API so SPA can re-initialize when navigating back
