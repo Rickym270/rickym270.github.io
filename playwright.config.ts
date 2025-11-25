@@ -43,17 +43,6 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'] },
       testIgnore: /api.*\.spec\.ts/,
     },
-    {
-      name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'],
-        // Increased timeouts for WebKit due to slower rendering/translation timing
-        // WebKit is excluded from CI but available for local testing: npm test --project=webkit
-        actionTimeout: 30_000, // 30 seconds for actions (clicks, fills, etc.)
-        navigationTimeout: 60_000, // 60 seconds for navigation
-      },
-      testIgnore: /api.*\.spec\.ts/,
-    },
     // API tests (no browser needed)
     {
       name: 'api',
