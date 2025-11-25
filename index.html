@@ -90,15 +90,38 @@
                 let lastKnownHeight = 0;
                 let heightUpdateInterval = null;
                 
-                function updateSidebarHeight(force = false) {
+                function updateSidebarHeight(force = false, useFullHeight = false) {
                     if (window.innerWidth <= 768 && mobileSidebar) {
                         const currentHeight = window.innerHeight;
                         // Use actual viewport height which updates as address bar shows/hides
                         // Also check visualViewport if available (better for mobile)
                         const viewportHeight = window.visualViewport ? window.visualViewport.height : currentHeight;
-                        // Use the larger of the two, or screen.height as fallback for initial load
-                        const screenHeight = window.screen ? window.screen.height : currentHeight;
-                        const heightToUse = Math.max(currentHeight, viewportHeight, screenHeight * 0.9);
+                        
+                        let heightToUse;
+                        if (useFullHeight) {
+                            // For initial open when address bar might be visible, we need to estimate
+                            // the full available height. When address bar is visible, innerHeight is smaller.
+                            // We'll use screen.height minus a safe estimate for status bar/notch
+                            const screenHeight = window.screen ? window.screen.height : currentHeight;
+                            const outerHeight = window.outerHeight || currentHeight;
+                            
+                            // If innerHeight is significantly smaller than screen height, address bar is likely visible
+                            // In that case, use screen height minus safe area insets
+                            const heightDiff = screenHeight - currentHeight;
+                            if (heightDiff > 50) {
+                                // Address bar is likely visible, use screen height minus safe areas
+                                // Get safe area insets from CSS if available, or estimate
+                                const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)')) || 0;
+                                const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)')) || 0;
+                                heightToUse = screenHeight - safeAreaTop - safeAreaBottom;
+                            } else {
+                                // Address bar is likely hidden, use current viewport
+                                heightToUse = Math.max(currentHeight, viewportHeight, outerHeight);
+                            }
+                        } else {
+                            // For updates while open, use dynamic viewport
+                            heightToUse = Math.max(currentHeight, viewportHeight);
+                        }
                         
                         if (force || heightToUse !== lastKnownHeight) {
                             mobileSidebar.style.height = heightToUse + 'px';
@@ -128,8 +151,9 @@
                 
                 // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
-                    // Update height BEFORE showing sidebar to ensure correct initial size
-                    updateSidebarHeight(true);
+                    // Update height BEFORE showing sidebar using full height for initial open
+                    // This ensures settings are visible even when address bar is showing
+                    updateSidebarHeight(true, true);
                     
                     // Force a reflow to ensure height is applied
                     if (mobileSidebar) {
@@ -141,13 +165,13 @@
                     document.body.style.overflow = 'hidden';
                     
                     // Update multiple times aggressively to catch address bar changes
-                    // Use requestAnimationFrame for smoother updates
+                    // First update uses full height, subsequent ones use dynamic height
                     requestAnimationFrame(function() {
-                        updateSidebarHeight(true);
-                        setTimeout(function() { updateSidebarHeight(true); }, 50);
-                        setTimeout(function() { updateSidebarHeight(true); }, 150);
-                        setTimeout(function() { updateSidebarHeight(true); }, 300);
-                        setTimeout(function() { updateSidebarHeight(true); }, 500);
+                        updateSidebarHeight(true, true); // Still use full height
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 50);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 150);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 300);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 500);
                     });
                     
                     // Continuously check for height changes while sidebar is open
