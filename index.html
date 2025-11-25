@@ -86,10 +86,29 @@
                 const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
                 const desktopThemeToggle = document.getElementById('theme-toggle');
                 
+                // Update sidebar height dynamically for Chrome iOS address bar
+                function updateSidebarHeight() {
+                    if (window.innerWidth <= 768 && mobileSidebar) {
+                        // Use actual viewport height which updates as address bar shows/hides
+                        mobileSidebar.style.height = window.innerHeight + 'px';
+                        mobileSidebar.style.maxHeight = window.innerHeight + 'px';
+                    }
+                }
+                
+                // Update on resize and orientation change
+                window.addEventListener('resize', updateSidebarHeight);
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(updateSidebarHeight, 100); // Small delay for orientation to complete
+                });
+                
+                // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
+                    updateSidebarHeight();
                     mobileSidebar.classList.add('active');
                     mobileNavOverlay.classList.add('active');
                     document.body.style.overflow = 'hidden';
+                    // Update again after a short delay to catch address bar changes
+                    setTimeout(updateSidebarHeight, 100);
                 }
                 
                 function closeSidebar() {
@@ -97,6 +116,9 @@
                     mobileNavOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
+                
+                // Initial height update
+                updateSidebarHeight();
                 
                 if (mobileMenuToggle) {
                     mobileMenuToggle.addEventListener('click', openSidebar);

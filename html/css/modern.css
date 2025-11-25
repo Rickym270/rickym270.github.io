@@ -1744,9 +1744,9 @@ body #main a {
     top: 0;
     left: 0;
     width: 280px;
-    height: 100dvh; /* Use dynamic viewport height for better mobile support */
-    height: 100vh; /* Fallback for browsers that don't support dvh */
-    max-height: 100dvh;
+    height: 100svh; /* Small viewport height - ensures sidebar fits when address bar is visible */
+    height: 100vh; /* Fallback for browsers that don't support svh */
+    max-height: 100svh;
     max-height: 100vh; /* Fallback */
     background-color: var(--color-bg-primary);
     z-index: 1040;
