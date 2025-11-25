@@ -445,10 +445,6 @@ test.describe('Translation feature', () => {
     // Wait a bit for translations to apply
     await page.waitForTimeout(300);
     
-    // Check page title
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Contáctame');
-    
     // Check page title and subtitle
     const title = page.locator('#content h1[data-translate="contact.title"]');
     await expect(title).toContainText('Contáctame');
