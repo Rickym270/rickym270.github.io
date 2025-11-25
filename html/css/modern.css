@@ -2027,14 +2027,14 @@ body #main a {
         padding-top: 0 !important;
     }
     
-    /* Add padding-top to section titles on mobile to match desktop spacing */
-    #content .section:first-child .section-title {
+    /* Add padding-top to sections on mobile to match desktop spacing */
+    #content .section:first-child {
         padding-top: var(--spacing-xl);
-        margin-top: var(--spacing-md);
+        margin-top: var(--spacing-lg);
     }
     
-    #content .section-title {
-        margin-top: var(--spacing-lg);
+    #content .section {
+        padding-top: var(--spacing-lg);
     }
     
     /* Ensure navbar container doesn't overflow */
