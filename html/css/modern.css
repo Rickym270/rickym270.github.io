@@ -1744,8 +1744,10 @@ body #main a {
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
-    max-height: 100vh;
+    height: 100dvh; /* Use dynamic viewport height for better mobile support */
+    height: 100vh; /* Fallback for browsers that don't support dvh */
+    max-height: 100dvh;
+    max-height: 100vh; /* Fallback */
     background-color: var(--color-bg-primary);
     z-index: 1040;
     transform: translateX(-100%);
@@ -1767,6 +1769,7 @@ body #main a {
     justify-content: space-between;
     padding: var(--spacing-lg);
     border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .mobile-sidebar-logo {
@@ -1821,6 +1824,8 @@ body #main a {
     flex: 1;
     padding: var(--spacing-md) 0;
     overflow-y: auto;
+    min-height: 0; /* Allow flex item to shrink below content size */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .mobile-nav-item {
@@ -1865,6 +1870,8 @@ body #main a {
     display: block;
     visibility: visible;
     flex-shrink: 0;
+    position: relative; /* Ensure it's in the normal flow */
+    z-index: 1; /* Keep footer above nav content when scrolling */
 }
 
 .mobile-sidebar-divider {
