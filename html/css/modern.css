@@ -164,14 +164,14 @@ a:hover {
     opacity: 0.8;
 }
 
-/* Links in hero section should be white (for dark background) */
+/* Links in hero section use theme colors */
 #homeBanner a,
 #homeBanner a:visited {
-    color: #ffffff !important;
+    color: var(--color-text-primary) !important;
 }
 
 #homeBanner a:hover {
-    color: #ffffff !important;
+    color: var(--color-accent) !important;
     opacity: 0.8;
 }
 
@@ -430,11 +430,12 @@ body[style*="background"] {
 #homeBanner {
     width: 100%;
     min-height: 70vh;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
+    transition: background var(--transition-base);
 }
 
 #homeBanner .container-fluid {
@@ -466,37 +467,40 @@ body[style*="background"] {
     display: block;
     font-size: 1.5rem;
     font-weight: 600;
-    color: #60a5fa;
+    color: var(--color-accent);
     letter-spacing: 0.05em;
     margin-bottom: var(--spacing-sm);
+    transition: color var(--transition-base);
 }
 
 .hero-name {
     display: block;
     font-size: 3.5rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--color-text-primary);
     letter-spacing: -0.02em;
     line-height: 1;
+    transition: color var(--transition-base);
 }
 
 .hero-description {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--color-text-secondary);
     margin-bottom: var(--spacing-2xl);
     max-width: 90%;
+    transition: color var(--transition-base);
 }
 
 .hero-buttons {
     display: flex;
     gap: var(--spacing-md);
     flex-wrap: wrap;
-    color: #ffffff;
+    color: var(--color-text-primary);
 }
 
 .btn-hero-primary {
-    background-color: #60a5fa;
+    background-color: var(--color-accent);
     color: #ffffff;
     border: none;
     padding: var(--spacing-md) var(--spacing-xl);
@@ -509,7 +513,7 @@ body[style*="background"] {
 }
 
 .btn-hero-primary:hover {
-    background-color: #3b82f6;
+    background-color: var(--color-accent-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
     color: #ffffff;
@@ -518,8 +522,8 @@ body[style*="background"] {
 
 .btn-hero-secondary {
     background-color: transparent;
-    color: #ffffff !important;
-    border: 2px solid #ffffff;
+    color: var(--color-text-primary) !important;
+    border: 2px solid var(--color-text-primary);
     padding: var(--spacing-md) var(--spacing-xl);
     border-radius: var(--radius-md);
     font-size: 1rem;
@@ -530,10 +534,10 @@ body[style*="background"] {
 }
 
 .btn-hero-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #ffffff;
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-text-primary);
     transform: translateY(-2px);
-    color: #ffffff !important;
+    color: var(--color-text-primary) !important;
     text-decoration: none;
 }
 
@@ -617,60 +621,9 @@ body[style*="background"] {
     }
 }
 
-/* Light mode adjustments */
+/* Light mode: Make hero background slightly darker for distinction */
 [data-theme="light"] #homeBanner {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-}
-
-/* Ensure hero text stays white/light in light mode since banner background is dark */
-[data-theme="light"] .hero-name {
-    color: #ffffff !important;
-}
-
-[data-theme="light"] .hero-title-accent {
-    color: #60a5fa !important;
-}
-
-[data-theme="light"] .hero-description {
-    color: rgba(255, 255, 255, 0.85) !important;
-}
-
-[data-theme="light"] .btn-hero-secondary {
-    color: #ffffff !important;
-    border-color: #ffffff !important;
-}
-
-[data-theme="light"] .btn-hero-secondary:hover {
-    color: #ffffff !important;
-    border-color: #ffffff !important;
-}
-
-@media (prefers-color-scheme: light) {
-    [data-theme="light"] #homeBanner {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-    }
-    
-    [data-theme="light"] .hero-name {
-        color: #ffffff !important;
-    }
-    
-    [data-theme="light"] .hero-title-accent {
-        color: #60a5fa !important;
-    }
-    
-    [data-theme="light"] .hero-description {
-        color: rgba(255, 255, 255, 0.85) !important;
-    }
-    
-    [data-theme="light"] .btn-hero-secondary {
-        color: #ffffff !important;
-        border-color: #ffffff !important;
-    }
-    
-    [data-theme="light"] .btn-hero-secondary:hover {
-        color: #ffffff !important;
-        border-color: #ffffff !important;
-    }
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
 }
 
 /* ============================================
@@ -1744,7 +1697,10 @@ body #main a {
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
+    height: 100svh; /* Small viewport height - ensures sidebar fits when address bar is visible */
+    height: 100vh; /* Fallback for browsers that don't support svh */
+    max-height: 100svh;
+    max-height: 100vh; /* Fallback */
     background-color: var(--color-bg-primary);
     z-index: 1040;
     transform: translateX(-100%);
@@ -1753,6 +1709,7 @@ body #main a {
     flex-direction: column;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     padding-top: env(safe-area-inset-top);
+    overflow: hidden;
 }
 
 .mobile-sidebar.active {
@@ -1765,6 +1722,7 @@ body #main a {
     justify-content: space-between;
     padding: var(--spacing-lg);
     border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .mobile-sidebar-logo {
@@ -1819,6 +1777,8 @@ body #main a {
     flex: 1;
     padding: var(--spacing-md) 0;
     overflow-y: auto;
+    min-height: 0; /* Allow flex item to shrink below content size */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .mobile-nav-item {
@@ -1858,8 +1818,22 @@ body #main a {
     margin-top: auto; /* Push to bottom */
     padding: var(--spacing-md) var(--spacing-lg);
     border-top: 1px solid var(--color-border);
-    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+    /* Add minimal padding for iOS safe area - ensure it's above the home indicator */
+    /* Reduced padding to bring settings closer to bottom when address bar is hidden */
+    padding-bottom: calc(var(--spacing-xs) + 5px);
     background-color: var(--color-bg-secondary);
+    display: block;
+    visibility: visible;
+    flex-shrink: 0;
+    position: relative; /* Ensure it's in the normal flow */
+    z-index: 1; /* Keep footer above nav content when scrolling */
+}
+
+/* Add safe area inset for newer iOS devices with home indicator */
+@supports (padding: env(safe-area-inset-bottom)) {
+    .mobile-sidebar-footer {
+        padding-bottom: calc(var(--spacing-xs) + 5px + env(safe-area-inset-bottom));
+    }
 }
 
 .mobile-sidebar-divider {
@@ -1872,6 +1846,7 @@ body #main a {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    visibility: visible;
 }
 
 .mobile-setting-group {
@@ -1879,6 +1854,8 @@ body #main a {
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-sm);
+    visibility: visible;
+    min-height: 40px;
 }
 
 .mobile-setting-label {
@@ -2001,6 +1978,16 @@ body #main a {
     #content #homeBanner {
         margin-top: 0 !important;
         padding-top: 0 !important;
+    }
+    
+    /* Add padding-top to sections on mobile to match desktop spacing */
+    #content .section:first-child {
+        padding-top: var(--spacing-xl);
+        margin-top: var(--spacing-lg);
+    }
+    
+    #content .section {
+        padding-top: var(--spacing-lg);
     }
     
     /* Ensure navbar container doesn't overflow */
