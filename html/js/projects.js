@@ -3,10 +3,16 @@
  */
 
 // API Base URL - fallback if api.js isn't loaded
-const API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+// Use var or check if already defined to prevent redeclaration errors in SPA navigation
+if (typeof API_BASE_URL_FALLBACK === 'undefined') {
+    var API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+}
 
 // Cache for project classification
-let projectClassification = null;
+// Check if already defined to prevent redeclaration errors in SPA navigation
+if (typeof projectClassification === 'undefined') {
+    var projectClassification = null;
+}
 
 /**
  * Load project classification from JSON file
@@ -372,7 +378,10 @@ function deduplicateProjects(projects) {
 }
 
 // Flag to prevent double initialization
-let projectsInitialized = false;
+// Check if already defined to prevent redeclaration errors in SPA navigation
+if (typeof projectsInitialized === 'undefined') {
+    var projectsInitialized = false;
+}
 // Make it accessible globally for SPA navigation
 window.projectsInitialized = false;
 // Provide a safe reset API so SPA can re-initialize when navigating back

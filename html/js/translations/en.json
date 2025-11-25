@@ -8,6 +8,10 @@
     "notes": "Notes",
     "tutorials": "Tutorials"
   },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme"
+  },
   "home": {
     "title": "Ricky Martinez - Home",
     "tagline": "Do Not Repeat Yourself. Test with precision.",

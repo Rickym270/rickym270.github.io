@@ -76,7 +76,8 @@
             });
             
             // Mobile sidebar toggle functionality
-            $(document).ready(function() {
+            // Use DOMContentLoaded for faster initialization (doesn't wait for images)
+            function initMobileSidebar() {
                 const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
                 const mobileSidebar = document.getElementById('mobile-sidebar');
                 const mobileSidebarClose = document.getElementById('mobile-sidebar-close');
@@ -86,42 +87,191 @@
                 const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
                 const desktopThemeToggle = document.getElementById('theme-toggle');
                 
+                // Debug: Log if elements are found
+                if (!mobileMenuToggle) {
+                    console.warn('[Mobile Sidebar] mobile-menu-toggle button not found');
+                }
+                if (!mobileSidebar) {
+                    console.warn('[Mobile Sidebar] mobile-sidebar not found');
+                }
+                
                 // Update sidebar height dynamically for Chrome iOS address bar
-                function updateSidebarHeight() {
+                let lastKnownHeight = 0;
+                let heightUpdateInterval = null;
+                
+                function updateSidebarHeight(force = false, useFullHeight = false) {
                     if (window.innerWidth <= 768 && mobileSidebar) {
+                        const currentHeight = window.innerHeight;
                         // Use actual viewport height which updates as address bar shows/hides
-                        mobileSidebar.style.height = window.innerHeight + 'px';
-                        mobileSidebar.style.maxHeight = window.innerHeight + 'px';
+                        // Also check visualViewport if available (better for mobile)
+                        const viewportHeight = window.visualViewport ? window.visualViewport.height : currentHeight;
+                        
+                        let heightToUse;
+                        if (useFullHeight) {
+                            // For initial open, check if address bar is visible
+                            const screenHeight = window.screen ? window.screen.height : currentHeight;
+                            const heightDiff = screenHeight - currentHeight;
+                            
+                            // If innerHeight is significantly smaller than screen height, address bar is likely visible
+                            if (heightDiff > 50) {
+                                // Address bar is visible - use screen height minus safe areas
+                                const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)')) || 0;
+                                const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)')) || 0;
+                                heightToUse = screenHeight - safeAreaTop - safeAreaBottom;
+                            } else {
+                                // Address bar is hidden - use current viewport height (which is larger)
+                                heightToUse = Math.max(currentHeight, viewportHeight);
+                            }
+                        } else {
+                            // For updates while open, always use current viewport height
+                            // This ensures it resizes when address bar shows/hides
+                            heightToUse = Math.max(currentHeight, viewportHeight);
+                        }
+                        
+                        if (force || heightToUse !== lastKnownHeight) {
+                            mobileSidebar.style.height = heightToUse + 'px';
+                            mobileSidebar.style.maxHeight = heightToUse + 'px';
+                            lastKnownHeight = heightToUse;
+                        }
                     }
                 }
                 
                 // Update on resize and orientation change
-                window.addEventListener('resize', updateSidebarHeight);
-                window.addEventListener('orientationchange', function() {
-                    setTimeout(updateSidebarHeight, 100); // Small delay for orientation to complete
+                window.addEventListener('resize', function() {
+                    updateSidebarHeight(true);
                 });
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(function() { updateSidebarHeight(true); }, 100);
+                });
+                
+                // Use visualViewport API if available (better for mobile address bar detection)
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', function() {
+                        updateSidebarHeight(true);
+                    });
+                    window.visualViewport.addEventListener('scroll', function() {
+                        updateSidebarHeight(true);
+                    });
+                }
                 
                 // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
-                    updateSidebarHeight();
+                    // Update height BEFORE showing sidebar using full height for initial open
+                    // This ensures settings are visible even when address bar is showing
+                    updateSidebarHeight(true, true);
+                    
+                    // Force a reflow to ensure height is applied
+                    if (mobileSidebar) {
+                        mobileSidebar.offsetHeight; // Trigger reflow
+                    }
+                    
                     mobileSidebar.classList.add('active');
                     mobileNavOverlay.classList.add('active');
+                    
+                    // Disable scrolling on body and html to prevent address bar from showing/hiding
                     document.body.style.overflow = 'hidden';
-                    // Update again after a short delay to catch address bar changes
-                    setTimeout(updateSidebarHeight, 100);
+                    document.body.style.position = 'fixed';
+                    document.body.style.width = '100%';
+                    document.documentElement.style.overflow = 'hidden';
+                    
+                    // Update multiple times aggressively to catch address bar changes
+                    // First update uses full height for initial open, then switch to dynamic height
+                    requestAnimationFrame(function() {
+                        updateSidebarHeight(true, true); // Use full height for initial open
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 50);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 150);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 300);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 500);
+                    });
+                    
+                    // Continuously check for height changes while sidebar is open
+                    // This handles cases where address bar shows/hides after sidebar opens
+                    // Always use dynamic height (false) for continuous updates
+                    if (heightUpdateInterval) {
+                        clearInterval(heightUpdateInterval);
+                    }
+                    heightUpdateInterval = setInterval(function() {
+                        if (mobileSidebar && mobileSidebar.classList.contains('active')) {
+                            // Always use current viewport height for continuous updates
+                            // This ensures sidebar resizes when address bar shows/hides
+                            updateSidebarHeight(true, false);
+                        } else {
+                            clearInterval(heightUpdateInterval);
+                            heightUpdateInterval = null;
+                        }
+                    }, 100); // Check every 100ms for more responsive updates
                 }
                 
                 function closeSidebar() {
                     mobileSidebar.classList.remove('active');
                     mobileNavOverlay.classList.remove('active');
+                    
+                    // Re-enable scrolling
                     document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    document.documentElement.style.overflow = '';
+                    
+                    // Stop checking for height changes when sidebar closes
+                    if (heightUpdateInterval) {
+                        clearInterval(heightUpdateInterval);
+                        heightUpdateInterval = null;
+                    }
+                }
+                
+                // Initial height update - wait a bit for viewport to settle
+                // This is important for Chrome iOS where address bar affects initial height
+                setTimeout(function() {
+                    updateSidebarHeight(true);
+                }, 100);
+                
+                // Also update after page load completes
+                if (document.readyState === 'complete') {
+                    setTimeout(function() {
+                        updateSidebarHeight(true);
+                    }, 300);
+                } else {
+                    window.addEventListener('load', function() {
+                        setTimeout(function() {
+                            updateSidebarHeight(true);
+                        }, 300);
+                    });
                 }
                 
                 // Initial height update
                 updateSidebarHeight();
                 
+                // Add event listeners for mobile menu toggle
+                // Use both click and touchstart for better iOS compatibility
                 if (mobileMenuToggle) {
-                    mobileMenuToggle.addEventListener('click', openSidebar);
+                    let touchHandled = false;
+                    
+                    // Handle touch events for iOS
+                    mobileMenuToggle.addEventListener('touchstart', function(e) {
+                        touchHandled = true;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openSidebar();
+                        // Reset flag after a short delay
+                        setTimeout(function() {
+                            touchHandled = false;
+                        }, 300);
+                    }, { passive: false });
+                    
+                    // Handle click events (fallback for non-touch devices)
+                    mobileMenuToggle.addEventListener('click', function(e) {
+                        // Only handle click if touch wasn't already handled
+                        if (!touchHandled) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openSidebar();
+                        }
+                    });
+                    
+                    // Ensure button is clickable on iOS
+                    mobileMenuToggle.style.cursor = 'pointer';
+                    mobileMenuToggle.style.webkitTapHighlightColor = 'transparent';
+                    mobileMenuToggle.style.pointerEvents = 'auto';
                 }
                 
                 if (mobileSidebarClose) {
@@ -207,10 +357,6 @@
                 
                 // Sync theme toggle
                 if (mobileThemeToggle && desktopThemeToggle) {
-                    mobileThemeToggle.addEventListener('click', function() {
-                        desktopThemeToggle.click();
-                    });
-                    
                     // Update mobile theme icon when theme changes
                     const mobileThemeIcon = document.getElementById('mobile-theme-icon');
                     const desktopThemeIcon = document.getElementById('theme-icon');
@@ -236,6 +382,24 @@
                         closeSidebar();
                     }
                 });
+            }
+            
+            // Initialize when DOM is ready (faster than jQuery ready)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMobileSidebar);
+            } else {
+                // DOM already loaded
+                initMobileSidebar();
+            }
+            
+            // Also use jQuery ready as fallback
+            $(document).ready(function() {
+                // Re-initialize if elements weren't found the first time
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                if (mobileMenuToggle && !mobileMenuToggle.hasAttribute('data-initialized')) {
+                    mobileMenuToggle.setAttribute('data-initialized', 'true');
+                    initMobileSidebar();
+                }
             });
         </script>
         <script type="text/javascript" src="html/js/SPAHack.js"></script>
@@ -245,6 +409,18 @@
         <script type="text/javascript" src="html/js/theme.js"></script>
         <script type="text/javascript" src="html/js/translation.js"></script>
         <script type="text/javascript">
+            // Global error handler for browser extension interference
+            // This error is harmless and caused by extensions (password managers, ad blockers, etc.)
+            window.addEventListener('unhandledrejection', function(event) {
+                const errorMessage = event.reason?.message || event.reason?.toString() || '';
+                if (errorMessage.includes('message channel') || 
+                    errorMessage.includes('Extension context invalidated') ||
+                    errorMessage.includes('asynchronous response')) {
+                    // Suppress browser extension errors - they're harmless
+                    event.preventDefault();
+                    return;
+                }
+            });
             // Prefetch projects data on page load so it's ready when user navigates to projects page
             (function() {
                 if (typeof prefetchProjects === 'function') {
@@ -254,7 +430,19 @@
             
             // Language switcher event handlers
             $(document).ready(function() {
+                // Desktop language switcher
                 $(document).on('click', '#language-switcher button[data-lang]', function(e) {
+                    e.preventDefault();
+                    const lang = $(this).attr('data-lang');
+                    if (typeof window.TranslationManager !== 'undefined') {
+                        window.TranslationManager.switchLanguage(lang).then(() => {
+                            console.log('Language switched to:', lang);
+                        });
+                    }
+                });
+                
+                // Mobile language switcher
+                $(document).on('click', '#mobile-language-switcher button[data-lang]', function(e) {
                     e.preventDefault();
                     const lang = $(this).attr('data-lang');
                     if (typeof window.TranslationManager !== 'undefined') {
@@ -308,14 +496,20 @@
             </nav>
             <div class="mobile-sidebar-footer">
                 <div class="mobile-sidebar-divider"></div>
-                <div class="mobile-sidebar-actions">
-                    <div class="mobile-language-switcher" id="mobile-language-switcher">
-                        <button type="button" class="mobile-lang-btn active" data-lang="en" aria-pressed="true">EN</button>
-                        <button type="button" class="mobile-lang-btn" data-lang="es" aria-pressed="false">ES</button>
+                <div class="mobile-sidebar-settings">
+                    <div class="mobile-setting-group">
+                        <span class="mobile-setting-label" data-translate="settings.language">Language</span>
+                        <div class="mobile-language-switcher" id="mobile-language-switcher">
+                            <button type="button" class="mobile-lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+                            <button type="button" class="mobile-lang-btn" data-lang="es" aria-pressed="false">ES</button>
+                        </div>
                     </div>
-                    <button class="mobile-theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
-                        <span class="mobile-theme-icon" id="mobile-theme-icon">🌙</span>
-                    </button>
+                    <div class="mobile-setting-group">
+                        <span class="mobile-setting-label" data-translate="settings.theme">Theme</span>
+                        <button class="mobile-theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
+                            <span class="mobile-theme-icon" id="mobile-theme-icon">🌙</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
