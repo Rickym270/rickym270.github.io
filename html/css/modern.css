@@ -1865,13 +1865,22 @@ body #main a {
     margin-top: auto; /* Push to bottom */
     padding: var(--spacing-md) var(--spacing-lg);
     border-top: 1px solid var(--color-border);
-    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+    /* Add extra padding for iOS safe area - ensure it's above the home indicator */
+    /* Base padding of 20px for backwards compatibility, safe-area-inset adds extra on newer iOS */
+    padding-bottom: calc(var(--spacing-md) + 20px);
     background-color: var(--color-bg-secondary);
     display: block;
     visibility: visible;
     flex-shrink: 0;
     position: relative; /* Ensure it's in the normal flow */
     z-index: 1; /* Keep footer above nav content when scrolling */
+}
+
+/* Add safe area inset for newer iOS devices with home indicator */
+@supports (padding: env(safe-area-inset-bottom)) {
+    .mobile-sidebar-footer {
+        padding-bottom: calc(var(--spacing-md) + 20px + env(safe-area-inset-bottom));
+    }
 }
 
 .mobile-sidebar-divider {
