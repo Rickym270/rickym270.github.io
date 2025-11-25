@@ -87,11 +87,22 @@
                 const desktopThemeToggle = document.getElementById('theme-toggle');
                 
                 // Update sidebar height dynamically for Chrome iOS address bar
+                let lastKnownHeight = window.innerHeight;
+                let heightUpdateInterval = null;
+                
                 function updateSidebarHeight() {
                     if (window.innerWidth <= 768 && mobileSidebar) {
+                        const currentHeight = window.innerHeight;
                         // Use actual viewport height which updates as address bar shows/hides
-                        mobileSidebar.style.height = window.innerHeight + 'px';
-                        mobileSidebar.style.maxHeight = window.innerHeight + 'px';
+                        // Also check visualViewport if available (better for mobile)
+                        const viewportHeight = window.visualViewport ? window.visualViewport.height : currentHeight;
+                        const heightToUse = Math.max(currentHeight, viewportHeight);
+                        
+                        if (heightToUse !== lastKnownHeight) {
+                            mobileSidebar.style.height = heightToUse + 'px';
+                            mobileSidebar.style.maxHeight = heightToUse + 'px';
+                            lastKnownHeight = heightToUse;
+                        }
                     }
                 }
                 
@@ -101,20 +112,49 @@
                     setTimeout(updateSidebarHeight, 100); // Small delay for orientation to complete
                 });
                 
+                // Use visualViewport API if available (better for mobile address bar detection)
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', updateSidebarHeight);
+                    window.visualViewport.addEventListener('scroll', updateSidebarHeight);
+                }
+                
                 // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
                     updateSidebarHeight();
                     mobileSidebar.classList.add('active');
                     mobileNavOverlay.classList.add('active');
                     document.body.style.overflow = 'hidden';
-                    // Update again after a short delay to catch address bar changes
-                    setTimeout(updateSidebarHeight, 100);
+                    
+                    // Update multiple times to catch address bar changes
+                    setTimeout(updateSidebarHeight, 50);
+                    setTimeout(updateSidebarHeight, 150);
+                    setTimeout(updateSidebarHeight, 300);
+                    
+                    // Continuously check for height changes while sidebar is open
+                    // This handles cases where address bar shows/hides after sidebar opens
+                    if (heightUpdateInterval) {
+                        clearInterval(heightUpdateInterval);
+                    }
+                    heightUpdateInterval = setInterval(function() {
+                        if (mobileSidebar && mobileSidebar.classList.contains('active')) {
+                            updateSidebarHeight();
+                        } else {
+                            clearInterval(heightUpdateInterval);
+                            heightUpdateInterval = null;
+                        }
+                    }, 200); // Check every 200ms while sidebar is open
                 }
                 
                 function closeSidebar() {
                     mobileSidebar.classList.remove('active');
                     mobileNavOverlay.classList.remove('active');
                     document.body.style.overflow = '';
+                    
+                    // Stop checking for height changes when sidebar closes
+                    if (heightUpdateInterval) {
+                        clearInterval(heightUpdateInterval);
+                        heightUpdateInterval = null;
+                    }
                 }
                 
                 // Initial height update
