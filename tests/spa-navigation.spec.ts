@@ -209,10 +209,13 @@ test.describe('SPA Navigation', () => {
       
       // Wait for heading to exist first, then check visibility
       try {
-        await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+        await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'visible' });
       } catch {
-        // Fallback for WebKit: wait for any h1
-        await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+        // Fallback for WebKit: wait for any h1 with Projects text
+        await page.waitForFunction(() => {
+          const heading = document.querySelector('#content h1') as HTMLElement | null;
+          return heading && heading.textContent?.includes('Projects') && heading.offsetParent !== null;
+        }, { timeout: 10000 });
       }
       await page.waitForTimeout(500);
       
