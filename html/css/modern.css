@@ -1801,7 +1801,10 @@ body #main a {
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
+    height: 100svh; /* Small viewport height - ensures sidebar fits when address bar is visible */
+    height: 100vh; /* Fallback for browsers that don't support svh */
+    max-height: 100svh;
+    max-height: 100vh; /* Fallback */
     background-color: var(--color-bg-primary);
     z-index: 1040;
     transform: translateX(-100%);
@@ -1810,6 +1813,7 @@ body #main a {
     flex-direction: column;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     padding-top: env(safe-area-inset-top);
+    overflow: hidden;
 }
 
 .mobile-sidebar.active {
@@ -1912,9 +1916,25 @@ body #main a {
 }
 
 .mobile-sidebar-footer {
+    margin-top: auto; /* Push to bottom */
     padding: var(--spacing-md) var(--spacing-lg);
     border-top: 1px solid var(--color-border);
-    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+    /* Add extra padding for iOS safe area - ensure it's above the home indicator */
+    /* Base padding of 20px for backwards compatibility, safe-area-inset adds extra on newer iOS */
+    padding-bottom: calc(var(--spacing-md) + 20px);
+    background-color: var(--color-bg-secondary);
+    display: block;
+    visibility: visible;
+    flex-shrink: 0;
+    position: relative; /* Ensure it's in the normal flow */
+    z-index: 1; /* Keep footer above nav content when scrolling */
+}
+
+/* Add safe area inset for newer iOS devices with home indicator */
+@supports (padding: env(safe-area-inset-bottom)) {
+    .mobile-sidebar-footer {
+        padding-bottom: calc(var(--spacing-md) + 20px + env(safe-area-inset-bottom));
+    }
 }
 
 .mobile-sidebar-divider {
