@@ -86,16 +86,148 @@
                 const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
                 const desktopThemeToggle = document.getElementById('theme-toggle');
                 
+                // Update sidebar height dynamically for Chrome iOS address bar
+                let lastKnownHeight = 0;
+                let heightUpdateInterval = null;
+                
+                function updateSidebarHeight(force = false, useFullHeight = false) {
+                    if (window.innerWidth <= 768 && mobileSidebar) {
+                        const currentHeight = window.innerHeight;
+                        // Use actual viewport height which updates as address bar shows/hides
+                        // Also check visualViewport if available (better for mobile)
+                        const viewportHeight = window.visualViewport ? window.visualViewport.height : currentHeight;
+                        
+                        let heightToUse;
+                        if (useFullHeight) {
+                            // For initial open, check if address bar is visible
+                            const screenHeight = window.screen ? window.screen.height : currentHeight;
+                            const outerHeight = window.outerHeight || currentHeight;
+                            const heightDiff = screenHeight - currentHeight;
+                            
+                            // If innerHeight is significantly smaller than screen height, address bar is likely visible
+                            if (heightDiff > 50) {
+                                // Address bar is visible - use screen height minus safe areas
+                                const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)')) || 0;
+                                const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)')) || 0;
+                                heightToUse = screenHeight - safeAreaTop - safeAreaBottom;
+                            } else {
+                                // Address bar is hidden - use current viewport height (which is larger)
+                                heightToUse = Math.max(currentHeight, viewportHeight);
+                            }
+                        } else {
+                            // For updates while open, always use current viewport height
+                            // This ensures it resizes when address bar shows/hides
+                            heightToUse = Math.max(currentHeight, viewportHeight);
+                        }
+                        
+                        if (force || heightToUse !== lastKnownHeight) {
+                            mobileSidebar.style.height = heightToUse + 'px';
+                            mobileSidebar.style.maxHeight = heightToUse + 'px';
+                            lastKnownHeight = heightToUse;
+                        }
+                    }
+                }
+                
+                // Update on resize and orientation change
+                window.addEventListener('resize', function() {
+                    updateSidebarHeight(true);
+                });
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(function() { updateSidebarHeight(true); }, 100);
+                });
+                
+                // Use visualViewport API if available (better for mobile address bar detection)
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', function() {
+                        updateSidebarHeight(true);
+                    });
+                    window.visualViewport.addEventListener('scroll', function() {
+                        updateSidebarHeight(true);
+                    });
+                }
+                
+                // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
+                    // Update height BEFORE showing sidebar using full height for initial open
+                    // This ensures settings are visible even when address bar is showing
+                    updateSidebarHeight(true, true);
+                    
+                    // Force a reflow to ensure height is applied
+                    if (mobileSidebar) {
+                        mobileSidebar.offsetHeight; // Trigger reflow
+                    }
+                    
                     mobileSidebar.classList.add('active');
                     mobileNavOverlay.classList.add('active');
+                    
+                    // Disable scrolling on body and html to prevent address bar from showing/hiding
                     document.body.style.overflow = 'hidden';
+                    document.body.style.position = 'fixed';
+                    document.body.style.width = '100%';
+                    document.documentElement.style.overflow = 'hidden';
+                    
+                    // Update multiple times aggressively to catch address bar changes
+                    // First update uses full height for initial open, then switch to dynamic height
+                    requestAnimationFrame(function() {
+                        updateSidebarHeight(true, true); // Use full height for initial open
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 50);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 150);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 300);
+                        setTimeout(function() { updateSidebarHeight(true, false); }, 500);
+                    });
+                    
+                    // Continuously check for height changes while sidebar is open
+                    // This handles cases where address bar shows/hides after sidebar opens
+                    // Always use dynamic height (false) for continuous updates
+                    if (heightUpdateInterval) {
+                        clearInterval(heightUpdateInterval);
+                    }
+                    heightUpdateInterval = setInterval(function() {
+                        if (mobileSidebar && mobileSidebar.classList.contains('active')) {
+                            // Always use current viewport height for continuous updates
+                            // This ensures sidebar resizes when address bar shows/hides
+                            updateSidebarHeight(true, false);
+                        } else {
+                            clearInterval(heightUpdateInterval);
+                            heightUpdateInterval = null;
+                        }
+                    }, 100); // Check every 100ms for more responsive updates
                 }
                 
                 function closeSidebar() {
                     mobileSidebar.classList.remove('active');
                     mobileNavOverlay.classList.remove('active');
+                    
+                    // Re-enable scrolling
                     document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    document.documentElement.style.overflow = '';
+                    
+                    // Stop checking for height changes when sidebar closes
+                    if (heightUpdateInterval) {
+                        clearInterval(heightUpdateInterval);
+                        heightUpdateInterval = null;
+                    }
+                }
+                
+                // Initial height update - wait a bit for viewport to settle
+                // This is important for Chrome iOS where address bar affects initial height
+                setTimeout(function() {
+                    updateSidebarHeight(true);
+                }, 100);
+                
+                // Also update after page load completes
+                if (document.readyState === 'complete') {
+                    setTimeout(function() {
+                        updateSidebarHeight(true);
+                    }, 300);
+                } else {
+                    window.addEventListener('load', function() {
+                        setTimeout(function() {
+                            updateSidebarHeight(true);
+                        }, 300);
+                    });
                 }
                 
                 if (mobileMenuToggle) {

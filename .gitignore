@@ -32,3 +32,11 @@ coverage/
 # Env files
 .env
 .env.*
+
+# IDE files
+.cursor/
+
+# Test output files
+test-results-local.txt
+test-summary.txt
+*test*.txt
