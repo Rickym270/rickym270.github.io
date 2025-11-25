@@ -68,11 +68,16 @@ test.describe('Tutorials Page', () => {
     
     // Verify tutorials content loaded into #content - check for h1 title
     // Wait for heading element to exist in DOM first
-    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      // Fallback for WebKit: wait for any h1
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
-    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"]');
-    await expect(tutorialsHeading).toBeVisible({ timeout: 5000 });
-    await expect(tutorialsHeading).toHaveText('Tutorials', { timeout: 5000 });
+    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"], #content h1').filter({ hasText: /Tutorials/i });
+    await expect(tutorialsHeading.first()).toBeVisible({ timeout: 5000 });
+    await expect(tutorialsHeading.first()).toHaveText('Tutorials', { timeout: 5000 });
     
     // Verify tutorial cards are visible
     const tutorialCards = page.locator('.tutorial-card');

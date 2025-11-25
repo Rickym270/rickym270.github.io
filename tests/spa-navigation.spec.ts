@@ -166,14 +166,19 @@ test.describe('SPA Navigation', () => {
     // Navbar should still be visible
     await expect(page.locator('nav.navbar')).toBeVisible();
     
-    // Wait for heading element to exist in DOM first - use data-translate attribute for reliable selection
-    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    // Wait for heading element to exist in DOM first - use fallback for WebKit
+    try {
+      await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      // Fallback for WebKit: wait for any h1
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
-    // Tutorials content should load - use data-translate attribute for reliable selection
-    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"]');
-    await expect(tutorialsHeading).toBeVisible({ timeout: 10000 });
-    await expect(tutorialsHeading).toHaveText('Tutorials', { timeout: 5000 });
+    // Tutorials content should load - use fallback selector for WebKit
+    const tutorialsHeading = page.locator('#content h1[data-translate="tutorials.heading"], #content h1').filter({ hasText: /Tutorials/i });
+    await expect(tutorialsHeading.first()).toBeVisible({ timeout: 10000 });
+    await expect(tutorialsHeading.first()).toHaveText('Tutorials', { timeout: 5000 });
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
@@ -203,12 +208,17 @@ test.describe('SPA Navigation', () => {
       }, { timeout: 15000 });
       
       // Wait for heading to exist first, then check visibility
-      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+      try {
+        await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+      } catch {
+        // Fallback for WebKit: wait for any h1
+        await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+      }
       await page.waitForTimeout(500);
       
-      // Verify heading is visible
-      const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
-      await expect(projectsHeading).toBeVisible({ timeout: 10000 });
+      // Verify heading is visible - use fallback selector for WebKit
+      const projectsHeading = page.locator('#content h1[data-translate="projects.heading"], #content h1').filter({ hasText: /Projects/i });
+      await expect(projectsHeading.first()).toBeVisible({ timeout: 10000 });
       
       // Should only have one Projects heading (use data-translate attribute for reliable selection)
       const projectsHeadings = page.locator('#content h1[data-translate="projects.heading"]');

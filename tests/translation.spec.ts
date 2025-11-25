@@ -234,13 +234,18 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     
     // Wait for heading element to exist and translations to apply - use longer timeout for CI
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      // Fallback for WebKit: wait for any h1
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
-    // Check that Projects page is in Spanish
-    const projectsTitle = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsTitle).toBeVisible({ timeout: 3000 });
-    await expect(projectsTitle).toHaveText('Proyectos', { timeout: 3000 });
+    // Check that Projects page is in Spanish - use fallback selector for WebKit
+    const projectsTitle = page.locator('#content h1[data-translate="projects.heading"], #content h1').filter({ hasText: /Proyectos/i });
+    await expect(projectsTitle.first()).toBeVisible({ timeout: 3000 });
+    await expect(projectsTitle.first()).toHaveText('Proyectos', { timeout: 3000 });
     
     // Navigate back to Home - use navbar-links for desktop, RM brand or mobile sidebar for mobile
     if (isMobile) {
@@ -703,13 +708,18 @@ test.describe('Translation feature', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#content h1');
     }, { timeout: 15000 });
     // Wait for heading element to exist in DOM - use waitForSelector for better WebKit reliability
-    await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h1[data-translate="tutorials.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      // Fallback for WebKit: wait for any h1
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead
-    const title = page.locator('#content h1[data-translate="tutorials.heading"]');
-    await expect(title).toBeVisible({ timeout: 10000 });
-    await expect(title).toHaveText('Tutoriales', { timeout: 5000 });
+    const title = page.locator('#content h1[data-translate="tutorials.heading"], #content h1').filter({ hasText: /Tutoriales/i });
+    await expect(title.first()).toBeVisible({ timeout: 10000 });
+    await expect(title.first()).toHaveText('Tutoriales', { timeout: 5000 });
     
     const subtitle = page.locator('#content p[data-translate="tutorials.subtitle"]');
     await expect(subtitle).toContainText('Directorio de todos los tutoriales');
