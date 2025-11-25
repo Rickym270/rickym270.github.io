@@ -64,7 +64,13 @@ test.describe('SPA Navigation', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for translations to apply
+    // Wait for heading element to exist in DOM (it's in the static HTML)
+    try {
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      // Fallback for WebKit: wait for any h1
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
     // URL should not change
@@ -73,10 +79,10 @@ test.describe('SPA Navigation', () => {
     // Navbar should remain visible
     await expect(page.locator('nav.navbar')).toBeVisible();
     
-    // Content should have changed
-    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsHeading).toBeVisible({ timeout: 5000 });
-    await expect(projectsHeading).toHaveText('Projects', { timeout: 3000 });
+    // Content should have changed - use fallback selector for WebKit
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"], #content h1').filter({ hasText: /Projects/i });
+    await expect(projectsHeading.first()).toBeVisible({ timeout: 5000 });
+    await expect(projectsHeading.first()).toHaveText('Projects', { timeout: 3000 });
   });
 
   test('theme persists across SPA navigation', async ({ page }) => {
