@@ -222,9 +222,10 @@
             // Global error handler for browser extension interference
             // This error is harmless and caused by extensions (password managers, ad blockers, etc.)
             window.addEventListener('unhandledrejection', function(event) {
-                if (event.reason && event.reason.message && 
-                    (event.reason.message.includes('message channel') || 
-                     event.reason.message.includes('Extension context invalidated'))) {
+                const errorMessage = event.reason?.message || event.reason?.toString() || '';
+                if (errorMessage.includes('message channel') || 
+                    errorMessage.includes('Extension context invalidated') ||
+                    errorMessage.includes('asynchronous response')) {
                     // Suppress browser extension errors - they're harmless
                     event.preventDefault();
                     return;
