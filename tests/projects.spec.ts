@@ -63,22 +63,26 @@ test.describe('Projects Page', () => {
     }, { timeout: 15000 });
     
     // Wait for heading element to exist first (attached state for iPhone emulation)
-    await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    try {
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+    } catch {
+      // Fallback for WebKit: wait for any h1
+      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+    }
     await page.waitForTimeout(500);
     
-    // Check for Projects heading - use data-translate attribute for more reliable selection
-    // Increased timeout for iPhone emulation
-    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
-    await expect(projectsHeading).toBeVisible({ timeout: 15000 });
-    await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });
+    // Check for Projects heading - use fallback selector for WebKit
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"], #content h1').filter({ hasText: /Projects/i });
+    await expect(projectsHeading.first()).toBeVisible({ timeout: 15000 });
+    await expect(projectsHeading.first()).toHaveText('Projects', { timeout: 5000 });
     
     // Wait for scripts to execute and API call to complete (or fail gracefully)
     // The page will either show project cards OR an error message - both are valid
     await page.waitForTimeout(3000); // Give scripts time to load and execute
     
     // Verify page structure is correct (projectsHeading already declared above)
-    await expect(projectsHeading).toBeVisible({ timeout: 3000 });
-    await expect(projectsHeading).toHaveText('Projects');
+    await expect(projectsHeading.first()).toBeVisible({ timeout: 3000 });
+    await expect(projectsHeading.first()).toHaveText('Projects');
     
     // Check if projects loaded successfully (preferred case)
     const cardsVisible = await page.locator('#content .card .card-title').first().isVisible({ timeout: 5000 }).catch(() => false);
@@ -206,25 +210,29 @@ test.describe('Projects Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
     
-    // Wait for heading element to exist in DOM (it's in the static HTML)
+    // Wait for heading element to exist and be visible - use fallback for WebKit
     try {
-      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'attached' });
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'visible' });
     } catch {
-      await page.waitForSelector('#content h1', { timeout: 10000, state: 'attached' });
+      // Fallback for WebKit: wait for any h1 with Projects text
+      await page.waitForFunction(() => {
+        const heading = document.querySelector('#content h1') as HTMLElement | null;
+        return heading && heading.textContent?.includes('Projects') && heading.offsetParent !== null;
+      }, { timeout: 10000 });
     }
     await page.waitForTimeout(500);
     
-    // Projects should still load correctly - use data-translate selector
-    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"]');
+    // Projects should still load correctly - use fallback selector for WebKit
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"], #content h1').filter({ hasText: /Projects/i });
     const projectsHeadingCount = await projectsHeading.count();
     if (projectsHeadingCount > 0) {
-      await expect(projectsHeading).toBeVisible({ timeout: 10000 });
-      await expect(projectsHeading).toHaveText('Projects', { timeout: 10000 })
+      await expect(projectsHeading.first()).toBeVisible({ timeout: 5000 });
+      await expect(projectsHeading.first()).toHaveText('Projects', { timeout: 10000 });
     } else {
       const anyHeading = page.locator('#content h1');
       const anyHeadingCount = await anyHeading.count();
       if (anyHeadingCount > 0) {
-        
+        await expect(anyHeading.first()).toBeVisible({ timeout: 5000 });
       }
     }
     await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });

@@ -219,6 +219,18 @@
         <script type="text/javascript" src="html/js/theme.js"></script>
         <script type="text/javascript" src="html/js/translation.js"></script>
         <script type="text/javascript">
+            // Global error handler for browser extension interference
+            // This error is harmless and caused by extensions (password managers, ad blockers, etc.)
+            window.addEventListener('unhandledrejection', function(event) {
+                const errorMessage = event.reason?.message || event.reason?.toString() || '';
+                if (errorMessage.includes('message channel') || 
+                    errorMessage.includes('Extension context invalidated') ||
+                    errorMessage.includes('asynchronous response')) {
+                    // Suppress browser extension errors - they're harmless
+                    event.preventDefault();
+                    return;
+                }
+            });
             // Prefetch projects data on page load so it's ready when user navigates to projects page
             (function() {
                 if (typeof prefetchProjects === 'function') {

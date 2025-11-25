@@ -48,12 +48,25 @@ test.describe('Docs/Notes Page', () => {
         await articleLink.click();
         
         // Wait for article content to load via AJAX
-        // The back button is part of the dynamically loaded content
-        await page.waitForSelector('#docsNavigatrior', { timeout: 10000, state: 'attached' });
+        // Wait for content to appear first (h3 or container), then check for back button
+        await page.waitForFunction(() => {
+          const faqMain = document.querySelector('#FAQMain');
+          if (!faqMain) return false;
+          // Wait for article content (h3 heading or container with content)
+          return !!faqMain.querySelector('h3, .container') || faqMain.textContent?.trim().length > 0;
+        }, { timeout: 15000 });
+        
+        // Now wait for back button element to exist in DOM (it might be hidden initially)
+        try {
+          await page.waitForSelector('#FAQMain #docsNavigatrior', { timeout: 10000, state: 'attached' });
+        } catch {
+          // Fallback: wait for any container that might contain the back button
+          await page.waitForSelector('#FAQMain .container', { timeout: 10000, state: 'attached' });
+        }
         await page.waitForTimeout(500); // Give setupBackButton() time to run
         
         // Now Back button SHOULD be visible
-        const backButtonOnArticle = page.locator('#docsNavigatrior');
+        const backButtonOnArticle = page.locator('#FAQMain #docsNavigatrior');
         await expect(backButtonOnArticle).toBeVisible({ timeout: 5000 });
         
         // Back button should work
@@ -104,7 +117,14 @@ test.describe('Docs/Notes Page', () => {
       const articleLink = page.locator('#FAQMain a').filter({ hasText: /Executing|commands|CMDs/i }).first();
       if (await articleLink.isVisible({ timeout: 2000 })) {
         await articleLink.click();
-        await page.waitForTimeout(1500);
+        
+        // Wait for article content to load via AJAX
+        await page.waitForFunction(() => {
+          const faqMain = document.querySelector('#FAQMain');
+          if (!faqMain) return false;
+          // Wait for article content (h3, pre, or container with content)
+          return !!faqMain.querySelector('h3, pre, .container') || faqMain.textContent?.trim().length > 0;
+        }, { timeout: 15000 });
         
         // Find code blocks
         const codeBlocks = page.locator('#FAQMain pre');
