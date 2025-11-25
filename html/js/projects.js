@@ -3,7 +3,10 @@
  */
 
 // API Base URL - fallback if api.js isn't loaded
-const API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+// Use var or check if already defined to prevent redeclaration errors in SPA navigation
+if (typeof API_BASE_URL_FALLBACK === 'undefined') {
+    var API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+}
 
 // Cache for project classification
 let projectClassification = null;
