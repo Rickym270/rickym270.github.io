@@ -117,7 +117,14 @@ test.describe('Docs/Notes Page', () => {
       const articleLink = page.locator('#FAQMain a').filter({ hasText: /Executing|commands|CMDs/i }).first();
       if (await articleLink.isVisible({ timeout: 2000 })) {
         await articleLink.click();
-        await page.waitForTimeout(1500);
+        
+        // Wait for article content to load via AJAX
+        await page.waitForFunction(() => {
+          const faqMain = document.querySelector('#FAQMain');
+          if (!faqMain) return false;
+          // Wait for article content (h3, pre, or container with content)
+          return !!faqMain.querySelector('h3, pre, .container') || faqMain.textContent?.trim().length > 0;
+        }, { timeout: 15000 });
         
         // Find code blocks
         const codeBlocks = page.locator('#FAQMain pre');
