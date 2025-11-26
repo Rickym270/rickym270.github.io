@@ -1,125 +1,80 @@
-/* Notes Page Specific Styles */
+/* Notes Page - Flat UI Design System */
 
-/* Hero Section */
+/* ============================================
+   Hero Section - Flat Design
+   ============================================ */
 .notes-hero {
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
-    color: white;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
     padding: var(--spacing-xl) var(--spacing-lg);
-    border-radius: var(--radius-lg);
     margin-bottom: var(--spacing-xl);
     text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.notes-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-    animation: float 20s ease-in-out infinite;
-    z-index: 1;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    border-bottom: 1px solid var(--color-border);
 }
 
 .notes-hero-content {
     position: relative;
-    z-index: 2;
+}
+
+.notes-hero-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-md);
+    display: block;
+    color: var(--color-text-primary);
 }
 
 .notes-hero-title {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 600;
     margin-bottom: var(--spacing-sm);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--color-text-primary);
 }
 
 .notes-hero-subtitle {
-    font-size: 1.125rem;
-    opacity: 0.9;
+    font-size: 1rem;
+    color: var(--color-text-secondary);
     margin-bottom: 0;
     font-weight: 400;
 }
 
-.notes-hero-icon {
-    font-size: 3rem;
-    margin-bottom: var(--spacing-md);
-    display: block;
-}
-
-/* Category Grid */
+/* ============================================
+   Category Grid - Flat Design
+   ============================================ */
 .notes-category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-xl);
 }
 
-/* Category Cards */
+/* ============================================
+   Category Cards - Flat UI
+   ============================================ */
 .notes-card {
-    background: var(--color-bg-secondary);
+    background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    border-radius: 0;
     padding: var(--spacing-lg);
     text-decoration: none;
     color: inherit;
-    transition: all var(--transition-base);
+    transition: border-color var(--transition-fast);
     position: relative;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-.notes-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    transition: all var(--transition-base);
-}
-
-.notes-card.python::before {
-    background: linear-gradient(90deg, #3776ab 0%, #ffd43b 100%);
-}
-
-.notes-card.git::before {
-    background: linear-gradient(90deg, #f05032 0%, #362d27 100%);
-}
-
-.notes-card.misc::before {
-    background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
-}
-
-.notes-card.notion::before {
-    background: linear-gradient(90deg, #000000 0%, #37352f 100%);
-}
-
 .notes-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--color-accent-light);
+    border-color: var(--color-accent);
     text-decoration: none;
     color: inherit;
 }
 
-.notes-card:hover::before {
-    height: 6px;
-}
-
 .notes-card-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
     margin-bottom: var(--spacing-md);
     display: block;
+    color: var(--color-text-primary);
 }
 
 .notes-card.python .notes-card-icon {
@@ -135,18 +90,18 @@
 }
 
 .notes-card.notion .notes-card-icon {
-    color: #000000;
+    color: var(--color-text-primary);
 }
 
 [data-theme="dark"] .notes-card.notion .notes-card-icon {
-    color: #ffffff;
+    color: var(--color-text-primary);
 }
 
 .notes-card-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    border-radius: var(--radius-lg);
     color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
 }
 
 .notes-card-description {
@@ -154,23 +109,26 @@
     margin-bottom: var(--spacing-md);
     flex-grow: 1;
     line-height: 1.6;
+    font-size: 0.9375rem;
 }
 
 .notes-card-count {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--color-text-tertiary);
     margin-bottom: var(--spacing-md);
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .notes-card-link {
     display: inline-block;
     color: var(--color-accent);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 0.9375rem;
     margin-top: auto;
-    transition: all var(--transition-base);
+    transition: color var(--transition-fast);
     padding: var(--spacing-xs) 0;
 }
 
@@ -178,7 +136,6 @@
 .notes-card-link:focus {
     color: var(--color-accent-hover);
     text-decoration: underline;
-    transform: translateX(4px);
 }
 
 .notes-card-link:active,
@@ -186,31 +143,31 @@
     color: var(--color-accent);
 }
 
-/* Notion Section Specific Styles */
+/* ============================================
+   Notion Section - Flat Design
+   ============================================ */
 .notes-notion-section {
     margin-top: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
 }
 
 .notes-card.notion {
-    opacity: 0.8;
+    opacity: 0.7;
     cursor: not-allowed;
 }
 
 .notes-card.notion:hover {
-    transform: none;
-    box-shadow: var(--shadow-sm);
     border-color: var(--color-border);
 }
 
 .notion-coming-soon {
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
-    color: white;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
     padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     display: inline-block;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: var(--spacing-md);
@@ -226,92 +183,283 @@
 .notion-disabled:hover {
     color: var(--color-text-tertiary) !important;
     text-decoration: none;
-    transform: none;
 }
 
-/* Back Button Styles - Flat UI, simple text link */
-.btn-back {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding: 0;
-    background: none;
+/* ============================================
+   Back Button & Breadcrumbs Container - New Design
+   ============================================ */
+#docsBackButton {
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
     border: none;
+}
+
+/* ============================================
+   Circular Back Button - New Design
+   ============================================ */
+.btn-back-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
     color: var(--color-text-primary);
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 0.9375rem;
-    transition: opacity var(--transition-fast);
     cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.btn-back-circle:hover,
+.btn-back-circle:focus {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    outline: none;
+}
+
+.btn-back-circle:active {
+    background: var(--color-bg-tertiary);
+    transform: scale(0.95);
+}
+
+.btn-back-circle svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+/* ============================================
+   Navigation Container - Flat UI
+   ============================================ */
+.docs-nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--spacing-md);
+    width: 100%;
+    min-width: 0;
+}
+
+#docsBackButton .container.docs-nav-container {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* ============================================
+   Breadcrumb Navigation - New Design
+   ============================================ */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    font-size: 0.875rem;
+    line-height: 1.5;
     font-family: var(--font-primary);
 }
 
-.btn-back:hover,
-.btn-back:focus {
-    background: none;
-    border: none;
-    color: var(--color-text-primary);
+.breadcrumb-nav-inline {
+    margin-left: auto;
+    flex-shrink: 1;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.breadcrumb-nav-inline .breadcrumb-item,
+.breadcrumb-nav-inline .breadcrumb-link {
+    flex-shrink: 0;
+}
+
+.breadcrumb-item {
+    color: var(--color-accent);
+    font-weight: 400;
+    display: inline-block;
+}
+
+.breadcrumb-item.breadcrumb-active {
+    color: var(--color-accent-hover);
+    font-weight: 600;
+}
+
+.breadcrumb-link {
+    color: var(--color-accent);
     text-decoration: none;
-    opacity: 0.7;
+    font-weight: 400;
+    display: inline-block;
+    transition: color var(--transition-fast);
 }
 
-.btn-back:active {
-    opacity: 0.5;
+.breadcrumb-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
 }
 
-.btn-back i {
-    font-size: 0.875rem;
-    margin-right: var(--spacing-xs);
-    transition: transform var(--transition-fast);
+.breadcrumb-separator {
+    color: var(--color-text-tertiary);
+    margin: 0 var(--spacing-xs);
+    font-weight: 300;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-back:hover i {
-    transform: translateX(-2px);
+.breadcrumb-separator svg {
+    width: 8px;
+    height: 8px;
+    display: block;
 }
 
-#docsBackButton {
-    padding: var(--spacing-md) 0;
-    margin-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: var(--spacing-md);
+/* Dark mode breadcrumbs */
+[data-theme="dark"] .breadcrumb-item {
+    color: var(--color-accent);
 }
 
-/* Ensure seamless integration in article pages */
-#content #docsBackButton {
-    margin-top: 0;
-    padding-top: var(--spacing-lg);
+[data-theme="dark"] .breadcrumb-item.breadcrumb-active {
+    color: var(--color-accent-hover);
 }
 
-/* Dark mode support */
-[data-theme="dark"] .btn-back,
-:root:not([data-theme="light"]) .btn-back {
+[data-theme="dark"] .breadcrumb-link {
+    color: var(--color-accent);
+}
+
+[data-theme="dark"] .breadcrumb-link:hover {
+    color: var(--color-accent-hover);
+}
+
+[data-theme="dark"] .breadcrumb-separator {
+    color: var(--color-text-tertiary);
+}
+
+[data-theme="dark"] .btn-back-circle {
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
     color: var(--color-text-primary);
 }
 
-[data-theme="dark"] .btn-back:hover,
-:root:not([data-theme="light"]) .btn-back:hover {
-    color: var(--color-text-primary);
-    opacity: 0.8;
+[data-theme="dark"] .btn-back-circle:hover {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
 }
 
-/* Welcome Message */
+[data-theme="dark"] #docsBackButton {
+    background: var(--color-bg-secondary);
+}
+
+/* Light mode specific */
+[data-theme="light"] .breadcrumb-item {
+    color: var(--color-accent);
+}
+
+[data-theme="light"] .breadcrumb-item.breadcrumb-active {
+    color: var(--color-accent-hover);
+}
+
+[data-theme="light"] .breadcrumb-link {
+    color: var(--color-accent);
+}
+
+[data-theme="light"] .breadcrumb-link:hover {
+    color: var(--color-accent-hover);
+}
+
+[data-theme="light"] .btn-back-circle {
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+}
+
+[data-theme="light"] .btn-back-circle:hover {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+[data-theme="light"] #docsBackButton {
+    background: var(--color-bg-secondary);
+}
+
+/* ============================================
+   Welcome Message - Flat UI
+   ============================================ */
 .notes-welcome {
     text-align: center;
     padding: var(--spacing-xl);
-    background: var(--color-bg-secondary);
-    border-radius: var(--radius-lg);
+    background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
     margin-bottom: var(--spacing-xl);
 }
 
 .notes-welcome h4 {
     color: var(--color-text-secondary);
-    font-size: 1.125rem;
+    font-size: 1rem;
     margin: 0;
-    font-weight: 500;
+    font-weight: 400;
 }
 
-/* Responsive Design */
+/* ============================================
+   Contents Section - Flat UI
+   ============================================ */
+.toc_title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+    text-align: left;
+}
+
+.toc_list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.toc_list li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+.toc_list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+}
+
+.toc_list a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+    padding: var(--spacing-xs) 0;
+    font-weight: 400;
+    transition: color var(--transition-fast);
+}
+
+.toc_list a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
 @media (max-width: 768px) {
     .notes-hero {
         padding: var(--spacing-lg) var(--spacing-md);
@@ -319,11 +467,11 @@
     }
     
     .notes-hero-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
     
     .notes-hero-subtitle {
-        font-size: 1rem;
+        font-size: 0.9375rem;
     }
     
     .notes-category-grid {
@@ -337,31 +485,142 @@
     }
     
     .notes-card-icon {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
     
     .notes-card-title {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
     }
     
     .notes-welcome {
         padding: var(--spacing-lg) var(--spacing-md);
         margin-bottom: var(--spacing-lg);
     }
+    
+    /* Category index pages - mobile */
+    #content #FAQMain,
+    #content #FAQMain > div {
+        padding-left: var(--spacing-md) !important;
+        padding-right: var(--spacing-md) !important;
+    }
+    
+    /* Table of contents on mobile */
+    #content #FAQMain .toc_title,
+    #FAQMain .toc_title {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: var(--spacing-md) !important;
+        margin-bottom: var(--spacing-md) !important;
+        width: 100% !important;
+        display: block !important;
+        text-align: left !important;
+        font-size: 1.125rem !important;
+    }
+    
+    #content #FAQMain .toc_list,
+    #FAQMain .toc_list {
+        padding-left: var(--spacing-md) !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .toc_list li {
+        padding-left: var(--spacing-md);
+    }
+    
+    .toc_list li::before {
+        left: 0;
+    }
+    
+    /* Back button container on mobile */
+    #content #docsBackButton,
+    #docsBackButton {
+        padding: var(--spacing-sm) var(--spacing-md) !important;
+        margin-left: var(--spacing-md) !important;
+        margin-right: var(--spacing-md) !important;
+    }
+    
+    #content #docsBackButton .container,
+    #docsBackButton .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Navigation container on mobile */
+    .docs-nav-container {
+        flex-wrap: nowrap !important;
+        gap: var(--spacing-sm) !important;
+    }
+    
+    .breadcrumb-nav-inline {
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
+        justify-content: flex-end;
+        font-size: 0.8125rem;
+    }
+    
+    .btn-back-circle {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .btn-back-circle svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    /* On very small screens, allow wrapping */
+    @media (max-width: 480px) {
+        .docs-nav-container {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        
+        .breadcrumb-nav-inline {
+            margin-left: 0 !important;
+            width: 100%;
+        }
+    }
 }
 
-/* Animation for fade transitions */
+/* ============================================
+   Content Alignment - Flat UI
+   ============================================ */
 .notes-content {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.notes-content #FAQMain,
+#content .notes-content #FAQMain {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: var(--spacing-lg) !important;
+    padding-right: var(--spacing-lg) !important;
+    float: none !important;
+    clear: both !important;
+}
+
+.container-no-padding {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.container-no-padding #FAQMain {
+    padding-left: var(--spacing-lg) !important;
+    padding-right: var(--spacing-lg) !important;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
