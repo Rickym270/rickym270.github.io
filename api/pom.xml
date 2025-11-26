@@ -57,12 +57,16 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- Notion API SDK -->
+        <!-- Notion API SDK - Commented out until proper dependency is available -->
+        <!-- The Notion integration is marked as "Coming Soon" and not yet implemented -->
+        <!-- When implementing, use a valid Maven dependency or add custom repository -->
+        <!--
         <dependency>
             <groupId>com.github.seratch</groupId>
             <artifactId>notion-sdk-java</artifactId>
             <version>1.4.0</version>
         </dependency>
+        -->
 
         <!-- Tests -->
         <dependency>
