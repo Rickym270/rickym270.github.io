@@ -98,9 +98,40 @@
     "clickToStart": "¡Haz clic en cualquier FAQ para comenzar!",
     "contents": "Contenidos",
     "back": "Atrás",
+    "backToCategories": "Volver a Categorías",
+    "welcomeText": "Navega por documentación técnica organizada y materiales de referencia.",
     "python": "Python",
     "git": "Git",
     "misc": "Misc.",
+    "notesHero": {
+      "title": "Documentación Técnica",
+      "subtitle": "Navega por documentación técnica organizada y materiales de referencia.",
+      "pythonCard": {
+        "title": "Python",
+        "description": "Scripts, automatización y técnicas de desarrollo",
+        "count": "8 artículos",
+        "viewMore": "Ver Más →"
+      },
+      "gitCard": {
+        "title": "Git",
+        "description": "Flujos de trabajo de control de versiones y mejores prácticas",
+        "count": "1 artículos",
+        "viewMore": "Ver Más →"
+      },
+      "miscCard": {
+        "title": "Misc.",
+        "description": "Consejos, trucos y notas técnicas diversas",
+        "count": "1 artículos",
+        "viewMore": "Ver Más →"
+      },
+      "notionCard": {
+        "title": "Notion",
+        "description": "Notas personales y documentación de Notion",
+        "count": "Próximamente",
+        "viewMore": "Ver Más →",
+        "comingSoon": "Próximamente"
+      }
+    },
     "pythonTopics": {
       "executingCommands": "Ejecutar Comandos",
       "jinjaUsage": "Uso de Jinja",
@@ -136,7 +167,7 @@
       "gitCard": {
         "title": "Git",
         "description": "Flujos de trabajo de control de versiones y mejores prácticas",
-        "count": "2 artículos",
+        "count": "1 artículo",
         "explore": "Explorar",
         "viewMore": "Ver Más"
       },
