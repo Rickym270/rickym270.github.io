@@ -135,7 +135,7 @@ test.describe('Docs/Notes Page', () => {
     await expect(page.locator('#FAQMain')).toContainText(/Python|Executing Commands|Jinja/i);
   });
 
-  test('Back button appears only on article pages, not on index pages', async ({ page }) => {
+  test('Back button and breadcrumbs appear on category and article pages', async ({ page }) => {
     await page.goto('/');
     
     // Check if we're on mobile (docs dropdown only exists on desktop)
@@ -157,7 +157,7 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForTimeout(1000);
     
     // Back button should NOT be visible on initial page
-    const backButton = page.locator('#docsNavigatrior');
+    const backButton = page.locator('#docsBackButton');
     const backButtonVisible = await backButton.isVisible({ timeout: 1000 }).catch(() => false);
     expect(backButtonVisible).toBeFalsy();
     
@@ -167,18 +167,24 @@ test.describe('Docs/Notes Page', () => {
       await pythonCard.click();
       await page.waitForTimeout(1000);
       
-      // Back button should still NOT be visible on index/TOC page
-      const backButtonAfterToc = page.locator('#docsNavigatrior');
-      const backButtonVisibleAfterToc = await backButtonAfterToc.isVisible({ timeout: 1000 }).catch(() => false);
-      expect(backButtonVisibleAfterToc).toBeFalsy();
+      // Back button SHOULD be visible on category index page
+      const backButtonAfterCategory = page.locator('#docsBackButton');
+      await expect(backButtonAfterCategory).toBeVisible({ timeout: 3000 });
+      
+      // Check for circular back button
+      const backBtn = page.locator('#docsBackBtn');
+      await expect(backBtn).toBeVisible();
+      
+      // Check for breadcrumbs
+      const breadcrumbs = page.locator('.breadcrumb-nav');
+      await expect(breadcrumbs).toBeVisible();
       
       // Click on an actual article
-      const articleLink = page.locator('#FAQMain a').first();
+      const articleLink = page.locator('#FAQMain a, .toc_list a').first();
       if (await articleLink.isVisible({ timeout: 2000 })) {
         await articleLink.click();
         
         // Wait for article content to load via AJAX
-        // Wait for content to appear first (h3 or container), then check for back button
         await page.waitForFunction(() => {
           const faqMain = document.querySelector('#FAQMain');
           if (!faqMain) return false;
@@ -186,37 +192,30 @@ test.describe('Docs/Notes Page', () => {
           return !!faqMain.querySelector('h3, .container') || faqMain.textContent?.trim().length > 0;
         }, { timeout: 15000 });
         
-        // Now wait for back button element to exist in DOM (it might be hidden initially)
-        try {
-          await page.waitForSelector('#FAQMain #docsNavigatrior', { timeout: 10000, state: 'attached' });
-        } catch {
-          // Fallback: wait for any container that might contain the back button
-          await page.waitForSelector('#FAQMain .container', { timeout: 10000, state: 'attached' });
-        }
         await page.waitForTimeout(500); // Give setupBackButton() time to run
         
-        // Now Back button SHOULD be visible
-        const backButtonOnArticle = page.locator('#FAQMain #docsNavigatrior');
+        // Back button SHOULD still be visible on article page
+        const backButtonOnArticle = page.locator('#docsBackButton');
         await expect(backButtonOnArticle).toBeVisible({ timeout: 5000 });
         
-        // Back button should work
-        const backLink = backButtonOnArticle.locator('a');
-        await expect(backLink).toBeVisible();
-        await expect(backLink).toHaveText(/Back/i);
+        // Breadcrumbs should show article name
+        const breadcrumbsOnArticle = page.locator('.breadcrumb-nav');
+        await expect(breadcrumbsOnArticle).toBeVisible();
         
-        // Click back
-        await backLink.click();
+        // Click back button
+        const backBtnOnArticle = page.locator('#docsBackBtn');
+        await expect(backBtnOnArticle).toBeVisible();
+        await backBtnOnArticle.click();
         await page.waitForTimeout(1000);
         
-        // Should return to index/TOC (Back button hidden again)
-        const backButtonAfterBack = page.locator('#docsNavigatrior');
-        const backButtonVisibleAfterBack = await backButtonAfterBack.isVisible({ timeout: 1000 }).catch(() => false);
-        expect(backButtonVisibleAfterBack).toBeFalsy();
+        // Should return to category index (Back button still visible)
+        const backButtonAfterBack = page.locator('#docsBackButton');
+        await expect(backButtonAfterBack).toBeVisible({ timeout: 3000 });
       }
     }
   });
 
-  test('hover effects work on desktop', async ({ page }) => {
+  test('hover effects work on desktop (flat UI)', async ({ page }) => {
     await page.goto('/');
     
     // Skip on mobile - hover effects don't apply
@@ -233,20 +232,25 @@ test.describe('Docs/Notes Page', () => {
     await page.getByRole('link', { name: 'Notes' }).click();
     await page.waitForTimeout(1000);
     
-    // Test hover effect on Python card
+    // Test hover effect on Python card (flat UI - border color change, no transform)
     const pythonCard = page.locator('.notes-category-card.python');
     await expect(pythonCard).toBeVisible();
+    
+    // Get initial border color
+    const initialBorderColor = await pythonCard.evaluate((el) => {
+      return window.getComputedStyle(el).borderColor;
+    });
     
     // Hover over the card
     await pythonCard.hover();
     await page.waitForTimeout(200);
     
-    // Card should have hover styles applied (transform, shadow, etc.)
-    const transform = await pythonCard.evaluate((el) => {
-      return window.getComputedStyle(el).transform;
+    // Card should have hover styles applied (border color change for flat UI)
+    const hoverBorderColor = await pythonCard.evaluate((el) => {
+      return window.getComputedStyle(el).borderColor;
     });
-    // Should have some transform applied (translateY)
-    expect(transform).not.toBe('none');
+    // Border color should change on hover (to accent color)
+    expect(hoverBorderColor).not.toBe(initialBorderColor);
   });
 
   test('responsive design works on mobile', async ({ page }) => {
@@ -414,40 +418,36 @@ test.describe('Docs/Notes Page', () => {
     }
     await page.waitForTimeout(1000);
     
-    // Check that notes.css styles are applied
+    // Check that notes.css styles are applied (flat UI)
     const heroSection = page.locator('.notes-hero');
     await expect(heroSection).toBeVisible();
     
-    // Check hero has gradient background
-
-    // tests/docs.spec.ts - Replace lines 401-405
-    // Add wait for CSS to be fully loaded and variables resolved
-    await page.waitForFunction(() => {
-      const hero = document.querySelector('.notes-hero');
-      if (!hero) return false;
-      const styles = window.getComputedStyle(hero);
-      const bg = styles.background || styles.backgroundImage;
-      return bg && bg !== 'none' && (bg.includes('gradient') || bg.includes('rgb'));
-    }, { timeout: 10000 });
-
-    // Then check for gradient OR resolved color values
+    // Check hero has flat background (no gradient in flat UI)
     const heroBackground = await heroSection.evaluate((el) => {
       const styles = window.getComputedStyle(el);
-      return styles.background || styles.backgroundImage;
+      return {
+        background: styles.background,
+        backgroundColor: styles.backgroundColor,
+        backgroundImage: styles.backgroundImage
+      };
     });
-    expect(heroBackground).toMatch(/linear-gradient|rgb\(/); // Accept either gradient or resolved RGB values    
-    // Check category cards have proper styling
+    // Flat UI: should have solid background color, no gradient
+    expect(heroBackground.backgroundImage).toBe('none');
+    expect(heroBackground.backgroundColor).toBeTruthy();
+    
+    // Check category cards have flat UI styling (border-radius: 0)
     const pythonCard = page.locator('.notes-category-card.python');
     const cardBorderRadius = await pythonCard.evaluate((el) => {
       return window.getComputedStyle(el).borderRadius;
     });
-    expect(parseFloat(cardBorderRadius)).toBeGreaterThan(0);
+    // Flat UI: border-radius should be 0
+    expect(parseFloat(cardBorderRadius)).toBe(0);
     
-    // Check card has transition property
+    // Check card has transition property for border color change
     const cardTransition = await pythonCard.evaluate((el) => {
       return window.getComputedStyle(el).transition;
     });
-    expect(cardTransition).toContain('0.2s');
+    expect(cardTransition).toContain('border-color');
   });
 
   test('dropdown menu stays visible on hover', async ({ page }) => {
@@ -482,5 +482,94 @@ test.describe('Docs/Notes Page', () => {
     
     // Menu items should be visible
     await expect(dropdownMenu.getByRole('link', { name: 'Notes' })).toBeVisible();
+  });
+
+  test('breadcrumbs navigation works correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Click on a category
+    const pythonCard = page.locator('.notes-category-card.python');
+    if (await pythonCard.isVisible({ timeout: 2000 })) {
+      await pythonCard.click();
+      await page.waitForTimeout(1000);
+      
+      // Check breadcrumbs appear
+      const breadcrumbs = page.locator('.breadcrumb-nav');
+      await expect(breadcrumbs).toBeVisible();
+      
+      // Should show "Docs > Python" (or similar)
+      const breadcrumbText = await breadcrumbs.textContent();
+      expect(breadcrumbText).toMatch(/Docs/i);
+      
+      // Click on an article
+      const articleLink = page.locator('#FAQMain a, .toc_list a').first();
+      if (await articleLink.isVisible({ timeout: 2000 })) {
+        await articleLink.click();
+        await page.waitForTimeout(1000);
+        
+        // Breadcrumbs should update to show article
+        const updatedBreadcrumbs = page.locator('.breadcrumb-nav');
+        await expect(updatedBreadcrumbs).toBeVisible();
+        const updatedText = await updatedBreadcrumbs.textContent();
+        expect(updatedText).toMatch(/Docs/i);
+      }
+    }
+  });
+
+  test('circular back button displays correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Click on a category
+    const pythonCard = page.locator('.notes-category-card.python');
+    if (await pythonCard.isVisible({ timeout: 2000 })) {
+      await pythonCard.click();
+      await page.waitForTimeout(1000);
+      
+      // Check for circular back button
+      const backButton = page.locator('#docsBackBtn');
+      await expect(backButton).toBeVisible();
+      
+      // Check it's circular (border-radius: 50%)
+      const borderRadius = await backButton.evaluate((el) => {
+        return window.getComputedStyle(el).borderRadius;
+      });
+      expect(borderRadius).toMatch(/50%/);
+      
+      // Check it has SVG icon
+      const svg = backButton.locator('svg');
+      await expect(svg).toBeVisible();
+    }
   });
 });
