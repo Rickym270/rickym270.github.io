@@ -57,6 +57,13 @@
             <version>3.0.0</version>
         </dependency>
 
+        <!-- Notion API SDK -->
+        <dependency>
+            <groupId>com.github.seratch</groupId>
+            <artifactId>notion-sdk-java</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

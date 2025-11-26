@@ -100,6 +100,10 @@
     background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
 }
 
+.notes-card.notion::before {
+    background: linear-gradient(90deg, #000000 0%, #37352f 100%);
+}
+
 .notes-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
@@ -130,6 +134,14 @@
     color: var(--color-accent);
 }
 
+.notes-card.notion .notes-card-icon {
+    color: #000000;
+}
+
+[data-theme="dark"] .notes-card.notion .notes-card-icon {
+    color: #ffffff;
+}
+
 .notes-card-title {
     font-size: 1.5rem;
     font-weight: 600;
@@ -151,40 +163,135 @@
     font-weight: 500;
 }
 
-.notes-card-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-sm) var(--spacing-md);
-    background-color: var(--color-accent);
-    color: white !important; /* Ensure white text */
-    border-radius: var(--radius-md);
+.notes-card-link {
+    display: inline-block;
+    color: var(--color-accent);
     text-decoration: none;
     font-weight: 600;
-    transition: all var(--transition-base);
-    border: none;
-    cursor: pointer;
+    font-size: 0.9375rem;
     margin-top: auto;
+    transition: all var(--transition-base);
+    padding: var(--spacing-xs) 0;
 }
 
-.notes-card-button:hover,
-.notes-card-button:focus,
-.notes-card-button:active,
-.notes-card-button:visited {
-    background-color: var(--color-accent-hover);
-    color: white !important; /* Ensure white text on hover/focus/active/visited */
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+.notes-card-link:hover,
+.notes-card-link:focus {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+    transform: translateX(4px);
+}
+
+.notes-card-link:active,
+.notes-card-link:visited {
+    color: var(--color-accent);
+}
+
+/* Notion Section Specific Styles */
+.notes-notion-section {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.notes-card.notion {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.notes-card.notion:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-border);
+}
+
+.notion-coming-soon {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+}
+
+.notion-disabled {
+    color: var(--color-text-tertiary) !important;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.notion-disabled:hover {
+    color: var(--color-text-tertiary) !important;
     text-decoration: none;
+    transform: none;
 }
 
-.notes-card-button i {
-    margin-left: var(--spacing-xs);
-    transition: transform var(--transition-base);
+/* Back Button Styles - Flat UI, simple text link */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    transition: opacity var(--transition-fast);
+    cursor: pointer;
+    font-family: var(--font-primary);
 }
 
-.notes-card-button:hover i {
-    transform: translateX(2px);
+.btn-back:hover,
+.btn-back:focus {
+    background: none;
+    border: none;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    opacity: 0.7;
+}
+
+.btn-back:active {
+    opacity: 0.5;
+}
+
+.btn-back i {
+    font-size: 0.875rem;
+    margin-right: var(--spacing-xs);
+    transition: transform var(--transition-fast);
+}
+
+.btn-back:hover i {
+    transform: translateX(-2px);
+}
+
+#docsBackButton {
+    padding: var(--spacing-md) 0;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-md);
+}
+
+/* Ensure seamless integration in article pages */
+#content #docsBackButton {
+    margin-top: 0;
+    padding-top: var(--spacing-lg);
+}
+
+/* Dark mode support */
+[data-theme="dark"] .btn-back,
+:root:not([data-theme="light"]) .btn-back {
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-back:hover,
+:root:not([data-theme="light"]) .btn-back:hover {
+    color: var(--color-text-primary);
+    opacity: 0.8;
 }
 
 /* Welcome Message */

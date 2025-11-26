@@ -130,22 +130,32 @@
         "title": "Python",
         "description": "Scripts, automation, and development techniques",
         "count": "8 articles",
-        "explore": "Explore"
+        "explore": "Explore",
+        "viewMore": "View More"
       },
       "gitCard": {
         "title": "Git",
         "description": "Version control workflows and best practices",
         "count": "2 articles",
-        "explore": "Explore"
+        "explore": "Explore",
+        "viewMore": "View More"
       },
       "miscCard": {
         "title": "Misc.",
         "description": "Tips, tricks, and miscellaneous technical notes",
         "count": "1 articles",
-        "explore": "Explore"
+        "explore": "Explore",
+        "viewMore": "View More"
+      },
+      "notionCard": {
+        "title": "Notion",
+        "description": "Personal notes and documentation from Notion",
+        "comingSoon": "Coming Soon",
+        "viewMore": "View More →"
       }
     },
-    "welcomeText": "Browse through organized technical documentation and reference materials."
+    "welcomeText": "Browse through organized technical documentation and reference materials.",
+    "backToCategories": "Back to Categories"
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutorials",

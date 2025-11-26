@@ -1,147 +1,406 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org//TR/xhtml1/DTD/xhtml1-transitional-dtd">
+<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <meta http-equiv="Cache-control" content="no-cache">
-        <meta http-equiv="Expires" content="-1"/>
-        
-        <!-- <link rel="stylesheet" type="text/css" href="../css/style.css"> -->
-        <link rel="stylesheet" type="text/css" href="/html/css/style.css">
-        <link rel="stylesheet" type="text/css" href="/html/css/modern.css">
-        <link rel="stylesheet" type="text/css" href="/html/css/notes.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-        
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-       
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title data-translate-title="docs.title">Ricky Martinez - Docs</title>
-
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $.ajaxSetup({
-                    cache: false
-                });
-                $('.notes-category-card').click(function(e){
-                    // handles switching what link is active
-                    $('.notes-category-card').removeClass('active');
-                    $(this).addClass('active');
-                    e.preventDefault();       // Prevents default re-direct of the anchor tag
-                });
-                $(".notes-category-card").on('click',function(e){
-                    e.preventDefault();
-                    var attr = $(this).attr('href');
-                    if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
-                        $('#FAQMain').load(attr, function() {
-                            // After loading, setup Back button handler
-                            setupBackButton();
-                            // Re-apply translations after content loads
-                            if (typeof window.TranslationManager !== 'undefined') {
-                                window.TranslationManager.applyTranslations();
-                            }
-                        });
-                    }
-                });
-                
-                // Function to setup Back button handler and visibility
-                function setupBackButton() {
-                    // Hide Back button on index pages (those with toc_list or toc_title)
-                    var hasTocList = $('#FAQMain .toc_list').length > 0;
-                    var hasTocTitle = $('#FAQMain .toc_title').length > 0;
-                    var hasInitialMessage = $('#FAQMain h4:contains("Click any FAQ")').length > 0;
-                    
-                    if (hasTocList || hasTocTitle || hasInitialMessage) {
-                        $('#FAQMain #docsNavigatrior').hide();
-                    } else {
-                        // Show Back button on article pages
-                        $('#FAQMain #docsNavigatrior').show();
-                    }
-                    
-                    // Use event delegation for dynamically loaded content
-                    $(document).off('click', '#docsNavigatrior > a');
-                    $(document).on('click', '#docsNavigatrior > a', function(e){
-                        e.preventDefault();
-                        var backUrl = $(this).attr('href');
-                        if(backUrl && backUrl !== '#'){
-                            $('#FAQMain').load(backUrl, function() {
-                                // Re-setup Back button after loading index page
-                                setupBackButton();
-                                // Re-apply translations after content loads
-                                if (typeof window.TranslationManager !== 'undefined') {
-                                    window.TranslationManager.applyTranslations();
-                                }
-                            });
-                        }
-                    });
-                }
-                
-                // Initial setup
-                setupBackButton();
-            });
-        </script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="/html/css/modern.css" />
+        <link rel="stylesheet" href="/html/css/style.css" />
+        <link rel="stylesheet" href="/html/css/notes.css" />
     </head>
     <body>
-        <div class="container" id="main">
-            <div class="push3"></div>
-            
-            <!-- Notes Hero Section -->
-            <div class="notes-hero">
-                <div class="notes-hero-content">
-                    <span class="notes-hero-icon">📚</span>
-                    <h1 class="notes-hero-title" data-translate="docs.notesHero.title">Technical Documentation</h1>
-                    <p class="notes-hero-subtitle" data-translate="docs.notesHero.subtitle">Browse through organized technical documentation and reference materials.</p>
+        <div class="container">
+            <div class="section">
+                <!-- Notes Hero Section -->
+                <div class="notes-hero">
+                    <div class="notes-hero-content">
+                        <span class="notes-hero-icon">📚</span>
+                        <h1 class="notes-hero-title" data-translate="docs.notesHero.title">Technical Documentation</h1>
+                        <p class="notes-hero-subtitle" data-translate="docs.notesHero.subtitle">Browse through organized technical documentation and reference materials.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Category Cards -->
-            <div class="notes-category-grid">
-                <a href="../html/pages/FAQPages/Python/index.html" class="notes-card notes-category-card python">
-                    <span class="notes-card-icon">🐍</span>
-                    <h3 class="notes-card-title" data-translate="docs.notesHero.pythonCard.title">Python</h3>
-                    <p class="notes-card-description" data-translate="docs.notesHero.pythonCard.description">Scripts, automation, and development techniques</p>
-                    <div class="notes-card-count" data-translate="docs.notesHero.pythonCard.count">8 articles</div>
-                    <span class="notes-card-button">
-                        <span data-translate="docs.notesHero.pythonCard.explore">Explore</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </span>
-                </a>
                 
-                <a href="../html/pages/FAQPages/Git/index.html" class="notes-card notes-category-card git">
-                    <span class="notes-card-icon">📝</span>
-                    <h3 class="notes-card-title" data-translate="docs.notesHero.gitCard.title">Git</h3>
-                    <p class="notes-card-description" data-translate="docs.notesHero.gitCard.description">Version control workflows and best practices</p>
-                    <div class="notes-card-count" data-translate="docs.notesHero.gitCard.count">2 articles</div>
-                    <span class="notes-card-button">
-                        <span data-translate="docs.notesHero.gitCard.explore">Explore</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </span>
-                </a>
+                <!-- Category Cards -->
+                <div class="notes-category-grid">
+                    <div class="notes-card notes-category-card python">
+                        <span class="notes-card-icon">🐍</span>
+                        <h3 class="notes-card-title" data-translate="docs.notesHero.pythonCard.title">Python</h3>
+                        <p class="notes-card-description" data-translate="docs.notesHero.pythonCard.description">Scripts, automation, and development techniques</p>
+                        <div class="notes-card-count" data-translate="docs.notesHero.pythonCard.count">8 articles</div>
+                        <a href="../html/pages/FAQPages/Python/index.html" class="notes-card-link" data-translate="docs.notesHero.pythonCard.viewMore">View More →</a>
+                    </div>
+                    
+                    <div class="notes-card notes-category-card git">
+                        <span class="notes-card-icon">📝</span>
+                        <h3 class="notes-card-title" data-translate="docs.notesHero.gitCard.title">Git</h3>
+                        <p class="notes-card-description" data-translate="docs.notesHero.gitCard.description">Version control workflows and best practices</p>
+                        <div class="notes-card-count" data-translate="docs.notesHero.gitCard.count">2 articles</div>
+                        <a href="../html/pages/FAQPages/Git/index.html" class="notes-card-link" data-translate="docs.notesHero.gitCard.viewMore">View More →</a>
+                    </div>
+                    
+                    <div class="notes-card notes-category-card misc">
+                        <span class="notes-card-icon">🔧</span>
+                        <h3 class="notes-card-title" data-translate="docs.notesHero.miscCard.title">Misc.</h3>
+                        <p class="notes-card-description" data-translate="docs.notesHero.miscCard.description">Tips, tricks, and miscellaneous technical notes</p>
+                        <div class="notes-card-count" data-translate="docs.notesHero.miscCard.count">1 articles</div>
+                        <a href="../html/pages/FAQPages/Misc/index.html" class="notes-card-link" data-translate="docs.notesHero.miscCard.viewMore">View More →</a>
+                    </div>
+                </div>
                 
-                <a href="../html/pages/FAQPages/Misc/index.html" class="notes-card notes-category-card misc">
-                    <span class="notes-card-icon">🔧</span>
-                    <h3 class="notes-card-title" data-translate="docs.notesHero.miscCard.title">Misc.</h3>
-                    <p class="notes-card-description" data-translate="docs.notesHero.miscCard.description">Tips, tricks, and miscellaneous technical notes</p>
-                    <div class="notes-card-count" data-translate="docs.notesHero.miscCard.count">1 articles</div>
-                    <span class="notes-card-button">
-                        <span data-translate="docs.notesHero.miscCard.explore">Explore</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </span>
-                </a>
-            </div>
-            
-            <!-- Main Content Area -->
-            <div class="notes-content">
-                <div class="container container-no-padding" id="FAQMain">
-                    <div class="notes-welcome">
-                        <h4 data-translate="docs.welcomeText">Browse through organized technical documentation and reference materials.</h4>
+                <!-- Notion Integration Section - Coming Soon -->
+                <div class="notes-notion-section">
+                    <div class="notes-card notes-category-card notion">
+                        <span class="notes-card-icon">📝</span>
+                        <h3 class="notes-card-title" data-translate="docs.notesHero.notionCard.title">Notion</h3>
+                        <p class="notes-card-description" data-translate="docs.notesHero.notionCard.description">Personal notes and documentation from Notion</p>
+                        <div class="notes-card-count notion-coming-soon" data-translate="docs.notesHero.notionCard.comingSoon">Coming Soon</div>
+                        <div class="notes-card-link notion-disabled" data-translate="docs.notesHero.notionCard.viewMore">View More →</div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area - will be replaced when category is selected -->
+                <div class="notes-content" id="notesMainContent">
+                    <div class="container container-no-padding" id="FAQMain">
+                        <div class="notes-welcome">
+                            <h4 data-translate="docs.welcomeText">Browse through organized technical documentation and reference materials.</h4>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="push5"></div>
+        
+        
+        <script type="text/javascript">
+            // Initialize docs page functionality when loaded via SPA or directly
+            // Make it globally accessible for SPA loading
+            window.initDocsPage = function() {
+                // Use jQuery if available (will be available when loaded via SPA)
+                if (typeof jQuery === 'undefined') {
+                    // Wait for jQuery to be available (for SPA loading)
+                    var checkJQuery = setInterval(function() {
+                        if (typeof jQuery !== 'undefined') {
+                            clearInterval(checkJQuery);
+                            window.initDocsPage();
+                        }
+                    }, 50);
+                    
+                    // Stop checking after 5 seconds
+                    setTimeout(function() {
+                        clearInterval(checkJQuery);
+                    }, 5000);
+                    return;
+                }
+                
+                var $ = jQuery;
+                
+                // Store original docs page content for back navigation
+                var originalDocsContent = null;
+                
+                // Function to normalize URL paths (convert relative to absolute)
+                function normalizeUrl(url) {
+                    if (!url || url === '#') return url;
+                    
+                    // If already absolute (starts with /), return as is
+                    if (url.startsWith('/')) {
+                        return url;
+                    }
+                    
+                    // If relative path, convert to absolute
+                    // Remove leading ../ or ./
+                    url = url.replace(/^\.\.\//g, '').replace(/^\.\//g, '');
+                    
+                    // If it doesn't start with /, add it
+                    if (!url.startsWith('/')) {
+                        url = '/' + url;
+                    }
+                    
+                    return url;
+                }
+                
+                // Function to apply modern styling to article content
+                function applyArticleStyling() {
+                    // Ensure container has proper styling
+                    $('#content .container').addClass('article-content');
+                    
+                    // Fix any relative paths in links
+                    $('#content a[href*="FAQPages"]').each(function() {
+                        var href = $(this).attr('href');
+                        if (href && !href.startsWith('/') && !href.startsWith('http')) {
+                            $(this).attr('href', normalizeUrl(href));
+                        }
+                    });
+                }
+                
+                // Setup function that can be called multiple times safely
+                function setupDocsPageHandlers() {
+                    $.ajaxSetup({
+                        cache: false
+                    });
+                    
+                    // Store original content if not already stored
+                    if (!originalDocsContent && $('#content').length) {
+                        originalDocsContent = $('#content').html();
+                    }
+                    
+                    // Remove any existing handlers to prevent duplicates
+                    $(document).off('click', '.notes-card-link');
+                    $(document).off('click', '#docsBackBtn');
+                    
+                    // Setup "View More" link click handlers
+                    $(document).on('click', '.notes-card-link', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        var href = $(this).attr('href');
+                        if (!href || href === '#') {
+                            return;
+                        }
+                        
+                        // Store original content before replacing
+                        if (!originalDocsContent && $('#content').length) {
+                            originalDocsContent = $('#content').html();
+                        }
+                        
+                        // Show loading state
+                        var $content = $('#content');
+                        if ($content.length) {
+                            $content.html('<div class="container"><div class="text-center"><p class="text-muted">Loading...</p></div></div>');
+                        }
+                        
+                        // Load category content and replace entire page content
+                        $.get(href, function(data) {
+                            // Extract body content from loaded HTML
+                            var $temp = $('<div>').html(data);
+                            var bodyContent = $temp.find('body').html() || $temp.html();
+                            
+                            if (bodyContent && bodyContent.trim() !== '') {
+                                // Remove any script tags that might cause issues
+                                var $contentDiv = $('<div>').html(bodyContent);
+                                $contentDiv.find('script').remove();
+                                
+                                // Replace entire content area
+                                if ($('#content').length) {
+                                    // Create back button HTML - flat UI styling
+                                    var backButtonHtml = '<div id="docsBackButton"><div class="container"><button class="btn btn-back" id="docsBackBtn"><i class="fas fa-arrow-left"></i> <span data-translate="docs.backToCategories">Back to Categories</span></button></div></div>';
+                                    
+                                    // Prepend back button and add content
+                                    $('#content').html(backButtonHtml + $contentDiv.html());
+                                    
+                                    // Apply modern styling to category index content
+                                    applyArticleStyling();
+                                    
+                                    // Setup back button handler (this also sets up article link handlers)
+                                    setupBackButton();
+                                    
+                                    // Re-apply translations after content loads
+                                    if (typeof window.TranslationManager !== 'undefined') {
+                                        setTimeout(function() {
+                                            window.TranslationManager.applyTranslations();
+                                        }, 100);
+                                    }
+                                    
+                                    // Mark content as loaded
+                                    $('#content').attr('data-content-loaded', 'true');
+                                    
+                                    // Scroll to top
+                                    window.scrollTo(0, 0);
+                                }
+                            }
+                        }).fail(function(xhr, status, error) {
+                            console.error("Failed to load " + href + ":", status, error);
+                            // Restore original content on error
+                            if (originalDocsContent && $('#content').length) {
+                                $('#content').html(originalDocsContent);
+                            }
+                        });
+                    });
+                    
+                    // Setup back button handler - use event delegation since button is dynamically added
+                    $(document).off('click', '#docsBackBtn');
+                    $(document).on('click', '#docsBackBtn', function(e) {
+                        e.preventDefault();
+                        
+                        // Restore original docs page content
+                        if (originalDocsContent && $('#content').length) {
+                            $('#content').html(originalDocsContent);
+                            
+                            // Re-initialize docs page handlers
+                            setupDocsPageHandlers();
+                            
+                            // Re-apply translations
+                            if (typeof window.TranslationManager !== 'undefined') {
+                                setTimeout(function() {
+                                    window.TranslationManager.applyTranslations();
+                                }, 100);
+                            }
+                            
+                            // Scroll to top
+                            window.scrollTo(0, 0);
+                        }
+                    });
+                    
+                    // Function to setup Back button handler for article navigation
+                    function setupBackButton() {
+                        // Handle article link clicks from category index pages
+                        $(document).off('click', '#FAQMain a, #content a[href*="FAQPages"]');
+                        $(document).on('click', '#FAQMain a, #content a[href*="FAQPages"]', function(e) {
+                            var href = $(this).attr('href');
+                            
+                            // Only handle FAQPages links (article links)
+                            if (href && href.includes('FAQPages') && !href.includes('index.html')) {
+                                e.preventDefault();
+                                
+                                var articleUrl = normalizeUrl(href);
+                                
+                                // Load article content
+                                $.get(articleUrl, function(data) {
+                                    var $temp = $('<div>').html(data);
+                                    var bodyContent = $temp.find('body').html() || $temp.html();
+                                    
+                                    if (bodyContent && bodyContent.trim() !== '') {
+                                        var $contentDiv = $('<div>').html(bodyContent);
+                                        $contentDiv.find('script').remove();
+                                        
+                                        // Fix back button paths in article content
+                                        $contentDiv.find('#docsNavigatrior a').each(function() {
+                                            var backHref = $(this).attr('href');
+                                            if (backHref && !backHref.startsWith('/')) {
+                                                // Convert relative path to absolute
+                                                var normalizedBackUrl = normalizeUrl(backHref);
+                                                $(this).attr('href', normalizedBackUrl);
+                                            }
+                                        });
+                                        
+                                        if ($('#content').length) {
+                                            // Keep the back button when navigating to article
+                                            var $existingBackButton = $('#content #docsBackButton');
+                                            var backButtonHtml = '';
+                                            if ($existingBackButton.length) {
+                                                backButtonHtml = $existingBackButton[0].outerHTML;
+                                            } else {
+                                                backButtonHtml = '<div id="docsBackButton"><div class="container"><button class="btn btn-back" id="docsBackBtn"><i class="fas fa-arrow-left"></i> <span data-translate="docs.backToCategories">Back to Categories</span></button></div></div>';
+                                            }
+                                            
+                                            // Replace content with article
+                                            $('#content').html(backButtonHtml + $contentDiv.html());
+                                            
+                                            // Apply modern styling to article content
+                                            applyArticleStyling();
+                                            
+                                            // Re-setup Back button after loading
+                                            setupBackButton();
+                                            
+                                            // Re-apply translations
+                                            if (typeof window.TranslationManager !== 'undefined') {
+                                                setTimeout(function() {
+                                                    window.TranslationManager.applyTranslations();
+                                                }, 100);
+                                            }
+                                            
+                                            $('#content').attr('data-content-loaded', 'true');
+                                            window.scrollTo(0, 0);
+                                        }
+                                    }
+                                }).fail(function(xhr, status, error) {
+                                    console.error("Failed to load article " + articleUrl + ":", status, error);
+                                });
+                                
+                                return false;
+                            }
+                        });
+                        
+                        // Handle back navigation button in articles (docsNavigatrior)
+                        $(document).off('click', '#docsNavigatrior > a');
+                        $(document).on('click', '#docsNavigatrior > a', function(e) {
+                            e.preventDefault();
+                            var backUrl = $(this).attr('href');
+                            
+                            if (backUrl && backUrl !== '#') {
+                                // Normalize the URL path
+                                var normalizedUrl = normalizeUrl(backUrl);
+                                
+                                $.get(normalizedUrl, function(data) {
+                                    var $temp = $('<div>').html(data);
+                                    var bodyContent = $temp.find('body').html() || $temp.html();
+                                    
+                                    if (bodyContent && bodyContent.trim() !== '') {
+                                        var $contentDiv = $('<div>').html(bodyContent);
+                                        $contentDiv.find('script').remove();
+                                        
+                                        if ($('#content').length) {
+                                            // Keep the back button when navigating back to category index
+                                            var $existingBackButton = $('#content #docsBackButton');
+                                            var backButtonHtml = '';
+                                            if ($existingBackButton.length) {
+                                                backButtonHtml = $existingBackButton[0].outerHTML;
+                                            } else {
+                                                backButtonHtml = '<div id="docsBackButton"><div class="container"><button class="btn btn-back" id="docsBackBtn"><i class="fas fa-arrow-left"></i> <span data-translate="docs.backToCategories">Back to Categories</span></button></div></div>';
+                                            }
+                                            
+                                            $('#content').html(backButtonHtml + $contentDiv.html());
+                                            
+                                            // Apply modern styling
+                                            applyArticleStyling();
+                                            
+                                            // Re-setup Back button after loading
+                                            setupBackButton();
+                                            
+                                            // Re-apply translations
+                                            if (typeof window.TranslationManager !== 'undefined') {
+                                                setTimeout(function() {
+                                                    window.TranslationManager.applyTranslations();
+                                                }, 100);
+                                            }
+                                            
+                                            $('#content').attr('data-content-loaded', 'true');
+                                            window.scrollTo(0, 0);
+                                        }
+                                    }
+                                }).fail(function(xhr, status, error) {
+                                    console.error("Failed to load " + normalizedUrl + ":", status, error);
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Function to apply modern styling to article content
+                    function applyArticleStyling() {
+                        // Ensure container has proper styling
+                        $('#content .container').addClass('article-content');
+                        
+                        // Fix any relative paths in links
+                        $('#content a[href*="FAQPages"]').each(function() {
+                            var href = $(this).attr('href');
+                            if (href && !href.startsWith('/') && !href.startsWith('http')) {
+                                $(this).attr('href', normalizeUrl(href));
+                            }
+                        });
+                    }
+                }
+                
+                // Run setup when DOM is ready
+                if (document.readyState === 'loading') {
+                    $(document).ready(setupDocsPageHandlers);
+                } else {
+                    // DOM already ready
+                    setupDocsPageHandlers();
+                }
+            };
+            
+            // Initialize immediately if jQuery is available
+            if (typeof jQuery !== 'undefined') {
+                window.initDocsPage();
+            } else {
+                // Wait for DOMContentLoaded and then check for jQuery
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(window.initDocsPage, 100);
+                    });
+                } else {
+                    setTimeout(window.initDocsPage, 100);
+                }
+            }
+        </script>
     </body>
 </html>
