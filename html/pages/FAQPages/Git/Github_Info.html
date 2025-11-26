@@ -43,17 +43,14 @@
                         
                         
                         
-                        git init - Creates a new git repository
-                        
-                        git status - inspects the contents of the working directory and staging area
-                        
-                        git add - adds files from the working directory to the staging area
-                        
-                        git diff - shows the difference between the working directory and the staging area
-                        
-                        git commit - permanently stores file changes from the staging area in the repository
-                        
-                        git log - shows a list of all previous commits
+                        <ul class="git-command-list">
+                            <li class="git-command-item"><span class="git-command">git init</span> - Creates a new git repository</li>
+                            <li class="git-command-item"><span class="git-command">git status</span> - inspects the contents of the working directory and staging area</li>
+                            <li class="git-command-item"><span class="git-command">git add</span> - adds files from the working directory to the staging area</li>
+                            <li class="git-command-item"><span class="git-command">git diff</span> - shows the difference between the working directory and the staging area</li>
+                            <li class="git-command-item"><span class="git-command">git commit</span> - permanently stores file changes from the staging area in the repository</li>
+                            <li class="git-command-item"><span class="git-command">git log</span> - shows a list of all previous commits</li>
+                        </ul>
                         
                         
                         
@@ -64,49 +61,49 @@
                         
                         HEAD - Refers to the most recent commit that has been made in the repository. This can be viewed by running:
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git show HEAD
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git show HEAD</span>
                         
                         
                         
                         Discarding a change
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git diff
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git diff</span>
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- It is recommended to do a ```git diff``` to see how the current file and differs from the previous commit
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- It is recommended to do a <span class="git-command-inline">git diff</span> to see how the current file and differs from the previous commit
                         
                         
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git checkout HEAD <filename>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git checkout HEAD &lt;filename&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- If there is a change in a file that was made, and now the change needs to be discarded, you can run:
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  git checkout HEAD <filename>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span class="git-command-inline">git checkout HEAD &lt;filename&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Use the above command to discard changes made to a file in your working directory.
                         
                         
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE: This does not reset files that have been pushed already. This all takes place in the working area of the workflow.
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="note-statement"><strong>NOTE:</strong> This does not reset files that have been pushed already. This all takes place in the working area of the workflow.</div>
                         
                         
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git reset HEAD <filename>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git reset HEAD &lt;filename&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- If a change was made, and that change is added into the staging area by accident, you can reset the HEAD to remove the change from the STAGING AREA.
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE: This does not discard the change made on the working file, just the change that is reflected in the HEAD commit.
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="note-statement"><strong>NOTE:</strong> This does not discard the change made on the working file, just the change that is reflected in the HEAD commit.</div>
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTE: In output, M is short for "modification"
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="note-statement"><strong>NOTE:</strong> In output, M is short for "modification"</div>
                         
                         
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git reset <commit_SHA>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git reset &lt;commit_SHA&gt;</span>
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- To go back on changes, run git log to view all previous commits.
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- To go back on changes, run <span class="git-command-inline">git log</span> to view all previous commits.
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Find the commit you want to revert to and get the first 7 characters of the commit_SHA.
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Run git reset <commit_SHA> to revert back. This reassigns HEAD to be what it was in the commit that was selected
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Run <span class="git-command-inline">git reset &lt;commit_SHA&gt;</span> to revert back. This reassigns HEAD to be what it was in the commit that was selected
                         
                         
                         
@@ -135,7 +132,7 @@
                         
                         
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git branch
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git branch</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- returns the name of the branch you are currently on. This is delimited by an asterisk
                         
@@ -151,7 +148,7 @@
                         
                         CREATING A NEW Branch
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git branch <new_branch>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git branch &lt;new_branch&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Use this command to create a branch.
                         
@@ -161,7 +158,7 @@
                         
                         
                         
-                        git checkout <branch name>
+                        <span class="git-command-inline">git checkout &lt;branch name&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;- Used to switch branches.
                         
@@ -179,15 +176,15 @@
                         
                         
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;NOTE: in the above case, if switching from branch A to Branch B, the file will reflect that file C is not present because it doesn't exist in Branch B (even though it exists in Branch A).
+                        &nbsp;&nbsp;&nbsp;&nbsp;<div class="note-statement"><strong>NOTE:</strong> in the above case, if switching from branch A to Branch B, the file will reflect that file C is not present because it doesn't exist in Branch B (even though it exists in Branch A).</div>
                         
                         
                         
-                        git merge
+                        <span class="git-command-inline">git merge</span>
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;- To merge cahnges made on one branch into the master branch, you merge them.
+                        &nbsp;&nbsp;&nbsp;&nbsp;- To merge changes made on one branch into the master branch, you merge them.
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;  git merge <branch name>
+                        &nbsp;&nbsp;&nbsp;&nbsp;  <span class="git-command-inline">git merge &lt;branch name&gt;</span>
                         
                         
                         
@@ -213,11 +210,11 @@
                         
                         delete branch
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;- git branch -d <branch name>
+                        &nbsp;&nbsp;&nbsp;&nbsp;- <span class="git-command-inline">git branch -d &lt;branch name&gt;</span>
                         
                         
                         
-                        NOTE: Branches are meant to be deleted unless there is a new feature that is currently being developed. Once the branch is done, it has completed its use and can be deleted.
+                        <div class="note-statement"><strong>NOTE:</strong> Branches are meant to be deleted unless there is a new feature that is currently being developed. Once the branch is done, it has completed its use and can be deleted.</div>
                         
                         
                         
@@ -232,11 +229,11 @@
                         
                         Git handles the necessary to collaborate effectively:
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;1. Replicates project on users computer
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;2. Tracks and allows for review of each other's work
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;3. Access to project version
+                        <ol class="git-command-list">
+                            <li>Replicates project on users computer</li>
+                            <li>Tracks and allows for review of each other's work</li>
+                            <li>Access to project version</li>
+                        </ol>
                         
                         
                         
@@ -246,15 +243,13 @@
                         
                         Useful commands:
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git clone: Creates a local copy of a remote.
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;git remote -v: Lists a Git project's remotes.
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;git fetch: Fetches work from the remote into the local copy.
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;git merge origin/master: Merges origin/master into your local branch.
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;git push origin <branch_name>: Pushes a local branch to the origin remote.
+                        <ul class="git-command-list">
+                            <li class="git-command-item"><span class="git-command">git clone</span>: Creates a local copy of a remote.</li>
+                            <li class="git-command-item"><span class="git-command">git remote -v</span>: Lists a Git project's remotes.</li>
+                            <li class="git-command-item"><span class="git-command">git fetch</span>: Fetches work from the remote into the local copy.</li>
+                            <li class="git-command-item"><span class="git-command">git merge origin/master</span>: Merges origin/master into your local branch.</li>
+                            <li class="git-command-item"><span class="git-command">git push origin &lt;branch_name&gt;</span>: Pushes a local branch to the origin remote.</li>
+                        </ul>
                         
                         
                         
@@ -266,49 +261,47 @@
                         
                         Git Workflow, teams
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;- Create a branch (git branch <branch_name>)
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;- Swithc to the branch (git checkout <branch_name>)
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;- Make changes
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;- Add changes to staging area
-                        
-                        &nbsp;&nbsp;&nbsp;&nbsp;- Commit the changes
+                        <ul class="git-command-list">
+                            <li>Create a branch (<span class="git-command-inline">git branch &lt;branch_name&gt;</span>)</li>
+                            <li>Switch to the branch (<span class="git-command-inline">git checkout &lt;branch_name&gt;</span>)</li>
+                            <li>Make changes</li>
+                            <li>Add changes to staging area</li>
+                            <li>Commit the changes</li>
+                        </ul>
                         
                         
                         
-                        git clone <remote location> <clone name>
+                        <span class="git-command-inline">git clone &lt;remote location&gt; &lt;clone name&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;- Replicates the repo onto your own computer.
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;- <remote location> can be a filepath or a URL
+                        &nbsp;&nbsp;&nbsp;&nbsp;- &lt;remote location&gt; can be a filepath or a URL
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;- <clone name> is the name that will be given to the directory that the repo is being copied to
+                        &nbsp;&nbsp;&nbsp;&nbsp;- &lt;clone name&gt; is the name that will be given to the directory that the repo is being copied to
                         
                         
                         
-                        git remote
+                        <span class="git-command-inline">git remote</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;- When a clone of a repository is made, a remote address is given to the repository. It is named, origin.
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;git remote -v
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="git-command-inline">git remote -v</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-Lists out the remotes
                         
                         
                         
-                        git fetch
+                        <span class="git-command-inline">git fetch</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;When collaborating, it is necessary to be up-to-date with any changes that were made by other collaborators.
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;Fetch to bring any changes into your local copy.
                         
-                        &nbsp;&nbsp;&nbsp;&nbsp;NOTE: This does not merge changes into the local repository. It creates a remote branch
+                        &nbsp;&nbsp;&nbsp;&nbsp;<div class="note-statement"><strong>NOTE:</strong> This does not merge changes into the local repository. It creates a remote branch</div>
                         
                         
                         
-                        git merge <remote branch> <master branch>
+                        <span class="git-command-inline">git merge &lt;remote branch&gt; &lt;master branch&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;Recall the remote branch. Changes made by collaborators have been fetched and are visible in a branch called origin/master. This is not the same as the master branch.
                         
@@ -316,7 +309,7 @@
                         
                         
                         
-                        git push origin <branch_name>
+                        <span class="git-command-inline">git push origin &lt;branch_name&gt;</span>
                         
                         &nbsp;&nbsp;&nbsp;&nbsp;Pushes changes made by a user up to the remote, origin. From there, the owner of the repo can review the changes, and merge the work into the master branch
                         

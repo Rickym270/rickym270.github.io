@@ -30,6 +30,15 @@
                             if (typeof window.TranslationManager !== 'undefined') {
                                 window.TranslationManager.applyTranslations();
                             }
+                            // Apply article styling (NOTE formatting, lists, git commands)
+                            if (typeof window.initDocsPage === 'function') {
+                                setTimeout(function() {
+                                    if (typeof formatNoteStatements === 'function') formatNoteStatements();
+                                    if (typeof styleGitCommands === 'function') styleGitCommands();
+                                    if (typeof groupCommandWithDescriptions === 'function') groupCommandWithDescriptions();
+                                    if (typeof convertListsToHTML === 'function') convertListsToHTML();
+                                }, 100);
+                            }
                         });
                     }
                 });
@@ -37,7 +46,7 @@
         </script>
     </head>
     <body id="FAQMain">
-        <div>
+        <div class="container">
             <p class="toc_title" data-translate="docs.contents">Contents</p>
             <ol class="toc_list">
                 <li>
