@@ -135,23 +135,17 @@ test.describe('Docs/Notes Page', () => {
     
     // Wait for category content to load - wait for back button first (indicates navigation happened)
     await page.waitForSelector('#docsBackButton', { timeout: 15000 });
-    await page.waitForTimeout(3000); // Give time for content to load
+    await page.waitForTimeout(2000); // Give time for content to load
     
-    // Wait for FAQMain to exist and have some content
-    await page.waitForSelector('#FAQMain', { timeout: 10000 });
-    await page.waitForFunction(() => {
-      const faqMain = document.querySelector('#FAQMain');
-      if (!faqMain) return false;
-      // Check if there's any meaningful content (not just whitespace)
-      const text = faqMain.textContent?.trim() || '';
-      return text.length > 20; // At least some content loaded
-    }, { timeout: 15000 });
+    // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
+    await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000 });
+    await page.waitForTimeout(1000); // Additional wait for content to stabilize
     
-    // Should load Python index page content - check for any article-related content
-    const faqMain = page.locator('#FAQMain');
-    const faqMainText = await faqMain.textContent();
+    // Should load Python index page content - check for Contents section or article links
+    const content = page.locator('#content');
+    const contentText = await content.textContent();
     // Check if content loaded (either Contents section, article links, or category name)
-    expect(faqMainText).toMatch(/Contents|Executing|Jinja|Python|article|FAQPages/i);
+    expect(contentText).toMatch(/Contents|Executing|Jinja|Python|article|FAQPages/i);
   });
 
   test('Back button and breadcrumbs appear on category and article pages', async ({ page }) => {
@@ -206,17 +200,13 @@ test.describe('Docs/Notes Page', () => {
       await expect(breadcrumbs).toBeVisible();
       
       // Click on an actual article
-      const articleLink = page.locator('#FAQMain a, .toc_list a').first();
-      if (await articleLink.isVisible({ timeout: 2000 })) {
+      const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
+      if (await articleLink.isVisible({ timeout: 5000 })) {
         await articleLink.click();
         
-        // Wait for article content to load via AJAX
-        await page.waitForFunction(() => {
-          const faqMain = document.querySelector('#FAQMain');
-          if (!faqMain) return false;
-          // Wait for article content (h3 heading or container with content)
-          return !!faqMain.querySelector('h3, .container') || faqMain.textContent?.trim().length > 0;
-        }, { timeout: 15000 });
+        // Wait for article content to load - wait for h3 heading specifically
+        await page.waitForSelector('#content h3, #content .container h3', { timeout: 20000 });
+        await page.waitForTimeout(1000);
         
         await page.waitForTimeout(1000); // Give setupBackButton() time to run
         
@@ -334,16 +324,16 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForTimeout(1500);
       
       // Find an article link (e.g., "Executing commands")
-      const articleLink = page.locator('#FAQMain a, .toc_list a').filter({ hasText: /Executing|commands|CMDs/i }).first();
-      if (await articleLink.isVisible({ timeout: 2000 })) {
+      const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').filter({ hasText: /Executing|commands|CMDs/i }).first();
+      if (await articleLink.isVisible({ timeout: 5000 })) {
         await articleLink.click();
         
-        // Wait for article content to load via AJAX - wait for h3 heading specifically
-        await page.waitForSelector('#FAQMain h3', { timeout: 20000 });
+        // Wait for article content to load - wait for h3 heading specifically
+        await page.waitForSelector('#content h3, #content .container h3', { timeout: 20000 });
         await page.waitForTimeout(1000);
         
         // Find code blocks
-        const codeBlocks = page.locator('#FAQMain pre');
+        const codeBlocks = page.locator('#content pre, #content .container pre');
         const codeBlockCount = await codeBlocks.count();
         
         if (codeBlockCount > 0) {
@@ -402,10 +392,10 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForTimeout(1500);
     
     // Check that text has proper font size (not tiny)
-    const container = page.locator('#FAQMain .container, #FAQMain');
-    if (await container.first().isVisible({ timeout: 3000 })) {
-      const firstContainer = container.first();
-      const fontSize = await firstContainer.evaluate((el) => {
+    // Check actual text elements (p, h1-h6, li) instead of container
+    const textElement = page.locator('#content p, #content h1, #content h2, #content h3, #content h4, #content li, #content .notes-welcome').first();
+    if (await textElement.isVisible({ timeout: 3000 })) {
+      const fontSize = await textElement.evaluate((el) => {
         return window.getComputedStyle(el).fontSize;
       });
       const fontSizeNum = parseFloat(fontSize);
@@ -413,7 +403,7 @@ test.describe('Docs/Notes Page', () => {
       expect(fontSizeNum).toBeGreaterThanOrEqual(12);
       
       // Check that text color is visible
-      const textColor = await firstContainer.evaluate((el) => {
+      const textColor = await textElement.evaluate((el) => {
         return window.getComputedStyle(el).color;
       });
       // Should not be transparent
@@ -546,8 +536,8 @@ test.describe('Docs/Notes Page', () => {
       expect(breadcrumbText).toMatch(/Docs/i);
       
       // Click on an article
-      const articleLink = page.locator('#FAQMain a, .toc_list a').first();
-      if (await articleLink.isVisible({ timeout: 2000 })) {
+      const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
+      if (await articleLink.isVisible({ timeout: 5000 })) {
         await articleLink.click();
         await page.waitForTimeout(1500);
         
