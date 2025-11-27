@@ -50,9 +50,9 @@ test.describe('Docs/Notes Page', () => {
     }
     await page.waitForTimeout(1000);
     
-    // Check that all three category cards exist
+    // Check that all category cards exist (Python, Git, Misc, and Notion)
     const categoryCards = page.locator('.notes-category-card');
-    await expect(categoryCards).toHaveCount(3);
+    await expect(categoryCards).toHaveCount(4);
     
     // Check Python card
     const pythonCard = page.locator('.notes-category-card.python');
@@ -126,13 +126,17 @@ test.describe('Docs/Notes Page', () => {
     }
     await page.waitForTimeout(1000);
     
-    // Click on Python category card
+    // Click on Python category "View More" link (not the card itself)
     const pythonCard = page.locator('.notes-category-card.python');
-    await pythonCard.click();
-    await page.waitForTimeout(1000);
+    const viewMoreLink = pythonCard.locator('.notes-card-link');
+    await expect(viewMoreLink).toBeVisible();
+    await viewMoreLink.click();
     
-    // Should load Python index page content
-    await expect(page.locator('#FAQMain')).toContainText(/Python|Executing Commands|Jinja/i);
+    // Wait for category content to load
+    await page.waitForTimeout(1500);
+    
+    // Should load Python index page content (Contents section with article links)
+    await expect(page.locator('#FAQMain')).toContainText(/Contents|Executing|Jinja|Python/i);
   });
 
   test('Back button and breadcrumbs appear on category and article pages', async ({ page }) => {
@@ -161,11 +165,18 @@ test.describe('Docs/Notes Page', () => {
     const backButtonVisible = await backButton.isVisible({ timeout: 1000 }).catch(() => false);
     expect(backButtonVisible).toBeFalsy();
     
-    // Click on a category (e.g., Python)
+    // Click on a category "View More" link (e.g., Python)
     const pythonCard = page.locator('.notes-category-card.python');
     if (await pythonCard.isVisible({ timeout: 2000 })) {
-      await pythonCard.click();
-      await page.waitForTimeout(1000);
+      const viewMoreLink = pythonCard.locator('.notes-card-link');
+      await expect(viewMoreLink).toBeVisible();
+      await viewMoreLink.click();
+      
+      // Wait for category content to load
+      await page.waitForTimeout(1500);
+      
+      // Wait for back button and breadcrumbs to appear
+      await page.waitForSelector('#docsBackButton', { timeout: 5000 });
       
       // Back button SHOULD be visible on category index page
       const backButtonAfterCategory = page.locator('#docsBackButton');
@@ -192,7 +203,7 @@ test.describe('Docs/Notes Page', () => {
           return !!faqMain.querySelector('h3, .container') || faqMain.textContent?.trim().length > 0;
         }, { timeout: 15000 });
         
-        await page.waitForTimeout(500); // Give setupBackButton() time to run
+        await page.waitForTimeout(1000); // Give setupBackButton() time to run
         
         // Back button SHOULD still be visible on article page
         const backButtonOnArticle = page.locator('#docsBackButton');
@@ -206,7 +217,7 @@ test.describe('Docs/Notes Page', () => {
         const backBtnOnArticle = page.locator('#docsBackBtn');
         await expect(backBtnOnArticle).toBeVisible();
         await backBtnOnArticle.click();
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(1500);
         
         // Should return to category index (Back button still visible)
         const backButtonAfterBack = page.locator('#docsBackButton');
@@ -270,10 +281,10 @@ test.describe('Docs/Notes Page', () => {
     
     // Check that cards are stacked vertically (single column)
     const cards = page.locator('.notes-category-card');
-    await expect(cards).toHaveCount(3);
+    await expect(cards).toHaveCount(4); // Python, Git, Misc, and Notion
     
     // All cards should be visible
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await expect(cards.nth(i)).toBeVisible();
     }
   });
@@ -302,11 +313,13 @@ test.describe('Docs/Notes Page', () => {
     // Try to find and click an article with code
     const pythonCard = page.locator('.notes-category-card.python');
     if (await pythonCard.isVisible({ timeout: 2000 })) {
-      await pythonCard.click();
-      await page.waitForTimeout(1000);
+      // Click "View More" link, not the card itself
+      const viewMoreLink = pythonCard.locator('.notes-card-link');
+      await viewMoreLink.click();
+      await page.waitForTimeout(1500);
       
       // Find an article link (e.g., "Executing commands")
-      const articleLink = page.locator('#FAQMain a').filter({ hasText: /Executing|commands|CMDs/i }).first();
+      const articleLink = page.locator('#FAQMain a, .toc_list a').filter({ hasText: /Executing|commands|CMDs/i }).first();
       if (await articleLink.isVisible({ timeout: 2000 })) {
         await articleLink.click();
         
@@ -503,11 +516,15 @@ test.describe('Docs/Notes Page', () => {
     }
     await page.waitForTimeout(1000);
     
-    // Click on a category
+    // Click on a category "View More" link
     const pythonCard = page.locator('.notes-category-card.python');
     if (await pythonCard.isVisible({ timeout: 2000 })) {
-      await pythonCard.click();
-      await page.waitForTimeout(1000);
+      const viewMoreLink = pythonCard.locator('.notes-card-link');
+      await viewMoreLink.click();
+      await page.waitForTimeout(1500);
+      
+      // Wait for breadcrumbs to appear
+      await page.waitForSelector('.breadcrumb-nav', { timeout: 5000 });
       
       // Check breadcrumbs appear
       const breadcrumbs = page.locator('.breadcrumb-nav');
@@ -521,7 +538,7 @@ test.describe('Docs/Notes Page', () => {
       const articleLink = page.locator('#FAQMain a, .toc_list a').first();
       if (await articleLink.isVisible({ timeout: 2000 })) {
         await articleLink.click();
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(1500);
         
         // Breadcrumbs should update to show article
         const updatedBreadcrumbs = page.locator('.breadcrumb-nav');
@@ -551,11 +568,15 @@ test.describe('Docs/Notes Page', () => {
     }
     await page.waitForTimeout(1000);
     
-    // Click on a category
+    // Click on a category "View More" link
     const pythonCard = page.locator('.notes-category-card.python');
     if (await pythonCard.isVisible({ timeout: 2000 })) {
-      await pythonCard.click();
-      await page.waitForTimeout(1000);
+      const viewMoreLink = pythonCard.locator('.notes-card-link');
+      await viewMoreLink.click();
+      await page.waitForTimeout(1500);
+      
+      // Wait for back button to appear
+      await page.waitForSelector('#docsBackBtn', { timeout: 5000 });
       
       // Check for circular back button
       const backButton = page.locator('#docsBackBtn');
