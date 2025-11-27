@@ -98,9 +98,40 @@
     "clickToStart": "Click any FAQ to get started!",
     "contents": "Contents",
     "back": "Back",
+    "backToCategories": "Back to Categories",
+    "welcomeText": "Browse through organized technical documentation and reference materials.",
     "python": "Python",
     "git": "Git",
     "misc": "Misc.",
+    "notesHero": {
+      "title": "Technical Documentation",
+      "subtitle": "Browse through organized technical documentation and reference materials.",
+      "pythonCard": {
+        "title": "Python",
+        "description": "Scripts, automation, and development techniques",
+        "count": "8 articles",
+        "viewMore": "View More →"
+      },
+      "gitCard": {
+        "title": "Git",
+        "description": "Version control workflows and best practices",
+        "count": "1 articles",
+        "viewMore": "View More →"
+      },
+      "miscCard": {
+        "title": "Misc.",
+        "description": "Tips, tricks, and miscellaneous technical notes",
+        "count": "1 articles",
+        "viewMore": "View More →"
+      },
+      "notionCard": {
+        "title": "Notion",
+        "description": "Personal notes and documentation from Notion",
+        "count": "Coming Soon",
+        "viewMore": "View More →",
+        "comingSoon": "Coming Soon"
+      }
+    },
     "pythonTopics": {
       "executingCommands": "Executing Commands",
       "jinjaUsage": "Jinja Usage",
@@ -122,7 +153,40 @@
     },
     "miscTopics": {
       "fontAwesome": "Font Awesome Icons"
-    }
+    },
+    "notesHero": {
+      "title": "Technical Documentation",
+      "subtitle": "Browse through organized technical documentation and reference materials.",
+      "pythonCard": {
+        "title": "Python",
+        "description": "Scripts, automation, and development techniques",
+        "count": "8 articles",
+        "explore": "Explore",
+        "viewMore": "View More"
+      },
+      "gitCard": {
+        "title": "Git",
+        "description": "Version control workflows and best practices",
+        "count": "1 article",
+        "explore": "Explore",
+        "viewMore": "View More"
+      },
+      "miscCard": {
+        "title": "Misc.",
+        "description": "Tips, tricks, and miscellaneous technical notes",
+        "count": "1 articles",
+        "explore": "Explore",
+        "viewMore": "View More"
+      },
+      "notionCard": {
+        "title": "Notion",
+        "description": "Personal notes and documentation from Notion",
+        "comingSoon": "Coming Soon",
+        "viewMore": "View More →"
+      }
+    },
+    "welcomeText": "Browse through organized technical documentation and reference materials.",
+    "backToCategories": "Back to Categories"
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutorials",

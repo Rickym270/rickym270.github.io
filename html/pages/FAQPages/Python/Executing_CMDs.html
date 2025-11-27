@@ -9,24 +9,20 @@
         <script src="../html/js/helper.js"></script>
     </head>
     <body>
-        <div class="container">When I
-            <div id="docsNavigatrior">
+        <div class="container">
+            <div id="docsNavigatrior" style="display: none;">
                 <a href="html/pages/FAQPages/Python/index.html">Back</a>
             </div>
             <div class="push3"></div>
             <div class="row">
                 <div class="col-12">
                     <h3>Executing commands in Bash (python)</h3>
-                	<div class="push2"></div>
                 </div>
             </div>
             <div class="row">
                     <div class="col-12">
-                        
-                        
-                        
-                        <div class='divider'></div></br>
-                                <h4>Using Subprocess</h4>
+                        <div class='divider'></div>
+                        <h4>Using Subprocess</h4>
                         
                         <pre>
                         
@@ -46,12 +42,21 @@
                         
                         </pre>
                         
+                        <div class="code-description">
+                            <h5>Subprocess Example</h5>
+                            <p>This example demonstrates how to execute shell commands using Python's <code class="code-reference">subprocess</code> module. The code executes a diff command and counts the differences.</p>
+                            <div class="line-descriptions">
+                                <div class="line-desc"><strong>Line 1:</strong> Imports the subprocess module.</div>
+                                <div class="line-desc"><strong>Line 3:</strong> Defines the shell command to execute.</div>
+                                <div class="line-desc"><strong>Line 4:</strong> Creates a subprocess using <code class="code-reference">Popen()</code> with shell execution enabled.</div>
+                                <div class="line-desc"><strong>Line 7:</strong> Retrieves the output and errors from the command execution.</div>
+                            </div>
+                        </div>
+                        
                         
                         
                         <div class='divider'></div></br>
                                 <h4>Using Paramiko</h4>
-                        
-                        
                         
                         <pre>
                         
@@ -78,6 +83,23 @@
                         <code>stdin, stdout, stderr = client.exec_command("clish -c 'show route static'")</code>
                         
                         </pre>
+                        
+                        <div class="code-description">
+                            <h5>Paramiko SSH Example</h5>
+                            <p>This example demonstrates how to establish an SSH connection and execute commands on a remote device using Python's <code class="code-reference">paramiko</code> library.</p>
+                            <div class="line-descriptions">
+                                <div class="line-desc"><strong>Line 1:</strong> Imports the paramiko module for SSH functionality.</div>
+                                <div class="line-desc"><strong>Line 3:</strong> Creates a new SSH client instance.</div>
+                                <div class="line-desc"><strong>Line 4:</strong> Loads system host keys for known host verification.</div>
+                                <div class="line-desc"><strong>Line 5:</strong> Loads host keys from the user's SSH known_hosts file.</div>
+                                <div class="line-desc"><strong>Line 6:</strong> Sets the policy to allow all host keys (use with caution in production).</div>
+                                <div class="line-desc"><strong>Line 7:</strong> Establishes SSH connection to the device with credentials.</div>
+                                <div class="line-desc"><strong>Line 8:</strong> Invokes an interactive shell session.</div>
+                                <div class="line-desc"><strong>Line 9:</strong> Sends Ctrl+C (ASCII code 3) to interrupt any running command.</div>
+                                <div class="line-desc"><strong>Line 10:</strong> Executes the "clish" command to enter CLI shell mode.</div>
+                                <div class="line-desc"><strong>Line 11:</strong> Executes a CLI command and captures stdin, stdout, and stderr streams.</div>
+                            </div>
+                        </div>
                         
                     </div>
             </div>

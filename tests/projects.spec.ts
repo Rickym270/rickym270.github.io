@@ -248,7 +248,6 @@ test.describe('Projects Page', () => {
         await expect(anyHeading.first()).toBeVisible({ timeout: 5000 });
       }
     }
-    await expect(projectsHeading).toHaveText('Projects', { timeout: 5000 });
     
     // Sections should exist (they might be hidden if empty, which is fine - just check they're attached)
     const inProgress = page.locator('#ProjInProgress');

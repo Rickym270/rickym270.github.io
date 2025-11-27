@@ -278,6 +278,14 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     color: var(--color-text-primary) !important;
 }
 
+.nav-item.active .nav-link.dropdown-toggle {
+    color: var(--color-text-primary) !important;
+}
+
+.nav-item.active .nav-link.dropdown-toggle:hover {
+    color: var(--color-text-primary) !important;
+}
+
 .nav-item.active .nav-link::after {
     content: '';
     position: absolute;
@@ -287,6 +295,16 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     height: 2px;
     background-color: var(--color-accent);
     border-radius: 2px;
+}
+
+/* Ensure dropdown-item doesn't get active styling when parent is active */
+.nav-item.active .dropdown-item {
+    color: var(--color-text-secondary) !important;
+}
+
+.nav-item.active .dropdown-item:hover {
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-bg-secondary) !important;
 }
 
 .dropdown-menu {
@@ -869,8 +887,25 @@ h5 u {
 
 /* Fix text color in docs content */
 [data-theme="dark"] #FAQMain,
-[data-theme="dark"] #FAQMain * {
-    color: var(--color-text-primary);
+[data-theme="dark"] #FAQMain *,
+[data-theme="dark"] #content .container,
+[data-theme="dark"] #content .container *,
+[data-theme="dark"] #content .container.article-content,
+[data-theme="dark"] #content .container.article-content * {
+    color: var(--color-text-primary) !important;
+}
+
+/* Force text visibility in dark mode for article content */
+[data-theme="dark"] #content .container,
+[data-theme="dark"] #content .container.article-content {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container div,
+[data-theme="dark"] #content .container span,
+[data-theme="dark"] #content .container.article-content div,
+[data-theme="dark"] #content .container.article-content span {
+    color: inherit !important;
 }
 
 [data-theme="dark"] #FAQMain h1,
@@ -878,22 +913,42 @@ h5 u {
 [data-theme="dark"] #FAQMain h3,
 [data-theme="dark"] #FAQMain h4,
 [data-theme="dark"] #FAQMain h5,
-[data-theme="dark"] #FAQMain h6 {
-    color: var(--color-text-primary);
+[data-theme="dark"] #FAQMain h6,
+[data-theme="dark"] #content .container h1,
+[data-theme="dark"] #content .container h2,
+[data-theme="dark"] #content .container h3,
+[data-theme="dark"] #content .container h4,
+[data-theme="dark"] #content .container h5,
+[data-theme="dark"] #content .container h6,
+[data-theme="dark"] #content .container.article-content h1,
+[data-theme="dark"] #content .container.article-content h2,
+[data-theme="dark"] #content .container.article-content h3,
+[data-theme="dark"] #content .container.article-content h4,
+[data-theme="dark"] #content .container.article-content h5,
+[data-theme="dark"] #content .container.article-content h6 {
+    color: var(--color-text-primary) !important;
 }
 
 [data-theme="dark"] #FAQMain ol li,
 [data-theme="dark"] #FAQMain ul li,
-[data-theme="dark"] #FAQMain p {
-    color: var(--color-text-primary);
+[data-theme="dark"] #FAQMain p,
+[data-theme="dark"] #content .container p,
+[data-theme="dark"] #content .container.article-content p,
+[data-theme="dark"] #content .container ol li,
+[data-theme="dark"] #content .container ul li {
+    color: var(--color-text-secondary) !important;
 }
 
-[data-theme="dark"] #FAQMain a {
-    color: #ffffff !important;
+[data-theme="dark"] #FAQMain a,
+[data-theme="dark"] #content .container a,
+[data-theme="dark"] #content .container.article-content a {
+    color: var(--color-accent) !important;
 }
 
-[data-theme="dark"] #FAQMain a:hover {
-    color: #ffffff !important;
+[data-theme="dark"] #FAQMain a:hover,
+[data-theme="dark"] #content .container a:hover,
+[data-theme="dark"] #content .container.article-content a:hover {
+    color: var(--color-accent-hover) !important;
     opacity: 0.8;
 }
 
@@ -906,46 +961,63 @@ h5 u {
     opacity: 0.7;
 }
 
-/* TOC list styling for FAQ pages */
+/* TOC list styling for FAQ pages - Flat UI */
 .toc_list {
-    list-style: decimal;
-    padding-left: 2rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
 }
 
 .toc_list li {
     margin-bottom: var(--spacing-sm);
     color: var(--color-text-primary);
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+.toc_list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-text-tertiary);
+    font-weight: 400;
 }
 
 .toc_list a {
     color: var(--color-text-primary);
     text-decoration: none;
-    font-size: 1.125rem; /* Increased from 1rem for better visibility */
+    font-size: 1rem;
     display: inline-block;
     padding: var(--spacing-xs) 0;
-    font-weight: 500;
+    font-weight: 400;
+    transition: color var(--transition-fast);
 }
 
 .toc_list a:hover {
-    color: var(--color-text-primary);
-    opacity: 0.8;
+    color: var(--color-accent);
     text-decoration: underline;
 }
 
 .toc_title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
+    margin-top: 0;
     margin-bottom: var(--spacing-md);
     color: var(--color-text-primary);
+    text-align: left;
 }
 
 [data-theme="dark"] .toc_list li {
     color: var(--color-text-primary) !important;
 }
 
+[data-theme="dark"] .toc_list li::before {
+    color: var(--color-text-tertiary) !important;
+}
+
 [data-theme="dark"] .toc_list a {
-    color: #ffffff !important;
-    font-size: 1.125rem !important;
+    color: var(--color-text-primary) !important;
+    font-size: 1rem !important;
 }
 
 [data-theme="dark"] .toc_title {
@@ -953,8 +1025,8 @@ h5 u {
 }
 
 [data-theme="dark"] .toc_list a:hover {
-    color: #ffffff !important;
-    opacity: 0.8;
+    color: var(--color-accent) !important;
+    opacity: 1;
 }
 
 /* Main content styling - ensure text is visible */
@@ -1042,12 +1114,12 @@ body #main a {
 }
 
 [data-theme="light"] .toc_list a {
-    color: #1a1a1a !important;
+    color: var(--color-text-primary) !important;
 }
 
 [data-theme="light"] .toc_list a:hover {
-    color: #1a1a1a !important;
-    opacity: 0.7;
+    color: var(--color-accent) !important;
+    opacity: 1;
 }
 
 /* Position FAQMain content higher - align with Notes title */
@@ -1057,39 +1129,144 @@ body #main a {
     font-size: 1rem !important; /* Override style.css 12% font-size */
 }
 
-/* Fix text size in docsNavigatrior */
-#docsNavigatrior {
+/* Fix text size in docsNavigatrior - flat UI styling */
+#docsNavigatrior,
+#content #docsNavigatrior {
     font-size: 1rem !important;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
 }
 
-#docsNavigatrior a {
-    font-size: 1rem !important;
-    font-weight: 500;
-    color: var(--color-accent);
+#docsNavigatrior a,
+#content #docsNavigatrior a {
+    font-size: 0.9375rem !important;
+    font-weight: 400;
+    color: var(--color-text-primary);
     text-decoration: none;
-    padding: var(--spacing-sm) var(--spacing-md);
-    display: inline-block;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background-color: var(--color-bg-secondary);
-    transition: all var(--transition-fast);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: none;
+    border: none;
+    transition: opacity var(--transition-fast);
 }
 
-#docsNavigatrior a:hover {
-    background-color: var(--color-bg-tertiary);
-    border-color: var(--color-accent);
-    color: var(--color-accent-hover);
+#docsNavigatrior a:hover,
+#content #docsNavigatrior a:hover {
+    background: none;
+    border: none;
+    color: var(--color-text-primary);
+    opacity: 0.7;
 }
 
-[data-theme="dark"] #docsNavigatrior a {
-    background-color: var(--color-bg-tertiary);
-    border-color: var(--color-border);
+#docsNavigatrior a::before,
+#content #docsNavigatrior a::before {
+    content: '←';
+    margin-right: var(--spacing-xs);
+    font-size: 0.875rem;
+}
+
+[data-theme="dark"] #docsNavigatrior a,
+[data-theme="dark"] #content #docsNavigatrior a {
+    color: var(--color-text-primary);
 }
 
 /* Fix container font-size - override style.css 12% font-size */
-#FAQMain .container {
+#FAQMain .container,
+#content .container.article-content,
+#content .container {
     font-size: 1rem !important;
     line-height: 1.6;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+}
+
+/* Ensure FAQMain and its children don't float */
+#FAQMain,
+#FAQMain > div,
+#FAQMain > *,
+#content #FAQMain,
+#content #FAQMain > div,
+#content #FAQMain > * {
+    float: none !important;
+    clear: both !important;
+    position: relative !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Override any Bootstrap column classes that might be affecting FAQMain */
+#content #FAQMain[class*="col-"],
+#FAQMain[class*="col-"],
+#content #FAQMain [class*="col-"],
+#FAQMain [class*="col-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    float: none !important;
+}
+
+/* Ensure proper padding for category index pages */
+#content #FAQMain,
+#content #FAQMain > div {
+    padding-left: var(--spacing-lg) !important;
+    padding-right: var(--spacing-lg) !important;
+    padding-top: var(--spacing-lg) !important;
+    margin-top: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    float: none !important;
+    clear: both !important;
+}
+
+/* Table of contents styling */
+#content #FAQMain .toc_title,
+#FAQMain .toc_title {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: left !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    float: none !important;
+    clear: both !important;
+}
+
+#content #FAQMain .toc_list,
+#FAQMain .toc_list {
+    padding-left: var(--spacing-md) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    float: none !important;
+    clear: both !important;
+    list-style: none !important;
+}
+
+#content #FAQMain .toc_list li,
+#FAQMain .toc_list li {
+    padding-left: var(--spacing-md) !important;
+    position: relative !important;
+}
+
+#content #FAQMain .toc_list li::before,
+#FAQMain .toc_list li::before {
+    content: '→' !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: var(--color-text-tertiary) !important;
+    font-weight: 400 !important;
 }
 
 /* Fix unwrapped text nodes - text directly in container without wrapping element */
@@ -1100,37 +1277,492 @@ body #main a {
 
 /* Ensure rows and columns have proper font size */
 #FAQMain .row,
-#FAQMain .col-12 {
+#FAQMain .col-12,
+#content .row,
+#content .col-12 {
     font-size: 1rem !important;
+    color: var(--color-text-primary);
 }
 
 /* Fix any text content inside col-12 */
-#FAQMain .col-12 {
+#FAQMain .col-12,
+#content .col-12 {
     font-size: 1rem !important;
 }
 
+/* Article content styling - flat UI design */
+#content .container.article-content,
+#content #FAQMain .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background-color: var(--color-bg-primary);
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid var(--color-border);
+    box-shadow: none;
+    margin-top: var(--spacing-lg);
+}
+
+/* Clean up article container - remove unwanted spacing and elements */
+#content .container.article-content > *:first-child:not(#docsBackButton):not(#docsNavigatrior) {
+    margin-top: 0;
+}
+
+/* Ensure proper spacing between article sections */
+#content .container.article-content .row + .row {
+    margin-top: var(--spacing-lg);
+}
+
+/* Style article text content better */
+#content .container.article-content .col-12 > *:first-child {
+    margin-top: 0;
+}
+
+#content .container.article-content .col-12 > *:last-child {
+    margin-bottom: 0;
+}
+
+#content .container.article-content h3,
+#content #FAQMain .container h3 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: left !important;
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+    line-height: 1.3;
+}
+
+/* Reduce spacing after h3 when followed by divider and h4 */
+#content .container.article-content h3 + .row .divider,
+#content #FAQMain .container h3 + .row .divider {
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+#content .container.article-content h4,
+#content #FAQMain .container h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+}
+
+#content .container.article-content p,
+#content #FAQMain .container p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Style article text content - handle text directly in col-12 */
+#content .container.article-content .col-12,
+#content #FAQMain .container .col-12 {
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+}
+
+/* Style spans and text in articles */
+#content .container.article-content span,
+#content #FAQMain .container span {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+/* Better spacing for article sections */
+#content .container.article-content .row {
+    margin-bottom: var(--spacing-md);
+}
+
+#content .container.article-content .row:last-child {
+    margin-bottom: 0;
+}
+
+#content .container.article-content .divider,
+#content #FAQMain .container .divider {
+    border-top: 1px solid var(--color-border);
+    margin: var(--spacing-md) 0;
+}
+
+/* Reduce spacing for divider after h3 heading */
+#content .container.article-content h3 ~ .row .divider,
+#content #FAQMain .container h3 ~ .row .divider,
+.container h3 ~ .row .divider {
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Hide old navigation element - we use #docsBackButton instead */
+#content #docsNavigatrior,
+#FAQMain #docsNavigatrior {
+    display: none !important;
+}
+
+/* Remove old push spacing classes */
+#content .push2,
+#content .push3,
+#content .push4,
+#content .push5,
+#FAQMain .push2,
+#FAQMain .push3,
+#FAQMain .push4,
+#FAQMain .push5 {
+    display: none !important;
+}
+
+/* Remove any stray text nodes in container (like "When I") */
+#content .container:not(.article-content) > text,
+#FAQMain .container > text {
+    display: none;
+}
+
 /* Code block styling - ensure code snippets are displayed properly with single spacing */
-#FAQMain pre {
+#FAQMain pre,
+#content .container pre,
+#content #FAQMain pre,
+pre {
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: var(--spacing-md);
-    padding-left: var(--spacing-xl) !important; /* Indentation to differentiate from headers */
-    margin: var(--spacing-md) 0;
+    padding-left: 3.5rem !important; /* Space for line numbers */
+    margin: var(--spacing-lg) 0;
     overflow-x: auto;
     text-align: left !important;
     font-family: var(--font-mono);
     font-size: 0.875rem;
-    line-height: 1 !important; /* Single spacing - critical for no double spacing */
+    line-height: 0.875rem !important; /* True single spacing: line-height equals font-size */
     white-space: pre; /* Preserve whitespace and line breaks */
     direction: ltr;
+    position: relative;
     /* Aggressively remove any spacing */
     font-size-adjust: none;
     letter-spacing: normal;
 }
 
+/* Ensure all code elements in pre blocks have single spacing */
+pre code:not(:empty) {
+    line-height: 0.875rem !important;
+    height: 0.875rem !important;
+    min-height: 0.875rem !important;
+    max-height: 0.875rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+/* Line numbers for code blocks */
+.code-with-lines {
+    position: relative;
+}
+
+.code-line-numbers {
+    position: absolute;
+    left: 0;
+    top: var(--spacing-md);
+    width: 3rem;
+    background-color: var(--color-bg-tertiary);
+    border-right: 1px solid var(--color-border);
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-xs);
+    padding-right: var(--spacing-sm);
+    padding-bottom: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    user-select: none;
+    text-align: right;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.code-line-numbers .line-number {
+    display: block;
+    height: 0.875rem; /* Match line-height of code (true single spacing) */
+    line-height: 0.875rem;
+    min-height: 0.875rem;
+}
+
+[data-theme="dark"] .code-line-numbers {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-tertiary);
+}
+
+/* Code description styling - cardless/flat design */
+.code-description {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: var(--spacing-md) 0;
+    margin: var(--spacing-md) 0 var(--spacing-lg) 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.code-description h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--color-text-primary);
+}
+
+.code-description p {
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.code-description p:last-child {
+    margin-bottom: 0;
+}
+
+.code-description .code-reference {
+    color: var(--color-accent);
+    font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+}
+
+/* Line descriptions - each on a new line */
+.code-description .line-descriptions {
+    margin-top: var(--spacing-sm);
+}
+
+.code-description .line-desc {
+    margin: var(--spacing-xs) 0;
+    line-height: 1.6;
+    display: block;
+}
+
+.code-description .line-desc:first-child {
+    margin-top: 0;
+}
+
+.code-description .line-desc:last-child {
+    margin-bottom: 0;
+}
+
+/* NOTE statement styling */
+.note-statement {
+    margin: var(--spacing-md) 0;
+    padding-left: var(--spacing-md);
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+.note-statement strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Git command lists */
+.git-command-list {
+    margin: var(--spacing-md) 0;
+    padding-left: var(--spacing-xl);
+    color: var(--color-text-secondary);
+}
+
+/* Numbered lists (ol) */
+ol.git-command-list {
+    list-style-type: decimal;
+}
+
+/* Unordered lists (ul) for git commands */
+ul.git-command-list {
+    list-style-type: disc;
+    padding-left: var(--spacing-xl);
+}
+
+.git-command-item {
+    margin: var(--spacing-sm) 0;
+    line-height: 1.7;
+}
+
+/* Git command styling - distinguishable but not code blocks */
+.git-command,
+.git-command-inline {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-accent);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    display: inline-block;
+    margin-right: var(--spacing-xs);
+}
+
+.git-command-inline {
+    display: inline;
+    margin-right: var(--spacing-xs);
+}
+
+[data-theme="dark"] .git-command,
+[data-theme="dark"] .git-command-inline {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-accent);
+}
+
+/* Flat UI list styling - consistent with Flat UI principles */
+.flat-list {
+    margin: var(--spacing-md) 0;
+    padding-left: 0;
+    list-style: none;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+.flat-list-item {
+    margin: var(--spacing-sm) 0;
+    padding-left: var(--spacing-lg);
+    position: relative;
+    line-height: 1.7;
+    display: block;
+}
+
+/* Flat UI bullet point (custom, minimal) */
+.flat-list-item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+    font-size: 1.2em;
+    line-height: 1.4;
+}
+
+/* Numbered flat lists */
+ol.flat-list {
+    counter-reset: flat-counter;
+    padding-left: 0;
+    list-style: none;
+}
+
+ol.flat-list .flat-list-item {
+    counter-increment: flat-counter;
+    padding-left: var(--spacing-xl);
+}
+
+ol.flat-list .flat-list-item::before {
+    content: counter(flat-counter) '.';
+    position: absolute;
+    left: 0;
+    color: var(--color-text-primary);
+    font-weight: 600;
+    font-size: 1em;
+    line-height: 1.7;
+}
+
+/* Ensure lists are properly displayed */
+#content .container.article-content ul,
+#content .container.article-content ol,
+#content #FAQMain .container ul,
+#content #FAQMain .container ol,
+#FAQMain ul,
+#FAQMain ol {
+    margin: var(--spacing-md) 0;
+    padding-left: var(--spacing-xl);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+#content .container.article-content li,
+#content #FAQMain .container li,
+#FAQMain li {
+    margin: var(--spacing-sm) 0;
+    line-height: 1.7;
+    display: list-item;
+}
+
+/* Override for flat lists in article content */
+#content .container.article-content .flat-list,
+#content #FAQMain .container .flat-list,
+#FAQMain .flat-list {
+    padding-left: 0;
+}
+
+#content .container.article-content .flat-list-item,
+#content #FAQMain .container .flat-list-item,
+#FAQMain .flat-list-item {
+    display: block;
+    list-style: none;
+}
+
+/* Command with description grouping - Flat UI styling */
+.command-with-description {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-accent);
+}
+
+.command-block {
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    display: block;
+    line-height: 1.6;
+}
+
+.command-description-list {
+    margin: var(--spacing-sm) 0 0 0;
+    padding-left: var(--spacing-lg);
+    list-style: none;
+    color: var(--color-text-secondary);
+}
+
+.command-desc-item {
+    margin: var(--spacing-xs) 0;
+    padding-left: var(--spacing-md);
+    position: relative;
+    line-height: 1.7;
+    display: block;
+}
+
+.command-desc-item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+/* Dark mode for command groups */
+[data-theme="dark"] .command-with-description {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border);
+}
+
+[data-theme="dark"] .command-block {
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .code-description {
+    background: none;
+    border: none;
+}
+
 /* Inline code */
-#FAQMain code:not(pre code) {
+#FAQMain code:not(pre code),
+#content .container code:not(pre code),
+#content #FAQMain code:not(pre code) {
     font-family: var(--font-mono);
     font-size: 0.875rem;
     background-color: var(--color-bg-secondary);
@@ -1142,7 +1774,10 @@ body #main a {
 }
 
 /* Code inside pre blocks - single spacing display (no double spacing) */
-#FAQMain pre code {
+#FAQMain pre code,
+#content .container pre code,
+#content #FAQMain pre code,
+pre code {
     background-color: transparent;
     padding: 0 !important;
     border-radius: 0;
@@ -1151,16 +1786,19 @@ body #main a {
     white-space: pre-wrap; /* Preserve whitespace but wrap if needed */
     font-family: var(--font-mono);
     font-size: 0.875rem;
-    line-height: 1 !important; /* Exact single spacing - height equals font-size */
+    line-height: 0.875rem !important; /* True single spacing: line-height equals font-size */
     margin: 0 !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
-    height: auto;
+    height: 0.875rem !important; /* Force height to match line-height for single spacing */
+    min-height: 0.875rem !important; /* Ensure minimum height matches line-height */
+    max-height: 0.875rem !important; /* Prevent any expansion */
     /* Remove any browser defaults */
     border: 0;
     outline: 0;
+    overflow: visible;
 }
 
 /* Critical: Ensure consecutive code elements have absolutely zero spacing */
@@ -1193,20 +1831,140 @@ body #main a {
 }
 
 /* Dark mode code blocks */
-[data-theme="dark"] #FAQMain pre {
-    background-color: var(--color-bg-secondary);
-    border-color: var(--color-border);
-    color: var(--color-text-primary);
+[data-theme="dark"] #FAQMain pre,
+[data-theme="dark"] #content .container pre,
+[data-theme="dark"] #content #FAQMain pre,
+[data-theme="dark"] #content .container.article-content pre,
+[data-theme="dark"] #content pre {
+    background-color: var(--color-bg-secondary) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text-primary) !important;
 }
 
-[data-theme="dark"] #FAQMain code {
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text-primary);
+[data-theme="dark"] #FAQMain code,
+[data-theme="dark"] #content .container code,
+[data-theme="dark"] #content #FAQMain code,
+[data-theme="dark"] #content .container.article-content code,
+[data-theme="dark"] #content code {
+    background-color: var(--color-bg-secondary) !important;
+    color: var(--color-text-primary) !important;
 }
 
-[data-theme="dark"] #FAQMain pre code {
-    background-color: transparent;
-    color: var(--color-text-primary);
+[data-theme="dark"] #FAQMain pre code,
+[data-theme="dark"] #content .container pre code,
+[data-theme="dark"] #content #FAQMain pre code,
+[data-theme="dark"] #content .container.article-content pre code,
+[data-theme="dark"] #content pre code {
+    background-color: transparent !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Dark mode article content - ensure all text is visible */
+[data-theme="dark"] #content .container.article-content,
+[data-theme="dark"] #content .container,
+[data-theme="dark"] #content #FAQMain .container {
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-bg-primary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content .row,
+[data-theme="dark"] #content .container.article-content .col-12,
+[data-theme="dark"] #content #FAQMain .container .row,
+[data-theme="dark"] #content #FAQMain .container .col-12,
+[data-theme="dark"] #content .container .row,
+[data-theme="dark"] #content .container .col-12 {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content .row *,
+[data-theme="dark"] #content .container.article-content .col-12 *,
+[data-theme="dark"] #content #FAQMain .container .row *,
+[data-theme="dark"] #content #FAQMain .container .col-12 * {
+    color: inherit;
+}
+
+/* Ensure all text in article containers is visible in dark mode */
+[data-theme="dark"] #content .container,
+[data-theme="dark"] #content .container.article-content,
+[data-theme="dark"] #content #FAQMain .container {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container *:not(code):not(pre):not(a),
+[data-theme="dark"] #content .container.article-content *:not(code):not(pre):not(a),
+[data-theme="dark"] #content #FAQMain .container *:not(code):not(pre):not(a) {
+    color: inherit;
+}
+
+/* Dark mode article content - ensure all text is visible */
+[data-theme="dark"] #content .container.article-content,
+[data-theme="dark"] #content .container,
+[data-theme="dark"] #content #FAQMain .container {
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-bg-primary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content *,
+[data-theme="dark"] #content .container *,
+[data-theme="dark"] #content #FAQMain .container * {
+    color: inherit;
+}
+
+[data-theme="dark"] #content .container.article-content h3,
+[data-theme="dark"] #content #FAQMain .container h3,
+[data-theme="dark"] #content .container h3 {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content h4,
+[data-theme="dark"] #content #FAQMain .container h4,
+[data-theme="dark"] #content .container h4 {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content p,
+[data-theme="dark"] #content #FAQMain .container p,
+[data-theme="dark"] #content .container p {
+    color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content .row,
+[data-theme="dark"] #content .container.article-content .col-12,
+[data-theme="dark"] #content #FAQMain .container .row,
+[data-theme="dark"] #content #FAQMain .container .col-12,
+[data-theme="dark"] #content .container .row,
+[data-theme="dark"] #content .container .col-12 {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container.article-content .row *,
+[data-theme="dark"] #content .container.article-content .col-12 *,
+[data-theme="dark"] #content #FAQMain .container .row *,
+[data-theme="dark"] #content #FAQMain .container .col-12 * {
+    color: inherit;
+}
+
+/* Dark mode for article text nodes and direct text content */
+[data-theme="dark"] #content .container.article-content,
+[data-theme="dark"] #content #FAQMain .container {
+    color: var(--color-text-primary) !important;
+}
+
+/* Ensure code blocks have visible text in dark mode */
+[data-theme="dark"] #content .container pre,
+[data-theme="dark"] #content .container.article-content pre {
+    color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #content .container pre code,
+[data-theme="dark"] #content .container.article-content pre code {
+    color: var(--color-text-primary) !important;
+}
+
+/* Dark mode for any text directly in container */
+[data-theme="dark"] #content .container,
+[data-theme="dark"] #content .container.article-content {
+    color: var(--color-text-primary) !important;
 }
 
 /* Hide Back button on index pages (when FAQMain contains toc_list or toc_title) */
@@ -1927,19 +2685,21 @@ body #main a {
     /* Fix navbar on mobile - ensure it's visible and not cut off */
     .navbar {
         /* Add safe area inset for iOS devices (notch, status bar) */
-        padding-top: env(safe-area-inset-top);
+        padding-top: env(safe-area-inset-top) !important;
         /* Ensure navbar is fully visible */
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1030;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1030 !important;
         /* Single line navbar on mobile */
-        height: 56px;
-        min-height: 56px;
-        padding-left: var(--spacing-sm);
-        padding-right: var(--spacing-sm);
-        padding-bottom: 0;
+        height: 56px !important;
+        min-height: 56px !important;
+        padding-left: var(--spacing-sm) !important;
+        padding-right: var(--spacing-sm) !important;
+        padding-bottom: 0 !important;
+        background-color: var(--color-bg-primary) !important;
+        border-bottom: 1px solid var(--color-border) !important;
         transition: height var(--transition-base), padding-left var(--transition-base), padding-right var(--transition-base);
     }
     
@@ -1973,6 +2733,122 @@ body #main a {
     
     #content .container {
         padding-top: 0 !important;
+        padding-left: var(--spacing-md) !important;
+        padding-right: var(--spacing-md) !important;
+    }
+    
+    /* Category index pages - ensure proper padding on mobile */
+    #content #FAQMain,
+    #content #FAQMain > div {
+        padding-left: var(--spacing-md) !important;
+        padding-right: var(--spacing-md) !important;
+        padding-top: var(--spacing-md) !important;
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Table of contents styling on mobile */
+    #content #FAQMain .toc_title,
+    #FAQMain .toc_title {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-top: var(--spacing-md) !important;
+        margin-bottom: var(--spacing-md) !important;
+    }
+    
+    #content #FAQMain .toc_list,
+    #FAQMain .toc_list {
+        padding-left: var(--spacing-md) !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        list-style: none !important;
+    }
+    
+    #content #FAQMain .toc_list li,
+    #FAQMain .toc_list li {
+        padding-left: var(--spacing-md) !important;
+        position: relative !important;
+    }
+    
+    #content #FAQMain .toc_list li::before,
+    #FAQMain .toc_list li::before {
+        content: '→' !important;
+        position: absolute !important;
+        left: 0 !important;
+        color: var(--color-text-tertiary) !important;
+    }
+    
+    /* Back button container on mobile */
+    #content #docsBackButton,
+    #docsBackButton {
+        padding: var(--spacing-sm) var(--spacing-md) !important;
+        margin-left: var(--spacing-md) !important;
+        margin-right: var(--spacing-md) !important;
+    }
+    
+    #content #docsBackButton .container,
+    #docsBackButton .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    .btn-back-circle {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .btn-back-circle svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    /* Navigation container on mobile - keep on same line */
+    .docs-nav-container {
+        flex-wrap: nowrap !important;
+        gap: var(--spacing-sm) !important;
+    }
+    
+    .breadcrumb-nav-inline {
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
+        justify-content: flex-end;
+    }
+    
+    /* On very small screens, allow wrapping */
+    @media (max-width: 480px) {
+        .docs-nav-container {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        
+        .breadcrumb-nav-inline {
+            margin-left: 0 !important;
+            width: 100%;
+        }
+    }
+    
+    /* Breadcrumb styling on mobile */
+    .breadcrumb-container {
+        padding: var(--spacing-sm) var(--spacing-md) !important;
+    }
+    
+    .breadcrumb-nav {
+        font-size: 0.8125rem;
+    }
+    
+    /* Article headers alignment on mobile */
+    #content .container.article-content h3,
+    #content #FAQMain .container h3 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        text-align: left !important;
     }
     
     #content #homeBanner {

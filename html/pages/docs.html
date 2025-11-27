@@ -1,116 +1,1063 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org//TR/xhtml1/DTD/xhtml1-transitional-dtd">
+<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <meta http-equiv="Cache-control" content="no-cache">
-        <meta http-equiv="Expires" content="-1"/>
-        
-        <!-- <link rel="stylesheet" type="text/css" href="../css/style.css"> -->
-        <link rel="stylesheet" type="text/css" href="/html/css/style.css">
-        <link rel="stylesheet" type="text/css" href="/html/css/modern.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-        
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-       
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title data-translate-title="docs.title">Ricky Martinez - Docs</title>
-
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $.ajaxSetup({
-                    cache: false
-                });
-                $('#FAQLinks div.list-group a').click(function(e){
-                    // handles switching what link is active
-                    $('#FAQLinks a').removeClass('active');
-                    $(this).addClass('active');
-                    e.preventDefault();       // Prevents default re-direct of the anchor tag
-                });
-                $("div.list-group a").on('click',function(e){
-                    e.preventDefault();
-                    var attr = $(this).attr('href');
-                    if(attr!='#' || (typeof attr != typeof undefined || attr!=false)){
-                        $('#FAQMain').load(attr, function() {
-                            // After loading, setup Back button handler
-                            setupBackButton();
-                            // Re-apply translations after content loads
-                            if (typeof window.TranslationManager !== 'undefined') {
-                                window.TranslationManager.applyTranslations();
-                            }
-                        });
-                    }
-                });
-                
-                // Function to setup Back button handler and visibility
-                function setupBackButton() {
-                    // Hide Back button on index pages (those with toc_list or toc_title)
-                    var hasTocList = $('#FAQMain .toc_list').length > 0;
-                    var hasTocTitle = $('#FAQMain .toc_title').length > 0;
-                    var hasInitialMessage = $('#FAQMain h4:contains("Click any FAQ")').length > 0;
-                    
-                    if (hasTocList || hasTocTitle || hasInitialMessage) {
-                        $('#FAQMain #docsNavigatrior').hide();
-                    } else {
-                        // Show Back button on article pages
-                        $('#FAQMain #docsNavigatrior').show();
-                    }
-                    
-                    // Use event delegation for dynamically loaded content
-                    $(document).off('click', '#docsNavigatrior > a');
-                    $(document).on('click', '#docsNavigatrior > a', function(e){
-                        e.preventDefault();
-                        var backUrl = $(this).attr('href');
-                        if(backUrl && backUrl !== '#'){
-                            $('#FAQMain').load(backUrl, function() {
-                                // Re-setup Back button after loading index page
-                                setupBackButton();
-                                // Re-apply translations after content loads
-                                if (typeof window.TranslationManager !== 'undefined') {
-                                    window.TranslationManager.applyTranslations();
-                                }
-                            });
-                        }
-                    });
-                }
-                
-                // Initial setup
-                setupBackButton();
-            });
-        </script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="/html/css/modern.css" />
+        <link rel="stylesheet" href="/html/css/style.css" />
+        <link rel="stylesheet" href="/html/css/notes.css" />
     </head>
     <body>
-        <div class="container" id="main">
-            <div class="push3"></div>
-            <div class="row">
-                <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2 right-divider divider-height" id="FAQLinks">
-                    <h3 data-translate="docs.notes">Notes</h3>
-        
-                    <div class="push3"></div>
-                    <div class="list-group" id="FAQLinks">
-                         
-                        <a class="list-group-item list-group-item-action" href="../html/pages/FAQPages/Python/index.html" data-translate="docs.python">Python</a>
-
-                        <a class="list-group-item list-group-item-action" href="../html/pages/FAQPages/Git/index.html" data-translate="docs.git">Git</a>
-
-                        <a class="list-group-item list-group-item-action" href="../html/pages/FAQPages/Misc/index.html" data-translate="docs.misc">Misc.</a>
-                        
+        <div class="container">
+            <div class="section">
+            <!-- Notes Hero Section -->
+            <div class="notes-hero">
+                <div class="notes-hero-content">
+                    <span class="notes-hero-icon">📚</span>
+                    <h1 class="notes-hero-title" data-translate="docs.notesHero.title">Technical Documentation</h1>
+                    <p class="notes-hero-subtitle" data-translate="docs.notesHero.subtitle">Browse through organized technical documentation and reference materials.</p>
+                </div>
+            </div>
+            
+            <!-- Category Cards -->
+            <div class="notes-category-grid">
+                    <div class="notes-card notes-category-card python">
+                    <span class="notes-card-icon">🐍</span>
+                    <h3 class="notes-card-title" data-translate="docs.notesHero.pythonCard.title">Python</h3>
+                    <p class="notes-card-description" data-translate="docs.notesHero.pythonCard.description">Scripts, automation, and development techniques</p>
+                    <div class="notes-card-count" data-translate="docs.notesHero.pythonCard.count">8 articles</div>
+                        <a href="../html/pages/FAQPages/Python/index.html" class="notes-card-link" data-translate="docs.notesHero.pythonCard.viewMore">View More →</a>
+                    </div>
+                    
+                    <div class="notes-card notes-category-card git">
+                    <span class="notes-card-icon">📝</span>
+                    <h3 class="notes-card-title" data-translate="docs.notesHero.gitCard.title">Git</h3>
+                    <p class="notes-card-description" data-translate="docs.notesHero.gitCard.description">Version control workflows and best practices</p>
+                    <div class="notes-card-count" data-translate="docs.notesHero.gitCard.count">1 articles</div>
+                        <a href="../html/pages/FAQPages/Git/index.html" class="notes-card-link" data-translate="docs.notesHero.gitCard.viewMore">View More →</a>
+                    </div>
+                    
+                    <div class="notes-card notes-category-card misc">
+                    <span class="notes-card-icon">🔧</span>
+                    <h3 class="notes-card-title" data-translate="docs.notesHero.miscCard.title">Misc.</h3>
+                    <p class="notes-card-description" data-translate="docs.notesHero.miscCard.description">Tips, tricks, and miscellaneous technical notes</p>
+                    <div class="notes-card-count" data-translate="docs.notesHero.miscCard.count">1 articles</div>
+                        <a href="../html/pages/FAQPages/Misc/index.html" class="notes-card-link" data-translate="docs.notesHero.miscCard.viewMore">View More →</a>
                     </div>
                 </div>
-        
-                <div class="col-xs-8 col-sm-8 col-md-9 col-lg-10">
-                    <div class="container container-no-padding" id="FAQMain">
-                        <h4 data-translate="docs.clickToStart">Click any FAQ to get started!</h4>
-                        <div class="push2"></div>
-                        
+                
+                <!-- Notion Integration Section - Coming Soon -->
+                <div class="notes-notion-section">
+                    <div class="notes-card notes-category-card notion">
+                        <span class="notes-card-icon">📝</span>
+                        <h3 class="notes-card-title" data-translate="docs.notesHero.notionCard.title">Notion</h3>
+                        <p class="notes-card-description" data-translate="docs.notesHero.notionCard.description">Personal notes and documentation from Notion</p>
+                        <div class="notes-card-count notion-coming-soon" data-translate="docs.notesHero.notionCard.comingSoon">Coming Soon</div>
+                        <div class="notes-card-link notion-disabled" data-translate="docs.notesHero.notionCard.viewMore">View More →</div>
+                    </div>
+            </div>
+            
+                <!-- Main Content Area - will be replaced when category is selected -->
+                <div class="notes-content" id="notesMainContent">
+                <div class="container container-no-padding" id="FAQMain">
+                    <div class="notes-welcome">
+                        <h4 data-translate="docs.welcomeText">Browse through organized technical documentation and reference materials.</h4>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="push5"></div>
+        
+        
+        <script type="text/javascript">
+            // Initialize docs page functionality when loaded via SPA or directly
+            // Make it globally accessible for SPA loading
+            window.initDocsPage = function() {
+                // Use jQuery if available (will be available when loaded via SPA)
+                if (typeof jQuery === 'undefined') {
+                    // Wait for jQuery to be available (for SPA loading)
+                    var checkJQuery = setInterval(function() {
+                        if (typeof jQuery !== 'undefined') {
+                            clearInterval(checkJQuery);
+                            window.initDocsPage();
+                        }
+                    }, 50);
+                    
+                    // Stop checking after 5 seconds
+                    setTimeout(function() {
+                        clearInterval(checkJQuery);
+                    }, 5000);
+                    return;
+                }
+                
+                var $ = jQuery;
+                
+                // Store original docs page content for back navigation
+                var originalDocsContent = null;
+                
+                // Track breadcrumb navigation path
+                var breadcrumbPath = [];
+                
+                // Function to update breadcrumbs
+                function updateBreadcrumbs(categoryName, articleName, categoryUrl, articleUrl) {
+                    breadcrumbPath = [
+                        { name: 'Docs', url: 'html/pages/docs.html', active: false }
+                    ];
+                    
+                    if (categoryName) {
+                        breadcrumbPath.push({ name: categoryName, url: categoryUrl || null, active: false });
+                    }
+                    
+                    if (articleName) {
+                        breadcrumbPath.push({ name: articleName, url: articleUrl || null, active: true });
+                    }
+                    
+                    // Generate breadcrumb HTML with clickable links - new design
+                    var breadcrumbHtml = '<nav class="breadcrumb-nav" aria-label="breadcrumb">';
+                    breadcrumbPath.forEach(function(item, index) {
+                        if (index > 0) {
+                            breadcrumbHtml += '<span class="breadcrumb-separator"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 1L6 4L3 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+                        }
+                        if (item.active) {
+                            breadcrumbHtml += '<span class="breadcrumb-item breadcrumb-active">' + item.name + '</span>';
+                        } else if (item.url) {
+                            breadcrumbHtml += '<a href="#" data-url="' + item.url + '" class="breadcrumb-item breadcrumb-link">' + item.name + '</a>';
+                        } else {
+                            breadcrumbHtml += '<span class="breadcrumb-item">' + item.name + '</span>';
+                        }
+                    });
+                    breadcrumbHtml += '</nav>';
+                    
+                    return breadcrumbHtml;
+                }
+                
+                // Function to get category name from URL
+                function getCategoryNameFromUrl(url) {
+                    if (url.includes('/Python/')) return 'Python';
+                    if (url.includes('/Git/')) return 'Git';
+                    if (url.includes('/Misc/')) return 'Misc.';
+                    return null;
+                }
+                
+                // Function to get article name from URL or content
+                function getArticleNameFromContent($content) {
+                    // Try to get from h3 tag
+                    var h3 = $content.find('h3').first();
+                    if (h3.length) {
+                        var text = h3.text().trim();
+                        // If it's a translation key, try to get translated text
+                        var translateKey = h3.attr('data-translate');
+                        if (translateKey && typeof window.TranslationManager !== 'undefined' && typeof window.TranslationManager.t === 'function') {
+                            try {
+                                var translated = window.TranslationManager.t(translateKey);
+                                if (translated && translated !== translateKey) {
+                                    return translated;
+                                }
+                            } catch (e) {
+                                console.warn('Translation error:', e);
+                            }
+                        }
+                        return text;
+                    }
+                    // Try to get from title
+                    var title = $content.find('.toc_title').first();
+                    if (title.length) {
+                        return 'Contents';
+                    }
+                    return null;
+                }
+                
+                // Function to setup breadcrumb link handlers
+                function setupBreadcrumbHandlers() {
+                    $(document).off('click', '.breadcrumb-link');
+                    $(document).on('click', '.breadcrumb-link', function(e) {
+                        e.preventDefault();
+                        var url = $(this).attr('data-url') || $(this).attr('href');
+                        if (url && url !== '#') {
+                            // Normalize URL
+                            var normalizedUrl = normalizeUrl(url);
+                            
+                            // Use SPA navigation if available
+                            if (typeof window.loadSPAContent === 'function') {
+                                window.loadSPAContent(normalizedUrl);
+                            } else if (typeof $ !== 'undefined' && $.fn.load) {
+                                // Fallback to jQuery load
+                                $('#content').load(normalizedUrl);
+                            } else {
+                                // Fallback to direct navigation
+                                window.location.href = normalizedUrl;
+                            }
+                        }
+                    });
+                }
+                
+                // Function to normalize URL paths (convert relative to absolute)
+                function normalizeUrl(url) {
+                    if (!url || url === '#') return url;
+                    
+                    // If already absolute (starts with /), return as is
+                    if (url.startsWith('/')) {
+                        return url;
+                    }
+                    
+                    // If relative path, convert to absolute
+                    // Remove leading ../ or ./
+                    url = url.replace(/^\.\.\//g, '').replace(/^\.\//g, '');
+                    
+                    // If it doesn't start with /, add it
+                    if (!url.startsWith('/')) {
+                        url = '/' + url;
+                    }
+                    
+                    return url;
+                }
+                
+                // Function to add line numbers to code blocks
+                function addLineNumbersToCodeBlocks() {
+                    // Target all pre elements in the content area
+                    $('#content pre, #FAQMain pre, .container pre').each(function() {
+                        var $pre = $(this);
+                        // Skip if already processed
+                        if ($pre.hasClass('code-with-lines')) {
+                            return;
+                        }
+                        
+                        var $codeElements = $pre.find('code');
+                        if ($codeElements.length === 0) {
+                            return;
+                        }
+                        
+                        // Count non-empty code elements (each represents a line)
+                        var lineCount = 0;
+                        $codeElements.each(function() {
+                            var codeText = $(this).text().trim();
+                            if (codeText.length > 0 || $(this).html().trim().length > 0) {
+                                lineCount++;
+                            }
+                        });
+                        
+                        if (lineCount === 0) {
+                            return;
+                        }
+                        
+                        // Add class and styling
+                        $pre.addClass('code-with-lines');
+                        $pre.css({
+                            'padding-left': '3.5rem',
+                            'position': 'relative'
+                        });
+                        
+                        // Create line numbers - match the line height of code
+                        var lineNumbersHtml = '<div class="code-line-numbers">';
+                        for (var i = 1; i <= lineCount; i++) {
+                            lineNumbersHtml += '<span class="line-number">' + i + '</span>';
+                        }
+                        lineNumbersHtml += '</div>';
+                        
+                        // Insert line numbers
+                        $pre.prepend(lineNumbersHtml);
+                    });
+                }
+                
+                // Function to apply modern styling to article content
+                function applyArticleStyling() {
+                    // Ensure container has proper styling
+                    $('#content .container').addClass('article-content');
+                    
+                    // Hide old navigation element (#docsNavigatrior) - we use #docsBackButton instead
+                    $('#content #docsNavigatrior').hide();
+                    
+                    // Remove any stray text nodes directly in container (like "When I")
+                    $('#content .container').contents().filter(function() {
+                        return this.nodeType === 3 && $(this).text().trim().length > 0 && 
+                               !$(this).prev().is('#docsNavigatrior') && 
+                               !$(this).next().is('#docsNavigatrior');
+                    }).each(function() {
+                        var text = $(this).text().trim();
+                        // Remove common stray text patterns
+                        if (text.match(/^(When I|When|I)$/i)) {
+                            $(this).remove();
+                        }
+                    });
+                    
+                    // Remove old push spacing classes
+                    $('#content .push2, #content .push3, #content .push4, #content .push5').remove();
+                    
+                    // Clean up empty divs and spacing
+                    $('#content .container > div:empty').remove();
+                    
+                    // Fix any relative paths in links
+                    $('#content a[href*="FAQPages"]').each(function() {
+                        var href = $(this).attr('href');
+                        if (href && !href.startsWith('/') && !href.startsWith('http')) {
+                            $(this).attr('href', normalizeUrl(href));
+                        }
+                    });
+                    
+                    // Ensure proper spacing for article content
+                    $('#content .container .row:first-child').css('margin-top', '0');
+                    
+                    // Format NOTE: statements - make "NOTE:" bold and on new line
+                    formatNoteStatements();
+                    
+                    // Style git commands first (before grouping)
+                    styleGitCommands();
+                    
+                    // Group git commands with their related descriptions
+                    groupCommandWithDescriptions();
+                    
+                    // Convert numbered/bulleted lists to proper HTML lists
+                    convertListsToHTML();
+                    
+                    // Add line numbers to code blocks - call with delay to ensure DOM is ready
+                    setTimeout(function() {
+                        addLineNumbersToCodeBlocks();
+                    }, 50);
+                }
+                
+                // Make styling functions globally accessible for index.html files
+                // (defined below, assigned here after definition)
+                
+                // Function to format NOTE: statements
+                function formatNoteStatements() {
+                    // Find all text containing "NOTE:" and format it - check multiple selectors
+                    $('#content .col-12, #FAQMain .col-12, #content .container, #FAQMain .container, body .container .col-12').each(function() {
+                        var $container = $(this);
+                        var html = $container.html();
+                        if (!html) return;
+                        
+                        // Replace "NOTE:" with formatted version (bold "NOTE:" on new line)
+                        // Match "NOTE:" followed by colon and space, then text until end of line or tag
+                        var newHtml = html.replace(/(NOTE:)\s+([^<\n]+)/gi, function(match, note, text) {
+                            // Check if already formatted
+                            if (match.includes('<div class="note-statement">')) {
+                                return match;
+                            }
+                            return '<div class="note-statement"><strong>' + note + '</strong> ' + text.trim() + '</div>';
+                        });
+                        
+                        if (newHtml !== html) {
+                            $container.html(newHtml);
+                        }
+                    });
+                }
+                
+                // Function to convert numbered/bulleted lists to proper HTML lists
+                function convertListsToHTML() {
+                    $('#content .col-12, #FAQMain .col-12, #content .container, #FAQMain .container, body .container .col-12').each(function() {
+                        var $container = $(this);
+                        var html = $container.html();
+                        if (!html) return;
+                        
+                        // Convert dash items (lines starting with "&nbsp;&nbsp;&nbsp;&nbsp;-" or "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-")
+                        // Pattern: &nbsp; followed by dash and space, then text
+                        var dashPattern = /((?:&nbsp;){4,8}-\s+([^<\n]+))/g;
+                        var dashMatches = [];
+                        var match;
+                        var processedIndices = new Set();
+                        
+                        while ((match = dashPattern.exec(html)) !== null) {
+                            // Skip if already inside a list tag
+                            var beforeMatch = html.substring(0, match.index);
+                            var afterMatch = html.substring(match.index);
+                            if (beforeMatch.includes('<ul') && !beforeMatch.includes('</ul>')) {
+                                continue; // Already in a list
+                            }
+                            if (afterMatch.includes('</ul>') && !beforeMatch.includes('<ul')) {
+                                continue; // Part of existing list
+                            }
+                            
+                            dashMatches.push({
+                                full: match[1],
+                                text: match[2].trim(),
+                                index: match.index
+                            });
+                        }
+                        
+                        // Group consecutive dash items into lists
+                        if (dashMatches.length > 0) {
+                            // Sort by index
+                            dashMatches.sort(function(a, b) { return a.index - b.index; });
+                            
+                            // Group consecutive items (within reasonable distance)
+                            var groups = [];
+                            var currentGroup = [dashMatches[0]];
+                            
+                            for (var i = 1; i < dashMatches.length; i++) {
+                                var prevMatch = dashMatches[i - 1];
+                                var currMatch = dashMatches[i];
+                                var distance = currMatch.index - (prevMatch.index + prevMatch.full.length);
+                                
+                                // If items are close together (within 200 chars), group them
+                                if (distance < 200 && distance > 0) {
+                                    currentGroup.push(currMatch);
+                                } else {
+                                    if (currentGroup.length > 0) {
+                                        groups.push(currentGroup);
+                                    }
+                                    currentGroup = [currMatch];
+                                }
+                            }
+                            if (currentGroup.length > 0) {
+                                groups.push(currentGroup);
+                            }
+                            
+                            // Replace groups with proper lists (process from end to start to preserve indices)
+                            for (var g = groups.length - 1; g >= 0; g--) {
+                                var group = groups[g];
+                                if (group.length === 0) continue;
+                                
+                                var listItems = group.map(function(m) {
+                                    return '<li class="flat-list-item">' + m.text + '</li>';
+                                }).join('\n');
+                                
+                                var firstMatch = group[0];
+                                var lastMatch = group[group.length - 1];
+                                var before = html.substring(0, firstMatch.index);
+                                var after = html.substring(lastMatch.index + lastMatch.full.length);
+                                html = before + '<ul class="flat-list">' + listItems + '</ul>' + after;
+                            }
+                        }
+                        
+                        // Convert numbered lists (lines starting with "&nbsp;&nbsp;&nbsp;&nbsp;1.", "&nbsp;&nbsp;&nbsp;&nbsp;2.", etc.)
+                        // Pattern: &nbsp; followed by number, period, space, and text
+                        var numberedPattern = /((?:&nbsp;){4}(\d+)\.\s+([^<\n]+))/g;
+                        var numberedMatches = [];
+                        while ((match = numberedPattern.exec(html)) !== null) {
+                            numberedMatches.push({
+                                full: match[1],
+                                num: match[2],
+                                text: match[3].trim(),
+                                index: match.index
+                            });
+                        }
+                        
+                        // If we found numbered items, convert them
+                        if (numberedMatches.length > 0) {
+                            var listItems = numberedMatches.map(function(m) {
+                                return '<li class="flat-list-item">' + m.text + '</li>';
+                            }).join('\n');
+                            // Replace the first occurrence with the list
+                            var firstMatch = numberedMatches[0];
+                            var lastMatch = numberedMatches[numberedMatches.length - 1];
+                            var before = html.substring(0, firstMatch.index);
+                            var after = html.substring(lastMatch.index + lastMatch.full.length);
+                            html = before + '<ol class="flat-list">' + listItems + '</ol>' + after;
+                        }
+                        
+                        // Convert git commands list (lines starting with "&nbsp;&nbsp;&nbsp;&nbsp;git")
+                        // Pattern: &nbsp; followed by "git" command with colon
+                        var gitCommandPattern = /((?:&nbsp;){4}(git\s+[^:\n<]+):\s+([^<\n]+))/g;
+                        var gitMatches = [];
+                        while ((match = gitCommandPattern.exec(html)) !== null) {
+                            gitMatches.push({
+                                full: match[1],
+                                command: match[2].trim(),
+                                desc: match[3].trim(),
+                                index: match.index
+                            });
+                        }
+                        
+                        // If we found git commands, convert them
+                        if (gitMatches.length > 0) {
+                            var gitListItems = gitMatches.map(function(m) {
+                                return '<li class="git-command-item"><span class="git-command">' + m.command + '</span>: ' + m.desc + '</li>';
+                            }).join('\n');
+                            // Replace the first occurrence with the list
+                            var firstGitMatch = gitMatches[0];
+                            var lastGitMatch = gitMatches[gitMatches.length - 1];
+                            var beforeGit = html.substring(0, firstGitMatch.index);
+                            var afterGit = html.substring(lastGitMatch.index + lastGitMatch.full.length);
+                            html = beforeGit + '<ul class="git-command-list">' + gitListItems + '</ul>' + afterGit;
+                        }
+                        
+                        $container.html(html);
+                    });
+                }
+                
+                // Function to style git commands in text (standalone, not in lists)
+                function styleGitCommands() {
+                    // Style standalone git commands that aren't in lists or code blocks
+                    $('#content .col-12, #FAQMain .col-12, #content .container, #FAQMain .container, body .container .col-12').each(function() {
+                        var $container = $(this);
+                        var html = $container.html();
+                        if (!html) return;
+                        
+                        // Match standalone git commands (not in lists, not in code tags)
+                        // Pattern: "git " followed by command, optionally followed by " - description"
+                        html = html.replace(/(^|>|\s)(git\s+[a-z-]+(?:\s+[^\s<-<]+)*)(\s*-\s*([^<\n]+))?/gi, function(match, before, command, dashDesc, desc) {
+                            // Skip if already in a tag (code, span, etc.)
+                            if (before === '>' || match.includes('<span') || match.includes('<code') || match.includes('git-command')) {
+                                return match;
+                            }
+                            var result = before + '<span class="git-command-inline">' + command + '</span>';
+                            if (desc) {
+                                result += ' - ' + desc;
+                            }
+                            return result;
+                        });
+                        
+                        $container.html(html);
+                    });
+                }
+                
+                // Function to group git commands with their related descriptions
+                function groupCommandWithDescriptions() {
+                    $('#content .col-12, #FAQMain .col-12, #content .container, #FAQMain .container, body .container .col-12').each(function() {
+                        var $container = $(this);
+                        var html = $container.html();
+                        if (!html) return;
+                        
+                        // Find git commands with git-command-inline class
+                        var commandPattern = /((?:&nbsp;){4}<span class="git-command-inline">[^<]+<\/span>)/g;
+                        var commands = [];
+                        var match;
+                        
+                        while ((match = commandPattern.exec(html)) !== null) {
+                            var commandIndex = match.index;
+                            var commandHtml = match[1];
+                            
+                            // Look ahead for dash items that follow this command
+                            var afterCommand = html.substring(commandIndex + commandHtml.length);
+                            // Match dash items that come after the command (within reasonable distance)
+                            var dashPattern = /((?:&nbsp;){4,8}-\s+[^<\n]+)/g;
+                            var dashMatches = [];
+                            var dashMatch;
+                            var lastDashIndex = -1;
+                            
+                            while ((dashMatch = dashPattern.exec(afterCommand)) !== null) {
+                                var dashIndex = dashMatch.index;
+                                // Only include dashes that are close to the command (within 500 chars)
+                                // and not already part of a list or other structure
+                                if (dashIndex < 500) {
+                                    // Check if this dash is part of an existing list structure
+                                    var beforeDash = afterCommand.substring(0, dashIndex);
+                                    if (!beforeDash.includes('</ul>') && !beforeDash.includes('</ol>') && 
+                                        !beforeDash.includes('command-with-description') &&
+                                        !beforeDash.includes('<div class="note-statement">')) {
+                                        dashMatches.push({
+                                            full: dashMatch[1],
+                                            text: dashMatch[1].replace(/(?:&nbsp;){4,8}-\s+/, '').trim(),
+                                            index: dashIndex
+                                        });
+                                        lastDashIndex = dashIndex + dashMatch[1].length;
+                                    } else {
+                                        break; // Stop if we hit a list boundary or note
+                                    }
+                                } else {
+                                    break; // Stop if dashes are too far away
+                                }
+                            }
+                            
+                            // If we found dash items, group them with the command
+                            if (dashMatches.length > 0) {
+                                // Check if there's text or other content between command and dashes
+                                var textBetween = afterCommand.substring(0, dashMatches[0].index).trim();
+                                // Only group if there's minimal content between (just whitespace/breaks)
+                                if (textBetween.length < 50 && !textBetween.includes('<div') && !textBetween.includes('<h') && !textBetween.includes('<span class="note-statement">')) {
+                                    commands.push({
+                                        commandIndex: commandIndex,
+                                        commandHtml: commandHtml,
+                                        dashMatches: dashMatches,
+                                        endIndex: commandIndex + commandHtml.length + lastDashIndex
+                                    });
+                                }
+                            }
+                        }
+                        
+                        // Replace from end to start to preserve indices
+                        for (var i = commands.length - 1; i >= 0; i--) {
+                            var cmd = commands[i];
+                            var listItems = cmd.dashMatches.map(function(d) {
+                                return '<li class="command-desc-item">' + d.text + '</li>';
+                            }).join('\n');
+                            
+                            var wrapped = '<div class="command-with-description">' +
+                                '<div class="command-block">' + cmd.commandHtml + '</div>' +
+                                '<ul class="command-description-list">' + listItems + '</ul>' +
+                                '</div>';
+                            
+                            var before = html.substring(0, cmd.commandIndex);
+                            var after = html.substring(cmd.endIndex);
+                            html = before + wrapped + after;
+                        }
+                        
+                        $container.html(html);
+                    });
+                }
+                
+                // Make styling functions globally accessible for index.html files
+                window.formatNoteStatements = formatNoteStatements;
+                window.convertListsToHTML = convertListsToHTML;
+                window.styleGitCommands = styleGitCommands;
+                window.groupCommandWithDescriptions = groupCommandWithDescriptions;
+                
+                // Setup function that can be called multiple times safely
+                function setupDocsPageHandlers() {
+                    $.ajaxSetup({
+                        cache: false
+                    });
+                    
+                    // Store original content if not already stored
+                    if (!originalDocsContent && $('#content').length) {
+                        originalDocsContent = $('#content').html();
+                    }
+                    
+                    // Remove any existing handlers to prevent duplicates
+                    $(document).off('click', '.notes-card-link');
+                    $(document).off('click', '#docsBackBtn');
+                    
+                    // Setup "View More" link click handlers
+                    $(document).on('click', '.notes-card-link', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        var href = $(this).attr('href');
+                        if (!href || href === '#') {
+                            return;
+                        }
+                        
+                        // Store original content before replacing
+                        if (!originalDocsContent && $('#content').length) {
+                            originalDocsContent = $('#content').html();
+                        }
+                        
+                        // Show loading state
+                        var $content = $('#content');
+                        if ($content.length) {
+                            $content.html('<div class="container"><div class="text-center"><p class="text-muted">Loading...</p></div></div>');
+                        }
+                        
+                        // Load category content and replace entire page content
+                        $.get(href, function(data) {
+                            // Extract body content from loaded HTML
+                            var $temp = $('<div>').html(data);
+                            var bodyContent = $temp.find('body').html() || $temp.html();
+                            
+                            if (bodyContent && bodyContent.trim() !== '') {
+                                // Remove any script tags that might cause issues
+                                var $contentDiv = $('<div>').html(bodyContent);
+                                $contentDiv.find('script').remove();
+                                
+                                // Remove any link tags that might load old CSS
+                                $contentDiv.find('link[rel="stylesheet"]').remove();
+                                
+                                // Replace entire content area
+                                if ($('#content').length) {
+                                    // Get category name from URL
+                                    var categoryName = getCategoryNameFromUrl(href);
+                                    
+                                    // Create back button and breadcrumbs in new design container
+                                    var backButtonHtml = '<div id="docsBackButton"><div class="container docs-nav-container"><button class="btn-back-circle" id="docsBackBtn" aria-label="Back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><nav class="breadcrumb-nav breadcrumb-nav-inline" aria-label="breadcrumb">' + updateBreadcrumbs(categoryName, null, href, null) + '</nav></div></div>';
+                                    
+                                    // Prepend back button with breadcrumbs, and add content
+                                    $('#content').html(backButtonHtml + $contentDiv.html());
+                                    
+                                    // Apply modern styling to category index content
+                                    applyArticleStyling();
+                                    
+                                    // Setup back button handler (this also sets up article link handlers)
+                                    setupBackButton();
+                                    
+                                    // Re-apply translations after content loads
+                                    if (typeof window.TranslationManager !== 'undefined') {
+                                        setTimeout(function() {
+                                            window.TranslationManager.applyTranslations();
+                                        }, 100);
+                                    }
+                                    
+                                    // Mark content as loaded
+                                    $('#content').attr('data-content-loaded', 'true');
+                                    
+                                    // Scroll to top
+                                    window.scrollTo(0, 0);
+                                }
+                            }
+                        }).fail(function(xhr, status, error) {
+                            console.error("Failed to load " + href + ":", status, error);
+                            // Restore original content on error
+                            if (originalDocsContent && $('#content').length) {
+                                $('#content').html(originalDocsContent);
+                            }
+                        });
+                    });
+                    
+                    // Setup back button handler - use event delegation since button is dynamically added
+                    $(document).off('click', '#docsBackBtn');
+                    $(document).on('click', '#docsBackBtn', function(e) {
+                        e.preventDefault();
+                        
+                        // Check if we're on an article page (has category URL in breadcrumbs)
+                        var $breadcrumbNav = $('.breadcrumb-nav-inline');
+                        var categoryUrl = null;
+                        
+                        if ($breadcrumbNav.length) {
+                            var $breadcrumbItems = $breadcrumbNav.find('.breadcrumb-item, .breadcrumb-link');
+                            // Check if we have more than just "Docs" (index 0) - meaning we're in a category or article
+                            if ($breadcrumbItems.length > 1) {
+                                // Get the category breadcrumb (index 1, after "Docs")
+                                var $categoryItem = $breadcrumbItems.eq(1);
+                                if ($categoryItem.is('a')) {
+                                    categoryUrl = $categoryItem.attr('data-url') || $categoryItem.attr('href');
+                                }
+                                
+                                // If we're on an article page (breadcrumbs length > 2), go back to category
+                                // If we're on a category page (breadcrumbs length == 2), go back to main Docs
+                                if ($breadcrumbItems.length > 2 && categoryUrl) {
+                                    // We're on an article page - navigate back to category index
+                                    $.get(categoryUrl, function(data) {
+                                        var $temp = $('<div>').html(data);
+                                        var bodyContent = $temp.find('body').html() || $temp.html();
+                                        
+                                        if (bodyContent && bodyContent.trim() !== '') {
+                                            var $contentDiv = $('<div>').html(bodyContent);
+                                            $contentDiv.find('script').remove();
+                                            $contentDiv.find('link[rel="stylesheet"]').remove();
+                                            
+                                            // Get category name from URL
+                                            var categoryName = getCategoryNameFromUrl(categoryUrl);
+                                            
+                                            // Create back button with breadcrumbs for category page
+                                            var backButtonHtml = '<div id="docsBackButton"><div class="container docs-nav-container"><button class="btn-back-circle" id="docsBackBtn" aria-label="Back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><nav class="breadcrumb-nav breadcrumb-nav-inline" aria-label="breadcrumb">' + updateBreadcrumbs(categoryName, null, categoryUrl, null) + '</nav></div></div>';
+                                            
+                                            $('#content').html(backButtonHtml + $contentDiv.html());
+                                            
+                                            // Apply styling
+                                            applyArticleStyling();
+                                            
+                                            // Re-setup handlers
+                                            setupBackButton();
+                                            setupBreadcrumbHandlers();
+                                            
+                                            // Re-apply translations
+                                            if (typeof window.TranslationManager !== 'undefined') {
+                                                setTimeout(function() {
+                                                    window.TranslationManager.applyTranslations();
+                                                }, 100);
+                                            }
+                                            
+                                            $('#content').attr('data-content-loaded', 'true');
+                                            window.scrollTo(0, 0);
+                                        }
+                                    }).fail(function(xhr, status, error) {
+                                        console.error("Failed to load category " + categoryUrl + ":", status, error);
+                                        // Fallback to main Docs page
+                                        if (originalDocsContent && $('#content').length) {
+                                            $('#content').html(originalDocsContent);
+                                            setupDocsPageHandlers();
+                                            if (typeof window.TranslationManager !== 'undefined') {
+                                                setTimeout(function() {
+                                                    window.TranslationManager.applyTranslations();
+                                                }, 100);
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    // We're on a category page - go back to main Docs page
+                                    if (originalDocsContent && $('#content').length) {
+                                        $('#content').html(originalDocsContent);
+                                        setupDocsPageHandlers();
+                                        
+                                        if (typeof window.TranslationManager !== 'undefined') {
+                                            setTimeout(function() {
+                                                window.TranslationManager.applyTranslations();
+                                            }, 100);
+                                        }
+                                        
+                                        window.scrollTo(0, 0);
+                                    }
+                                }
+                            } else {
+                                // Only "Docs" in breadcrumbs - shouldn't happen, but fallback to main page
+                                if (originalDocsContent && $('#content').length) {
+                                    $('#content').html(originalDocsContent);
+                                    setupDocsPageHandlers();
+                                    
+                                    if (typeof window.TranslationManager !== 'undefined') {
+                                        setTimeout(function() {
+                                            window.TranslationManager.applyTranslations();
+                                        }, 100);
+                                    }
+                                    
+                                    window.scrollTo(0, 0);
+                                }
+                            }
+                        } else {
+                            // No breadcrumbs - restore original docs page content
+                            if (originalDocsContent && $('#content').length) {
+                                $('#content').html(originalDocsContent);
+                                setupDocsPageHandlers();
+                                
+                                if (typeof window.TranslationManager !== 'undefined') {
+                                    setTimeout(function() {
+                                        window.TranslationManager.applyTranslations();
+                                    }, 100);
+                                }
+                                
+                                window.scrollTo(0, 0);
+                            }
+                        }
+                    });
+                    
+                    // Function to setup Back button handler for article navigation
+                    function setupBackButton() {
+                        // Remove old handlers from index.html files that might interfere
+                        $(document).off('click', 'ol > li a');
+                        $('ol.toc_list li a').off('click');
+                        
+                        // Handle article link clicks from category index pages
+                        // Use more specific selector and higher priority to override old handlers
+                        $(document).off('click', '#FAQMain a, #content a[href*="FAQPages"], .toc_list a, #content .toc_list a, ol.toc_list li a');
+                        $(document).on('click', '#FAQMain a, #content a[href*="FAQPages"], .toc_list a, #content .toc_list a, ol.toc_list li a', function(e) {
+                            var href = $(this).attr('href');
+                            
+                            // Only handle FAQPages links (article links) - exclude index.html and empty/anchor links
+                            if (href && href.includes('FAQPages') && !href.includes('index.html') && href !== '#' && !href.startsWith('#')) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                e.stopImmediatePropagation(); // Prevent other handlers (like old jQuery in index.html) from running
+                                
+                                var articleUrl = normalizeUrl(href);
+                                
+                                console.log('Article link clicked:', href, '-> normalized:', articleUrl);
+                                
+                                // Load article content
+                                $.get(articleUrl, function(data) {
+                                    var $temp = $('<div>').html(data);
+                                    var bodyContent = $temp.find('body').html() || $temp.html();
+                                    
+                                    if (bodyContent && bodyContent.trim() !== '') {
+                                        var $contentDiv = $('<div>').html(bodyContent);
+                                        $contentDiv.find('script').remove();
+                                        
+                                        // Remove any link tags that might load old CSS
+                                        $contentDiv.find('link[rel="stylesheet"]').remove();
+                                        
+                                        // Hide old navigation element in article content
+                                        $contentDiv.find('#docsNavigatrior').hide();
+                                        
+                                        // Remove any stray text nodes (like "When I")
+                                        $contentDiv.find('.container').contents().filter(function() {
+                                            return this.nodeType === 3 && $(this).text().trim().match(/^(When I|When|I)$/i);
+                                        }).remove();
+                                        
+                                        if ($('#content').length) {
+                                            // Keep the back button and breadcrumbs when navigating to article
+                                            var $existingBackButton = $('#content #docsBackButton');
+                                            var $existingBreadcrumb = $('#content .breadcrumb-nav-inline');
+                                            var backButtonHtml = '';
+                                            
+                                            // Get category name and URL from current breadcrumb or URL
+                                            var categoryName = null;
+                                            var categoryUrl = null;
+                                            if ($existingBreadcrumb.length) {
+                                                var $breadcrumbItems = $existingBreadcrumb.find('.breadcrumb-item, .breadcrumb-link');
+                                                if ($breadcrumbItems.length > 1) {
+                                                    var $categoryItem = $breadcrumbItems.eq(1);
+                                                    categoryName = $categoryItem.text().trim();
+                                                    // Get URL if it's a link
+                                                    if ($categoryItem.is('a')) {
+                                                        categoryUrl = $categoryItem.attr('data-url') || $categoryItem.attr('href');
+                                                    }
+                                                }
+                                            }
+                                            
+                                            // Get article name from content
+                                            var articleName = getArticleNameFromContent($contentDiv);
+                                            
+                                            // Get article URL from the clicked link
+                                            var articleUrl = href || null;
+                                            
+                                            // Create/update back button with breadcrumbs inline
+                                            if ($existingBackButton.length) {
+                                                // Update existing breadcrumbs
+                                                var $existingNav = $existingBackButton.find('.breadcrumb-nav-inline');
+                                                if ($existingNav.length) {
+                                                    $existingNav.html(updateBreadcrumbs(categoryName, articleName, categoryUrl, articleUrl));
+                                                } else {
+                                                    // Add breadcrumbs if they don't exist
+                                                    $existingBackButton.find('.container').append('<nav class="breadcrumb-nav breadcrumb-nav-inline" aria-label="breadcrumb">' + updateBreadcrumbs(categoryName, articleName, categoryUrl, articleUrl) + '</nav>');
+                                                }
+                                                backButtonHtml = $existingBackButton[0].outerHTML;
+                                            } else {
+                                                backButtonHtml = '<div id="docsBackButton"><div class="container docs-nav-container"><button class="btn-back-circle" id="docsBackBtn" aria-label="Back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><nav class="breadcrumb-nav breadcrumb-nav-inline" aria-label="breadcrumb">' + updateBreadcrumbs(categoryName, articleName, categoryUrl, articleUrl) + '</nav></div></div>';
+                                            }
+                                            
+                                            // Replace content with article
+                                            $('#content').html(backButtonHtml + $contentDiv.html());
+                                            
+                                            // Apply modern styling to article content
+                                            applyArticleStyling();
+                                            
+                                            // Re-setup Back button after loading
+                                            setupBackButton();
+                                            
+                                            // Setup breadcrumb link handlers
+                                            setupBreadcrumbHandlers();
+                                            
+                                            // Re-apply translations
+                                            if (typeof window.TranslationManager !== 'undefined') {
+                                                setTimeout(function() {
+                                                    window.TranslationManager.applyTranslations();
+                                                }, 100);
+                                            }
+                                            
+                                            $('#content').attr('data-content-loaded', 'true');
+                                            window.scrollTo(0, 0);
+                                        }
+                                    }
+                                }).fail(function(xhr, status, error) {
+                                    console.error("Failed to load article " + articleUrl + ":", status, error);
+                                });
+                                
+                                return false;
+                            }
+                        });
+                        
+                        // Handle back navigation button in articles (docsNavigatrior)
+                        $(document).off('click', '#docsNavigatrior > a');
+                        $(document).on('click', '#docsNavigatrior > a', function(e) {
+                            e.preventDefault();
+                            var backUrl = $(this).attr('href');
+                            
+                            if (backUrl && backUrl !== '#') {
+                                // Normalize the URL path
+                                var normalizedUrl = normalizeUrl(backUrl);
+                                
+                                $.get(normalizedUrl, function(data) {
+                                    var $temp = $('<div>').html(data);
+                                    var bodyContent = $temp.find('body').html() || $temp.html();
+                                    
+                                    if (bodyContent && bodyContent.trim() !== '') {
+                                        var $contentDiv = $('<div>').html(bodyContent);
+                                        $contentDiv.find('script').remove();
+                                        
+                                        // Remove any link tags that might load old CSS
+                                        $contentDiv.find('link[rel="stylesheet"]').remove();
+                                        
+                                        if ($('#content').length) {
+                                            // Keep the back button and breadcrumbs when navigating back to category index
+                                            var $existingBackButton = $('#content #docsBackButton');
+                                            var $existingBreadcrumb = $('#content .breadcrumb-nav-inline');
+                                            var backButtonHtml = '';
+                                            
+                                            // Get category name and URL from URL or existing breadcrumb
+                                            var categoryName = null;
+                                            var categoryUrl = null;
+                                            if ($existingBreadcrumb.length) {
+                                                var $breadcrumbItems = $existingBreadcrumb.find('.breadcrumb-item, .breadcrumb-link');
+                                                if ($breadcrumbItems.length > 1) {
+                                                    var $categoryItem = $breadcrumbItems.eq(1);
+                                                    categoryName = $categoryItem.text().trim();
+                                                    // Get URL if it's a link
+                                                    if ($categoryItem.is('a')) {
+                                                        categoryUrl = $categoryItem.attr('data-url') || $categoryItem.attr('href');
+                                                    }
+                                                }
+                                            }
+                                            
+                                            // If no category URL, try to get from backUrl
+                                            if (!categoryUrl && backUrl) {
+                                                categoryUrl = normalizeUrl(backUrl);
+                                            }
+                                            
+                                            // Create/update back button with breadcrumbs inline
+                                            if ($existingBackButton.length) {
+                                                // Update existing breadcrumbs
+                                                var $existingNav = $existingBackButton.find('.breadcrumb-nav-inline');
+                                                if ($existingNav.length) {
+                                                    $existingNav.html(updateBreadcrumbs(categoryName, null, categoryUrl, null));
+                                                } else {
+                                                    // Add breadcrumbs if they don't exist
+                                                    $existingBackButton.find('.container').append('<nav class="breadcrumb-nav breadcrumb-nav-inline" aria-label="breadcrumb">' + updateBreadcrumbs(categoryName, null, categoryUrl, null) + '</nav>');
+                                                }
+                                                backButtonHtml = $existingBackButton[0].outerHTML;
+                                            } else {
+                                                backButtonHtml = '<div id="docsBackButton"><div class="container docs-nav-container"><button class="btn-back-circle" id="docsBackBtn" aria-label="Back"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><nav class="breadcrumb-nav breadcrumb-nav-inline" aria-label="breadcrumb">' + updateBreadcrumbs(categoryName, null, categoryUrl, null) + '</nav></div></div>';
+                                            }
+                                            
+                                            $('#content').html(backButtonHtml + $contentDiv.html());
+                                            
+                                            // Apply modern styling
+                                            applyArticleStyling();
+                                            
+                                            // Re-setup Back button after loading
+                                            setupBackButton();
+                                            
+                                            // Setup breadcrumb link handlers
+                                            setupBreadcrumbHandlers();
+                                            
+                                            // Re-apply translations
+                                            if (typeof window.TranslationManager !== 'undefined') {
+                                                setTimeout(function() {
+                                                    window.TranslationManager.applyTranslations();
+                                                }, 100);
+                                            }
+                                            
+                                            $('#content').attr('data-content-loaded', 'true');
+                                            window.scrollTo(0, 0);
+                                        }
+                                    }
+                                }).fail(function(xhr, status, error) {
+                                    console.error("Failed to load " + normalizedUrl + ":", status, error);
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Function to apply modern styling to article content
+                    function applyArticleStyling() {
+                        // Ensure container has proper styling
+                        $('#content .container').addClass('article-content');
+                        
+                        // Fix any relative paths in links
+                        $('#content a[href*="FAQPages"]').each(function() {
+                            var href = $(this).attr('href');
+                            if (href && !href.startsWith('/') && !href.startsWith('http')) {
+                                $(this).attr('href', normalizeUrl(href));
+                            }
+                        });
+                    }
+                }
+                
+                // Run setup when DOM is ready
+                if (document.readyState === 'loading') {
+                    $(document).ready(function() {
+                        setupDocsPageHandlers();
+                        // Apply translations after setup
+                        if (typeof window.TranslationManager !== 'undefined') {
+                            setTimeout(function() {
+                                window.TranslationManager.applyTranslations();
+                            }, 200);
+                        }
+                    });
+                } else {
+                    // DOM already ready
+                    setupDocsPageHandlers();
+                    // Apply translations after setup
+                    if (typeof window.TranslationManager !== 'undefined') {
+                        setTimeout(function() {
+                            window.TranslationManager.applyTranslations();
+                        }, 200);
+                    }
+                }
+            };
+            
+            // Initialize immediately if jQuery is available
+            if (typeof jQuery !== 'undefined') {
+                window.initDocsPage();
+            } else {
+                // Wait for DOMContentLoaded and then check for jQuery
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(window.initDocsPage, 100);
+                    });
+                } else {
+                    setTimeout(window.initDocsPage, 100);
+                }
+            }
+        </script>
     </body>
 </html>

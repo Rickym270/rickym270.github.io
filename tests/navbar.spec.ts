@@ -398,7 +398,7 @@ test.describe('Navbar', () => {
     // Check that settings container exists
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings).toBeVisible();
-    
+
     // Check that setting groups exist
     const settingGroups = page.locator('.mobile-setting-group');
     await expect(settingGroups).toHaveCount(2);
