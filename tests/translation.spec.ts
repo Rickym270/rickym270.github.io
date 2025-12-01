@@ -674,60 +674,7 @@ test.describe('Translation feature', () => {
     }
   });
 
-  test('docs page translates correctly', async ({ page }) => {
-    // Check if we're on mobile
-    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
-    
-    // Switch to Spanish
-    if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
-      await esButton.click();
-    } else {
-      const esButton = page.locator('#language-switcher button[data-lang="es"]');
-      await esButton.click();
-    }
-    await page.waitForTimeout(500);
-    
-    // Navigate to Docs - mobile has direct link, desktop has dropdown
-    if (isMobile) {
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
-    } else {
-      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Documentos' }).or(
-        page.locator('#navbar-links').getByRole('link', { name: 'Documentos' })
-      );
-      await docsButton.hover();
-      await page.getByRole('link', { name: 'Notas' }).click();
-    }
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#FAQLinks');
-    }, { timeout: 15000 });
-    await page.waitForTimeout(300);
-    
-    // Check page title
-    const pageTitle = await page.title();
-    expect(pageTitle).toContain('Documentos');
-    
-    // Check translations
-    const notesHeading = page.locator('#content h3[data-translate="docs.notes"]');
-    await expect(notesHeading).toHaveText('Notas');
-    
-    const pythonLink = page.locator('#content a[data-translate="docs.python"]');
-    await expect(pythonLink).toHaveText('Python');
-    
-    const gitLink = page.locator('#content a[data-translate="docs.git"]');
-    await expect(gitLink).toHaveText('Git');
-    
-    const miscLink = page.locator('#content a[data-translate="docs.misc"]');
-    await expect(miscLink).toHaveText('Misc.');
-    
-    const clickToStart = page.locator('#content h4[data-translate="docs.clickToStart"]');
-    await expect(clickToStart).toContainText('Haz clic en cualquier FAQ');
-  });
-  
-  test('tutorials page translates correctly', async ({ page }) => {
+    test('tutorials page translates correctly', async ({ page }) => {
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
@@ -863,6 +810,83 @@ test.describe('Translation feature', () => {
       const homeLink = page.locator('#navbar-links a[data-translate="nav.home"]').first();
       await expect(homeLink).toHaveText('Inicio');
     }
+  });
+
+  test('docs page translations work correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // On mobile, open sidebar and click Docs
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    } else {
+      // Desktop: use navbar scoped selector
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.getByRole('link', { name: 'Notes' }).click();
+    }
+    await page.waitForTimeout(1000);
+    
+    // Test English content
+    await expect(page.locator('.notes-hero-title')).toContainText('Technical Documentation');
+    await expect(page.locator('.notes-category-card.python .notes-card-title')).toContainText('Python');
+    await expect(page.locator('.notes-category-card.git .notes-card-title')).toContainText('Git');
+    await expect(page.locator('.notes-category-card.misc .notes-card-title')).toContainText('Misc');
+    await expect(page.locator('.notes-welcome h4')).toContainText('Browse through organized');
+    
+    // Switch to Spanish
+    if (isMobile) {
+      // Mobile: language switcher is in sidebar
+      const mobileLangSwitcher = page.locator('#mobile-language-switcher');
+      await expect(mobileLangSwitcher).toBeVisible();
+      await page.evaluate(() => {
+        const button = document.querySelector('#mobile-language-switcher button[data-lang="es"]');
+        if (button) {
+          (button as HTMLElement).click();
+        }
+      });
+      await page.waitForTimeout(500);
+    } else {
+      // Desktop: language switcher is in navbar
+      const langSwitcher = page.locator('#language-switcher');
+      await expect(langSwitcher).toBeVisible();
+      await langSwitcher.locator('button[data-lang="es"]').click();
+    }
+    
+    await page.waitForTimeout(500);
+    
+    // Test Spanish content
+    await expect(page.locator('.notes-hero-title')).toContainText('Documentación Técnica');
+    await expect(page.locator('.notes-category-card.python .notes-card-title')).toContainText('Python');
+    await expect(page.locator('.notes-category-card.git .notes-card-title')).toContainText('Git');
+    await expect(page.locator('.notes-category-card.misc .notes-card-title')).toContainText('Misc');
+    await expect(page.locator('.notes-welcome h4')).toContainText('Navega por documentación');
+    
+    // Switch back to English
+    if (isMobile) {
+      const mobileLangSwitcher = page.locator('#mobile-language-switcher');
+      await page.evaluate(() => {
+        const button = document.querySelector('#mobile-language-switcher button[data-lang="en"]');
+        if (button) {
+          (button as HTMLElement).click();
+        }
+      });
+      await page.waitForTimeout(500);
+    } else {
+      const langSwitcher = page.locator('#language-switcher');
+      await langSwitcher.locator('button[data-lang="en"]').click();
+    }
+    
+    await page.waitForTimeout(500);
+    
+    // Verify back to English
+    await expect(page.locator('.notes-hero-title')).toContainText('Technical Documentation');
   });
 });
 

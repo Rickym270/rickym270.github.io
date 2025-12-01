@@ -25,7 +25,7 @@ test.describe('Home page content', () => {
     const headline = page.locator('#content #homeBanner .hero-headline');
     await expect(headline).toBeVisible();
     await expect(headline).toContainText(/RICKY MARTINEZ/i);
-    await expect(headline).toContainText(/Do Not Repeat Yourself/i);
+    await expect(headline).toContainText(/Don't Repeat Yourself/i);
   });
 
   test('hero buttons link to LinkedIn and Github correctly', async ({ page }) => {
@@ -162,9 +162,22 @@ test.describe('Home page content', () => {
     // Navbar should still be visible
     await expect(page.locator('nav.navbar')).toBeVisible();
     
+    // Skills page content should load - use more robust selector with data-translate attribute
+    // Wait for heading with longer timeout and fallback for WebKit
+    try {
+      await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 10000, state: 'visible' });
+    } catch {
+      // Fallback for WebKit - wait for any heading with Skills text and check visibility
+      await page.waitForFunction(() => {
+        const heading = document.querySelector('#content h1, #content h3') as HTMLElement;
+        return heading && heading.textContent?.includes('Skills') && heading.offsetParent !== null;
+      }, { timeout: 10000 });
+    }
+    await page.waitForTimeout(500); // Give translations time to apply
+    
     // Skills page content should load - check for h1 or h3 with "Skills"
-    const skillsHeading = page.locator('#content h1, #content h3').filter({ hasText: /Skills/i });
-    await expect(skillsHeading.first()).toBeVisible({ timeout: 3000 });
+    const skillsHeading = page.locator('#content h1[data-translate="skills.title"], #content h1, #content h3').filter({ hasText: /Skills/i });
+    await expect(skillsHeading.first()).toBeVisible({ timeout: 5000 });
   });
 
   test('Quick Stats displays last updated in correct format', async ({ page }) => {

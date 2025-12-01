@@ -29,10 +29,27 @@
         html.setAttribute('data-theme', theme);
         localStorage.setItem(THEME_KEY, theme);
         
+        // Update highlight.js theme
+        const hljsThemeLight = document.getElementById('hljs-theme-light');
+        const hljsThemeDark = document.getElementById('hljs-theme-dark');
+        if (hljsThemeLight && hljsThemeDark) {
+            if (theme === 'dark') {
+                hljsThemeLight.media = 'none';
+                hljsThemeDark.media = 'all';
+            } else {
+                hljsThemeLight.media = 'all';
+                hljsThemeDark.media = 'none';
+            }
+        }
+        
         // Update icon (find it again in case DOM changed)
         themeIcon = document.getElementById('theme-icon');
+        const themeIconMedium = document.querySelector('.theme-icon-medium');
         if (themeIcon) {
             themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        if (themeIconMedium) {
+            themeIconMedium.textContent = theme === 'dark' ? '☀️' : '🌙';
         }
         
         // Update mobile theme icon
@@ -62,8 +79,12 @@
         
         // Find toggle button again
         themeToggle = document.getElementById('theme-toggle');
+        const themeToggleMedium = document.getElementById('theme-toggle-medium');
         if (themeToggle) {
             themeToggle.addEventListener('click', toggleTheme);
+        }
+        if (themeToggleMedium) {
+            themeToggleMedium.addEventListener('click', toggleTheme);
         }
     }
     
@@ -107,6 +128,16 @@
             target.id === 'theme-toggle' || 
             target.id === 'theme-icon' ||
             (target.parentElement && target.parentElement.id === 'theme-toggle')
+        )) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleTheme(e);
+        }
+        // Check if click is on the medium screen button or its children
+        if (target && (
+            target.id === 'theme-toggle-medium' || 
+            target.classList.contains('theme-icon-medium') ||
+            (target.parentElement && target.parentElement.id === 'theme-toggle-medium')
         )) {
             e.preventDefault();
             e.stopPropagation();

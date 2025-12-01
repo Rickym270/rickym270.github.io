@@ -56,7 +56,8 @@ test.describe('Navbar', () => {
       const docs = nav.getByRole('button', { name: 'Docs' }).or(nav.getByRole('link', { name: 'Docs' }));
       await expect(docs).toBeVisible();
       await docs.hover();
-      const menu = page.locator('.dropdown-menu');
+      // Use first visible dropdown menu (desktop or medium screen)
+      const menu = page.locator('.dropdown-menu').first();
       await expect(menu).toBeVisible();
       await expect(menu.getByRole('link', { name: 'Notes' })).toBeVisible();
 
@@ -398,7 +399,7 @@ test.describe('Navbar', () => {
     // Check that settings container exists
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings).toBeVisible();
-    
+
     // Check that setting groups exist
     const settingGroups = page.locator('.mobile-setting-group');
     await expect(settingGroups).toHaveCount(2);

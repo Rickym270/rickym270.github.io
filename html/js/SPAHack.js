@@ -63,18 +63,49 @@ $(document).ready(function(){
             'html/pages/tutorials.html': 'a[data-url="html/pages/tutorials.html"]'
         };
         
+        // Special handling for dropdown items (like Docs > Notes)
+        var dropdownMapping = {
+            'html/pages/docs.html': {
+                dropdownParent: 'li.nav-item.dropdown',
+                dropdownToggle: 'a.dropdown-toggle[data-translate="nav.docs"]'
+            }
+        };
+        
         // Find matching nav item and add active class
         for (var mappedUrl in navMapping) {
             if (url.includes(mappedUrl.split('/').pop()) || url === mappedUrl) {
                 var selector = navMapping[mappedUrl];
                 var navLink = jQuery(selector);
-                if (navLink.length) {
-                    // Update desktop navbar
+                
+                // Check if this is a dropdown item that needs special handling
+                if (dropdownMapping[mappedUrl] && navLink.hasClass('dropdown-item')) {
+                    // For dropdown items, highlight the parent dropdown instead
+                    var dropdownParent = jQuery(dropdownMapping[mappedUrl].dropdownParent);
+                    var dropdownToggle = jQuery(dropdownMapping[mappedUrl].dropdownToggle);
+                    
+                    // Remove active from dropdown-item to prevent it from being highlighted
+                    navLink.removeClass('active');
+                    
+                    // Add active to the parent dropdown li
+                    if (dropdownParent.length) {
+                        dropdownParent.addClass('active');
+                    }
+                    // Also ensure the dropdown-toggle link gets active styling
+                    if (dropdownToggle.length) {
+                        dropdownToggle.addClass('active');
+                        dropdownToggle.closest('li.nav-item').addClass('active');
+                    }
+                } else if (navLink.length) {
+                    // Regular nav item - highlight normally
                     navLink.closest('li.nav-item').addClass('active');
-                    // Update mobile sidebar
                     navLink.addClass('active');
-                    break;
                 }
+                
+                // Update mobile sidebar (always use the direct link)
+                if (!navLink.hasClass('dropdown-item')) {
+                    navLink.addClass('active');
+                }
+                break;
             }
         }
     }
@@ -231,6 +262,15 @@ $(document).ready(function(){
                                     initProjects();
                                 }
                             }, 100);
+                        }
+                        // Initialize docs page functionality if docs page
+                        if (sectionUrl.includes('docs.html')) {
+                            // Ensure docs page initialization runs after SPA load
+                            setTimeout(function() {
+                                if (typeof window.initDocsPage === 'function') {
+                                    window.initDocsPage();
+                                }
+                            }, 200);
                         }
                 });
                 }

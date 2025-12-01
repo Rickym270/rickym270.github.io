@@ -14,7 +14,7 @@
   },
   "home": {
     "title": "Ricky Martinez - Inicio",
-    "tagline": "No te repitas. Prueba con precisión.",
+    "tagline": "No te repitas. Ingeniería con Precisión.",
     "name": "RICKY MARTINEZ",
     "description": "Desarrollador y solucionador de problemas que prospera con la eficiencia, creatividad y automatización. Desde marcos de prueba hasta sistemas full-stack, me encanta construir soluciones que hacen que la tecnología funcione de manera más inteligente, no más difícil.",
     "connectLinkedIn": "Conectar en LinkedIn",
@@ -107,9 +107,40 @@
     "clickToStart": "¡Haz clic en cualquier FAQ para comenzar!",
     "contents": "Contenidos",
     "back": "Atrás",
+    "backToCategories": "Volver a Categorías",
+    "welcomeText": "Navega por documentación técnica organizada y materiales de referencia.",
     "python": "Python",
     "git": "Git",
     "misc": "Misc.",
+    "notesHero": {
+      "title": "Documentación Técnica",
+      "subtitle": "Navega por documentación técnica organizada y materiales de referencia.",
+      "pythonCard": {
+        "title": "Python",
+        "description": "Scripts, automatización y técnicas de desarrollo",
+        "count": "8 artículos",
+        "viewMore": "Ver Más →"
+      },
+      "gitCard": {
+        "title": "Git",
+        "description": "Flujos de trabajo de control de versiones y mejores prácticas",
+        "count": "1 artículos",
+        "viewMore": "Ver Más →"
+      },
+      "miscCard": {
+        "title": "Misc.",
+        "description": "Consejos, trucos y notas técnicas diversas",
+        "count": "1 artículos",
+        "viewMore": "Ver Más →"
+      },
+      "notionCard": {
+        "title": "Notion",
+        "description": "Notas personales y documentación de Notion",
+        "count": "Próximamente",
+        "viewMore": "Ver Más →",
+        "comingSoon": "Próximamente"
+      }
+    },
     "pythonTopics": {
       "executingCommands": "Ejecutar Comandos",
       "jinjaUsage": "Uso de Jinja",
@@ -131,7 +162,40 @@
     },
     "miscTopics": {
       "fontAwesome": "Iconos Font Awesome"
-    }
+    },
+    "notesHero": {
+      "title": "Documentación Técnica",
+      "subtitle": "Navega por documentación técnica organizada y materiales de referencia.",
+      "pythonCard": {
+        "title": "Python",
+        "description": "Scripts, automatización y técnicas de desarrollo",
+        "count": "8 artículos",
+        "explore": "Explorar",
+        "viewMore": "Ver Más"
+      },
+      "gitCard": {
+        "title": "Git",
+        "description": "Flujos de trabajo de control de versiones y mejores prácticas",
+        "count": "1 artículo",
+        "explore": "Explorar",
+        "viewMore": "Ver Más"
+      },
+      "miscCard": {
+        "title": "Misc.",
+        "description": "Consejos, trucos y notas técnicas diversas",
+        "count": "1 artículos",
+        "explore": "Explorar",
+        "viewMore": "Ver Más"
+      },
+      "notionCard": {
+        "title": "Notion",
+        "description": "Notas personales y documentación de Notion",
+        "comingSoon": "Próximamente",
+        "viewMore": "Ver Más →"
+      }
+    },
+    "welcomeText": "Navega por documentación técnica organizada y materiales de referencia.",
+    "backToCategories": "Volver a Categorías"
   },
   "tutorials": {
     "title": "Ricky Martinez - Tutoriales",
