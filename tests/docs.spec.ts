@@ -483,8 +483,8 @@ test.describe('Docs/Notes Page', () => {
     await docsButton.hover();
     await page.waitForTimeout(200);
     
-    // Dropdown menu should appear
-    const dropdownMenu = page.locator('.dropdown-menu');
+    // Dropdown menu should appear - use first visible one (desktop or medium screen)
+    const dropdownMenu = page.locator('.dropdown-menu').first();
     await expect(dropdownMenu).toBeVisible();
     
     // Move mouse to menu (simulate moving from button to menu)
