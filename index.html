@@ -346,10 +346,39 @@
         </script>
         <script type="text/javascript" src="html/js/SPAHack.js"></script>
         <!-- Load API and Projects scripts globally so SPA-loaded pages can use them -->
+        <!-- Highlight.js for syntax highlighting -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-theme-light">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-theme-dark" media="none">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/shell.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/jsx.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/tsx.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/html.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/ruby.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/swift.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
         <script type="text/javascript" src="/html/js/api.js?v=20251110"></script>
         <script type="text/javascript" src="/html/js/projects.js?v=20251110"></script>
         <script type="text/javascript" src="html/js/theme.js"></script>
         <script type="text/javascript" src="html/js/translation.js"></script>
+        <script type="text/javascript" src="html/js/code-block.js"></script>
         <script type="text/javascript">
             // Global error handler for browser extension interference
             // This error is harmless and caused by extensions (password managers, ad blockers, etc.)
@@ -374,6 +403,17 @@
             $(document).ready(function() {
                 // Desktop language switcher
                 $(document).on('click', '#language-switcher button[data-lang]', function(e) {
+                    e.preventDefault();
+                    const lang = $(this).attr('data-lang');
+                    if (typeof window.TranslationManager !== 'undefined') {
+                        window.TranslationManager.switchLanguage(lang).then(() => {
+                            console.log('Language switched to:', lang);
+                        });
+                    }
+                });
+                
+                // Medium screen language switcher
+                $(document).on('click', '#language-switcher-medium button[data-lang]', function(e) {
                     e.preventDefault();
                     const lang = $(this).attr('data-lang');
                     if (typeof window.TranslationManager !== 'undefined') {
@@ -463,11 +503,12 @@
                     <span></span>
                     <span></span>
                 </button>
+                <!-- Desktop navbar (single row) -->
                 <a class="navbar-brand-name" href="#" data-url="html/pages/home.html">
                     <p class="navbar-brand-full" style="margin: 0;">Ricky Martinez</p>
                     <p class="navbar-brand-mobile" style="margin: 0;">RM</p>
                 </a>
-                <ul class="navbar-nav mr-auto d-flex flex-row align-items-center justify-content-between w-100" id="navbar-links" style="flex-wrap: wrap;">
+                <ul class="navbar-nav mr-auto d-flex flex-row align-items-center justify-content-between w-100" id="navbar-links">
                     <div class="d-flex align-items-center">
                         <li class="nav-item active">
                             <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">Home</a>
@@ -481,9 +522,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">Contact</a>
                         </li>
-                    </div>
-                    <div class="d-flex align-items-center">
-                    <div class="d-flex align-items-center">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">
                               Docs
@@ -495,6 +533,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
                         </li>
+                    </div>
+                    <div class="d-flex align-items-center">
                         <li class="nav-item ml-2" id="language-switcher">
                             <div class="btn-group" role="group" aria-label="Language selector">
                                 <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="en" aria-pressed="true" title="English">
@@ -512,6 +552,59 @@
                         </li>
                     </div>
                 </ul>
+                <!-- Medium screen navbar (two-row) -->
+                <div class="navbar-content">
+                    <div class="navbar-row navbar-row-top">
+                        <a class="navbar-brand-first" href="#" data-url="html/pages/home.html">
+                            <span class="navbar-brand-name-first">Ricky</span>
+                        </a>
+                        <ul class="navbar-nav-main">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#Projects" data-url="html/pages/projects.html" data-translate="nav.projects">Projects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#Skills" data-url="html/pages/skills.html" data-translate="nav.skills">Skills</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="navbar-row navbar-row-bottom">
+                        <a class="navbar-brand-second" href="#" data-url="html/pages/home.html">
+                            <span class="navbar-brand-name-second">Martinez</span>
+                        </a>
+                        <ul class="navbar-nav-secondary">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">
+                                  Docs
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkMedium">
+                                    <a class="dropdown-item" href="#" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
+                            </li>
+                        </ul>
+                        <div class="navbar-controls">
+                            <div class="btn-group" role="group" aria-label="Language selector" id="language-switcher-medium">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="en" aria-pressed="true" title="English">
+                                    EN
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="es" aria-pressed="false" title="Español">
+                                    ES
+                                </button>
+                            </div>
+                            <button class="theme-toggle" id="theme-toggle-medium" aria-label="Toggle dark mode" title="Toggle dark mode">
+                                <span class="theme-icon-medium">🌙</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </nav>
         <div id="content">

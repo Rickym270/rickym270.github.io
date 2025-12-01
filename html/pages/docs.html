@@ -311,10 +311,15 @@
                     // Convert numbered/bulleted lists to proper HTML lists
                     convertListsToHTML();
                     
-                    // Add line numbers to code blocks - call with delay to ensure DOM is ready
+                    // Initialize modern code blocks with language selector and copy button
                     setTimeout(function() {
-                        addLineNumbersToCodeBlocks();
-                    }, 50);
+                        if (typeof window.initCodeBlocks === 'function') {
+                            window.initCodeBlocks();
+                        } else {
+                            // Fallback to old line numbers if new component not available
+                            addLineNumbersToCodeBlocks();
+                        }
+                    }, 100);
                 }
                 
                 // Make styling functions globally accessible for index.html files

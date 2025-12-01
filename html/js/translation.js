@@ -205,9 +205,25 @@
         updateLanguageSwitcher: function() {
             // Update desktop language switcher
             const switcher = document.getElementById('language-switcher');
+            const switcherMedium = document.getElementById('language-switcher-medium');
             if (switcher) {
                 const buttons = switcher.querySelectorAll('button[data-lang]');
                 buttons.forEach(btn => {
+                    const btnLang = btn.getAttribute('data-lang');
+                    if (btnLang === this.currentLanguage) {
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-pressed', 'true');
+                    } else {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-pressed', 'false');
+                    }
+                });
+            }
+            
+            // Update medium screen language switcher
+            if (switcherMedium) {
+                const buttonsMedium = switcherMedium.querySelectorAll('button[data-lang]');
+                buttonsMedium.forEach(btn => {
                     const btnLang = btn.getAttribute('data-lang');
                     if (btnLang === this.currentLanguage) {
                         btn.classList.add('active');

@@ -25,7 +25,7 @@ test.describe('Home page content', () => {
     const headline = page.locator('#content #homeBanner .hero-headline');
     await expect(headline).toBeVisible();
     await expect(headline).toContainText(/RICKY MARTINEZ/i);
-    await expect(headline).toContainText(/Do Not Repeat Yourself/i);
+    await expect(headline).toContainText(/Don't Repeat Yourself/i);
   });
 
   test('hero buttons link to LinkedIn and Github correctly', async ({ page }) => {
