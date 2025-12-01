@@ -206,6 +206,13 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     right: 0;
 }
 
+/* Set padding for navbar container div */
+body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
+.navbar > .container {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
 /* Desktop (992px+): Show original single-row layout, hide two-row structure */
 @media (min-width: 992px) {
     /* Hide two-row structure on desktop */
@@ -213,17 +220,24 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         display: none !important;
     }
     
-    /* Show original navbar-nav structure */
-    .navbar-nav {
-        display: flex !important;
-        flex-direction: row;
+    /* Container uses grid to properly center nav links between brand and controls */
+    .navbar > .container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        justify-content: space-between;
         width: 100%;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        flex-wrap: nowrap !important;
+        gap: var(--spacing-lg);
+    }
+    
+    /* Brand name - left aligned */
+    .navbar-brand-name {
+        grid-column: 1;
+        justify-self: start;
+    }
+    
+    /* Show original navbar-nav structure - use contents to break out of flex */
+    .navbar-nav {
+        display: contents !important;
     }
     
     .navbar-nav > div {
@@ -232,13 +246,16 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         gap: var(--spacing-xs);
     }
     
+    /* Nav links container - centered in middle grid column */
     .navbar-nav > div:first-child {
-        flex: 0 0 auto;
+        grid-column: 2;
+        justify-self: center;
     }
     
+    /* Controls container - right aligned in third grid column */
     .navbar-nav > div:last-child {
-        flex: 0 0 auto;
-        margin-left: auto;
+        grid-column: 3;
+        justify-self: end;
     }
     
     /* Show desktop brand name */
@@ -279,7 +296,6 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     .navbar-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         width: 100%;
         position: relative;
     }
@@ -296,11 +312,11 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     .navbar-brand-first,
     .navbar-brand-second {
         display: block !important;
-        margin-right: auto;
         flex-shrink: 0;
+        margin-right: var(--spacing-lg);
     }
     
-    /* Center the nav items in both rows */
+    /* Center the nav items in both rows - takes remaining space and centers content */
     .navbar-nav-main {
         display: flex;
         align-items: center;
@@ -309,10 +325,7 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         margin: 0;
         padding: 0;
         list-style: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: auto;
+        flex: 1;
     }
     
     .navbar-nav-secondary {
@@ -323,10 +336,7 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         margin: 0;
         padding: 0;
         list-style: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: auto;
+        flex: 1;
     }
     
     /* Controls - align right */
@@ -334,8 +344,8 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         display: flex;
         align-items: center;
         gap: var(--spacing-sm);
-        margin-left: auto;
         flex-shrink: 0;
+        margin-left: var(--spacing-lg);
     }
     
     /* Hide desktop brand name on medium screens */
