@@ -192,12 +192,12 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
    Navigation
    ============================================ */
 .navbar {
-    height: var(--nav-height);
+    min-height: var(--nav-height);
     background-color: var(--color-bg-primary) !important;
     border-bottom: 1px solid var(--color-border);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: height var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
+    transition: min-height var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
     padding: 0 var(--spacing-lg);
     z-index: 1030;
     /* Ensure navbar stays on top and accounts for iOS safe area */
@@ -206,26 +206,199 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     right: 0;
 }
 
+/* Desktop (992px+): Show original single-row layout, hide two-row structure */
+@media (min-width: 992px) {
+    /* Hide two-row structure on desktop */
+    .navbar-content {
+        display: none !important;
+    }
+    
+    /* Show original navbar-nav structure */
+    .navbar-nav {
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        flex-wrap: nowrap !important;
+    }
+    
+    .navbar-nav > div {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .navbar-nav > div:first-child {
+        flex: 0 0 auto;
+    }
+    
+    .navbar-nav > div:last-child {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+    
+    /* Show desktop brand name */
+    .navbar-brand-name {
+        display: block !important;
+    }
+    
+    .navbar-brand-full {
+        display: block !important;
+    }
+    
+    .navbar-brand-mobile {
+        display: none !important;
+    }
+    
+    /* Hide two-row brand names on desktop */
+    .navbar-brand-first,
+    .navbar-brand-second {
+        display: none !important;
+    }
+}
+
+/* Medium screens (769px-991px): Show two-row layout */
+@media (min-width: 769px) and (max-width: 991px) {
+    /* Hide original navbar-nav on medium screens */
+    .navbar-nav {
+        display: none !important;
+    }
+    
+    /* Show two-row structure */
+    .navbar-content {
+        display: flex !important;
+        flex-direction: column;
+        width: 100%;
+        gap: var(--spacing-xs);
+    }
+    
+    .navbar-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        position: relative;
+    }
+    
+    .navbar-row-top {
+        padding-top: var(--spacing-sm);
+    }
+    
+    .navbar-row-bottom {
+        padding-bottom: var(--spacing-sm);
+    }
+    
+    /* Center the nav items in both rows */
+    .navbar-nav-main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+    }
+    
+    .navbar-nav-secondary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+    }
+    
+    /* Hide controls on bottom row - they should be on the right */
+    .navbar-controls {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-left: auto;
+    }
+    
+    /* Hide desktop brand name on medium screens */
+    .navbar-brand-name {
+        display: none !important;
+    }
+    
+    /* Show two-row brand names */
+    .navbar-brand-first,
+    .navbar-brand-second {
+        display: block !important;
+    }
+}
+
 .navbar.scrolled {
-    height: calc(var(--nav-height) * 0.7);
+    min-height: calc(var(--nav-height) * 0.7);
+}
+
+.navbar.scrolled .navbar-row-top {
+    padding-top: var(--spacing-xs);
+}
+
+.navbar.scrolled .navbar-row-bottom {
+    padding-bottom: var(--spacing-xs);
 }
 
 .navbar.bg-light {
     background-color: var(--color-bg-primary) !important;
 }
 
+/* Mobile brand name (hidden on desktop, shown on mobile) */
 .navbar-brand-name {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--color-text-primary) !important;
     transition: color var(--transition-fast);
+    text-decoration: none;
+    flex-shrink: 0;
+    display: none; /* Hidden on desktop */
 }
 
 .navbar-brand-name:hover {
     color: var(--color-accent) !important;
 }
 
-.navbar-brand-name p {
+.navbar-brand-name p,
+.navbar-brand-name span {
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Medium screen two-row brand names (hidden on desktop and mobile) */
+.navbar-brand-first,
+.navbar-brand-second {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary) !important;
+    transition: color var(--transition-fast);
+    text-decoration: none;
+    flex-shrink: 0;
+    z-index: 1;
+    position: relative;
+    display: none; /* Hidden by default, shown on medium screens */
+}
+
+.navbar-brand-first:hover,
+.navbar-brand-second:hover {
+    color: var(--color-accent) !important;
+}
+
+.navbar-brand-name-first,
+.navbar-brand-name-second {
     margin: 0;
     line-height: 1.2;
 }
@@ -236,6 +409,13 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
 
 .navbar-brand-full {
     display: block;
+}
+
+/* Medium screens: Show two-row structure */
+@media (min-width: 769px) and (max-width: 991px) {
+    .navbar-content {
+        display: flex;
+    }
 }
 
 .nav-link {
@@ -489,6 +669,7 @@ body[style*="background"] {
     letter-spacing: 0.05em;
     margin-bottom: var(--spacing-sm);
     transition: color var(--transition-base);
+    text-align: center;
 }
 
 .hero-name {
@@ -1438,13 +1619,16 @@ pre {
     text-align: left !important;
     font-family: var(--font-mono);
     font-size: 0.875rem;
-    line-height: 0.875rem !important; /* True single spacing: line-height equals font-size */
+    line-height: 0.2rem !important; /* True single spacing: line-height equals font-size */
     white-space: pre; /* Preserve whitespace and line breaks */
     direction: ltr;
     position: relative;
     /* Aggressively remove any spacing */
     font-size-adjust: none;
     letter-spacing: normal;
+    /* Remove all spacing between lines */
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
 }
 
 /* Ensure all code elements in pre blocks have single spacing */
@@ -1801,6 +1985,150 @@ pre code {
     overflow: visible;
 }
 
+/* Modern Code Block Component with Language Selector */
+.code-block-wrapper {
+    position: relative;
+    margin: var(--spacing-lg) 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-secondary);
+    overflow: hidden;
+}
+
+.code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.code-language-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.code-language-tab {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: var(--font-primary);
+}
+
+.code-language-tab:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+.code-language-tab.active {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.code-block-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.code-copy-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: var(--font-primary);
+}
+
+.code-copy-button:hover {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+}
+
+.code-copy-button.copied {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.code-block-content {
+    position: relative;
+    overflow-x: auto;
+}
+
+.code-block-content pre {
+    margin: 0 !important;
+    padding: var(--spacing-md) !important;
+    padding-left: 3.5rem !important; /* Space for line numbers */
+    background-color: var(--color-bg-secondary) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: 0.875rem;
+    line-height: 1.5 !important; /* Better readability */
+}
+
+.code-block-content pre code {
+    display: block !important;
+    line-height: 1.5 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.code-block-content pre code + code {
+    margin-top: 0 !important;
+}
+
+/* Dark mode for code block wrapper */
+[data-theme="dark"] .code-block-wrapper {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+}
+
+[data-theme="dark"] .code-block-header {
+    background-color: var(--color-bg-tertiary);
+    border-bottom-color: var(--color-border);
+}
+
+[data-theme="dark"] .code-language-tab {
+    color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .code-language-tab:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .code-copy-button {
+    color: var(--color-text-secondary);
+    border-color: var(--color-border);
+}
+
+[data-theme="dark"] .code-copy-button:hover {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
 /* Critical: Ensure consecutive code elements have absolutely zero spacing */
 #FAQMain pre code + code {
     margin-top: 0 !important;
@@ -1809,8 +2137,9 @@ pre code {
     padding-bottom: 0 !important;
     border-top: 0 !important;
     border-bottom: 0 !important;
-    /* Negative margin to eliminate any visual spacing */
-    margin-top: -0.1em !important;
+    /* Negative margin to eliminate any visual spacing between code lines */
+    margin-top: -0.2em !important; /* Small negative margin to eliminate gaps */
+    display: block !important;
 }
 
 /* Empty code elements should not take any space */
@@ -1825,9 +2154,18 @@ pre code {
 
 /* Override any browser defaults on pre children */
 #FAQMain pre > * {
-    line-height: 1 !important;
+    line-height: 0.875rem !important; /* Match code line-height */
     margin: 0 !important;
     padding: 0 !important;
+}
+
+/* Ensure pre element itself has no line spacing */
+#FAQMain pre,
+#content .container pre,
+#content #FAQMain pre {
+    line-height: 0.2rem !important;
+    /* Remove any spacing between child elements */
+    font-size: 0.875rem;
 }
 
 /* Dark mode code blocks */
@@ -1858,6 +2196,7 @@ pre code {
     background-color: transparent !important;
     color: var(--color-text-primary) !important;
 }
+
 
 /* Dark mode article content - ensure all text is visible */
 [data-theme="dark"] #content .container.article-content,
@@ -2679,6 +3018,16 @@ pre code {
         display: flex;
     }
     
+    /* Hide desktop two-row navbar structure on mobile */
+    .navbar-content {
+        display: none !important;
+    }
+    
+    /* Show mobile brand name */
+    .navbar-brand-name {
+        display: block !important;
+    }
+    
     .navbar-nav {
         display: none !important;
     }
@@ -2911,6 +3260,12 @@ pre code {
         line-height: 1.2;
     }
     
+    /* Hide desktop brand names on mobile */
+    .navbar-brand-first,
+    .navbar-brand-second {
+        display: none !important;
+    }
+    
     .navbar.scrolled .navbar-brand-mobile {
         font-size: 0.9rem;
     }
@@ -3034,6 +3389,49 @@ pre code {
 @media (min-width: 992px) {
     .navbar-nav {
         flex-wrap: nowrap !important;
+    }
+}
+
+/* Medium screen sizes (tablet/half-screen) - prevent navbar skewing */
+@media (min-width: 769px) and (max-width: 991px) {
+    .navbar-content {
+        gap: var(--spacing-xs);
+    }
+    
+    .navbar-row {
+        flex-wrap: nowrap;
+    }
+    
+    .navbar-row-top {
+        position: relative;
+    }
+    
+    .navbar-nav-main {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        flex-wrap: nowrap;
+        gap: var(--spacing-xs);
+    }
+    
+    .navbar-nav-secondary {
+        flex-wrap: nowrap;
+        gap: var(--spacing-xs);
+    }
+    
+    .navbar-controls {
+        flex-shrink: 0;
+        gap: var(--spacing-xs);
+    }
+    
+    .nav-link {
+        font-size: 0.875rem;
+        padding: var(--spacing-xs) var(--spacing-sm) !important;
+        white-space: nowrap;
+    }
+    
+    .navbar .container {
+        padding: var(--spacing-sm) var(--spacing-md);
     }
 }
 
