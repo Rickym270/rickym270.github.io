@@ -292,12 +292,12 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         padding-bottom: var(--spacing-sm);
     }
     
-    /* Brand names align left */
+    /* Brand names - align left */
     .navbar-brand-first,
     .navbar-brand-second {
         display: block !important;
+        margin-right: auto;
         flex-shrink: 0;
-        text-align: left;
     }
     
     /* Center the nav items in both rows */
@@ -329,7 +329,7 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         width: auto;
     }
     
-    /* Controls align right */
+    /* Controls - align right */
     .navbar-controls {
         display: flex;
         align-items: center;
