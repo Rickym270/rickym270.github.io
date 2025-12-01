@@ -292,6 +292,14 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         padding-bottom: var(--spacing-sm);
     }
     
+    /* Brand names align left */
+    .navbar-brand-first,
+    .navbar-brand-second {
+        display: block !important;
+        flex-shrink: 0;
+        text-align: left;
+    }
+    
     /* Center the nav items in both rows */
     .navbar-nav-main {
         display: flex;
@@ -321,23 +329,18 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         width: auto;
     }
     
-    /* Hide controls on bottom row - they should be on the right */
+    /* Controls align right */
     .navbar-controls {
         display: flex;
         align-items: center;
         gap: var(--spacing-sm);
         margin-left: auto;
+        flex-shrink: 0;
     }
     
     /* Hide desktop brand name on medium screens */
     .navbar-brand-name {
         display: none !important;
-    }
-    
-    /* Show two-row brand names */
-    .navbar-brand-first,
-    .navbar-brand-second {
-        display: block !important;
     }
 }
 
