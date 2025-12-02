@@ -502,8 +502,8 @@
     #content #FAQMain > div {
         padding-left: var(--spacing-md) !important;
         padding-right: var(--spacing-md) !important;
-    }
-    
+}
+
     /* Table of contents on mobile */
     #content #FAQMain .toc_title,
     #FAQMain .toc_title {
