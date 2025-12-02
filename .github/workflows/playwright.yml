@@ -35,15 +35,20 @@ jobs:
           # Get commit messages to check
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             # For PRs, check PR title, body, and all commit messages
-            COMMIT_MESSAGES="${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}"
+            # Safely handle PR body by writing to a temp file to avoid shell interpretation issues
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_BODY="${{ github.event.pull_request.body }}"
+            echo "$PR_TITLE" > /tmp/pr_text.txt
+            echo "$PR_BODY" >> /tmp/pr_text.txt
             # Get all commit messages in the PR (from base to head)
             BASE_SHA="${{ github.event.pull_request.base.sha }}"
             HEAD_SHA="${{ github.event.pull_request.head.sha }}"
             if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ]; then
-              COMMIT_MESSAGES="$COMMIT_MESSAGES $(git log --format=%B $BASE_SHA..$HEAD_SHA 2>/dev/null || git log --format=%B -10)"
+              git log --format=%B $BASE_SHA..$HEAD_SHA >> /tmp/pr_text.txt 2>/dev/null || git log --format=%B -10 >> /tmp/pr_text.txt
             else
-              COMMIT_MESSAGES="$COMMIT_MESSAGES $(git log --format=%B -10)"
+              git log --format=%B -10 >> /tmp/pr_text.txt
             fi
+            COMMIT_MESSAGES=$(cat /tmp/pr_text.txt)
           else
             # For push/schedule/workflow_dispatch, check recent commit messages
             COMMIT_MESSAGES="$(git log --format=%B -10)"
