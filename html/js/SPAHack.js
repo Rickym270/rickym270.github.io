@@ -115,6 +115,10 @@ $(document).ready(function(){
         // Use event delegation for dynamically loaded content
         jQuery(document).off('click', 'a.nav-link, a.dropdown-item, a.inline-load, a.navbar-brand-name');
         jQuery(document).on('click', 'a.nav-link, a.dropdown-item, a.inline-load, a.navbar-brand-name', function(e){
+            // Skip private repository links
+            if ($(this).hasClass('private-repo-link') || $(this).attr('data-private') === 'true') {
+                return;
+            }
             e.preventDefault(); // Prevent default anchor behavior
             var sectionUrl = $(this).attr("data-url");
             // If no data-url but href points to index.html, load home page

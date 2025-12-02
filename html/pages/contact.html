@@ -141,8 +141,30 @@
             }
 
             function showMessage(text, isError = false) {
-                // Ensure we always have a message to display
-                const displayText = text && text.trim() ? text.trim() : (isError ? 'An error occurred. Please try again.' : 'Success!');
+                // Translate the message if it matches known error patterns
+                let displayText = text && text.trim() ? text.trim() : (isError ? 'An error occurred. Please try again.' : 'Success!');
+                
+                if (isError && typeof window.TranslationManager !== 'undefined') {
+                    // Map common error messages to translation keys
+                    const errorMappings = {
+                        'Please wait before submitting another message': 'contact.errorRateLimit',
+                        'Please fill in all required fields': 'contact.errorValidation',
+                        'Please enter a valid email address': 'contact.errorEmail',
+                        'Spam detected. Message not sent': 'contact.errorSpam',
+                        'CAPTCHA verification failed': 'contact.errorCaptcha',
+                        'Request timed out': 'contact.errorTimeout',
+                        'Server error occurred': 'contact.errorServer'
+                    };
+                    
+                    // Check if the error message matches any known patterns
+                    for (const [pattern, key] of Object.entries(errorMappings)) {
+                        if (displayText.includes(pattern)) {
+                            displayText = window.TranslationManager.t(key);
+                            break;
+                        }
+                    }
+                }
+                
                 messageDiv.textContent = displayText;
                 messageDiv.className = 'alert ' + (isError ? 'alert-danger' : 'alert-success');
                 messageDiv.style.display = 'block';
@@ -173,20 +195,29 @@
 
                 // Client-side validation
                 if (!name || !email || !subject || !message) {
-                    showMessage('Please fill in all required fields.', true);
+                    const errorMsg = typeof window.TranslationManager !== 'undefined' 
+                        ? window.TranslationManager.t('contact.errorValidation')
+                        : 'Please fill in all required fields.';
+                    showMessage(errorMsg, true);
                     return;
                 }
 
                 // Email validation
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    showMessage('Please enter a valid email address.', true);
+                    const errorMsg = typeof window.TranslationManager !== 'undefined' 
+                        ? window.TranslationManager.t('contact.errorEmail')
+                        : 'Please enter a valid email address.';
+                    showMessage(errorMsg, true);
                     return;
                 }
 
                 // Check honeypot
                 if (honeypot) {
-                    showMessage('Spam detected. Message not sent.', true);
+                    const errorMsg = typeof window.TranslationManager !== 'undefined' 
+                        ? window.TranslationManager.t('contact.errorSpam')
+                        : 'Spam detected. Message not sent.';
+                    showMessage(errorMsg, true);
                     return;
                 }
 
@@ -288,7 +319,10 @@
                     }
 
                     const result = await response.json();
-                    showMessage('✓ Email sent successfully! Thank you for reaching out. I\'ll get back to you soon.', false);
+                    const successMsg = typeof window.TranslationManager !== 'undefined' 
+                        ? window.TranslationManager.t('contact.success')
+                        : '✓ Email sent successfully! Thank you for reaching out. I\'ll get back to you soon.';
+                    showMessage(successMsg, false);
                     form.reset();
                     
                     // Reset Turnstile widget if it exists
@@ -330,7 +364,9 @@
                             }
                         }
                     } else if (errorText.includes('CAPTCHA') || errorText.includes('verification failed') || errorText.includes('Turnstile') || errorText.includes('400020')) {
-                        errorMessage = 'Security verification failed. Please refresh the page and try again.';
+                        errorMessage = typeof window.TranslationManager !== 'undefined' 
+                            ? window.TranslationManager.t('contact.errorCaptcha')
+                            : 'Security verification failed. Please refresh the page and try again.';
                         if (typeof turnstile !== 'undefined' && isTurnstileConfigured()) {
                             try {
                                 turnstile.reset();

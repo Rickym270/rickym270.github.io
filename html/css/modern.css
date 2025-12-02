@@ -206,6 +206,13 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     right: 0;
 }
 
+/* Set padding for navbar container div */
+body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
+.navbar > .container {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
 /* Desktop (992px+): Show original single-row layout, hide two-row structure */
 @media (min-width: 992px) {
     /* Hide two-row structure on desktop */
@@ -213,17 +220,24 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         display: none !important;
     }
     
-    /* Show original navbar-nav structure */
-    .navbar-nav {
-        display: flex !important;
-        flex-direction: row;
+    /* Container uses grid to properly center nav links between brand and controls */
+    .navbar > .container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        justify-content: space-between;
         width: 100%;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        flex-wrap: nowrap !important;
+        gap: var(--spacing-lg);
+    }
+    
+    /* Brand name - left aligned */
+    .navbar-brand-name {
+        grid-column: 1;
+        justify-self: start;
+    }
+    
+    /* Show original navbar-nav structure - use contents to break out of flex */
+    .navbar-nav {
+        display: contents !important;
     }
     
     .navbar-nav > div {
@@ -232,13 +246,16 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         gap: var(--spacing-xs);
     }
     
+    /* Nav links container - centered in middle grid column */
     .navbar-nav > div:first-child {
-        flex: 0 0 auto;
+        grid-column: 2;
+        justify-self: center;
     }
     
+    /* Controls container - right aligned in third grid column */
     .navbar-nav > div:last-child {
-        flex: 0 0 auto;
-        margin-left: auto;
+        grid-column: 3;
+        justify-self: end;
     }
     
     /* Show desktop brand name */
@@ -279,7 +296,6 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
     .navbar-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         width: 100%;
         position: relative;
     }
@@ -292,7 +308,15 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         padding-bottom: var(--spacing-sm);
     }
     
-    /* Center the nav items in both rows */
+    /* Brand names - align left */
+    .navbar-brand-first,
+    .navbar-brand-second {
+        display: block !important;
+        flex-shrink: 0;
+        margin-right: var(--spacing-lg);
+    }
+    
+    /* Center the nav items in both rows - takes remaining space and centers content */
     .navbar-nav-main {
         display: flex;
         align-items: center;
@@ -301,10 +325,7 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         margin: 0;
         padding: 0;
         list-style: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: auto;
+        flex: 1;
     }
     
     .navbar-nav-secondary {
@@ -315,29 +336,21 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
         margin: 0;
         padding: 0;
         list-style: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: auto;
+        flex: 1;
     }
     
-    /* Hide controls on bottom row - they should be on the right */
+    /* Controls - align right */
     .navbar-controls {
         display: flex;
         align-items: center;
         gap: var(--spacing-sm);
-        margin-left: auto;
+        flex-shrink: 0;
+        margin-left: var(--spacing-lg);
     }
     
     /* Hide desktop brand name on medium screens */
     .navbar-brand-name {
         display: none !important;
-    }
-    
-    /* Show two-row brand names */
-    .navbar-brand-first,
-    .navbar-brand-second {
-        display: block !important;
     }
 }
 
@@ -2600,6 +2613,63 @@ pre code {
 }
 
 /* ============================================
+   Private Repository Styles
+   ============================================ */
+.project-card-private {
+    opacity: 0.6;
+    filter: grayscale(0.3);
+    background-color: var(--color-bg-secondary);
+}
+
+.project-card-private:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.project-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.private-repo-icon {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    font-size: 1rem;
+    opacity: 0.7;
+    z-index: 1;
+    background-color: var(--color-bg-primary);
+    border-radius: 50%;
+    padding: var(--spacing-xs);
+    border: 1px solid var(--color-border);
+    cursor: help;
+}
+
+.card-link.disabled,
+.private-repo-link {
+    color: var(--color-text-tertiary) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    text-decoration: none !important;
+    user-select: none !important;
+}
+
+.card-link.disabled:hover,
+.card-link.disabled:focus,
+.card-link.disabled:active,
+.private-repo-link:hover,
+.private-repo-link:focus,
+.private-repo-link:active {
+    color: var(--color-text-tertiary) !important;
+    text-decoration: none !important;
+    cursor: not-allowed !important;
+}
+
+/* ============================================
    Hero Section
    ============================================ */
 .hero {
@@ -2761,6 +2831,16 @@ pre code {
     padding: 0;
     z-index: 1031;
     position: relative;
+    /* iOS touch improvements */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    /* Ensure button is touchable on iOS - increase touch target */
+    min-width: 44px;
+    min-height: 44px;
+    /* Center the hamburger icon within the larger touch target */
+    align-items: center;
 }
 
 .mobile-menu-toggle span {
@@ -3015,7 +3095,15 @@ pre code {
    ============================================ */
 @media (max-width: 768px) {
     .mobile-menu-toggle {
-        display: flex;
+        display: flex !important;
+        z-index: 1032 !important; /* Higher than navbar-brand-name (1031) */
+        position: relative;
+        /* Ensure proper touch target size on iOS */
+        min-width: 44px !important;
+        min-height: 44px !important;
+        /* Add padding to increase touch area while keeping visual size */
+        padding: 8px;
+        margin: 0;
     }
     
     /* Hide desktop two-row navbar structure on mobile */

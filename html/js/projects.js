@@ -146,17 +146,30 @@ function renderProjectCard(project, containerId) {
         : '';
     
     const projectSlug = project.slug || project.name.toLowerCase().replace(/\s+/g, '-');
+    const isPrivate = project.private === true;
+    
+    // Handle private repositories
+    const privateClass = isPrivate ? 'project-card-private' : '';
+    const privateIcon = isPrivate ? '<span class="private-repo-icon" title="" data-translate-title="projects.privateTooltip">🔒</span>' : '';
+    const linkAttributes = isPrivate 
+        ? 'class="card-link mt-auto disabled private-repo-link" data-private="true" title="" data-translate-title="projects.privateTooltip"'
+        : `href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer"`;
+    const linkText = isPrivate ? 'projects.privateRepo' : 'projects.viewGitHub';
+    
     const cardHtml = `
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-            <div class="project-card fade-in">
-                <img src="${imagePath}" class="project-image" alt="${project.name}" 
-                     onerror="this.onerror=null; this.style.display='none';"
-                     loading="lazy">
+            <div class="project-card fade-in ${privateClass}">
+                <div class="project-header">
+                    <img src="${imagePath}" class="project-image" alt="${project.name}" 
+                         onerror="this.onerror=null; this.style.display='none';"
+                         loading="lazy">
+                    ${privateIcon}
+                </div>
                 <h5 class="card-title" data-no-translate="true">${project.name}</h5>
                 <p class="card-text" data-translate="projects.descriptions.${projectSlug}">${summary}</p>
                 ${techTags ? `<div class="project-tech">${techTags}</div>` : ''}
-                <a href="${repoUrl}" class="card-link mt-auto" target="_blank" rel="noopener noreferrer" data-translate="projects.viewGitHub">
-                    View on GitHub →
+                <a ${linkAttributes} data-translate="${linkText}">
+                    ${isPrivate ? 'Private Repository' : 'View on GitHub →'}
                 </a>
             </div>
         </div>
@@ -171,6 +184,24 @@ function renderProjectCard(project, containerId) {
             container.insertAdjacentHTML('beforeend', cardHtml);
         }
     }
+}
+
+/**
+ * Setup event handlers for private repository links
+ * Prevents any navigation or interaction with private repo links
+ */
+function setupPrivateRepoHandlers() {
+    // Use event delegation to handle dynamically added private repo links
+    document.addEventListener('click', function(e) {
+        // Check if the clicked element or its parent is a private repo link
+        const privateLink = e.target.closest('.private-repo-link, [data-private="true"]');
+        if (privateLink) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }, true); // Use capture phase to intercept before other handlers
 }
 
 /**
@@ -394,6 +425,8 @@ async function initProjects() {
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
+            // Setup private repository link handlers
+            setupPrivateRepoHandlers();
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
                 setTimeout(() => {

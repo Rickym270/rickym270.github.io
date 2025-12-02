@@ -284,12 +284,15 @@ public class ProjectsService {
             .map(Object::toString).orElse("");
         String language = Optional.ofNullable(gh.get("language"))
             .map(Object::toString).orElse("");
+        // Extract private field from GitHub API response
+        boolean isPrivate = Boolean.TRUE.equals(gh.get("private"));
         
         Map<String, Object> project = new LinkedHashMap<>();
         project.put("slug", toSlug(name));
         project.put("name", name);
         project.put("summary", description);
         project.put("repo", htmlUrl);
+        project.put("private", isPrivate);
         if (language != null && !language.trim().isEmpty()) {
             project.put("tech", Collections.singletonList(language));
         }

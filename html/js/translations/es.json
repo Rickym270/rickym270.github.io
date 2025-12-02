@@ -41,6 +41,8 @@
     "ideas": "Ideas",
     "pleaseWait": "Por favor espere...",
     "viewGitHub": "Ver en GitHub →",
+    "privateRepo": "Repositorio Privado",
+    "privateTooltip": "Este repositorio es privado y no es accesible públicamente",
     "descriptions": {
       "blue-manager": "Aplicación de mantenimiento de propiedades con OCR y backend de Supabase.",
       "personal-website": "Sitio personal para alojar notas, tutoriales y proyectos — originalmente construido como plataforma de enseñanza de Python.",
@@ -90,7 +92,14 @@
     "messageNote": "Requerido - Máximo 2000 caracteres",
     "sendMessage": "Enviar Mensaje",
     "success": "✓ ¡Correo enviado con éxito! Gracias por contactarme. Te responderé pronto.",
-    "error": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
+    "error": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+    "errorRateLimit": "Por favor espera antes de enviar otro mensaje.",
+    "errorValidation": "Por favor completa todos los campos requeridos.",
+    "errorEmail": "Por favor ingresa una dirección de correo electrónico válida.",
+    "errorSpam": "Spam detectado. Mensaje no enviado.",
+    "errorCaptcha": "Verificación CAPTCHA falló. Por favor, inténtalo de nuevo.",
+    "errorTimeout": "Tiempo de espera agotado. Por favor verifica tu conexión e inténtalo de nuevo.",
+    "errorServer": "Error del servidor. Por favor, inténtalo más tarde."
   },
   "docs": {
     "title": "Ricky Martinez - Documentos",
