@@ -1,0 +1,191 @@
+name: Deploy to Google Cloud
+
+on:
+  push:
+    branches: [ master ]
+    # Only deploy when relevant files change
+    paths:
+      - 'html/**'
+      - 'index.html'
+      - 'data/**'
+      - 'api/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+    # Allow manual triggering
+
+permissions:
+  contents: read
+  id-token: write  # Required for Workload Identity Federation
+
+jobs:
+  deploy-api:
+    name: Deploy API to Cloud Run
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ./api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Set GCP Project
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy API to Cloud Run
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+          SMTP_FROM_EMAIL: ${{ secrets.SMTP_FROM_EMAIL }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+        run: |
+          REGION=us-east1
+          SERVICE=ricky-api
+          
+          # Build environment variables string
+          ENV_VARS=""
+          if [ -n "$GH_TOKEN" ]; then
+            ENV_VARS="GH_TOKEN=$GH_TOKEN"
+          fi
+          if [ -n "$ADMIN_API_KEY" ]; then
+            if [ -n "$ENV_VARS" ]; then
+              ENV_VARS="$ENV_VARS,ADMIN_API_KEY=$ADMIN_API_KEY"
+            else
+              ENV_VARS="ADMIN_API_KEY=$ADMIN_API_KEY"
+            fi
+          fi
+          if [ -n "$SMTP_HOST" ]; then
+            if [ -n "$ENV_VARS" ]; then
+              ENV_VARS="$ENV_VARS,SMTP_HOST=$SMTP_HOST"
+            else
+              ENV_VARS="SMTP_HOST=$SMTP_HOST"
+            fi
+          fi
+          if [ -n "$SMTP_PORT" ]; then
+            ENV_VARS="$ENV_VARS,SMTP_PORT=$SMTP_PORT"
+          fi
+          if [ -n "$SMTP_USERNAME" ]; then
+            ENV_VARS="$ENV_VARS,SMTP_USERNAME=$SMTP_USERNAME"
+          fi
+          if [ -n "$SMTP_PASSWORD" ]; then
+            ENV_VARS="$ENV_VARS,SMTP_PASSWORD=$SMTP_PASSWORD"
+          fi
+          if [ -n "$CONTACT_EMAIL" ]; then
+            ENV_VARS="$ENV_VARS,CONTACT_EMAIL=$CONTACT_EMAIL"
+          fi
+          if [ -n "$SMTP_FROM_EMAIL" ]; then
+            ENV_VARS="$ENV_VARS,SMTP_FROM_EMAIL=$SMTP_FROM_EMAIL"
+          fi
+          if [ -n "$TURNSTILE_SECRET_KEY" ]; then
+            ENV_VARS="$ENV_VARS,TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY"
+          fi
+          
+          echo "🚀 Deploying API to Cloud Run..."
+          echo "   Service: $SERVICE"
+          echo "   Region:  $REGION"
+          
+          if [ -n "$ENV_VARS" ]; then
+            gcloud run deploy $SERVICE \
+              --region $REGION \
+              --source . \
+              --allow-unauthenticated \
+              --set-env-vars "$ENV_VARS" \
+              --min-instances=0 \
+              --max-instances=3 \
+              --memory=512Mi \
+              --cpu=1
+          else
+            gcloud run deploy $SERVICE \
+              --region $REGION \
+              --source . \
+              --allow-unauthenticated \
+              --min-instances=0 \
+              --max-instances=3 \
+              --memory=512Mi \
+              --cpu=1
+          fi
+          
+          # Get service URL
+          SERVICE_URL=$(gcloud run services describe $SERVICE --region $REGION --format 'value(status.url)')
+          echo "✅ API deployed successfully!"
+          echo "   URL: $SERVICE_URL"
+
+  deploy-site:
+    name: Deploy Site to Cloud Storage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Set GCP Project
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy Site to Cloud Storage
+        run: |
+          BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
+          
+          if [ -z "$BUCKET_NAME" ]; then
+            echo "⚠️  GCS_BUCKET_NAME secret not set, skipping site deployment"
+            exit 0
+          fi
+          
+          echo "🚀 Deploying site to Cloud Storage..."
+          echo "   Bucket: $BUCKET_NAME"
+          
+          # Sync files to bucket (excluding git, node_modules, etc.)
+          gsutil -m rsync -r -d \
+            -x '\.git/.*|node_modules/.*|\.github/.*|api/.*|tests/.*|test-results/.*|playwright-report/.*|\.env.*|\.DS_Store|package-lock\.json|tsconfig\.json|playwright\.config\.ts|\.gitignore|README\.md|docs/.*' \
+            . gs://$BUCKET_NAME/
+          
+          # Set bucket to serve static website
+          gsutil web set -m index.html -e 404.html gs://$BUCKET_NAME/
+          
+          # Make files publicly readable
+          gsutil -m acl ch -r -u AllUsers:R gs://$BUCKET_NAME/
+          
+          # Get bucket URL
+          BUCKET_URL="https://storage.googleapis.com/$BUCKET_NAME"
+          echo "✅ Site deployed successfully!"
+          echo "   URL: $BUCKET_URL"
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### API Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ API deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ secrets.GCS_BUCKET_NAME }}" ]; then
+            echo "### Site Deployment" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Site deployed to Cloud Storage" >> $GITHUB_STEP_SUMMARY
+            echo "- URL: https://storage.googleapis.com/${{ secrets.GCS_BUCKET_NAME }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Site Deployment" >> $GITHUB_STEP_SUMMARY
+            echo "- ⚠️  Site deployment skipped (GCS_BUCKET_NAME not configured)" >> $GITHUB_STEP_SUMMARY
+          fi
+
