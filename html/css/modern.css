@@ -2510,13 +2510,13 @@ pre code {
     text-align: center;
     width: 100%;
     max-width: 200px; /* Prevent badges from getting too wide */
-}
-
-.skill-badge:hover {
-    background-color: var(--color-accent-light);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    transform: translateY(-1px);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .skill-icon {

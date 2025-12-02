@@ -276,4 +276,18 @@ $(document).ready(function(){
     
     // Setup click handlers initially
     setupClickHandlers();
+    
+    // Prevent text selection on skill badges globally
+    // Use event delegation to handle dynamically loaded content
+    document.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.skill-badge')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    document.addEventListener('selectstart', function(e) {
+        if (e.target.closest('.skill-badge')) {
+            e.preventDefault();
+        }
+    });
 });
