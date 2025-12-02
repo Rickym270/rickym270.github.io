@@ -69,7 +69,7 @@ jobs:
           COMMIT_MESSAGES_LOWER=$(echo "$COMMIT_MESSAGES" | tr '[:upper:]' '[:lower:]')
           echo "Debug: COMMIT_MESSAGES_LOWER first 500 chars: $(echo "$COMMIT_MESSAGES_LOWER" | head -c 500)"
           
-          # Check for skip keywords
+          # Check for skip keywords (only at beginning of line)
           SKIP_ALL=false
           SKIP_UI=false
           SKIP_API=false
@@ -77,32 +77,32 @@ jobs:
           SKIP_ADA=false
           SKIP_LOAD=false
           
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "\[skip ci\]"; then
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ci\]"; then
             SKIP_ALL=true
             echo "⚠️  [skip ci] detected - skipping all tests"
           fi
           
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "\[skip ui\]"; then
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ui\]"; then
             SKIP_UI=true
             echo "⚠️  [skip ui] detected - skipping UI tests"
           fi
           
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "\[skip api\]"; then
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip api\]"; then
             SKIP_API=true
             echo "⚠️  [skip api] detected - skipping API tests"
           fi
           
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "\[skip perf\]"; then
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip perf\]"; then
             SKIP_PERF=true
             echo "⚠️  [skip perf] detected - skipping performance tests"
           fi
           
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "\[skip ada\]"; then
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ada\]"; then
             SKIP_ADA=true
             echo "⚠️  [skip ada] detected - skipping accessibility tests"
           fi
           
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "\[skip load\]"; then
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip load\]"; then
             SKIP_LOAD=true
             echo "⚠️  [skip load] detected - skipping load tests"
           fi
