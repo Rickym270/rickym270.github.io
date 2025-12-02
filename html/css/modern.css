@@ -2515,13 +2515,8 @@ pre code {
     -moz-user-select: none;
     -ms-user-select: none;
     cursor: default;
-}
-
-.skill-badge:hover {
-    background-color: var(--color-accent-light);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    transform: translateY(-1px);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .skill-icon {
