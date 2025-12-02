@@ -366,6 +366,33 @@ npx playwright install firefox
 ## CI/CD Integration
 
 Tests run automatically in GitHub Actions. The workflow:
+
+### Skipping Tests in CI
+
+You can skip tests by including special keywords in your commit messages or PR titles:
+
+- `[skip ci]` - Skip all tests (UI and API)
+- `[skip ui]` - Skip all UI tests (Chromium, Firefox, iPhone emulation)
+- `[skip api]` - Skip all API tests
+- `[skip perf]` - Skip all performance tests (reserved for future use)
+- `[skip ada]` - Skip all accessibility tests (reserved for future use)
+- `[skip load]` - Skip all load tests (reserved for future use)
+
+**Examples:**
+```
+git commit -m "Update README [skip ci]"
+git commit -m "Fix typo in docs [skip ui]"
+git commit -m "Update API documentation [skip api]"
+```
+
+**Notes:**
+- Keywords are case-insensitive
+- Keywords can appear in commit messages or PR titles/bodies
+- Multiple skip keywords can be used together (e.g., `[skip ui] [skip api]`)
+- When `[skip ci]` is used, the entire test job is skipped
+- When specific test types are skipped, only those tests are skipped (other tests still run)
+
+The workflow:
 - Runs on pull requests
 - Runs on pushes to main
 - Runs on a daily schedule
