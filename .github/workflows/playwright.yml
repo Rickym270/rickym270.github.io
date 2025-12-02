@@ -31,14 +31,21 @@ jobs:
 
       - name: Check for skip keywords
         id: skip-check
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           # Get commit messages to check
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             # For PRs, check PR title, body, and all commit messages
-            # Use GitHub's toJSON to safely escape the PR body, then extract text
-            # Write PR title and body to temp file using printf to avoid shell interpretation
-            printf '%s\n' "${{ github.event.pull_request.title }}" > /tmp/pr_text.txt
-            printf '%s\n' "${{ github.event.pull_request.body }}" >> /tmp/pr_text.txt 2>/dev/null || true
+            # Write PR title and body to temp file, handling special characters safely
+            {
+              echo "$PR_TITLE"
+              echo "$PR_BODY"
+            } > /tmp/pr_text.txt 2>/dev/null || {
+              # Fallback: write title only if body causes issues
+              echo "$PR_TITLE" > /tmp/pr_text.txt
+            }
             # Get all commit messages in the PR (from base to head)
             BASE_SHA="${{ github.event.pull_request.base.sha }}"
             HEAD_SHA="${{ github.event.pull_request.head.sha }}"
