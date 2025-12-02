@@ -2510,6 +2510,11 @@ pre code {
     text-align: center;
     width: 100%;
     max-width: 200px; /* Prevent badges from getting too wide */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: default;
 }
 
 .skill-badge:hover {
