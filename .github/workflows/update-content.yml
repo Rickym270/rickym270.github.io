@@ -1,0 +1,112 @@
+name: Update Site Content
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC (adjust timezone as needed)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+  push:
+    branches: [ master ]
+    paths:
+      # Trigger when API data files change
+      - 'api/src/main/resources/data/projects.json'
+      - 'data/ProjectClassification.json'
+
+permissions:
+  contents: write  # Needed to commit changes
+
+jobs:
+  update-projects:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TZ: America/New_York
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Fetch latest projects from API
+        id: fetch-projects
+        run: |
+          # Fetch projects from production API
+          API_URL="https://ricky-api-745807383723.us-east1.run.app/api/projects"
+          
+          echo "Fetching projects from API..."
+          curl -s -f "$API_URL" > /tmp/projects.json || {
+            echo "Error: Failed to fetch projects from API"
+            exit 1
+          }
+          
+          # Validate JSON
+          if ! jq empty /tmp/projects.json 2>/dev/null; then
+            echo "Error: Invalid JSON response from API"
+            exit 1
+          fi
+          
+          # Count projects
+          PROJECT_COUNT=$(jq '. | length' /tmp/projects.json)
+          echo "Fetched $PROJECT_COUNT projects"
+          
+          # Create output directory if it doesn't exist
+          mkdir -p data/web_data
+          
+          # Copy to web_data directory (for static fallback)
+          cp /tmp/projects.json data/web_data/projects.json
+          
+          # Also update the API resources if needed (optional)
+          # This would require the API to be built, so we'll skip for now
+          
+          echo "projects_count=$PROJECT_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet data/web_data/projects.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in projects data"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in projects data"
+            git diff data/web_data/projects.json || true
+          fi
+
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git add data/web_data/projects.json
+          git commit -m "Update projects data from API [skip ci]"
+          git push
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ steps.check-changes.outputs.changed }}" == "true" ]; then
+            echo "✅ Updated projects data: ${{ steps.fetch-projects.outputs.projects_count }} projects"
+          else
+            echo "ℹ️  No changes detected - projects data is up to date"
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Update Site Content" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check-changes.outputs.changed }}" == "true" ]; then
+            echo "✅ Updated projects data: **${{ steps.fetch-projects.outputs.projects_count }}** projects" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️  No changes detected - projects data is up to date" >> $GITHUB_STEP_SUMMARY
+          fi
+
