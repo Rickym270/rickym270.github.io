@@ -110,6 +110,12 @@ jobs:
           echo "skip_ada=$SKIP_ADA" >> $GITHUB_OUTPUT
           echo "skip_load=$SKIP_LOAD" >> $GITHUB_OUTPUT
           
+          # Debug output
+          echo "Debug: SKIP_ALL=$SKIP_ALL"
+          echo "Debug: SKIP_UI=$SKIP_UI"
+          echo "Debug: SKIP_API=$SKIP_API"
+          echo "Debug: COMMIT_MESSAGES length: ${#COMMIT_MESSAGES}"
+          
           # Build project list
           PROJECTS=""
           if [ "$SKIP_ALL" = "true" ]; then
