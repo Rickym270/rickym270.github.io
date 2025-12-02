@@ -16,13 +16,6 @@ jobs:
     name: Deploy API to Cloud Run
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Only run if API files changed or manually triggered
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      contains(github.event.head_commit.message, '[deploy api]') ||
-      contains(github.event.head_commit.message, '[deploy all]') ||
-      contains(github.event.commits.*.message, '[deploy api]') ||
-      contains(github.event.commits.*.message, '[deploy all]')
     defaults:
       run:
         working-directory: ./api
@@ -40,23 +33,42 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "✅ Manual trigger - deploying API"
           else
-            # Check if API files changed compared to previous commit
-            if git diff --name-only HEAD~1 HEAD | grep -q "^api/"; then
-              echo "changed=true" >> $GITHUB_OUTPUT
-              echo "✅ API files changed - deploying"
-              git diff --name-only HEAD~1 HEAD | grep "^api/" || true
+            # Check if API files changed in this push
+            # Compare with the base commit (before this push)
+            BASE_SHA="${{ github.event.before }}"
+            HEAD_SHA="${{ github.event.after }}"
+            
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" == "0000000000000000000000000000000000000000" ]; then
+              # First commit or can't determine base - check if api/ exists and has files
+              if [ -d "api" ] && [ -n "$(find api -type f -name '*.java' -o -name 'pom.xml' -o -name '*.properties' 2>/dev/null | head -1)" ]; then
+                echo "changed=true" >> $GITHUB_OUTPUT
+                echo "✅ Initial commit or unable to determine base - deploying API"
+              else
+                echo "changed=false" >> $GITHUB_OUTPUT
+                echo "⏭️  No API directory or files found - skipping deployment"
+              fi
             else
-              echo "changed=false" >> $GITHUB_OUTPUT
-              echo "⏭️  No API changes detected - skipping deployment"
+              # Check if API files changed between base and head
+              if git diff --name-only $BASE_SHA $HEAD_SHA | grep -q "^api/"; then
+                echo "changed=true" >> $GITHUB_OUTPUT
+                echo "✅ API files changed - deploying"
+                echo "Changed API files:"
+                git diff --name-only $BASE_SHA $HEAD_SHA | grep "^api/" || true
+              else
+                echo "changed=false" >> $GITHUB_OUTPUT
+                echo "⏭️  No API changes detected - skipping deployment"
+              fi
             fi
           fi
 
       - name: Authenticate to Google Cloud
+        if: steps.check-api-changes.outputs.changed == 'true'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Set up Cloud SDK
+        if: steps.check-api-changes.outputs.changed == 'true'
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Set GCP Project
@@ -196,13 +208,22 @@ jobs:
           echo "✅ Site deployed successfully!"
           echo "   URL: $BUCKET_URL"
 
+      - name: Skip API deployment notification
+        if: steps.check-api-changes.outputs.changed != 'true'
+        run: |
+          echo "⏭️  API deployment skipped - no API changes detected"
+
       - name: Deployment Summary
         if: always()
         run: |
           echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### API Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ API deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check-api-changes.outputs.changed }}" == "true" ]; then
+            echo "- ✅ API deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⏭️  API deployment skipped (no API changes)" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ -n "${{ secrets.GCS_BUCKET_NAME }}" ]; then
             echo "### Site Deployment" >> $GITHUB_STEP_SUMMARY
