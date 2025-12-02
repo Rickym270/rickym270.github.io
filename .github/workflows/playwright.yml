@@ -26,6 +26,121 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history to check commit messages
+
+      - name: Check for skip keywords
+        id: skip-check
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          # Get commit messages to check
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # For PRs, check PR title, body, and all commit messages
+            # Write PR title and body to temp file, handling special characters safely
+            {
+              echo "$PR_TITLE"
+              echo "$PR_BODY"
+            } > /tmp/pr_text.txt 2>/dev/null || {
+              # Fallback: write title only if body causes issues
+              echo "$PR_TITLE" > /tmp/pr_text.txt
+            }
+            # Get all commit messages in the PR (from base to head)
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ]; then
+              git log --format=%B $BASE_SHA..$HEAD_SHA >> /tmp/pr_text.txt 2>/dev/null || git log --format=%B -10 >> /tmp/pr_text.txt
+            else
+              git log --format=%B -10 >> /tmp/pr_text.txt
+            fi
+            # Read the file content safely
+            COMMIT_MESSAGES=$(cat /tmp/pr_text.txt 2>/dev/null || echo "")
+            echo "Debug: PR title: $PR_TITLE"
+            echo "Debug: PR body length: ${#PR_BODY}"
+            echo "Debug: Temp file exists: $([ -f /tmp/pr_text.txt ] && echo 'yes' || echo 'no')"
+            echo "Debug: Temp file first 200 chars: $(head -c 200 /tmp/pr_text.txt 2>/dev/null || echo 'empty')"
+          else
+            # For push/schedule/workflow_dispatch, check recent commit messages
+            COMMIT_MESSAGES="$(git log --format=%B -10)"
+          fi
+          
+          # Convert to lowercase for case-insensitive matching
+          COMMIT_MESSAGES_LOWER=$(echo "$COMMIT_MESSAGES" | tr '[:upper:]' '[:lower:]')
+          echo "Debug: COMMIT_MESSAGES_LOWER first 500 chars: $(echo "$COMMIT_MESSAGES_LOWER" | head -c 500)"
+          
+          # Check for skip keywords (only at beginning of line)
+          SKIP_ALL=false
+          SKIP_UI=false
+          SKIP_API=false
+          SKIP_PERF=false
+          SKIP_ADA=false
+          SKIP_LOAD=false
+          
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ci\]"; then
+            SKIP_ALL=true
+            echo "⚠️  [skip ci] detected - skipping all tests"
+          fi
+          
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ui\]"; then
+            SKIP_UI=true
+            echo "⚠️  [skip ui] detected - skipping UI tests"
+          fi
+          
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip api\]"; then
+            SKIP_API=true
+            echo "⚠️  [skip api] detected - skipping API tests"
+          fi
+          
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip perf\]"; then
+            SKIP_PERF=true
+            echo "⚠️  [skip perf] detected - skipping performance tests"
+          fi
+          
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ada\]"; then
+            SKIP_ADA=true
+            echo "⚠️  [skip ada] detected - skipping accessibility tests"
+          fi
+          
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip load\]"; then
+            SKIP_LOAD=true
+            echo "⚠️  [skip load] detected - skipping load tests"
+          fi
+          
+          # Set outputs
+          echo "skip_all=$SKIP_ALL" >> $GITHUB_OUTPUT
+          echo "skip_ui=$SKIP_UI" >> $GITHUB_OUTPUT
+          echo "skip_api=$SKIP_API" >> $GITHUB_OUTPUT
+          echo "skip_perf=$SKIP_PERF" >> $GITHUB_OUTPUT
+          echo "skip_ada=$SKIP_ADA" >> $GITHUB_OUTPUT
+          echo "skip_load=$SKIP_LOAD" >> $GITHUB_OUTPUT
+          
+          # Debug output
+          echo "Debug: SKIP_ALL=$SKIP_ALL"
+          echo "Debug: SKIP_UI=$SKIP_UI"
+          echo "Debug: SKIP_API=$SKIP_API"
+          echo "Debug: COMMIT_MESSAGES length: ${#COMMIT_MESSAGES}"
+          
+          # Build project list
+          PROJECTS=""
+          if [ "$SKIP_ALL" = "true" ]; then
+            echo "✅ All tests skipped"
+          else
+            if [ "$SKIP_UI" != "true" ]; then
+              PROJECTS="$PROJECTS --project=chromium --project=chromium-iphone --project=firefox"
+            fi
+            if [ "$SKIP_API" != "true" ]; then
+              PROJECTS="$PROJECTS --project=api"
+            fi
+            
+            if [ -z "$PROJECTS" ]; then
+              echo "⚠️  All test types skipped - no tests to run"
+            else
+              echo "✅ Will run tests with projects:$PROJECTS"
+            fi
+          fi
+          
+          echo "projects=$PROJECTS" >> $GITHUB_OUTPUT
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -47,10 +162,12 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Build Spring Boot API
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
         working-directory: ./api
         run: ./mvnw clean package spring-boot:repackage -DskipTests
 
       - name: Verify JAR exists
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
         working-directory: ./api
         run: |
           if [ ! -f target/api-0.0.1-SNAPSHOT.jar ]; then
@@ -60,6 +177,7 @@ jobs:
           echo "JAR file size: $(ls -lh target/api-0.0.1-SNAPSHOT.jar | awk '{print $5}')"
 
       - name: Start Spring Boot API server
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
         working-directory: ./api
         env:
           # Email configuration (from GitHub Secrets)
@@ -91,6 +209,7 @@ jobs:
           fi
 
       - name: Wait for API server to be ready
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
         working-directory: ./api
         run: |
           echo "Waiting for API server to start..."
@@ -114,9 +233,26 @@ jobs:
           echo "API server is ready!"
 
       - name: Run Playwright tests
-        # Exclude WebKit from CI to avoid flaky failures
-        # Run Chromium, iPhone emulation, Firefox, and API tests only
-        run: npx playwright test --project=chromium --project=chromium-iphone --project=firefox --project=api
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
+        # Run tests based on skip keywords in commit messages
+        # Supports: [skip ci], [skip ui], [skip api], [skip perf], [skip ada], [skip load]
+        # UI tests cover: home, skills, projects, contact, docs, tutorials, navbar, theme, translation, responsive, SPA navigation, code blocks
+        # API tests cover: health, stats, meta, home, projects, contact, github-activity
+        run: |
+          if [ -z "${{ steps.skip-check.outputs.projects }}" ]; then
+            echo "⚠️  No tests to run (all skipped)"
+            exit 0
+          fi
+          npx playwright test ${{ steps.skip-check.outputs.projects }}
+
+      - name: Skip tests notification
+        if: steps.skip-check.outputs.skip_all == 'true' || (steps.skip-check.outputs.projects == '' && steps.skip-check.outputs.skip_all != 'true')
+        run: |
+          if [ "${{ steps.skip-check.outputs.skip_all }}" = "true" ]; then
+            echo "✅ All tests skipped due to [skip ci] in commit message"
+          else
+            echo "✅ All test types skipped - no tests to run"
+          fi
 
       - name: Stop API server
         if: always()

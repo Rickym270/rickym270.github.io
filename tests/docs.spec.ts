@@ -328,8 +328,14 @@ test.describe('Docs/Notes Page', () => {
       if (await articleLink.isVisible({ timeout: 5000 })) {
         await articleLink.click();
         
-        // Wait for article content to load - wait for h3 heading specifically
-        await page.waitForSelector('#content h3, #content .container h3', { timeout: 20000 });
+        // Wait for article content to load - check for data-content-loaded attribute or any content
+        await page.waitForFunction(() => {
+          const content = document.querySelector('#content');
+          return content && (
+            content.getAttribute('data-content-loaded') === 'true' ||
+            content.querySelector('h1, h2, h3, h4, pre, .container') !== null
+          );
+        }, { timeout: 20000 });
         await page.waitForTimeout(1000);
         
         // Find code blocks

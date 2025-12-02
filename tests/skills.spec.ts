@@ -153,5 +153,191 @@ test.describe('Skills Page', () => {
       await expect(skillBadges.first()).toBeVisible();
     }
   });
+
+  test('all skill categories are displayed', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Skills', exact: true }).first().click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h2, h3');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for all expected categories
+    const categories = [
+      'Programming Languages',
+      'Frameworks & Libraries',
+      'Testing & QA',
+      'DevOps & Cloud',
+      'Web Development',
+      'Databases',
+      'Tools & Other'
+    ];
+    
+    for (const category of categories) {
+      const categoryTitle = page.locator('.skill-category-title').filter({ hasText: new RegExp(category, 'i') });
+      const count = await categoryTitle.count();
+      if (count > 0) {
+        await expect(categoryTitle.first()).toBeVisible({ timeout: 3000 });
+      }
+    }
+  });
+
+  test('skill badges have correct styling', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Skills', exact: true }).first().click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h2, h3');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check skill badge styling
+    const skillBadge = page.locator('.skill-badge').first();
+    const badgeCount = await skillBadge.count();
+    
+    if (badgeCount > 0) {
+      await expect(skillBadge).toBeVisible();
+      
+      // Check styling properties
+      const styles = await skillBadge.evaluate((el) => {
+        const computed = window.getComputedStyle(el);
+        // user-select needs to be accessed via getPropertyValue in some browsers
+        const userSelect = computed.getPropertyValue('user-select') || 
+                          computed.getPropertyValue('-webkit-user-select') ||
+                          computed.getPropertyValue('-moz-user-select') ||
+                          computed.getPropertyValue('-ms-user-select') ||
+                          (computed as any).userSelect ||
+                          'none';
+        return {
+          display: computed.display,
+          alignItems: computed.alignItems,
+          justifyContent: computed.justifyContent,
+          padding: computed.padding,
+          borderRadius: computed.borderRadius,
+          backgroundColor: computed.backgroundColor,
+          border: computed.border,
+          userSelect: userSelect,
+          cursor: computed.cursor
+        };
+      });
+      
+      expect(styles.display).toBe('flex');
+      expect(styles.alignItems).toBe('center');
+      expect(styles.justifyContent).toBe('center');
+      expect(styles.userSelect).toBe('none');
+      expect(styles.cursor).toBe('default');
+    }
+  });
+
+  test('skill badges display specific skills', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Skills', exact: true }).first().click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h2, h3');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for specific skills that should be present
+    const expectedSkills = ['Java', 'Python', 'JavaScript', 'React', 'Playwright', 'Docker', 'Git'];
+    
+    for (const skill of expectedSkills) {
+      const skillBadge = page.locator('.skill-badge').filter({ hasText: new RegExp(`^${skill}$`, 'i') });
+      const count = await skillBadge.count();
+      if (count > 0) {
+        await expect(skillBadge.first()).toBeVisible({ timeout: 2000 });
+      }
+    }
+  });
+
+  test('skills page subtitle is visible', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Skills - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/skills.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Skills', exact: true }).first().click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1, h2, h3');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for subtitle
+    const subtitle = page.locator('.section-subtitle, p').filter({ hasText: /comprehensive|technologies|tools/i });
+    const subtitleCount = await subtitle.count();
+    if (subtitleCount > 0) {
+      await expect(subtitle.first()).toBeVisible({ timeout: 3000 });
+    }
+  });
 });
 

@@ -111,3 +111,5 @@
    Local development server
    - `npm run serve` - Serves on `http://localhost:4321` using `http-server`
    - Or use Python: `python3 -m http.server 4321` (Playwright will detect and reuse it)
+
+   For full UI testing instructions, see `docs/UI_TESTING.md`.

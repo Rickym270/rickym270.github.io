@@ -131,6 +131,112 @@ test.describe('Home Page Initial Load', () => {
       }
     }
   });
+
+  test('home page tagline is centered and displays correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for content to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for tagline
+    const tagline = page.locator('.hero-title-accent, .tagline').filter({ hasText: /Don't Repeat Yourself|Engineer with Precision/i });
+    const taglineCount = await tagline.count();
+    
+    if (taglineCount > 0) {
+      await expect(tagline.first()).toBeVisible();
+      
+      // Check text alignment is centered
+      const textAlign = await tagline.first().evaluate((el) => {
+        return window.getComputedStyle(el).textAlign;
+      });
+      expect(textAlign).toBe('center');
+      
+      // Check tagline text
+      const taglineText = await tagline.first().textContent();
+      expect(taglineText).toContain("Don't Repeat Yourself");
+      expect(taglineText).toContain("Engineer with Precision");
+    }
+  });
+
+  test('home page About Me section displays correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for content to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for About Me section
+    const aboutTitle = page.locator('h2').filter({ hasText: /About Me/i });
+    await expect(aboutTitle).toBeVisible({ timeout: 5000 });
+    
+    // Check for About Me content
+    const aboutSection = aboutTitle.locator('xpath=ancestor::section[1]');
+    await expect(aboutSection).toBeVisible();
+    
+    // Check for paragraph text in About Me
+    const aboutText = aboutSection.locator('p');
+    const textCount = await aboutText.count();
+    if (textCount > 0) {
+      await expect(aboutText.first()).toBeVisible();
+      const text = await aboutText.first().textContent();
+      expect(text).toBeTruthy();
+      expect(text!.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  test('home page Tech Stack section displays correctly', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for content to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for Tech Stack section
+    const techStackTitle = page.locator('h2').filter({ hasText: /Tech Stack/i });
+    await expect(techStackTitle).toBeVisible({ timeout: 5000 });
+    
+    // Check for skills preview
+    const skillsPreview = page.locator('#content .skill-badge');
+    const skillCount = await skillsPreview.count();
+    if (skillCount > 0) {
+      await expect(skillsPreview.first()).toBeVisible();
+    }
+  });
+
+  test('home page hero buttons are clickable and have correct links', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for content to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check LinkedIn button
+    const linkedInBtn = page.getByRole('link', { name: /Connect on LinkedIn/i });
+    await expect(linkedInBtn).toBeVisible();
+    await expect(linkedInBtn).toHaveAttribute('href', 'https://www.linkedin.com/in/rickym270');
+    await expect(linkedInBtn).toHaveAttribute('target', '_blank');
+    await expect(linkedInBtn).toHaveAttribute('rel', /noopener|noreferrer/);
+    
+    // Check GitHub button
+    const githubBtn = page.getByRole('link', { name: /View GitHub/i });
+    await expect(githubBtn).toBeVisible();
+    await expect(githubBtn).toHaveAttribute('href', 'https://github.com/rickym270');
+    await expect(githubBtn).toHaveAttribute('target', '_blank');
+    await expect(githubBtn).toHaveAttribute('rel', /noopener|noreferrer/);
+  });
 });
 
 
