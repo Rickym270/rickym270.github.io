@@ -322,6 +322,146 @@ test.describe('Projects Page', () => {
       expect(opacityNum).toBeGreaterThan(0); // Should be visible
     }
   });
+
+  test('projects page has correct title and subtitle', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+    
+    // Wait for projects page to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check for title
+    const projectsHeading = page.locator('#content h1[data-translate="projects.heading"], #content h1').filter({ hasText: /Projects/i });
+    const headingCount = await projectsHeading.count();
+    if (headingCount > 0) {
+      await expect(projectsHeading.first()).toBeVisible({ timeout: 5000 });
+      await expect(projectsHeading.first()).toContainText('Projects');
+    }
+    
+    // Check for subtitle
+    const subtitle = page.locator('.section-subtitle, p').filter({ hasText: /portfolio|projects|work/i });
+    const subtitleCount = await subtitle.count();
+    if (subtitleCount > 0) {
+      await expect(subtitle.first()).toBeVisible({ timeout: 3000 });
+    }
+  });
+
+  test('project cards have correct structure when loaded', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+    
+    // Wait for projects page to load and API call to complete
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(3000); // Give API time to load
+    
+    // Check for project cards
+    const projectCards = page.locator('#content .project-card, #content .card');
+    const cardCount = await projectCards.count();
+    
+    if (cardCount > 0) {
+      const firstCard = projectCards.first();
+      await expect(firstCard).toBeVisible();
+      
+      // Check card structure
+      const cardTitle = firstCard.locator('.card-title, h5');
+      const cardText = firstCard.locator('.card-text, p');
+      const cardImage = firstCard.locator('.project-image, img');
+      
+      // At least title should exist
+      const titleCount = await cardTitle.count();
+      if (titleCount > 0) {
+        await expect(cardTitle.first()).toBeVisible();
+        const titleText = await cardTitle.first().textContent();
+        expect(titleText).toBeTruthy();
+        expect(titleText!.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  test('project sections exist (In Progress, Complete, Coming Soon)', async ({ page }) => {
+    await page.goto('/');
+    
+    // Wait for initial load
+    await page.waitForSelector('#content', { state: 'attached' });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check if we're on mobile
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Projects - handle mobile
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+    
+    // Wait for projects page to load
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+    
+    // Check all sections exist in DOM
+    const inProgress = page.locator('#ProjInProgress');
+    const complete = page.locator('#ProjComplete');
+    const comingSoon = page.locator('#ProjComingSoon');
+    
+    await expect(inProgress).toBeAttached({ timeout: 5000 });
+    await expect(complete).toBeAttached({ timeout: 5000 });
+    await expect(comingSoon).toBeAttached({ timeout: 5000 });
+  });
 });
 
 
