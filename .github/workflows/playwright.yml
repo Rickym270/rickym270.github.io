@@ -56,6 +56,10 @@ jobs:
             fi
             # Read the file content safely
             COMMIT_MESSAGES=$(cat /tmp/pr_text.txt 2>/dev/null || echo "")
+            echo "Debug: PR title: $PR_TITLE"
+            echo "Debug: PR body length: ${#PR_BODY}"
+            echo "Debug: Temp file exists: $([ -f /tmp/pr_text.txt ] && echo 'yes' || echo 'no')"
+            echo "Debug: Temp file first 200 chars: $(head -c 200 /tmp/pr_text.txt 2>/dev/null || echo 'empty')"
           else
             # For push/schedule/workflow_dispatch, check recent commit messages
             COMMIT_MESSAGES="$(git log --format=%B -10)"
@@ -63,6 +67,7 @@ jobs:
           
           # Convert to lowercase for case-insensitive matching
           COMMIT_MESSAGES_LOWER=$(echo "$COMMIT_MESSAGES" | tr '[:upper:]' '[:lower:]')
+          echo "Debug: COMMIT_MESSAGES_LOWER first 500 chars: $(echo "$COMMIT_MESSAGES_LOWER" | head -c 500)"
           
           # Check for skip keywords
           SKIP_ALL=false
