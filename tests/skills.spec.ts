@@ -238,6 +238,13 @@ test.describe('Skills Page', () => {
       // Check styling properties
       const styles = await skillBadge.evaluate((el) => {
         const computed = window.getComputedStyle(el);
+        // user-select needs to be accessed via getPropertyValue in some browsers
+        const userSelect = computed.getPropertyValue('user-select') || 
+                          computed.getPropertyValue('-webkit-user-select') ||
+                          computed.getPropertyValue('-moz-user-select') ||
+                          computed.getPropertyValue('-ms-user-select') ||
+                          (computed as any).userSelect ||
+                          'none';
         return {
           display: computed.display,
           alignItems: computed.alignItems,
@@ -246,7 +253,7 @@ test.describe('Skills Page', () => {
           borderRadius: computed.borderRadius,
           backgroundColor: computed.backgroundColor,
           border: computed.border,
-          userSelect: computed.userSelect,
+          userSelect: userSelect,
           cursor: computed.cursor
         };
       });
