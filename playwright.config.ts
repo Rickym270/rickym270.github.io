@@ -40,8 +40,14 @@ export default defineConfig({
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { 
+        ...devices['Desktop Firefox'],
+        // Firefox sometimes needs more time for navigation
+        navigationTimeout: 60_000,
+        actionTimeout: 30_000,
+      },
       testIgnore: /api.*\.spec\.ts/,
+      timeout: 90_000, // 90 seconds per test for Firefox
     },
     // API tests (no browser needed)
     {

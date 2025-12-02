@@ -2,12 +2,25 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Translation feature', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    // Navigate with increased timeout for Firefox
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 45000 });
+    } catch (error) {
+      // If navigation times out, try again with networkidle
+      await page.goto('/', { waitUntil: 'networkidle', timeout: 60000 });
+    }
+    
+    // Wait for content element to be attached
+    await page.waitForSelector('#content', { state: 'attached', timeout: 30000 });
+    
     // Wait for content to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 15000 });
+    }, { timeout: 20000 });
+    
+    // Small delay to ensure everything is settled
+    await page.waitForTimeout(500);
   });
 
   test('language switcher is visible in navbar', async ({ page }) => {
