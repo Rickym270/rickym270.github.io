@@ -188,15 +188,13 @@ jobs:
           echo "   Bucket: $BUCKET_NAME"
           
           # Sync files to bucket (excluding git, node_modules, etc.)
-          gsutil -m rsync -r -d \
-            -x '\.git/.*|node_modules/.*|\.github/.*|api/.*|tests/.*|test-results/.*|playwright-report/.*|\.env.*|\.DS_Store|package-lock\.json|tsconfig\.json|playwright\.config\.ts|\.gitignore|README\.md|docs/.*' \
-            . gs://$BUCKET_NAME/
+          gsutil -m rsync -d -x '\.git/.*|node_modules/.*|\.github/.*|api/.*|tests/.*|test-results/.*|playwright-report/.*|\.env.*|\.DS_Store|package-lock\.json|tsconfig\.json|playwright\.config\.ts|\.gitignore|README\.md|docs/.*' . "gs://${BUCKET_NAME}/"
           
           # Set bucket to serve static website
-          gsutil web set -m index.html -e 404.html gs://$BUCKET_NAME/
+          gsutil web set -m index.html -e 404.html "gs://${BUCKET_NAME}/"
           
           # Make files publicly readable
-          gsutil -m acl ch -r -u AllUsers:R gs://$BUCKET_NAME/
+          gsutil -m acl ch -r -u AllUsers:R "gs://${BUCKET_NAME}/"
           
           # Get bucket URL
           BUCKET_URL="https://storage.googleapis.com/$BUCKET_NAME"
