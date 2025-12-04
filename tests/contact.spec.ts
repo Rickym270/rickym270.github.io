@@ -207,11 +207,22 @@ test.describe('Contact Page', () => {
 
   test('submit button is disabled during submission', async ({ page }) => {
     // Mock the API endpoint to prevent actual email sending
+    // Use Promise to track when request is intercepted
     let requestIntercepted = false;
+    let requestPromise: Promise<void>;
+    let resolveRequest: () => void;
+    
+    requestPromise = new Promise((resolve) => {
+      resolveRequest = resolve;
+    });
+    
+    // Set up route to match any API contact endpoint
     await page.route('**/api/contact', async route => {
       requestIntercepted = true;
+      resolveRequest();
       // Simulate a slow response to test button disabled state
-      await page.waitForTimeout(1000);
+      // Use Promise-based delay instead of page.waitForTimeout to avoid issues when test ends
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -268,14 +279,26 @@ test.describe('Contact Page', () => {
     await page.waitForTimeout(200);
     
     // Verify button is disabled during submission
-    // Note: The button may be re-enabled quickly if validation fails,
-    // so we check that it was disabled at some point
     const wasDisabled = await submitBtn.isDisabled().catch(() => false);
     
+    // Wait for the request to be intercepted (with timeout)
+    try {
+      await Promise.race([
+        requestPromise,
+        page.waitForTimeout(5000).then(() => { throw new Error('Request timeout'); })
+      ]);
+    } catch (error) {
+      // If request wasn't intercepted, that's the issue
+      if (!requestIntercepted) {
+        console.error('Request was not intercepted. Checking network requests...');
+      }
+    }
+    
     // Verify the request was intercepted (not sent to real API)
-    // Wait a bit for the request to be made
-    await page.waitForTimeout(1500);
     expect(requestIntercepted).toBe(true);
+    
+    // Clean up routes to prevent errors when test ends
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
   test('form submission shows success message', async ({ page }) => {
@@ -345,6 +368,9 @@ test.describe('Contact Page', () => {
     // Form should be reset after successful submission
     const nameValue = await page.locator('#name').inputValue();
     expect(nameValue).toBe('');
+    
+    // Clean up routes to prevent errors when test ends
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
   test('contact page title and subtitle are visible', async ({ page }) => {
