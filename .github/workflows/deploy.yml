@@ -176,11 +176,11 @@ jobs:
           project_id: ${{ vars.GCP_PROJECT_ID }}
 
       - name: Deploy Site to Cloud Storage
+        env:
+          BUCKET_NAME: ${{ vars.GCS_BUCKET_NAME }}
         run: |
-          BUCKET_NAME=${{ vars.GCS_BUCKET_NAME }}
-          
           if [ -z "$BUCKET_NAME" ]; then
-            echo "⚠️  GCS_BUCKET_NAME secret not set, skipping site deployment"
+            echo "⚠️  GCS_BUCKET_NAME variable not set, skipping site deployment"
             exit 0
           fi
           
