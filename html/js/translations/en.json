@@ -40,6 +40,7 @@
     "complete": "Complete",
     "ideas": "Ideas",
     "pleaseWait": "Please Wait...",
+    "loading": "Loading...",
     "viewGitHub": "View on GitHub →",
     "privateRepo": "Private Repository",
     "privateTooltip": "This repository is private and not publicly accessible",

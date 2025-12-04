@@ -375,14 +375,19 @@ async function initProjects() {
         const completeRow = document.querySelector('#ProjComplete .row');
         const ideasRow = document.querySelector('#ProjComingSoon .row');
         
+        // Get translated loading text
+        const loadingText = (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.t)
+            ? window.TranslationManager.t('projects.loading')
+            : 'Loading...';
+        
         if (inProgressRow) {
-            inProgressRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
+            inProgressRow.innerHTML = `<div class="col-12 text-center"><p class="text-muted" data-translate="projects.loading">${loadingText}</p></div>`;
         }
         if (completeRow) {
-            completeRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
+            completeRow.innerHTML = `<div class="col-12 text-center"><p class="text-muted" data-translate="projects.loading">${loadingText}</p></div>`;
         }
         if (ideasRow) {
-            ideasRow.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Loading...</p></div>';
+            ideasRow.innerHTML = `<div class="col-12 text-center"><p class="text-muted" data-translate="projects.loading">${loadingText}</p></div>`;
         }
         
         // Load project classification and fetch projects in parallel
