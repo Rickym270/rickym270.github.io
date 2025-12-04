@@ -5,7 +5,18 @@ on:
     branches: [ master ]
     # Trigger on any push to master (we'll check for changes in the workflow)
   workflow_dispatch:
-    # Allow manual triggering
+    # Allow manual triggering with options
+    inputs:
+      force_deploy_api:
+        description: 'Force deploy API even if no changes detected'
+        required: false
+        default: 'false'
+        type: boolean
+      force_deploy_site:
+        description: 'Force deploy site to Cloud Storage'
+        required: false
+        default: 'false'
+        type: boolean
 
 permissions:
   contents: read
@@ -29,9 +40,20 @@ jobs:
         id: check-api-changes
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            # Manual trigger - always deploy
-            echo "changed=true" >> $GITHUB_OUTPUT
-            echo "✅ Manual trigger - deploying API"
+            # Manual trigger - check if force deploy is requested
+            if [ "${{ inputs.force_deploy_api }}" == "true" ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+              echo "✅ Manual trigger with force_deploy_api=true - deploying API"
+            else
+              # Check if API files exist (for manual testing)
+              if [ -d "api" ] && [ -n "$(find api -type f -name '*.java' -o -name 'pom.xml' -o -name '*.properties' 2>/dev/null | head -1)" ]; then
+                echo "changed=true" >> $GITHUB_OUTPUT
+                echo "✅ Manual trigger - API files found, deploying"
+              else
+                echo "changed=false" >> $GITHUB_OUTPUT
+                echo "⏭️  Manual trigger - no API files found, skipping deployment"
+              fi
+            fi
           else
             # Check if API files changed in this push
             # Compare with the base commit (before this push)
@@ -161,6 +183,8 @@ jobs:
     name: Deploy Site to Cloud Storage
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Skip site deployment on manual trigger unless force_deploy_site is true
+    if: github.event_name != 'workflow_dispatch' || inputs.force_deploy_site == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
