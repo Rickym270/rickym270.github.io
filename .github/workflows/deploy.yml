@@ -183,8 +183,9 @@ jobs:
     name: Deploy Site to Cloud Storage
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Skip site deployment on manual trigger unless force_deploy_site is true
-    if: github.event_name != 'workflow_dispatch' || inputs.force_deploy_site == 'true'
+    # Only deploy to GCS on manual trigger with force_deploy_site=true (PoC/testing)
+    # GitHub Pages handles regular deployments, this is just for demonstration
+    if: github.event_name == 'workflow_dispatch' && inputs.force_deploy_site == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
