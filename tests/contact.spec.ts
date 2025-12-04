@@ -344,7 +344,10 @@ test.describe('Contact Page', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form');
     }, { timeout: 15000 });
-    await page.waitForTimeout(500);
+    
+    // Wait for contact form to be ready
+    await page.waitForSelector('#contact-form', { state: 'visible', timeout: 5000 });
+    await page.waitForTimeout(1000); // Give Turnstile time to load if configured
     
     // Fill form with valid data
     await page.locator('#name').fill('Test User');
@@ -356,9 +359,9 @@ test.describe('Contact Page', () => {
     const submitBtn = page.locator('#submit-btn');
     await submitBtn.click();
     
-    // Wait for success message
+    // Wait for success message - increased timeout and wait for API response
     const successMessage = page.locator('#form-message.alert-success');
-    await expect(successMessage).toBeVisible({ timeout: 5000 });
+    await expect(successMessage).toBeVisible({ timeout: 10000 });
     
     // Check message contains success text
     const messageText = await successMessage.textContent();

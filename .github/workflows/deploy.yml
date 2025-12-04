@@ -70,23 +70,20 @@ jobs:
       - name: Set up Cloud SDK
         if: steps.check-api-changes.outputs.changed == 'true'
         uses: google-github-actions/setup-gcloud@v2
-
-      - name: Set GCP Project
-        if: steps.check-api-changes.outputs.changed == 'true'
-        run: |
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
 
       - name: Deploy API to Cloud Run
         if: steps.check-api-changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
-          SMTP_FROM_EMAIL: ${{ secrets.SMTP_FROM_EMAIL }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
           REGION=us-east1
@@ -175,14 +172,12 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-
-      - name: Set GCP Project
-        run: |
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
 
       - name: Deploy Site to Cloud Storage
         run: |
-          BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
+          BUCKET_NAME=${{ vars.GCS_BUCKET_NAME }}
           
           if [ -z "$BUCKET_NAME" ]; then
             echo "⚠️  GCS_BUCKET_NAME secret not set, skipping site deployment"
@@ -225,10 +220,10 @@ jobs:
             echo "- ⏭️  API deployment skipped (no API changes)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -n "${{ secrets.GCS_BUCKET_NAME }}" ]; then
+          if [ -n "${{ vars.GCS_BUCKET_NAME }}" ]; then
             echo "### Site Deployment" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ Site deployed to Cloud Storage" >> $GITHUB_STEP_SUMMARY
-            echo "- URL: https://storage.googleapis.com/${{ secrets.GCS_BUCKET_NAME }}" >> $GITHUB_STEP_SUMMARY
+            echo "- URL: https://storage.googleapis.com/${{ vars.GCS_BUCKET_NAME }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "### Site Deployment" >> $GITHUB_STEP_SUMMARY
             echo "- ⚠️  Site deployment skipped (GCS_BUCKET_NAME not configured)" >> $GITHUB_STEP_SUMMARY

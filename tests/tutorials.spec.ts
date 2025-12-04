@@ -327,13 +327,25 @@ test.describe('Tutorials Page', () => {
         // Check for Next Lesson link
         const nextLink = page.locator('.lesson-nav-link').filter({ hasText: /Next|→/i }).first();
         if (await nextLink.isVisible({ timeout: 2000 })) {
+          // Get current URL before clicking
+          const currentUrl = page.url();
           await nextLink.click();
-          await page.waitForTimeout(2000);
+          
+          // Wait for URL to change or content to update
+          await page.waitForFunction(
+            (url) => window.location.href !== url || 
+            document.querySelector('.lesson-title')?.textContent?.trim() !== 'Introduction',
+            currentUrl,
+            { timeout: 10000 }
+          );
+          
+          // Additional wait for content to stabilize
+          await page.waitForTimeout(1000);
           
           // Verify next lesson loaded
           const lessonTitle = page.locator('.lesson-title');
-          await expect(lessonTitle).toBeVisible({ timeout: 3000 });
-          await expect(lessonTitle).not.toContainText(/Introduction/i);
+          await expect(lessonTitle).toBeVisible({ timeout: 5000 });
+          await expect(lessonTitle).not.toContainText(/Introduction/i, { timeout: 5000 });
         }
       }
     }

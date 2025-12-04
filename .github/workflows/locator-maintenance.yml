@@ -61,13 +61,13 @@ jobs:
       - name: Start Spring Boot API server
         working-directory: ./api
         env:
-          # Email configuration (from GitHub Secrets)
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          # Email configuration (non-sensitive from vars, sensitive from secrets)
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
-          SMTP_FROM_EMAIL: ${{ secrets.SMTP_FROM_EMAIL }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
           # GitHub API (optional, for projects endpoint)
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           # Admin API key (optional)
