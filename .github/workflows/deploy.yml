@@ -179,13 +179,16 @@ jobs:
         env:
           BUCKET_NAME: ${{ vars.GCS_BUCKET_NAME }}
         run: |
+          # Trim leading and trailing whitespace from BUCKET_NAME
+          BUCKET_NAME=$(echo "$BUCKET_NAME" | xargs)
+          
           if [ -z "$BUCKET_NAME" ]; then
             echo "⚠️  GCS_BUCKET_NAME variable not set, skipping site deployment"
             exit 0
           fi
           
           echo "🚀 Deploying site to Cloud Storage..."
-          echo "   Bucket: $BUCKET_NAME"
+          echo "   Bucket: '$BUCKET_NAME'"
           
           # Sync files to bucket (excluding git, node_modules, etc.)
           gsutil -m rsync -d -x '\.git/.*|node_modules/.*|\.github/.*|api/.*|tests/.*|test-results/.*|playwright-report/.*|\.env.*|\.DS_Store|package-lock\.json|tsconfig\.json|playwright\.config\.ts|\.gitignore|README\.md|docs/.*' . "gs://${BUCKET_NAME}/"
@@ -197,7 +200,7 @@ jobs:
           gsutil -m acl ch -r -u AllUsers:R "gs://${BUCKET_NAME}/"
           
           # Get bucket URL
-          BUCKET_URL="https://storage.googleapis.com/$BUCKET_NAME"
+          BUCKET_URL="https://storage.googleapis.com/${BUCKET_NAME}"
           echo "✅ Site deployed successfully!"
           echo "   URL: $BUCKET_URL"
 
