@@ -221,7 +221,8 @@ test.describe('Contact Page', () => {
       requestIntercepted = true;
       resolveRequest();
       // Simulate a slow response to test button disabled state
-      await page.waitForTimeout(1000);
+      // Use Promise-based delay instead of page.waitForTimeout to avoid issues when test ends
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -295,6 +296,9 @@ test.describe('Contact Page', () => {
     
     // Verify the request was intercepted (not sent to real API)
     expect(requestIntercepted).toBe(true);
+    
+    // Clean up routes to prevent errors when test ends
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
   test('form submission shows success message', async ({ page }) => {
@@ -364,6 +368,9 @@ test.describe('Contact Page', () => {
     // Form should be reset after successful submission
     const nameValue = await page.locator('#name').inputValue();
     expect(nameValue).toBe('');
+    
+    // Clean up routes to prevent errors when test ends
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   });
 
   test('contact page title and subtitle are visible', async ({ page }) => {
