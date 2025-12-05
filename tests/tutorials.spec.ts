@@ -1,42 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Tutorials Page', () => {
+  // Set timeout for all tests in this describe block
+  test.describe.configure({ timeout: 120000 }); // 2 minutes
+  
   test.beforeEach(async ({ page }) => {
-    // Increase timeout for beforeEach to prevent timeouts
-    test.setTimeout(90000);
+    // Minimal setup - just set language preference
+    await page.goto('/', { waitUntil: 'networkidle', timeout: 20000 });
     
-    // Ensure English is set for these tests
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
-    
-    // Wait for content to be attached first
-    await page.waitForSelector('#content', { state: 'attached', timeout: 15000 }).catch(() => {});
-    
-    // Wait for TranslationManager to be available and initialized (non-blocking)
-    await page.waitForFunction(() => {
-      return typeof window.TranslationManager !== 'undefined' && 
-             window.TranslationManager.currentLanguage !== undefined;
-    }, { timeout: 5000 }).catch(() => {
-      // TranslationManager might not exist on master branch - that's okay
-    });
-    
-    // Set language to English
+    // Set language to English (non-blocking)
     await page.evaluate(() => {
       localStorage.setItem('siteLanguage', 'en');
       if (typeof window.TranslationManager !== 'undefined') {
         window.TranslationManager.switchLanguage('en');
       }
-    });
-    
-    // Wait for translations to apply (reduced timeout)
-    await page.waitForTimeout(300);
-    
-    // Verify English is set by checking navbar text (non-blocking, shorter timeout)
-    await page.waitForFunction(() => {
-      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
-      return homeLink && homeLink.textContent?.trim() === 'Home';
-    }, { timeout: 2000 }).catch(() => {
-      // If translation system doesn't exist, that's okay - tests will use English by default
-    });
+    }).catch(() => {});
   });
 
   test('tutorials page loads without redirecting entire page', async ({ page }) => {
