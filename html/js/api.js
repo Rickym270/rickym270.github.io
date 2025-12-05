@@ -34,6 +34,15 @@ async function fetchFromAPI(endpoint) {
         return await response.json();
     } catch (error) {
         console.error(`Error fetching ${endpoint}:`, error);
+        
+        // Enhance error message for CORS/network issues
+        if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {
+            const enhancedError = new Error(`Network error: ${error.message}. This may be a CORS issue if accessing from a local IP address.`);
+            enhancedError.name = error.name;
+            enhancedError.originalError = error;
+            throw enhancedError;
+        }
+        
         throw error;
     }
 }

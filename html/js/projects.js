@@ -69,11 +69,22 @@ async function fetchProjectsFromAPI() {
         return await fetchProjects();
     } else {
         // Fallback standalone fetch
-        const response = await fetch(`${API_BASE_URL_FALLBACK}/api/projects`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            const response = await fetch(`${API_BASE_URL_FALLBACK}/api/projects`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            // Enhance error message for CORS/network issues
+            if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {
+                const enhancedError = new Error(`Network error: ${error.message}. This may be a CORS issue if accessing from a local IP address.`);
+                enhancedError.name = error.name;
+                enhancedError.originalError = error;
+                throw enhancedError;
+            }
+            throw error;
         }
-        return await response.json();
     }
 }
 
@@ -418,10 +429,30 @@ async function initProjects() {
     } catch (error) {
         console.error('Error loading projects:', error);
         
-        // Show error message
+        // Show detailed error message
         const errorMsg = document.createElement('div');
         errorMsg.className = 'alert alert-warning';
-        errorMsg.innerHTML = '<p>Unable to load projects from API. Showing static content instead.</p>';
+        
+        // Provide more helpful error information
+        let errorText = 'Unable to load projects from API. Showing static content instead.';
+        
+        // Detect CORS/network errors
+        const isCorsError = error.name === 'TypeError' || 
+                           error.message.includes('Failed to fetch') || 
+                           error.message.includes('Load failed') ||
+                           error.message.includes('Network error');
+        
+        if (isCorsError) {
+            const currentOrigin = window.location.origin;
+            errorText += `<br><small><strong>CORS/Network Error:</strong> ${error.message || 'Failed to fetch'}</small>`;
+            errorText += `<br><small>Current origin: ${currentOrigin}</small>`;
+            errorText += `<br><small>API URL: ${typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : API_BASE_URL_FALLBACK}/api/projects</small>`;
+            errorText += `<br><small><em>Note: The API needs to be redeployed with updated CORS configuration to allow requests from local IP addresses.</em></small>`;
+        } else if (error.message) {
+            errorText += `<br><small>Error: ${error.message}</small>`;
+        }
+        
+        errorMsg.innerHTML = `<p>${errorText}</p>`;
         const container = document.querySelector('.container');
         if (container) {
             container.insertBefore(errorMsg, container.querySelector('#ProjInProgress'));
