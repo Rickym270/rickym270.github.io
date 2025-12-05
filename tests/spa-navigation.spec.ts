@@ -5,20 +5,15 @@ test.describe('SPA Navigation', () => {
   test.describe.configure({ timeout: 120000 }); // 2 minutes
   
   test.beforeEach(async ({ page }) => {
-    // Minimal setup - just set language preference
-    await page.goto('/', { waitUntil: 'networkidle', timeout: 20000 });
-    
-    // Set language to English (non-blocking)
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    }).catch(() => {});
+    });
   });
 
   test('navigation loads content into #content without full page reload', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Initial page load - wait for content
     await page.waitForSelector('#content', { state: 'attached' });
@@ -83,7 +78,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('theme persists across SPA navigation', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -135,7 +130,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('tutorials page does not reload entire page when clicked', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     const initialUrl = page.url();
     
@@ -192,7 +187,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });

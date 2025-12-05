@@ -5,20 +5,15 @@ test.describe('Projects Page', () => {
   test.describe.configure({ timeout: 120000 }); // 2 minutes
   
   test.beforeEach(async ({ page }) => {
-    // Minimal setup - just set language preference
-    await page.goto('/', { waitUntil: 'networkidle', timeout: 20000 });
-    
-    // Set language to English (non-blocking)
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    }).catch(() => {});
+    });
   });
 
   test('navigates to Projects via navbar and renders content', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -114,7 +109,7 @@ test.describe('Projects Page', () => {
   });
 
   test('shows loading message in each section while projects load', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -164,7 +159,7 @@ test.describe('Projects Page', () => {
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
     test.setTimeout(90000); // Increase timeout for this test (90 seconds)
     
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -264,7 +259,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project icons are visible in dark mode', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -317,7 +312,7 @@ test.describe('Projects Page', () => {
   });
 
   test('projects page has correct title and subtitle', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -363,7 +358,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project cards have correct structure when loaded', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -417,7 +412,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project sections exist (In Progress, Complete, Coming Soon)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });

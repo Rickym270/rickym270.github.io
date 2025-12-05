@@ -5,20 +5,15 @@ test.describe('Tutorials Page', () => {
   test.describe.configure({ timeout: 120000 }); // 2 minutes
   
   test.beforeEach(async ({ page }) => {
-    // Minimal setup - just set language preference
-    await page.goto('/', { waitUntil: 'networkidle', timeout: 20000 });
-    
-    // Set language to English (non-blocking)
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    }).catch(() => {});
+    });
   });
 
   test('tutorials page loads without redirecting entire page', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -82,7 +77,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorial cards display correctly with icons and links', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -149,7 +144,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('Python tutorial index page loads with lesson cards', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -189,7 +184,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('lesson pages load with back button and navigation', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -235,7 +230,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('back button navigates to lesson index', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -278,7 +273,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('lesson navigation links work correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -336,7 +331,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorial page text and links are visible and clickable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });

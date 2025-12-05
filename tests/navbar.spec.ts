@@ -5,20 +5,15 @@ test.describe('Navbar', () => {
   test.describe.configure({ timeout: 120000 }); // 2 minutes
   
   test.beforeEach(async ({ page }) => {
-    // Minimal setup - just set language preference
-    await page.goto('/', { waitUntil: 'networkidle', timeout: 20000 });
-    
-    // Set language to English (non-blocking)
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    }).catch(() => {});
+    });
   });
 
   test('has top navbar with expected links', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
 
     const nav = page.locator('nav.navbar');
     await expect(nav).toBeVisible();
@@ -60,7 +55,7 @@ test.describe('Navbar', () => {
   });
 
   test('Docs dropdown arrow is on same line as text', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Skip on mobile - navbar links are hidden
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -86,7 +81,7 @@ test.describe('Navbar', () => {
   });
 
   test('Home link loads home page content', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile - navbar links are hidden on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -178,7 +173,7 @@ test.describe('Navbar', () => {
   });
 
   test('Skills link navigates to skills page', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -235,7 +230,7 @@ test.describe('Navbar', () => {
   test('mobile sidebar opens and closes correctly', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for page to load
     await page.waitForSelector('nav.navbar', { state: 'attached' });
@@ -270,7 +265,7 @@ test.describe('Navbar', () => {
   test('mobile sidebar navigation works', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for page to load
     await page.waitForSelector('nav.navbar', { state: 'attached' });
@@ -325,7 +320,7 @@ test.describe('Navbar', () => {
   test('RM brand navigates to home on mobile', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for page to load
     await page.waitForSelector('nav.navbar', { state: 'attached' });
@@ -367,7 +362,7 @@ test.describe('Navbar', () => {
   test('mobile sidebar footer has organized settings structure', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for page to load
     await page.waitForSelector('nav.navbar', { state: 'attached' });

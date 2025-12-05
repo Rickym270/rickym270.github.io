@@ -5,20 +5,16 @@ test.describe('Home Page Initial Load', () => {
   test.describe.configure({ timeout: 120000 }); // 2 minutes
   
   test.beforeEach(async ({ page }) => {
-    // Minimal setup - just set language preference
-    await page.goto('/', { waitUntil: 'networkidle', timeout: 20000 });
-    
-    // Set language to English (non-blocking)
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    }).catch(() => {});
+    });
   });
 
   test('loads Home content on initial load', async ({ page }) => {
-    await page.goto('/');
+    // Use domcontentloaded for faster loads (networkidle is too slow)
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load - give SPA time to initialize
     await page.waitForFunction(() => {
@@ -46,7 +42,8 @@ test.describe('Home Page Initial Load', () => {
   test('home page does not get replaced when navigating away and back', async ({ page }) => {
     test.setTimeout(90000); // Increase timeout for this test (90 seconds)
     
-    await page.goto('/');
+    // Use domcontentloaded for faster loads
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for home content to load initially
     await page.waitForFunction(() => {
@@ -100,7 +97,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page tagline is centered and displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -130,7 +127,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page About Me section displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -159,7 +156,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page Tech Stack section displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -181,7 +178,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page hero buttons are clickable and have correct links', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
