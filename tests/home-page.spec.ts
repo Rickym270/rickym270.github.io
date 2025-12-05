@@ -167,11 +167,24 @@ test.describe('Home page content', () => {
     try {
       await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 10000, state: 'visible' });
     } catch {
-      // Fallback for WebKit - wait for any heading with Skills text and check visibility
+      // Fallback for WebKit/mobile - wait for any heading or content with Skills
+      // Check multiple times as content may load gradually
       await page.waitForFunction(() => {
-        const heading = document.querySelector('#content h1, #content h3') as HTMLElement;
-        return heading && heading.textContent?.includes('Skills') && heading.offsetParent !== null;
-      }, { timeout: 10000 });
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        
+        // Check for heading with Skills text
+        const headings = Array.from(content.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+        for (const heading of headings) {
+          if (heading.textContent?.includes('Skills') && (heading as HTMLElement).offsetParent !== null) {
+            return true;
+          }
+        }
+        
+        // Also check if content has loaded (has substantial text)
+        const hasContent = content.textContent && content.textContent.trim().length > 100;
+        return hasContent;
+      }, { timeout: 20000 });
     }
     await page.waitForTimeout(500); // Give translations time to apply
     

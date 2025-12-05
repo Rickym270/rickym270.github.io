@@ -90,7 +90,15 @@ test.describe('Responsive layout', () => {
   
   test('stats cards stack vertically on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto('/');
+    // Use domcontentloaded for faster navigation, especially on Firefox
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    
+    // Wait for content to load
+    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
     
     // Wait for stats to potentially load
     await page.waitForTimeout(3000);
