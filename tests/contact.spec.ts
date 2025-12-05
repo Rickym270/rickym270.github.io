@@ -216,8 +216,9 @@ test.describe('Contact Page', () => {
       resolveRequest = resolve;
     });
     
-    // Set up route to match any API contact endpoint
-    await page.route('**/api/contact', async route => {
+    // Set up route to match any API contact endpoint (both relative and absolute URLs)
+    // Use regex to match any URL containing /api/contact
+    await page.route(/.*\/api\/contact/, async (route) => {
       requestIntercepted = true;
       resolveRequest();
       // Simulate a slow response to test button disabled state
@@ -303,7 +304,8 @@ test.describe('Contact Page', () => {
 
   test('form submission shows success message', async ({ page }) => {
     // Mock the API endpoint to prevent actual email sending
-    await page.route('**/api/contact', async route => {
+    // Use regex to match any URL containing /api/contact (both relative and absolute URLs)
+    await page.route(/.*\/api\/contact/, async (route) => {
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
