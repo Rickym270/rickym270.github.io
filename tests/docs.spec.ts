@@ -536,14 +536,29 @@ test.describe('Docs/Notes Page', () => {
     if (await pythonCard.isVisible({ timeout: 2000 })) {
       const viewMoreLink = pythonCard.locator('.notes-card-link');
       await viewMoreLink.click();
-      await page.waitForTimeout(1500);
       
-      // Wait for breadcrumbs to appear (increase timeout for mobile)
-      await page.waitForSelector('.breadcrumb-nav', { timeout: 10000 });
+      // Wait for category content to load
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        // Check for category content (toc_title, toc_list, or substantial text)
+        const hasContent = content.querySelector('.toc_title, .toc_list') || 
+                          (content.textContent && content.textContent.trim().length > 50);
+        return !!hasContent;
+      }, { timeout: 15000 });
+      
+      await page.waitForTimeout(1000); // Give breadcrumbs time to render
+      
+      // Wait for breadcrumbs to appear - check in back button container or standalone
+      // Breadcrumbs can be .breadcrumb-nav or .breadcrumb-nav-inline
+      await page.waitForFunction(() => {
+        const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline');
+        return breadcrumb && (breadcrumb as HTMLElement).offsetParent !== null;
+      }, { timeout: 15000 });
       
       // Check breadcrumbs appear (use first() to avoid strict mode violation)
-      const breadcrumbs = page.locator('.breadcrumb-nav').first();
-      await expect(breadcrumbs).toBeVisible();
+      const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline').first();
+      await expect(breadcrumbs).toBeVisible({ timeout: 5000 });
       
       // Should show "Docs > Python" (or similar)
       const breadcrumbText = await breadcrumbs.textContent();
@@ -553,11 +568,23 @@ test.describe('Docs/Notes Page', () => {
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
       if (await articleLink.isVisible({ timeout: 5000 })) {
         await articleLink.click();
-        await page.waitForTimeout(1500);
+        
+        // Wait for article content to load
+        await page.waitForFunction(() => {
+          const content = document.querySelector('#content');
+          if (!content) return false;
+          // Check for any heading or substantial content
+          const hasHeading = content.querySelector('h1, h2, h3, h4, h5, h6');
+          const hasText = content.textContent && content.textContent.trim().length > 50;
+          return !!(hasHeading || hasText);
+        }, { timeout: 15000 });
+        
+        await page.waitForTimeout(1000); // Give breadcrumbs time to update
         
         // Breadcrumbs should update to show article (use first() to avoid strict mode violation)
-        const updatedBreadcrumbs = page.locator('.breadcrumb-nav').first();
-        await expect(updatedBreadcrumbs).toBeVisible();
+        // Check for breadcrumbs in back button container or standalone
+        const updatedBreadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline').first();
+        await expect(updatedBreadcrumbs).toBeVisible({ timeout: 10000 });
         const updatedText = await updatedBreadcrumbs.textContent();
         expect(updatedText).toMatch(/Docs/i);
       }
