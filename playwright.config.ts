@@ -9,6 +9,10 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   outputDir: path.join(rootDir, 'test-results'),
+  // Enable parallel test execution within each project
+  // Use 50% of available CPU cores to balance speed and resource usage
+  workers: process.env.CI ? 2 : undefined, // 2 workers in CI, auto-detect locally
+  fullyParallel: true, // Run all tests in parallel (within each project)
   use: {
     baseURL: 'http://localhost:4321',
     trace: 'on-first-retry',
