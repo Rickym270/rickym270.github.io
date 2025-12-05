@@ -443,13 +443,6 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
     align-items: center;
     flex-shrink: 0;
     min-width: fit-content;
-    gap: 0.5rem;
-}
-
-.nav-icon {
-    font-size: 1rem;
-    display: inline-block;
-    flex-shrink: 0;
 }
 
 .nav-link.dropdown-toggle {
