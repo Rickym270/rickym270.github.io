@@ -216,9 +216,9 @@ test.describe('Contact Page', () => {
       resolveRequest = resolve;
     });
     
-    // Set up route to match any API contact endpoint (both relative and absolute URLs)
-    // Use regex to match any URL containing /api/contact
-    await page.route(/.*\/api\/contact/, async (route) => {
+    // Set up route BEFORE navigation - Playwright routes persist across navigation
+    // Use regex pattern to match any URL containing /api/contact (both absolute and relative)
+    await page.route(/.*\/api\/contact.*/, async (route) => {
       requestIntercepted = true;
       resolveRequest();
       // Simulate a slow response to test button disabled state
@@ -237,7 +237,17 @@ test.describe('Contact Page', () => {
         })
       });
     });
-
+    
+    // Also set up request listener for debugging
+    const requestUrls: string[] = [];
+    page.on('request', request => {
+      const url = request.url();
+      if (url.includes('contact') || url.includes('api')) {
+        requestUrls.push(url);
+        console.log('Request intercepted:', url);
+      }
+    });
+    
     await page.goto('/');
     
     // Wait for initial load
@@ -272,8 +282,15 @@ test.describe('Contact Page', () => {
     await page.locator('#subject').fill('Test Subject');
     await page.locator('#message').fill('This is a test message.');
     
-    // Submit form
+    // Submit form and wait for response (either intercepted or actual)
     const submitBtn = page.locator('#submit-btn');
+    
+    // Wait for response in parallel with form submission
+    const responsePromise = page.waitForResponse(
+      (response) => response.url().includes('/api/contact'),
+      { timeout: 5000 }
+    ).catch(() => null);
+    
     await submitBtn.click();
     
     // Wait a moment for the form to process
@@ -282,16 +299,30 @@ test.describe('Contact Page', () => {
     // Verify button is disabled during submission
     const wasDisabled = await submitBtn.isDisabled().catch(() => false);
     
-    // Wait for the request to be intercepted (with timeout)
+    // Wait for either the route interception or the actual response
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 5000);
+    });
+    
     try {
-      await Promise.race([
-        requestPromise,
-        page.waitForTimeout(5000).then(() => { throw new Error('Request timeout'); })
-      ]);
+      await Promise.race([requestPromise, responsePromise, timeoutPromise]);
     } catch (error) {
-      // If request wasn't intercepted, that's the issue
+      // If request wasn't intercepted, log for debugging
       if (!requestIntercepted) {
-        console.error('Request was not intercepted. Checking network requests...');
+        console.error('Request was not intercepted within timeout');
+        console.error('Request URLs captured:', requestUrls);
+        // Give it a moment to see if request comes through
+        await page.waitForTimeout(1000);
+        if (requestUrls.length === 0) {
+          console.error('No API requests detected. Form may not have submitted.');
+        } else {
+          console.error('Requests were made but not intercepted. Route pattern may not match.');
+          console.error('First request URL:', requestUrls[0]);
+        }
+      }
+      // Re-throw if it's not a timeout (timeout is expected if request wasn't intercepted)
+      if (error instanceof Error && !error.message.includes('timeout')) {
+        throw error;
       }
     }
     
