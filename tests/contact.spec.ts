@@ -347,6 +347,9 @@ test.describe('Contact Page', () => {
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use regex pattern to match any URL containing /api/contact (both absolute and relative)
     await page.route(/.*\/api\/contact.*/, async (route) => {
+      routeFulfilled = true;
+      resolveRouteFulfill();
+      // Fulfill the route after resolving the promise
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -359,8 +362,16 @@ test.describe('Contact Page', () => {
           receivedAt: new Date().toISOString()
         })
       });
-      routeFulfilled = true;
-      resolveRouteFulfill();
+    });
+    
+    // Also set up request listener for debugging
+    const requestUrls: string[] = [];
+    page.on('request', request => {
+      const url = request.url();
+      if (url.includes('contact') || url.includes('api')) {
+        requestUrls.push(url);
+        console.log('Request intercepted:', url);
+      }
     });
 
     await page.goto('/');
@@ -394,26 +405,53 @@ test.describe('Contact Page', () => {
     await page.waitForSelector('#contact-form', { state: 'visible', timeout: 5000 });
     await page.waitForTimeout(1000); // Give Turnstile time to load if configured
     
+    // Ensure submit button is enabled and visible
+    const submitBtn = page.locator('#submit-btn');
+    await expect(submitBtn).toBeVisible({ timeout: 5000 });
+    await expect(submitBtn).toBeEnabled({ timeout: 5000 });
+    
     // Fill form with valid data
     await page.locator('#name').fill('Test User');
     await page.locator('#email').fill('test@example.com');
     await page.locator('#subject').fill('Test Subject');
     await page.locator('#message').fill('This is a test message.');
     
-    // Submit form
-    const submitBtn = page.locator('#submit-btn');
-    await submitBtn.click();
-    
     // Wait for route to be fulfilled (with timeout fallback)
     const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => reject(new Error('Route fulfillment timeout')), 15000);
+      setTimeout(() => reject(new Error('Route fulfillment timeout')), 20000);
     });
     
+    // Click submit and wait for route interception in parallel
+    const clickPromise = submitBtn.click().catch(err => {
+      console.error('Error clicking submit button:', err);
+      throw err;
+    });
+    const routePromise = Promise.race([routeFulfillPromise, timeoutPromise]);
+    
     try {
-      await Promise.race([routeFulfillPromise, timeoutPromise]);
+      await Promise.all([clickPromise, routePromise]);
     } catch (error) {
       if (!routeFulfilled) {
         console.error('Route was not fulfilled within timeout');
+        console.error('Request URLs captured:', requestUrls);
+        // Check if form submitted (button should be disabled during submission)
+        const isDisabled = await submitBtn.isDisabled().catch(() => false);
+        console.error('Submit button disabled state:', isDisabled);
+        // Give it a moment to see if request comes through
+        await page.waitForTimeout(2000);
+        if (requestUrls.length === 0) {
+          console.error('No API requests detected. Form may not have submitted.');
+          // Check for validation errors
+          const errorMessage = await page.locator('#form-message.alert-danger').isVisible().catch(() => false);
+          if (errorMessage) {
+            const errorText = await page.locator('#form-message.alert-danger').textContent().catch(() => '');
+            console.error('Form validation error:', errorText);
+          }
+        } else {
+          console.error('Requests were made but not intercepted. Route pattern may not match.');
+          console.error('First request URL:', requestUrls[0]);
+          console.error('Route pattern: /.*\\/api\\/contact.*/');
+        }
         throw error;
       }
     }
