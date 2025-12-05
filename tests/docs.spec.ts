@@ -204,8 +204,16 @@ test.describe('Docs/Notes Page', () => {
       if (await articleLink.isVisible({ timeout: 5000 })) {
         await articleLink.click();
         
-        // Wait for article content to load - wait for h3 heading specifically
-        await page.waitForSelector('#content h3, #content .container h3', { timeout: 20000 });
+        // Wait for article content to load - use more flexible selector
+        // Articles may have h1, h2, h3, or other headings, so wait for any heading or content
+        await page.waitForFunction(() => {
+          const content = document.querySelector('#content');
+          if (!content) return false;
+          // Check for any heading or substantial content
+          const hasHeading = content.querySelector('h1, h2, h3, h4, h5, h6');
+          const hasText = content.textContent && content.textContent.trim().length > 50;
+          return !!(hasHeading || hasText);
+        }, { timeout: 20000 });
         await page.waitForTimeout(1000);
         
         await page.waitForTimeout(1000); // Give setupBackButton() time to run
