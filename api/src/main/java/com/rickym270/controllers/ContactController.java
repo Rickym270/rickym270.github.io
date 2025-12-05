@@ -4,6 +4,7 @@ import com.rickym270.dto.ContactMessage;
 import com.rickym270.dto.ContactRequest;
 import com.rickym270.exceptions.UnauthorizedException;
 import com.rickym270.services.ContactService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,31 @@ public class ContactController {
     @PostMapping("/contact")
     public ResponseEntity<ContactMessage> create(
             @Valid @RequestBody ContactRequest request,
+            HttpServletRequest httpRequest,
             @RequestHeader(value = "X-Forwarded-For", required = false) String forwardedFor,
             @RequestHeader(value = "X-Real-IP", required = false) String realIp) {
         
-        // Get client IP for rate limiting (check headers first, fallback to remote address)
-        String clientIp = forwardedFor != null ? forwardedFor.split(",")[0].trim() 
-                        : (realIp != null ? realIp : "unknown");
+        // Get client IP for rate limiting
+        // Cloud Run sets X-Forwarded-For, but handle edge cases properly
+        String clientIp = "unknown";
+        
+        if (forwardedFor != null && !forwardedFor.trim().isEmpty()) {
+            // X-Forwarded-For can contain multiple IPs: "client, proxy1, proxy2"
+            // Take the first one (original client IP)
+            String[] ips = forwardedFor.split(",");
+            clientIp = ips[0].trim();
+        } else if (realIp != null && !realIp.trim().isEmpty()) {
+            clientIp = realIp.trim();
+        }
+        // Note: We don't use httpRequest.getRemoteAddr() on Cloud Run because
+        // it would return the load balancer's IP, not the client's IP.
+        // This would cause all users to share the same rate limit.
+        
+        // Log for debugging if IP detection fails (helps diagnose rate limiting issues)
+        if ("unknown".equals(clientIp)) {
+            System.err.println("[ContactController] WARNING: Could not detect client IP. " +
+                             "X-Forwarded-For=" + forwardedFor + ", X-Real-IP=" + realIp);
+        }
         
         ContactMessage saved = contactService.save(request, clientIp);
         return ResponseEntity.status(201).body(saved);
