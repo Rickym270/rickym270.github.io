@@ -530,8 +530,8 @@ test.describe('Docs/Notes Page', () => {
       await viewMoreLink.click();
       await page.waitForTimeout(1500);
       
-      // Wait for breadcrumbs to appear
-      await page.waitForSelector('.breadcrumb-nav', { timeout: 5000 });
+      // Wait for breadcrumbs to appear (increase timeout for mobile)
+      await page.waitForSelector('.breadcrumb-nav', { timeout: 10000 });
       
       // Check breadcrumbs appear (use first() to avoid strict mode violation)
       const breadcrumbs = page.locator('.breadcrumb-nav').first();

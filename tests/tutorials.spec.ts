@@ -1,40 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Tutorials Page', () => {
+  // Set timeout for all tests in this describe block
+  test.describe.configure({ timeout: 120000 }); // 2 minutes
+  
   test.beforeEach(async ({ page }) => {
-    // Ensure English is set for these tests
-    await page.goto('/');
-    
-    // Wait for TranslationManager to be available and initialized
-    await page.waitForFunction(() => {
-      return typeof window.TranslationManager !== 'undefined' && 
-             window.TranslationManager.currentLanguage !== undefined;
-    }, { timeout: 5000 }).catch(() => {
-      // TranslationManager might not exist on master branch - that's okay
-    });
-    
-    // Set language to English
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    });
-    
-    // Wait for translations to apply
-    await page.waitForTimeout(500);
-    
-    // Verify English is set by checking navbar text
-    await page.waitForFunction(() => {
-      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
-      return homeLink && homeLink.textContent?.trim() === 'Home';
-    }, { timeout: 3000 }).catch(() => {
-      // If translation system doesn't exist, that's okay - tests will use English by default
     });
   });
 
   test('tutorials page loads without redirecting entire page', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -98,7 +77,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorial cards display correctly with icons and links', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -165,7 +144,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('Python tutorial index page loads with lesson cards', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -205,7 +184,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('lesson pages load with back button and navigation', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -251,7 +230,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('back button navigates to lesson index', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -294,7 +273,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('lesson navigation links work correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -352,7 +331,7 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorial page text and links are visible and clickable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });

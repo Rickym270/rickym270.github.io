@@ -450,6 +450,16 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
     font-size: 1rem;
     display: inline-block;
     flex-shrink: 0;
+    /* Use system emoji font to ensure emojis render correctly on all devices */
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols', 'EmojiOne Mozilla', 'Twemoji Mozilla', 'Segoe UI', sans-serif;
+    /* Ensure emojis are displayed as emojis, not text */
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    /* Prevent font fallback issues on iOS */
+    -webkit-font-feature-settings: normal;
+    font-feature-settings: normal;
 }
 
 .nav-link.dropdown-toggle {
@@ -2376,6 +2386,64 @@ pre code {
     .container {
         padding: var(--spacing-xl) var(--spacing-md);
     }
+    
+    /* Center all sections from About Me and below on mobile (home page only) */
+    /* Target sections that come after the hero banner on home page */
+    #content .section,
+    body > .section {
+        text-align: center;
+    }
+    
+    /* Center section titles */
+    #content .section .section-title,
+    body > .section .section-title {
+        text-align: center;
+    }
+    
+    /* Center section subtitles */
+    #content .section .section-subtitle,
+    body > .section .section-subtitle {
+        text-align: center;
+    }
+    
+    /* Center about text paragraphs */
+    #content .section .about-text,
+    body > .section .about-text {
+        text-align: center;
+    }
+    
+    #content .section .about-text p,
+    body > .section .about-text p {
+        text-align: center;
+    }
+    
+    /* Center skills grid container */
+    #content .section .skills-grid,
+    body > .section .skills-grid {
+        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Center stats section content */
+    #content .section #stats-container,
+    body > .section #stats-container {
+        justify-content: center;
+    }
+    
+    #content .section #stats-container .row,
+    body > .section #stats-container .row {
+        justify-content: center;
+    }
+    
+    /* Center buttons in sections */
+    #content .section .text-center,
+    body > .section .text-center {
+        text-align: center !important;
+    }
 }
 
 /* ============================================
@@ -2938,9 +3006,31 @@ pre code {
 
 .mobile-nav-icon {
     font-size: 1.25rem;
-    width: 24px;
+    min-width: 24px;
+    width: auto;
     text-align: center;
     flex-shrink: 0;
+    display: inline-block;
+    /* Use system emoji font to ensure emojis render correctly on all devices */
+    /* Important: Override any parent font-family to ensure emojis render */
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols', 'EmojiOne Mozilla', 'Twemoji Mozilla', 'Segoe UI', sans-serif !important;
+    /* Ensure emojis are displayed as emojis, not text */
+    font-style: normal !important;
+    font-variant: normal !important;
+    font-weight: normal !important;
+    line-height: 1;
+    /* Prevent font fallback issues on iOS */
+    -webkit-font-feature-settings: normal;
+    font-feature-settings: normal;
+    /* Ensure visibility on all browsers */
+    visibility: visible;
+    opacity: 1;
+    /* Force emoji rendering on iOS */
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    /* Ensure the icon doesn't inherit text-transform or other text properties */
+    text-transform: none;
+    letter-spacing: normal;
 }
 
 .mobile-nav-label {
@@ -2951,11 +3041,11 @@ pre code {
 .mobile-sidebar-footer {
     margin-top: auto; /* Push to bottom */
     padding: var(--spacing-md) var(--spacing-lg);
-    border-top: 1px solid var(--color-border);
+    /* Removed border-top - we use .mobile-sidebar-divider element instead */
     /* Add minimal padding for iOS safe area - ensure it's above the home indicator */
     /* Reduced padding to bring settings closer to bottom when address bar is hidden */
     padding-bottom: calc(var(--spacing-xs) + 5px);
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-bg-primary); /* Match the main sidebar background */
     display: block;
     visibility: visible;
     flex-shrink: 0;

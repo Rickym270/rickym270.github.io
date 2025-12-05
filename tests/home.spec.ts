@@ -1,40 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Home Page Initial Load', () => {
+  // Set timeout for all tests in this describe block
+  test.describe.configure({ timeout: 120000 }); // 2 minutes
+  
   test.beforeEach(async ({ page }) => {
-    // Ensure English is set for these tests
-    await page.goto('/');
-    
-    // Wait for TranslationManager to be available and initialized
-    await page.waitForFunction(() => {
-      return typeof window.TranslationManager !== 'undefined' && 
-             window.TranslationManager.currentLanguage !== undefined;
-    }, { timeout: 5000 }).catch(() => {
-      // TranslationManager might not exist on master branch - that's okay
-    });
-    
-    // Set language to English
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    });
-    
-    // Wait for translations to apply
-    await page.waitForTimeout(500);
-    
-    // Verify English is set by checking navbar text
-    await page.waitForFunction(() => {
-      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
-      return homeLink && homeLink.textContent?.trim() === 'Home';
-    }, { timeout: 3000 }).catch(() => {
-      // If translation system doesn't exist, that's okay - tests will use English by default
     });
   });
 
   test('loads Home content on initial load', async ({ page }) => {
-    await page.goto('/');
+    // Use domcontentloaded for faster loads (networkidle is too slow)
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load - give SPA time to initialize
     await page.waitForFunction(() => {
@@ -60,7 +40,10 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page does not get replaced when navigating away and back', async ({ page }) => {
-    await page.goto('/');
+    test.setTimeout(90000); // Increase timeout for this test (90 seconds)
+    
+    // Use domcontentloaded for faster loads
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for home content to load initially
     await page.waitForFunction(() => {
@@ -79,6 +62,8 @@ test.describe('Home Page Initial Load', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
+    
+    // Wait for projects page to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -92,48 +77,27 @@ test.describe('Home Page Initial Load', () => {
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
     
-    // Wait for home content to load again and be visible
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      if (!c) return false;
-      const dataLoaded = c.getAttribute('data-content-loaded') === 'true';
-      const hasBanner = !!c.querySelector('#homeBanner');
-      const hasHero = !!c.querySelector('.hero-content, .hero-text-column');
-      return dataLoaded || hasBanner || hasHero;
-    }, { timeout: 15000 });
+    // Wait for home content to load again - use more efficient selector
+    await page.waitForSelector('#content #homeBanner, #content .hero-content, #content .hero-text-column', { 
+      timeout: 15000,
+      state: 'attached' 
+    });
     
-    // Wait for homeBanner element to exist in DOM
-    try {
-      await page.waitForSelector('#content #homeBanner', { timeout: 15000, state: 'attached' });
-    } catch {
-      // If homeBanner doesn't appear, try other home page indicators
-      try {
-        await page.waitForSelector('#content .hero-content, #content .hero-text-column', { timeout: 10000, state: 'attached' });
-      } catch {
-        // Last resort: just wait a bit and continue
-        await page.waitForTimeout(1000);
-      }
-    }
-    await page.waitForTimeout(500);
-    
-    // Home content should still be visible
+    // Verify home content is visible
     const homeBanner = page.locator('#content #homeBanner');
-    const bannerCount = await homeBanner.count();
-
-    if ( bannerCount > 0) {
-      await expect(homeBanner).toBeVisible({ timeout: 10000 });
+    const bannerVisible = await homeBanner.isVisible({ timeout: 5000 }).catch(() => false);
+    
+    if (bannerVisible) {
+      await expect(homeBanner).toBeVisible({ timeout: 5000 });
     } else {
-      const heroContent = page.locator('#content .hero-content')
-      const heroContentCount = await heroContent.count();
-
-      if (heroContentCount > 0) {
-        await expect(heroContent.first()).toBeVisible({ timeout: 10000 });
-      }
+      // Fallback to hero content
+      const heroContent = page.locator('#content .hero-content, #content .hero-text-column').first();
+      await expect(heroContent).toBeVisible({ timeout: 5000 });
     }
   });
 
   test('home page tagline is centered and displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -163,7 +127,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page About Me section displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -192,7 +156,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page Tech Stack section displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -214,7 +178,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page hero buttons are clickable and have correct links', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {

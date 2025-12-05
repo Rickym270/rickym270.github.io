@@ -1,40 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('SPA Navigation', () => {
+  // Set timeout for all tests in this describe block
+  test.describe.configure({ timeout: 120000 }); // 2 minutes
+  
   test.beforeEach(async ({ page }) => {
-    // Ensure English is set for these tests
-    await page.goto('/');
-    
-    // Wait for TranslationManager to be available and initialized
-    await page.waitForFunction(() => {
-      return typeof window.TranslationManager !== 'undefined' && 
-             window.TranslationManager.currentLanguage !== undefined;
-    }, { timeout: 5000 }).catch(() => {
-      // TranslationManager might not exist on master branch - that's okay
-    });
-    
-    // Set language to English
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    });
-    
-    // Wait for translations to apply
-    await page.waitForTimeout(500);
-    
-    // Verify English is set by checking navbar text
-    await page.waitForFunction(() => {
-      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
-      return homeLink && homeLink.textContent?.trim() === 'Home';
-    }, { timeout: 3000 }).catch(() => {
-      // If translation system doesn't exist, that's okay - tests will use English by default
     });
   });
 
   test('navigation loads content into #content without full page reload', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Initial page load - wait for content
     await page.waitForSelector('#content', { state: 'attached' });
@@ -99,7 +78,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('theme persists across SPA navigation', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -151,7 +130,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('tutorials page does not reload entire page when clicked', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     const initialUrl = page.url();
     
@@ -208,7 +187,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });

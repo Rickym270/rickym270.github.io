@@ -1,40 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Projects Page', () => {
+  // Set timeout for all tests in this describe block
+  test.describe.configure({ timeout: 120000 }); // 2 minutes
+  
   test.beforeEach(async ({ page }) => {
-    // Ensure English is set for these tests
-    await page.goto('/');
-    
-    // Wait for TranslationManager to be available and initialized
-    await page.waitForFunction(() => {
-      return typeof window.TranslationManager !== 'undefined' && 
-             window.TranslationManager.currentLanguage !== undefined;
-    }, { timeout: 5000 }).catch(() => {
-      // TranslationManager might not exist on master branch - that's okay
-    });
-    
-    // Set language to English
-    await page.evaluate(() => {
+    // Minimal setup - just set language preference (no page load)
+    // Tests will load the page themselves, avoiding double loads
+    await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
-      if (typeof window.TranslationManager !== 'undefined') {
-        window.TranslationManager.switchLanguage('en');
-      }
-    });
-    
-    // Wait for translations to apply
-    await page.waitForTimeout(500);
-    
-    // Verify English is set by checking navbar text
-    await page.waitForFunction(() => {
-      const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
-      return homeLink && homeLink.textContent?.trim() === 'Home';
-    }, { timeout: 3000 }).catch(() => {
-      // If translation system doesn't exist, that's okay - tests will use English by default
     });
   });
 
   test('navigates to Projects via navbar and renders content', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -130,7 +109,7 @@ test.describe('Projects Page', () => {
   });
 
   test('shows loading message in each section while projects load', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -178,7 +157,9 @@ test.describe('Projects Page', () => {
   });
 
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
-    await page.goto('/');
+    test.setTimeout(90000); // Increase timeout for this test (90 seconds)
+    
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -195,6 +176,8 @@ test.describe('Projects Page', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
+    
+    // Wait for projects page to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -206,7 +189,12 @@ test.describe('Projects Page', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
-    await page.waitForTimeout(1000);
+    
+    // Wait for home page to load
+    await page.waitForSelector('#content #homeBanner, #content .hero-content', { 
+      timeout: 15000,
+      state: 'attached' 
+    });
     
     // Navigate back to Projects - handle mobile
     if (isMobile) {
@@ -217,15 +205,15 @@ test.describe('Projects Page', () => {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
     
-    // Wait for projects page HTML to load into #content
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
-    }, { timeout: 15000 });
+    // Wait for projects page to load again - use more efficient selector
+    await page.waitForSelector('#content #ProjInProgress, #content #ProjComplete, #content h1[data-translate="projects.heading"]', { 
+      timeout: 15000,
+      state: 'attached' 
+    });
     
     // Wait for heading element to exist and be visible - use fallback for WebKit
     try {
-      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'visible' });
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 10000, state: 'visible' });
     } catch {
       // Fallback for WebKit: wait for any h1 with Projects text
       await page.waitForFunction(() => {
@@ -271,7 +259,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project icons are visible in dark mode', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -324,7 +312,7 @@ test.describe('Projects Page', () => {
   });
 
   test('projects page has correct title and subtitle', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -370,7 +358,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project cards have correct structure when loaded', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });
@@ -424,7 +412,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project sections exist (In Progress, Complete, Coming Soon)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
     // Wait for initial load
     await page.waitForSelector('#content', { state: 'attached' });

@@ -139,8 +139,19 @@
                 } else if (element.hasAttribute('data-translate-html')) {
                     element.innerHTML = translation;
                 } else {
+                    // For mobile nav items, preserve icon spans
+                    if (element.classList.contains('mobile-nav-item')) {
+                        const iconSpan = element.querySelector('.mobile-nav-icon');
+                        const labelSpan = element.querySelector('.mobile-nav-label');
+                        if (iconSpan && labelSpan) {
+                            // Only update the label, preserve the icon
+                            labelSpan.textContent = translation;
+                        } else {
+                            element.textContent = translation;
+                        }
+                    }
                     // For labels, preserve HTML like <span class="text-danger">*</span>
-                    if (element.tagName === 'LABEL' && element.innerHTML.includes('<')) {
+                    else if (element.tagName === 'LABEL' && element.innerHTML.includes('<')) {
                         const htmlContent = element.innerHTML;
                         // Extract text before first HTML tag and the HTML part
                         const parts = htmlContent.split(/(<[^>]*>)/);
