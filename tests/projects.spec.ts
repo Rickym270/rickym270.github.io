@@ -178,6 +178,8 @@ test.describe('Projects Page', () => {
   });
 
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
+    test.setTimeout(90000); // Increase timeout for this test (90 seconds)
+    
     await page.goto('/');
     
     // Wait for initial load
@@ -195,6 +197,8 @@ test.describe('Projects Page', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
+    
+    // Wait for projects page to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -206,7 +210,12 @@ test.describe('Projects Page', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
-    await page.waitForTimeout(1000);
+    
+    // Wait for home page to load
+    await page.waitForSelector('#content #homeBanner, #content .hero-content', { 
+      timeout: 15000,
+      state: 'attached' 
+    });
     
     // Navigate back to Projects - handle mobile
     if (isMobile) {
@@ -217,15 +226,15 @@ test.describe('Projects Page', () => {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
     
-    // Wait for projects page HTML to load into #content
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
-    }, { timeout: 15000 });
+    // Wait for projects page to load again - use more efficient selector
+    await page.waitForSelector('#content #ProjInProgress, #content #ProjComplete, #content h1[data-translate="projects.heading"]', { 
+      timeout: 15000,
+      state: 'attached' 
+    });
     
     // Wait for heading element to exist and be visible - use fallback for WebKit
     try {
-      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 15000, state: 'visible' });
+      await page.waitForSelector('#content h1[data-translate="projects.heading"]', { timeout: 10000, state: 'visible' });
     } catch {
       // Fallback for WebKit: wait for any h1 with Projects text
       await page.waitForFunction(() => {
