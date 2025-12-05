@@ -46,6 +46,37 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body.receivedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
   });
 
+  test('POST /api/contact handles X-Forwarded-For header for IP detection', async ({ request }) => {
+    // Wait for API server to be ready
+    await request.get(`${API_BASE_URL}/api/health`, { timeout: 30000 }).catch(() => {
+      // Server might not be ready yet, continue anyway
+    });
+    
+    // Use unique email to avoid rate limiting
+    const uniqueEmail = `test-xff-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
+    
+    // Test with X-Forwarded-For header (simulates Cloud Run/proxy scenario)
+    const response = await request.post(`${API_BASE_URL}/api/contact`, {
+      data: {
+        name: 'Test User',
+        email: uniqueEmail,
+        subject: 'Test Subject',
+        message: 'This is a test message with X-Forwarded-For header',
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Forwarded-For': '192.168.1.100, 10.0.0.1', // Multiple IPs (client, proxy)
+      },
+      timeout: 30000,
+    });
+
+    // Should succeed and use first IP from X-Forwarded-For for rate limiting
+    expect(response.status()).toBe(201);
+    const body = await response.json();
+    expect(body).toHaveProperty('id');
+    expect(body).toHaveProperty('email', uniqueEmail);
+  });
+
   test('POST /api/contact returns 422 for invalid data', async ({ request }) => {
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {

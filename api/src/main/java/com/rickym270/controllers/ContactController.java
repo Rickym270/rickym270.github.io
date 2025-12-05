@@ -4,7 +4,6 @@ import com.rickym270.dto.ContactMessage;
 import com.rickym270.dto.ContactRequest;
 import com.rickym270.exceptions.UnauthorizedException;
 import com.rickym270.services.ContactService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,6 @@ public class ContactController {
     @PostMapping("/contact")
     public ResponseEntity<ContactMessage> create(
             @Valid @RequestBody ContactRequest request,
-            HttpServletRequest httpRequest,
             @RequestHeader(value = "X-Forwarded-For", required = false) String forwardedFor,
             @RequestHeader(value = "X-Real-IP", required = false) String realIp) {
         
@@ -41,7 +39,7 @@ public class ContactController {
         } else if (realIp != null && !realIp.trim().isEmpty()) {
             clientIp = realIp.trim();
         }
-        // Note: We don't use httpRequest.getRemoteAddr() on Cloud Run because
+        // Note: We don't use HttpServletRequest.getRemoteAddr() on Cloud Run because
         // it would return the load balancer's IP, not the client's IP.
         // This would cause all users to share the same rate limit.
         
