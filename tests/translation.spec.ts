@@ -114,17 +114,19 @@ test.describe('Translation feature', () => {
       const isActive = await enButton.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
       
-      // Check that English text is displayed in sidebar
+      // Check that English text is displayed in sidebar (mobile nav includes icon)
       const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
-      await expect(homeLink).toHaveText('Home');
+      // Mobile nav items include emoji icons, so use toContainText instead
+      await expect(homeLink).toContainText('Home');
     } else {
       const enButton = page.locator('#language-switcher button[data-lang="en"]');
       const isActive = await enButton.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
       
       // Check that English text is displayed - use navbar-links to avoid mobile sidebar
+      // Desktop nav also includes icons now, so use toContainText
       const homeLink = page.locator('#navbar-links a[data-translate="nav.home"]').first();
-      await expect(homeLink).toHaveText('Home');
+      await expect(homeLink).toContainText('Home');
     }
   });
 
@@ -145,9 +147,10 @@ test.describe('Translation feature', () => {
       // Wait for translation to apply
       await page.waitForTimeout(500);
       
-      // Check that Spanish text is displayed in sidebar
+      // Check that Spanish text is displayed in sidebar (mobile nav includes icon)
       const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
-      await expect(homeLink).toHaveText('Inicio');
+      // Mobile nav items include emoji icons, so use toContainText instead
+      await expect(homeLink).toContainText('Inicio');
       
       // Check that ES button is now active
       const isActive = await esButton.getAttribute('aria-pressed');
@@ -160,8 +163,9 @@ test.describe('Translation feature', () => {
       await page.waitForTimeout(500);
       
       // Check that Spanish text is displayed - use navbar-links to avoid mobile sidebar
+      // Desktop nav also includes icons now, so use toContainText
       const homeLink = page.locator('#navbar-links a[data-translate="nav.home"]').or(page.locator('nav.navbar a[data-translate="nav.home"]').first());
-      await expect(homeLink.first()).toHaveText('Inicio');
+      await expect(homeLink.first()).toContainText('Inicio');
       
       const projectsLink = page.locator('#navbar-links a[data-translate="nav.projects"]').or(page.locator('nav.navbar a[data-translate="nav.projects"]').first());
       await expect(projectsLink.first()).toHaveText('Proyectos');
@@ -193,9 +197,10 @@ test.describe('Translation feature', () => {
       await enButton.click();
       await page.waitForTimeout(500);
       
-      // Check that English text is displayed in sidebar
+      // Check that English text is displayed in sidebar (mobile nav includes icon)
       const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
-      await expect(homeLink).toHaveText('Home');
+      // Mobile nav items include emoji icons, so use toContainText instead
+      await expect(homeLink).toContainText('Home');
       
       const isActive = await enButton.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
@@ -211,8 +216,9 @@ test.describe('Translation feature', () => {
       await page.waitForTimeout(500);
       
       // Check that English text is displayed - use navbar-links to avoid mobile sidebar
+      // Desktop nav also includes icons now, so use toContainText
       const homeLink = page.locator('#navbar-links a[data-translate="nav.home"]').first();
-      await expect(homeLink).toHaveText('Home');
+      await expect(homeLink).toContainText('Home');
       
       const isActive = await enButton.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
@@ -803,9 +809,10 @@ test.describe('Translation feature', () => {
       const isActive = await esButtonAfterReload.getAttribute('aria-pressed');
       expect(isActive).toBe('true');
       
-      // Check that content is in Spanish
+      // Check that content is in Spanish (mobile nav includes icon)
       const homeLink = page.locator('.mobile-nav-item[data-translate="nav.home"]');
-      await expect(homeLink).toHaveText('Inicio');
+      // Mobile nav items include emoji icons, so use toContainText instead
+      await expect(homeLink).toContainText('Inicio');
     } else {
       const esButtonAfterReload = page.locator('#language-switcher button[data-lang="es"]');
       await expect(esButtonAfterReload).toBeVisible({ timeout: 5000 });
@@ -820,8 +827,9 @@ test.describe('Translation feature', () => {
       expect(isActive).toBe('true');
       
       // Check that content is in Spanish - use navbar-links to avoid mobile sidebar
+      // Desktop nav also includes icons now, so use toContainText
       const homeLink = page.locator('#navbar-links a[data-translate="nav.home"]').first();
-      await expect(homeLink).toHaveText('Inicio');
+      await expect(homeLink).toContainText('Inicio');
     }
   });
 

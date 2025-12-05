@@ -22,7 +22,9 @@ test.describe('API CORS Configuration', () => {
   });
 
   test('OPTIONS preflight request works correctly', async ({ request }) => {
-    const response = await request.options(`${API_BASE_URL}/api/health`, {
+    // Use request.fetch() with method: 'OPTIONS' since request.options() doesn't exist
+    const response = await request.fetch(`${API_BASE_URL}/api/health`, {
+      method: 'OPTIONS',
       headers: {
         'Origin': 'http://localhost:4321',
         'Access-Control-Request-Method': 'GET',
@@ -66,7 +68,11 @@ test.describe('API CORS Configuration', () => {
     
     expect(response.ok()).toBeTruthy();
     const headers = response.headers();
-    expect(headers['access-control-allow-origin']).toBeTruthy();
+    // CORS header should be present (either exact match or pattern match)
+    const allowOrigin = headers['access-control-allow-origin'];
+    expect(allowOrigin).toBeTruthy();
+    // Should match localhost:8080 (either exact or via pattern)
+    expect(allowOrigin === 'http://localhost:8080' || allowOrigin.includes('localhost')).toBeTruthy();
   });
 
   test('CORS allows production domain origin', async ({ request }) => {
