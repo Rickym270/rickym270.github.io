@@ -20,15 +20,13 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow specific origins
-        config.setAllowedOrigins(Arrays.asList(
-            "https://rickym270.github.io",
-            "http://localhost:4321",
-            "http://localhost:8080",
-            "http://127.0.0.1:4321",
-            "http://127.0.0.1:8080"
-        ));
-        
+        // Use allowedOriginPatterns instead of allowedOrigins to support wildcards with credentials
+        // This allows us to use patterns while still enabling credentials
+        // Allow production domain
+        config.addAllowedOriginPattern("https://rickym270.github.io");
+        // Allow localhost variants (exact matches via patterns)
+        config.addAllowedOriginPattern("http://localhost:*");
+        config.addAllowedOriginPattern("http://127.0.0.1:*");
         // Allow local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
         // This regex pattern matches common private IP ranges
         config.addAllowedOriginPattern("http://192.168.*.*:*");
