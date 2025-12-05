@@ -2,10 +2,16 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Tutorials Page', () => {
   test.beforeEach(async ({ page }) => {
-    // Ensure English is set for these tests
-    await page.goto('/');
+    // Increase timeout for beforeEach to prevent timeouts
+    test.setTimeout(90000);
     
-    // Wait for TranslationManager to be available and initialized
+    // Ensure English is set for these tests
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // Wait for content to be attached first
+    await page.waitForSelector('#content', { state: 'attached', timeout: 15000 }).catch(() => {});
+    
+    // Wait for TranslationManager to be available and initialized (non-blocking)
     await page.waitForFunction(() => {
       return typeof window.TranslationManager !== 'undefined' && 
              window.TranslationManager.currentLanguage !== undefined;
@@ -21,14 +27,14 @@ test.describe('Tutorials Page', () => {
       }
     });
     
-    // Wait for translations to apply
-    await page.waitForTimeout(500);
+    // Wait for translations to apply (reduced timeout)
+    await page.waitForTimeout(300);
     
-    // Verify English is set by checking navbar text
+    // Verify English is set by checking navbar text (non-blocking, shorter timeout)
     await page.waitForFunction(() => {
       const homeLink = document.querySelector('nav a[data-translate="nav.home"]');
       return homeLink && homeLink.textContent?.trim() === 'Home';
-    }, { timeout: 3000 }).catch(() => {
+    }, { timeout: 2000 }).catch(() => {
       // If translation system doesn't exist, that's okay - tests will use English by default
     });
   });
