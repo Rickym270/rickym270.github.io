@@ -388,13 +388,30 @@ test.describe('Contact Page', () => {
     await page.locator('#subject').fill('Test Subject');
     await page.locator('#message').fill('This is a test message.');
     
+    // Wait for form submission response before checking for success message
+    const responsePromise = page.waitForResponse(
+      (response) => response.url().includes('/api/contact') && response.status() === 201,
+      { timeout: 10000 }
+    );
+    
     // Submit form
     const submitBtn = page.locator('#submit-btn');
     await submitBtn.click();
     
-    // Wait for success message - increased timeout and wait for API response
+    // Wait for API response to complete
+    await responsePromise;
+    
+    // Wait a moment for the DOM to update after response
+    await page.waitForTimeout(500);
+    
+    // Wait for success message to appear (with increased timeout for mobile)
+    // The message div changes from d-none to visible with alert-success class
+    // First ensure the element exists, then check it's visible
+    await page.waitForSelector('#form-message', { state: 'attached', timeout: 5000 });
+    
+    // Wait for the alert-success class to be added and element to be visible
     const successMessage = page.locator('#form-message.alert-success');
-    await expect(successMessage).toBeVisible({ timeout: 10000 });
+    await expect(successMessage).toBeVisible({ timeout: 15000 });
     
     // Check message contains success text
     const messageText = await successMessage.textContent();
