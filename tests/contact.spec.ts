@@ -335,8 +335,18 @@ test.describe('Contact Page', () => {
 
   test('form submission shows success message', async ({ page }) => {
     // Mock the API endpoint to prevent actual email sending
-    // Use regex to match any URL containing /api/contact (both relative and absolute URLs)
-    await page.route(/.*\/api\/contact/, async (route) => {
+    // Use Promise to track when request is intercepted and fulfilled
+    let routeFulfilled = false;
+    let routeFulfillPromise: Promise<void>;
+    let resolveRouteFulfill: () => void;
+    
+    routeFulfillPromise = new Promise((resolve) => {
+      resolveRouteFulfill = resolve;
+    });
+    
+    // Set up route BEFORE navigation - Playwright routes persist across navigation
+    // Use regex pattern to match any URL containing /api/contact (both absolute and relative)
+    await page.route(/.*\/api\/contact.*/, async (route) => {
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -349,6 +359,8 @@ test.describe('Contact Page', () => {
           receivedAt: new Date().toISOString()
         })
       });
+      routeFulfilled = true;
+      resolveRouteFulfill();
     });
 
     await page.goto('/');
@@ -388,18 +400,23 @@ test.describe('Contact Page', () => {
     await page.locator('#subject').fill('Test Subject');
     await page.locator('#message').fill('This is a test message.');
     
-    // Wait for form submission response before checking for success message
-    const responsePromise = page.waitForResponse(
-      (response) => response.url().includes('/api/contact') && response.status() === 201,
-      { timeout: 10000 }
-    );
-    
     // Submit form
     const submitBtn = page.locator('#submit-btn');
     await submitBtn.click();
     
-    // Wait for API response to complete
-    await responsePromise;
+    // Wait for route to be fulfilled (with timeout fallback)
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      setTimeout(() => reject(new Error('Route fulfillment timeout')), 15000);
+    });
+    
+    try {
+      await Promise.race([routeFulfillPromise, timeoutPromise]);
+    } catch (error) {
+      if (!routeFulfilled) {
+        console.error('Route was not fulfilled within timeout');
+        throw error;
+      }
+    }
     
     // Wait a moment for the DOM to update after response
     await page.waitForTimeout(500);
@@ -412,6 +429,9 @@ test.describe('Contact Page', () => {
     // Wait for the alert-success class to be added and element to be visible
     const successMessage = page.locator('#form-message.alert-success');
     await expect(successMessage).toBeVisible({ timeout: 15000 });
+    
+    // Clean up routes to prevent errors when test ends
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
     
     // Check message contains success text
     const messageText = await successMessage.textContent();
