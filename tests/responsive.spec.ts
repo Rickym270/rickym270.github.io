@@ -10,7 +10,10 @@ test.describe('Responsive layout', () => {
   for (const vp of viewports) {
     test(`home layout is cohesive on ${vp.name}`, async ({ page }) => {
       await page.setViewportSize(vp.size);
-      await page.goto('/');
+      // Use networkidle for Firefox, domcontentloaded for others
+      const browserName = page.context().browser()?.browserType().name() || '';
+      const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+      await page.goto('/', { waitUntil, timeout: 90000 });
 
       // Wait for content to load
       await page.waitForFunction(() => {

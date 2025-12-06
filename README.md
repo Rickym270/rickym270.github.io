@@ -1,8 +1,51 @@
 # Personal Site (rickym270.github.io)
-   ## Description
-      This site will host notes, tutorials, and projects. It started as a Python teaching page and evolved into a personal site.
-   ## Notes:
-      - Added a hack (405.html) to enable single page apps
+
+A modern portfolio website featuring notes, tutorials, and projects. Built as a Single Page Application (SPA) with a Spring Boot backend API.
+
+## 📚 Documentation
+
+- **[Documentation Index](docs/README.md)** - Complete guide to all documentation
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to this project
+- **[Security Policy](SECURITY.md)** - Security reporting and best practices
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18.x (see [Node.js Setup Guide](docs/NODE_SETUP.md) if needed)
+- Java 17+ (for API development, optional with Docker)
+- Git
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Rickym270/rickym270.github.io.git
+cd rickym270.github.io
+
+# Install frontend dependencies
+npm install
+npx playwright install --with-deps
+```
+
+### Running Locally
+
+**Frontend:**
+```bash
+npm run serve  # Serves on http://localhost:4321
+```
+
+**Backend API:**
+```bash
+cd api && ./mvnw -DskipTests spring-boot:run  # Runs on http://localhost:8080
+```
+
+For detailed setup instructions, see the [Documentation Index](docs/README.md).
+
+## 📖 Description
+
+This site hosts notes, tutorials, and projects. It started as a Python teaching page and evolved into a personal portfolio site.
+
+**Note**: Added a hack (405.html) to enable single page apps on GitHub Pages.
 
 ## Backend API (Spring Boot)
    The repo contains a minimal Java backend under `api/` to support dynamic features.
@@ -15,7 +58,7 @@
      - From repo root:
        - cd api && docker run --rm -it -p 8080:8080 -v "$PWD":/app -w /app maven:3.9-eclipse-temurin-17 mvn -DskipTests spring-boot:run
 
-   For full run/test instructions, see `docs/TESTING.md`.
+   For full run/test instructions, see [API Testing Guide](docs/TESTING.md).
 
    Endpoints
    - Production API: https://ricky-api-745807383723.us-east1.run.app
@@ -112,4 +155,22 @@
    - `npm run serve` - Serves on `http://localhost:4321` using `http-server`
    - Or use Python: `python3 -m http.server 4321` (Playwright will detect and reuse it)
 
-   For full UI testing instructions, see `docs/UI_TESTING.md`.
+   For full UI testing instructions, see [UI Testing Guide](docs/UI_TESTING.md).
+
+## 📝 Additional Resources
+
+- **[API Testing Guide](docs/TESTING.md)** - Complete API testing documentation
+- **[UI Testing Guide](docs/UI_TESTING.md)** - Playwright E2E testing guide
+- **[Repository Analysis](docs/REPO_ANALYSIS.md)** - Repository structure and test coverage
+- **[API Deployment](api/DEPLOY.md)** - Deploying to Google Cloud Run
+- **[GitHub Secrets](docs/GITHUB_SECRETS.md)** - Setting up CI/CD secrets
+
+## 🧪 Testing
+
+Run all tests:
+```bash
+npm test  # Runs Playwright UI tests
+cd api && ./mvnw test  # Runs API unit tests
+```
+
+See [Documentation Index](docs/README.md) for complete testing guides.
