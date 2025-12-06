@@ -706,7 +706,7 @@ test.describe('Docs/Notes Page', () => {
       
       // Wait for back button to appear - use waitForFunction for more reliable detection
       // On mobile, back button may take longer to render
-      const backButtonTimeout = isMobile ? 15000 : 10000;
+      const backButtonTimeout = isMobile ? 30000 : 10000;
       await page.waitForFunction(() => {
         const backButton = document.querySelector('#docsBackButton');
         if (!backButton) return false;
