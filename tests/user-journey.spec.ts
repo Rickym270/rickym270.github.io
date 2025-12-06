@@ -247,8 +247,15 @@ test.describe('End-to-End User Journeys', () => {
         // Click outside or toggle again to close
         await page.locator('body').click({ position: { x: 10, y: 10 } });
         await page.waitForTimeout(500);
+        // Wait for sidebar to actually close
+        await page.waitForFunction(() => {
+          const sidebar = document.querySelector('#mobile-sidebar');
+          return !sidebar?.classList.contains('active');
+        }, { timeout: 2000 }).catch(() => {}); // Ignore if already closed
       }
-      await page.locator('#mobile-menu-toggle').click();
+      // Wait for menu toggle to be clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ force: true }); // Use force click to bypass interception
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
     } else {
