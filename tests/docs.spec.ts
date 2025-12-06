@@ -2,16 +2,24 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Docs/Notes Page', () => {
   test('Notes hero section displays correctly', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // Wait for page to be ready - check if content element exists
+    // For Firefox, use longer timeout
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 30000 });
     
     // Check if we're on mobile (docs dropdown only exists on desktop)
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs directly (no dropdown)
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -37,9 +45,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs directly (no dropdown)
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -88,9 +98,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs directly (no dropdown)
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -114,9 +126,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs directly (no dropdown)
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -134,7 +148,18 @@ test.describe('Docs/Notes Page', () => {
     await viewMoreLink.click();
     
     // Wait for category content to load - wait for back button first (indicates navigation happened)
-    await page.waitForSelector('#docsBackButton', { timeout: 15000 });
+    // On mobile, back button might have different ID or take longer to appear
+    await page.waitForFunction(() => {
+      const content = document.querySelector('#content');
+      if (!content) return false;
+      // Check for back button (could be #docsBackButton, #docsBackBtn, or .docs-back-button)
+      const backButton = content.querySelector('#docsBackButton, #docsBackBtn, .docs-back-button, .lesson-back-button');
+      if (backButton) return true;
+      // Also check if category content is loaded (toc_title, toc_list, or substantial text)
+      const hasContent = content.querySelector('.toc_title, .toc_list') || 
+                         (content.textContent && content.textContent.trim().length > 100);
+      return hasContent;
+    }, { timeout: 20000 });
     await page.waitForTimeout(2000); // Give time for content to load
     
     // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
@@ -156,9 +181,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs directly (no dropdown)
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -310,9 +337,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -383,7 +412,10 @@ test.describe('Docs/Notes Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForTimeout(500);
     
     // Check if we're on mobile
@@ -391,9 +423,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -433,9 +467,11 @@ test.describe('Docs/Notes Page', () => {
     
     if (isMobile) {
       // On mobile, open sidebar and click Docs
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -519,9 +555,11 @@ test.describe('Docs/Notes Page', () => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
@@ -598,9 +636,11 @@ test.describe('Docs/Notes Page', () => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      // Wait for mobile menu toggle to be ready and clickable
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })

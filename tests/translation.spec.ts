@@ -11,7 +11,10 @@ test.describe('Translation feature', () => {
     }
     
     // Wait for content element to be attached
-    await page.waitForSelector('#content', { state: 'attached', timeout: 30000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 30000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {

@@ -18,9 +18,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npx http-server -p 4321 -c-1 .',
-    url: 'http://localhost:4321',
-    reuseExistingServer: true,
+    command: 'npx http-server -p 4321 -c-1 -d false .',
+    url: 'http://localhost:4321/index.html',
+    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
     timeout: 60_000,
   },
   projects: [
