@@ -94,7 +94,10 @@ test.describe('Responsive layout', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     
     // Wait for content to load
-    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 10000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');

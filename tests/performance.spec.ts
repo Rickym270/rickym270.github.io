@@ -17,7 +17,10 @@ test.describe('Performance', () => {
     
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -32,7 +35,10 @@ test.describe('Performance', () => {
   test('SPA navigation is fast', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -65,7 +71,10 @@ test.describe('Performance', () => {
   test('images are optimized', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -98,7 +107,10 @@ test.describe('Performance', () => {
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -130,7 +142,10 @@ test.describe('Performance', () => {
   test('no memory leaks on navigation', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');

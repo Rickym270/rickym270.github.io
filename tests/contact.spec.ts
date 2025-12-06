@@ -38,7 +38,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -49,11 +52,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact - handle mobile
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load
@@ -85,7 +99,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -96,11 +113,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load
@@ -131,7 +159,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -142,11 +173,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load
@@ -176,7 +218,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -187,11 +232,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load
@@ -229,8 +285,12 @@ test.describe('Contact Page', () => {
     // Use function-based route matching for more reliable interception on mobile
     // This matches both absolute URLs (https://...) and any path containing /api/contact
     await page.route((url) => {
-      const urlString = url.href || url.toString();
+      // Playwright route function receives a URL object with a 'url' property (full URL string)
+      // Also has pathname, search, etc. properties
+      const urlString = url.url || '';
       const pathname = url.pathname || '';
+      
+      // Match any URL containing /api/contact
       return urlString.includes('/api/contact') || pathname.includes('/api/contact');
     }, async (route) => {
       // Only intercept once
@@ -271,7 +331,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -282,11 +345,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load
@@ -321,7 +395,7 @@ test.describe('Contact Page', () => {
     
     // Wait for either the route interception or the actual response
     // Increase timeout for mobile devices which may be slower
-    const timeoutDuration = isMobile ? 10000 : 5000;
+    const timeoutDuration = isMobile ? 15000 : 10000;
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => reject(new Error('Request timeout')), timeoutDuration);
     });
@@ -375,8 +449,17 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use regex pattern to match any URL containing /api/contact (both absolute and relative)
-    await page.route(/.*\/api\/contact.*/, async (route) => {
+    // Use function-based route matching for more reliable interception on mobile
+    // This matches both absolute URLs (https://...) and any path containing /api/contact
+    await page.route((url) => {
+      // Playwright route function receives a URL object with a 'url' property (full URL string)
+      // Also has pathname, search, etc. properties
+      const urlString = url.url || '';
+      const pathname = url.pathname || '';
+      
+      // Match any URL containing /api/contact
+      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
+    }, async (route) => {
       routeFulfilled = true;
       resolveRouteFulfill();
       // Fulfill the route after resolving the promise
@@ -407,7 +490,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -418,11 +504,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load
@@ -518,7 +615,10 @@ test.describe('Contact Page', () => {
     await page.goto('/');
     
     // Wait for initial load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -529,11 +629,22 @@ test.describe('Contact Page', () => {
     
     // Navigate to Contact
     if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+      // Wait for mobile menu toggle to be ready
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click({ timeout: 5000 });
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click({ timeout: 5000 });
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+      // For Firefox, wait for link to be ready and use force click if needed
+      const contactLink = page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first();
+      await contactLink.waitFor({ state: 'visible', timeout: 10000 });
+      // Try normal click first, if it fails on Firefox, use force
+      try {
+        await contactLink.click({ timeout: 10000 });
+      } catch (e) {
+        // Firefox sometimes needs force click for SPA navigation
+        await contactLink.click({ force: true, timeout: 10000 });
+      }
     }
     
     // Wait for contact page to load

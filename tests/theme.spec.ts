@@ -83,7 +83,10 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
     await page.goto('/');
     
     // Wait for content to load
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForTimeout(1000);
     
     // Get a regular link element (not a button) - use About Me section link
@@ -143,7 +146,10 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
-    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 10000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');

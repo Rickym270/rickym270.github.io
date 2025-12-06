@@ -24,8 +24,10 @@ test.describe('Accessibility', () => {
   test('page has proper heading hierarchy', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    // Wait for content element
-    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     
     // Wait for content to load - use multiple strategies with shorter timeouts
     try {
@@ -69,7 +71,10 @@ test.describe('Accessibility', () => {
   test('images have alt text', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     
     // Wait for content to load - use multiple strategies with shorter timeouts
     try {
@@ -107,7 +112,10 @@ test.describe('Accessibility', () => {
   test('links have accessible text', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     
     // Wait for content to load - use multiple strategies with shorter timeouts
     try {
@@ -146,7 +154,10 @@ test.describe('Accessibility', () => {
   test('form inputs have labels', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     
     // Wait for initial content, then navigate to contact - use shorter timeout
     try {
@@ -199,7 +210,10 @@ test.describe('Accessibility', () => {
   test('buttons have accessible names', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -236,7 +250,10 @@ test.describe('Accessibility', () => {
   test('color contrast meets WCAG standards', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -261,7 +278,10 @@ test.describe('Accessibility', () => {
   test('keyboard navigation works', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -294,7 +314,10 @@ test.describe('Accessibility', () => {
   test('ARIA landmarks are present', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
-    await page.waitForSelector('#content', { state: 'attached' });
+    // Wait for page to be ready - check if content element exists
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
