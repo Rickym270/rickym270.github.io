@@ -107,6 +107,12 @@ test.describe('End-to-End User Journeys', () => {
     
     // Intercept API call
     let requestIntercepted = false;
+    let routeFulfilled = false;
+    let resolveRouteFulfill: (() => void) | null = null;
+    const routeFulfillPromise = new Promise<void>((resolve) => {
+      resolveRouteFulfill = resolve;
+    });
+    
     await page.route(/.*\/api\/contact/, async (route) => {
       requestIntercepted = true;
       await route.fulfill({
@@ -121,13 +127,38 @@ test.describe('End-to-End User Journeys', () => {
           receivedAt: new Date().toISOString()
         })
       });
+      routeFulfilled = true;
+      if (resolveRouteFulfill) resolveRouteFulfill();
     });
     
     // Submit form
-    await page.locator('button[type="submit"], #submit-btn').click();
+    const clickPromise = page.locator('button[type="submit"], #submit-btn').click();
+    
+    // Wait for route to be fulfilled (with timeout fallback)
+    const timeoutDuration = isMobile ? 20000 : 15000;
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
+    });
+    
+    try {
+      await Promise.all([clickPromise, Promise.race([routeFulfillPromise, timeoutPromise])]);
+    } catch (error) {
+      if (!routeFulfilled) {
+        console.error('Route was not fulfilled within timeout');
+        // Give it a moment to see if response comes through
+        await page.waitForTimeout(2000);
+      }
+      // Re-throw if it's not a timeout
+      if (error instanceof Error && !error.message.includes('timeout')) {
+        throw error;
+      }
+    }
+    
+    // Wait a moment for DOM to update after API response
+    await page.waitForTimeout(500);
     
     // Wait for success message
-    await page.waitForSelector('#form-message.alert-success, .alert-success', { timeout: 15000 });
+    await page.waitForSelector('#form-message.alert-success, .alert-success', { timeout: 10000 });
     
     // Verify success
     const successMessage = page.locator('#form-message.alert-success, .alert-success');
