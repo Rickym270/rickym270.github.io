@@ -176,5 +176,85 @@ test.describe('Performance', () => {
     const content = page.locator('#content');
     await expect(content).toBeVisible();
   });
+
+  test('page performance metrics are acceptable', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    
+    // Wait for page to be ready
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    // Get performance metrics using Performance API
+    const metrics = await page.evaluate(() => {
+      const perf = performance.timing;
+      const navigation = perf.navigationStart;
+      
+      return {
+        domContentLoaded: perf.domContentLoadedEventEnd - navigation,
+        loadComplete: perf.loadEventEnd - navigation,
+        domInteractive: perf.domInteractive - navigation,
+        firstPaint: performance.getEntriesByType('paint').find((entry: any) => entry.name === 'first-paint')?.startTime || 0,
+        firstContentfulPaint: performance.getEntriesByType('paint').find((entry: any) => entry.name === 'first-contentful-paint')?.startTime || 0,
+      };
+    });
+
+    // DOM Content Loaded should be under 3 seconds
+    expect(metrics.domContentLoaded).toBeLessThan(3000);
+    
+    // Load complete should be under 5 seconds
+    expect(metrics.loadComplete).toBeLessThan(5000);
+    
+    // DOM Interactive should be under 2 seconds
+    expect(metrics.domInteractive).toBeLessThan(2000);
+  });
+
+  test('resource loading is optimized', async ({ page }) => {
+    const resources: Array<{ url: string; size: number; duration: number }> = [];
+    
+    page.on('response', async (response) => {
+      const url = response.url();
+      const headers = response.headers();
+      const contentLength = headers['content-length'];
+      
+      if (contentLength) {
+        const startTime = Date.now();
+        await response.body();
+        const duration = Date.now() - startTime;
+        
+        resources.push({
+          url,
+          size: parseInt(contentLength, 10),
+          duration
+        });
+      }
+    });
+
+    await page.goto('/', { waitUntil: 'networkidle' });
+    
+    // Wait for content
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
+
+    // Check that critical resources loaded
+    expect(resources.length).toBeGreaterThan(0);
+    
+    // Calculate total page weight
+    const totalSize = resources.reduce((sum, r) => sum + r.size, 0);
+    
+    // Page should be under 5MB (reasonable for a portfolio site)
+    expect(totalSize).toBeLessThan(5 * 1024 * 1024);
+    
+    // Average resource load time should be reasonable
+    if (resources.length > 0) {
+      const avgDuration = resources.reduce((sum, r) => sum + r.duration, 0) / resources.length;
+      expect(avgDuration).toBeLessThan(2000); // 2 seconds average
+    }
+  });
 });
 
