@@ -217,25 +217,36 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use regex pattern to match any URL containing /api/contact (both absolute and relative)
-    await page.route(/.*\/api\/contact.*/, async (route) => {
-      requestIntercepted = true;
-      resolveRequest();
-      // Simulate a slow response to test button disabled state
-      // Use Promise-based delay instead of page.waitForTimeout to avoid issues when test ends
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await route.fulfill({
-        status: 201,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'test-id',
-          name: 'Test User',
-          email: 'test@example.com',
-          subject: 'Test Subject',
-          message: 'This is a test message.',
-          receivedAt: new Date().toISOString()
-        })
-      });
+    // Use function-based route matching for more reliable interception on mobile
+    // This matches both absolute URLs (https://...) and any path containing /api/contact
+    await page.route((url) => {
+      const urlString = url.href || url.toString();
+      const pathname = url.pathname || '';
+      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
+    }, async (route) => {
+      // Only intercept once
+      if (!requestIntercepted) {
+        requestIntercepted = true;
+        resolveRequest();
+        // Simulate a slow response to test button disabled state
+        // Use Promise-based delay instead of page.waitForTimeout to avoid issues when test ends
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await route.fulfill({
+          status: 201,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 'test-id',
+            name: 'Test User',
+            email: 'test@example.com',
+            subject: 'Test Subject',
+            message: 'This is a test message.',
+            receivedAt: new Date().toISOString()
+          })
+        });
+      } else {
+        // If already intercepted, continue with the request (shouldn't happen, but safe)
+        await route.continue();
+      }
     });
     
     // Also set up request listener for debugging
@@ -300,8 +311,10 @@ test.describe('Contact Page', () => {
     const wasDisabled = await submitBtn.isDisabled().catch(() => false);
     
     // Wait for either the route interception or the actual response
+    // Increase timeout for mobile devices which may be slower
+    const timeoutDuration = isMobile ? 10000 : 5000;
     const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout')), 5000);
+      setTimeout(() => reject(new Error('Request timeout')), timeoutDuration);
     });
     
     try {
@@ -312,12 +325,19 @@ test.describe('Contact Page', () => {
         console.error('Request was not intercepted within timeout');
         console.error('Request URLs captured:', requestUrls);
         // Give it a moment to see if request comes through
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(2000);
         if (requestUrls.length === 0) {
           console.error('No API requests detected. Form may not have submitted.');
+          // Check if form validation prevented submission
+          const errorMessage = await page.locator('#form-message.alert-danger').isVisible().catch(() => false);
+          if (errorMessage) {
+            const errorText = await page.locator('#form-message.alert-danger').textContent().catch(() => '');
+            console.error('Form validation error:', errorText);
+          }
         } else {
           console.error('Requests were made but not intercepted. Route pattern may not match.');
           console.error('First request URL:', requestUrls[0]);
+          console.error('Route patterns: /.*\\/api\\/contact.*/ and url.href.includes check');
         }
       }
       // Re-throw if it's not a timeout (timeout is expected if request wasn't intercepted)
@@ -327,6 +347,7 @@ test.describe('Contact Page', () => {
     }
     
     // Verify the request was intercepted (not sent to real API)
+    // If it wasn't intercepted, the error above should have provided debugging info
     expect(requestIntercepted).toBe(true);
     
     // Clean up routes to prevent errors when test ends

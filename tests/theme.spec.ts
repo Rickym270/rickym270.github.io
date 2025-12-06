@@ -135,8 +135,12 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   });
 
   test('body background adapts to theme', async ({ page }) => {
-    // Use domcontentloaded for faster navigation, especially on Firefox
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    // For Firefox, use networkidle instead of domcontentloaded as it's more reliable
+    // networkidle waits for network to be idle, which is better for SPA navigation
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
     await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
