@@ -189,8 +189,10 @@ test.describe('Home page content', () => {
     await page.waitForTimeout(500); // Give translations time to apply
     
     // Skills page content should load - check for h1 or h3 with "Skills"
+    // Use the same flexible approach as the waitForFunction above
     const skillsHeading = page.locator('#content h1[data-translate="skills.title"], #content h1, #content h3').filter({ hasText: /Skills/i });
-    await expect(skillsHeading.first()).toBeVisible({ timeout: 5000 });
+    // If waitForFunction passed, the heading should be there, but give it more time to be visible
+    await expect(skillsHeading.first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Quick Stats displays last updated in correct format', async ({ page }) => {

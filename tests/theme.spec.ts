@@ -135,10 +135,16 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   });
 
   test('body background adapts to theme', async ({ page }) => {
-    await page.goto('/');
+    // Use domcontentloaded for faster navigation, especially on Firefox
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     
-    // Wait for page to fully load
-    await page.waitForSelector('body', { state: 'attached' });
+    // Wait for content to load
+    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+    
     await page.waitForTimeout(500);
     
     // Light mode
