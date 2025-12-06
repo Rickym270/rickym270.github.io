@@ -95,12 +95,21 @@ gcloud run deploy $SERVICE \
 
 ## Environment Variables
 
-- **GH_TOKEN** (optional but recommended): GitHub Personal Access Token to avoid rate limits
+- **GH_TOKEN** (highly recommended): GitHub Personal Access Token to avoid rate limits
+  - **Required for production** to avoid hitting GitHub API rate limits (5,000/hour vs 60/hour unauthenticated)
   - Generate at: https://github.com/settings/tokens
   - Scopes: `public_repo` (read access to public repos)
+  - The service will log a warning if GH_TOKEN is not set
+  - Without GH_TOKEN, you may see rate limit errors when checking project commit status
 
 - **ADMIN_API_KEY** (optional): Random secret key for admin endpoints (e.g., `/api/contact` GET)
   - Generate with: `openssl rand -hex 32`
+
+- **PROJECTS_GITHUB_TTL_MINUTES** (optional): Cache TTL for GitHub repository data (default: 720 = 12 hours)
+  - Increase to reduce API calls, decrease for more frequent updates
+
+- **PROJECTS_COMMIT_STATUS_TTL_MINUTES** (optional): Cache TTL for commit status checks (default: 60 = 1 hour)
+  - Individual commit status checks are cached per repository
 
 ## Useful Commands
 
