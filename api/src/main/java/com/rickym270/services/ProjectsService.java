@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -56,12 +57,37 @@ public class ProjectsService {
     private volatile List<Map<String, Object>> cachedGithubRepos;
     private volatile Instant lastGithubFetch;
     
+    // Cache for commit status checks (per repo, with TTL)
+    private final Map<String, CommitStatusCache> commitStatusCache = new ConcurrentHashMap<>();
+    
+    // Track if GH_TOKEN is available
+    private volatile Boolean hasToken = null;
+    private volatile Instant lastTokenCheck = null;
+    
+    // Rate limit tracking
+    private volatile Instant rateLimitResetTime = null;
+    private volatile boolean rateLimitActive = false;
+    
+    // Throttling: minimum delay between API calls (milliseconds)
+    private static final long API_CALL_DELAY_MS = 100; // 100ms between calls
+    
+    private static class CommitStatusCache {
+        final String status;
+        final Instant cachedAt;
+        
+        CommitStatusCache(String status, Instant cachedAt) {
+            this.status = status;
+            this.cachedAt = cachedAt;
+        }
+    }
+    
     public ProjectsService(FeatureFlags featureFlags, GitHubClient gitHubClient, Environment env) {
         this.featureFlags = featureFlags;
         this.gitHubClient = gitHubClient;
         this.env = env;
         this.cachedGithubRepos = null;
         this.lastGithubFetch = null;
+        checkAndLogTokenStatus();
     }
     
     /**
@@ -155,18 +181,82 @@ public class ProjectsService {
     }
     
     /**
-     * Get TTL in minutes from environment, defaulting to 360 (6 hours)
+     * Get TTL in minutes from environment, defaulting to 720 (12 hours)
      */
     private long getTtlMinutes() {
         String ttlStr = env.getProperty("PROJECTS_GITHUB_TTL_MINUTES");
         if (ttlStr == null || ttlStr.trim().isEmpty()) {
-            return 360; // Default 6 hours
+            return 720; // Default 12 hours (increased from 6)
         }
         try {
             return Long.parseLong(ttlStr.trim());
         } catch (NumberFormatException e) {
-            System.err.println("[ProjectsService] Invalid PROJECTS_GITHUB_TTL_MINUTES value: " + ttlStr + ", using default 360");
-            return 360;
+            System.err.println("[ProjectsService] Invalid PROJECTS_GITHUB_TTL_MINUTES value: " + ttlStr + ", using default 720");
+            return 720;
+        }
+    }
+    
+    /**
+     * Get commit status cache TTL in minutes (default: 60 minutes)
+     */
+    private long getCommitStatusTtlMinutes() {
+        String ttlStr = env.getProperty("PROJECTS_COMMIT_STATUS_TTL_MINUTES");
+        if (ttlStr == null || ttlStr.trim().isEmpty()) {
+            return 60; // Default 1 hour
+        }
+        try {
+            return Long.parseLong(ttlStr.trim());
+        } catch (NumberFormatException e) {
+            return 60;
+        }
+    }
+    
+    /**
+     * Check and log GH_TOKEN status
+     */
+    private void checkAndLogTokenStatus() {
+        Instant now = Instant.now();
+        // Check token status every 5 minutes
+        if (lastTokenCheck == null || now.isAfter(lastTokenCheck.plus(5, ChronoUnit.MINUTES))) {
+            String token = System.getenv("GH_TOKEN");
+            boolean tokenAvailable = token != null && !token.trim().isEmpty();
+            
+            if (hasToken == null || !hasToken.equals(tokenAvailable)) {
+                hasToken = tokenAvailable;
+                if (tokenAvailable) {
+                    System.out.println("[ProjectsService] ✓ GH_TOKEN is configured. Using authenticated GitHub API requests (5,000 requests/hour limit).");
+                } else {
+                    System.err.println("[ProjectsService] ⚠ GH_TOKEN not configured. Using unauthenticated requests (60 requests/hour limit).");
+                    System.err.println("[ProjectsService]   Set GH_TOKEN environment variable to increase rate limits.");
+                }
+            }
+            lastTokenCheck = now;
+        }
+    }
+    
+    /**
+     * Check if rate limit is currently active
+     */
+    private boolean isRateLimitActive() {
+        if (rateLimitActive && rateLimitResetTime != null) {
+            if (Instant.now().isAfter(rateLimitResetTime)) {
+                // Rate limit period has passed
+                rateLimitActive = false;
+                rateLimitResetTime = null;
+                System.out.println("[ProjectsService] Rate limit period expired. Resuming API calls.");
+            }
+        }
+        return rateLimitActive;
+    }
+    
+    /**
+     * Throttle API calls to avoid hitting rate limits
+     */
+    private void throttleApiCall() {
+        try {
+            Thread.sleep(API_CALL_DELAY_MS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
     
@@ -351,27 +441,39 @@ public class ProjectsService {
                 return "complete";
             }
             
-            // If rate limit was hit, skip API calls and use fallback
-            if (rateLimitHit[0]) {
-                if (checkRecentActivity(gh)) {
-                    return "in-progress";
+            // Check cache first
+            CommitStatusCache cached = commitStatusCache.get(repoName);
+            if (cached != null) {
+                long ttlMinutes = getCommitStatusTtlMinutes();
+                Instant cacheExpiry = cached.cachedAt.plus(ttlMinutes, ChronoUnit.MINUTES);
+                if (Instant.now().isBefore(cacheExpiry)) {
+                    return cached.status;
                 }
-                return "complete";
+                // Cache expired, remove it
+                commitStatusCache.remove(repoName);
             }
+            
+            // Check if rate limit is currently active (from previous requests)
+            if (isRateLimitActive() || rateLimitHit[0]) {
+                // Use fallback without making API call
+                String fallbackStatus = checkRecentActivity(gh) ? "in-progress" : "complete";
+                // Cache the fallback result
+                commitStatusCache.put(repoName, new CommitStatusCache(fallbackStatus, Instant.now()));
+                return fallbackStatus;
+            }
+            
+            // Check token status periodically
+            checkAndLogTokenStatus();
+            
+            // Throttle API calls to avoid hitting rate limits
+            throttleApiCall();
             
             // Calculate cutoff date (3 weeks ago)
             Instant threeWeeksAgo = Instant.now().minus(21, ChronoUnit.DAYS);
             String since = threeWeeksAgo.toString(); // ISO 8601 format
             
-            // Fetch commits from GitHub API
-            String token = System.getenv("GH_TOKEN");
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            headers.set("X-GitHub-Api-Version", "2022-11-28");
-            if (token != null && !token.trim().isEmpty()) {
-                headers.set("Authorization", "Bearer " + token.trim());
-            }
-            
+            // Use GitHubClient's header creation for consistency
+            HttpHeaders headers = createHeadersWithAuth();
             HttpEntity<Void> request = new HttpEntity<>(headers);
             String commitsUrl = String.format("https://api.github.com/repos/%s/%s/commits?since=%s&per_page=100", 
                 GITHUB_USER, repoName, since);
@@ -382,53 +484,97 @@ public class ProjectsService {
                         new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                     .getBody();
                 
-                if (commits != null && commits.size() >= 2) {
-                    return "in-progress";
-                }
+                String status = (commits != null && commits.size() >= 2) ? "in-progress" : "complete";
+                // Cache the result
+                commitStatusCache.put(repoName, new CommitStatusCache(status, Instant.now()));
+                return status;
             } catch (HttpStatusCodeException e) {
                 int statusCode = e.getStatusCode().value();
                 String responseBody = e.getResponseBodyAsString();
                 
                 // Handle rate limit (403)
                 if (statusCode == 403 && (responseBody != null && responseBody.contains("rate limit"))) {
+                    // Parse rate limit reset time from response headers if available
+                    org.springframework.http.HttpHeaders responseHeaders = e.getResponseHeaders();
+                    String resetHeader = (responseHeaders != null) ? responseHeaders.getFirst("X-RateLimit-Reset") : null;
+                    if (resetHeader != null) {
+                        try {
+                            long resetTimestamp = Long.parseLong(resetHeader);
+                            rateLimitResetTime = Instant.ofEpochSecond(resetTimestamp);
+                            rateLimitActive = true;
+                        } catch (NumberFormatException ignored) {
+                            // Default to 1 hour if can't parse
+                            rateLimitResetTime = Instant.now().plus(1, ChronoUnit.HOURS);
+                            rateLimitActive = true;
+                        }
+                    } else {
+                        // Default to 1 hour if no reset header
+                        rateLimitResetTime = Instant.now().plus(1, ChronoUnit.HOURS);
+                        rateLimitActive = true;
+                    }
+                    
                     // Only log once when rate limit is first hit
                     if (!rateLimitHit[0]) {
                         rateLimitHit[0] = true;
                         System.err.println("[ProjectsService] GitHub API rate limit exceeded. Using fallback status calculation for remaining projects.");
+                        if (rateLimitResetTime != null) {
+                            System.err.println("[ProjectsService] Rate limit resets at: " + rateLimitResetTime);
+                        }
                     }
                     // Fallback: use hasRecentActivity as proxy
-                    if (checkRecentActivity(gh)) {
-                        return "in-progress";
-                    }
-                    return "complete";
+                    String fallbackStatus = checkRecentActivity(gh) ? "in-progress" : "complete";
+                    // Cache the fallback result
+                    commitStatusCache.put(repoName, new CommitStatusCache(fallbackStatus, Instant.now()));
+                    return fallbackStatus;
                 }
                 
                 // Handle empty repository (409)
                 if (statusCode == 409 && (responseBody != null && responseBody.contains("empty"))) {
                     // Empty repository - no commits possible, so it's complete
-                    return "complete";
+                    String status = "complete";
+                    commitStatusCache.put(repoName, new CommitStatusCache(status, Instant.now()));
+                    return status;
                 }
                 
-                // Other HTTP errors - log with status code
-                System.err.println("[ProjectsService] Error fetching commits for " + repoName + ": " + statusCode + " " + e.getMessage());
-                // Fallback: use hasRecentActivity as proxy
-                if (checkRecentActivity(gh)) {
-                    return "in-progress";
+                // Other HTTP errors - log with status code (but don't spam)
+                if (statusCode >= 500) {
+                    System.err.println("[ProjectsService] Error fetching commits for " + repoName + ": " + statusCode + " " + e.getMessage());
                 }
+                // Fallback: use hasRecentActivity as proxy
+                String fallbackStatus = checkRecentActivity(gh) ? "in-progress" : "complete";
+                commitStatusCache.put(repoName, new CommitStatusCache(fallbackStatus, Instant.now()));
+                return fallbackStatus;
             } catch (Exception e) {
-                // Non-HTTP exceptions
-                System.err.println("[ProjectsService] Error fetching commits for " + repoName + ": " + e.getMessage());
-                // Fallback: use hasRecentActivity as proxy
-                if (checkRecentActivity(gh)) {
-                    return "in-progress";
+                // Non-HTTP exceptions - log but don't spam
+                if (!(e instanceof InterruptedException)) {
+                    System.err.println("[ProjectsService] Error fetching commits for " + repoName + ": " + e.getMessage());
                 }
+                // Fallback: use hasRecentActivity as proxy
+                String fallbackStatus = checkRecentActivity(gh) ? "in-progress" : "complete";
+                commitStatusCache.put(repoName, new CommitStatusCache(fallbackStatus, Instant.now()));
+                return fallbackStatus;
             }
-            
-            return "complete";
         } catch (Exception e) {
             System.err.println("[ProjectsService] Error calculating status: " + e.getMessage());
             return "complete";
         }
+    }
+    
+    /**
+     * Create HTTP headers with authentication token if available
+     * Uses GH_TOKEN environment variable (consistent with GitHubClient)
+     */
+    private HttpHeaders createHeadersWithAuth() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.set("X-GitHub-Api-Version", "2022-11-28");
+        
+        String token = System.getenv("GH_TOKEN");
+        if (token != null && !token.trim().isEmpty()) {
+            headers.set("Authorization", "Bearer " + token.trim());
+        }
+        
+        return headers;
     }
     
     /**

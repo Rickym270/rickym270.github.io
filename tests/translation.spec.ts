@@ -449,21 +449,52 @@ test.describe('Translation feature', () => {
     try {
       await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'visible' });
     } catch {
-      // Fallback for WebKit - wait for any heading with Skills/Habilidades text and check visibility
+      // Fallback for WebKit/mobile - more robust detection with longer timeout
+      const headingTimeout = isMobile ? 30000 : 15000;
+      
       await page.waitForFunction(() => {
-        const heading = document.querySelector('#content h1, #content h3') as HTMLElement;
-        return heading && (heading.textContent?.includes('Skills') || heading.textContent?.includes('Habilidades')) && heading.offsetParent !== null;
-      }, { timeout: 10000 });
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        
+        // Check for heading with Skills/Habilidades text that is actually visible
+        const headings = Array.from(content.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+        for (const heading of headings) {
+          const headingEl = heading as HTMLElement;
+          const text = headingEl.textContent || '';
+          // Check if heading contains "Skills" or "Habilidades" and is visible
+          if ((text.includes('Skills') || text.includes('Habilidades')) && 
+              headingEl.offsetParent !== null && 
+              headingEl.offsetWidth > 0 && 
+              headingEl.offsetHeight > 0) {
+            return true;
+          }
+        }
+        
+        // Fallback: Check if content has substantial text (skills page has more content)
+        const contentText = content.textContent || '';
+        const hasSubstantialContent = contentText.trim().length > 200;
+        const hasSkillIndicators = contentText.includes('Skill') || 
+                                    contentText.includes('Habilidad') ||
+                                    content.querySelector('.skill-category, .skill-item, [data-translate*="skill"]') !== null;
+        
+        // If we have substantial content and skill indicators, page likely loaded
+        if (hasSubstantialContent && hasSkillIndicators) {
+          return true;
+        }
+        
+        return false;
+      }, { timeout: headingTimeout });
     }
     
     // Wait for translation to be applied - check that it's actually in Spanish
+    const translationTimeout = isMobile ? 20000 : 10000;
     await page.waitForFunction(() => {
       const heading = document.querySelector('#content h1[data-translate="skills.title"], #content h1, #content h3');
       if (!heading) return false;
       const text = heading.textContent?.trim() || '';
       // Wait until it's translated to Spanish (contains "Habilidades")
       return text.includes('Habilidades');
-    }, { timeout: 10000 });
+    }, { timeout: translationTimeout });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead

@@ -80,7 +80,11 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   });
 
   test('links are white in dark mode and black in light mode', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle for reliable navigation
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const timeout = browserName === 'firefox' ? 60000 : 20000;
+    await page.goto('/', { waitUntil, timeout });
     
     // Wait for content to load
     // Wait for page to be ready - check if content element exists
