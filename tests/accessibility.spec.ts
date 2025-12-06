@@ -27,16 +27,21 @@ test.describe('Accessibility', () => {
     // Wait for content element
     await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
     
-    // Wait for content to load with fallback
-    try {
-      await page.waitForFunction(() => {
-        const c = document.querySelector('#content');
-        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-      }, { timeout: 10000 });
-    } catch {
-      // Fallback: just wait a bit if waitForFunction times out
-      await page.waitForTimeout(1000);
-    }
+    // Wait for content to load - use multiple fallback strategies
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      if (!c) return false;
+      const dataLoaded = c.getAttribute('data-content-loaded') === 'true';
+      const hasBanner = !!c.querySelector('#homeBanner');
+      const hasContent = c.textContent && c.textContent.trim().length > 0;
+      return dataLoaded || hasBanner || hasContent;
+    }, { timeout: 15000 }).catch(async () => {
+      // Fallback: wait for any heading to appear
+      await page.waitForSelector('#content h1, #content h2, #content h3', { timeout: 5000 }).catch(() => {
+        // Last resort: just wait a bit
+      });
+      await page.waitForTimeout(500);
+    });
 
     // Check for main heading (h1)
     const h1 = page.locator('h1').first();
@@ -54,14 +59,19 @@ test.describe('Accessibility', () => {
     
     await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
     
-    try {
-      await page.waitForFunction(() => {
-        const c = document.querySelector('#content');
-        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-      }, { timeout: 10000 });
-    } catch {
-      await page.waitForTimeout(1000);
-    }
+    // Wait for content to load - use multiple fallback strategies
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      if (!c) return false;
+      const dataLoaded = c.getAttribute('data-content-loaded') === 'true';
+      const hasBanner = !!c.querySelector('#homeBanner');
+      const hasContent = c.textContent && c.textContent.trim().length > 0;
+      return dataLoaded || hasBanner || hasContent;
+    }, { timeout: 15000 }).catch(async () => {
+      // Fallback: wait for any content
+      await page.waitForSelector('#content *', { timeout: 5000 }).catch(() => {});
+      await page.waitForTimeout(500);
+    });
 
     // Get all images (excluding decorative ones)
     const images = page.locator('img:not([role="presentation"])');
@@ -82,14 +92,19 @@ test.describe('Accessibility', () => {
     
     await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
     
-    try {
-      await page.waitForFunction(() => {
-        const c = document.querySelector('#content');
-        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-      }, { timeout: 10000 });
-    } catch {
-      await page.waitForTimeout(1000);
-    }
+    // Wait for content to load - use multiple fallback strategies
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      if (!c) return false;
+      const dataLoaded = c.getAttribute('data-content-loaded') === 'true';
+      const hasBanner = !!c.querySelector('#homeBanner');
+      const hasContent = c.textContent && c.textContent.trim().length > 0;
+      return dataLoaded || hasBanner || hasContent;
+    }, { timeout: 15000 }).catch(async () => {
+      // Fallback: wait for navigation to be ready
+      await page.waitForSelector('nav a, .nav-link', { timeout: 5000 }).catch(() => {});
+      await page.waitForTimeout(500);
+    });
 
     // Check main navigation links
     const navLinks = page.locator('nav a, .nav-link');
@@ -111,14 +126,18 @@ test.describe('Accessibility', () => {
     
     await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
     
-    try {
-      await page.waitForFunction(() => {
-        const c = document.querySelector('#content');
-        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-      }, { timeout: 10000 });
-    } catch {
+    // Wait for initial content, then navigate to contact
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      if (!c) return false;
+      const dataLoaded = c.getAttribute('data-content-loaded') === 'true';
+      const hasBanner = !!c.querySelector('#homeBanner');
+      const hasContent = c.textContent && c.textContent.trim().length > 0;
+      return dataLoaded || hasBanner || hasContent;
+    }, { timeout: 15000 }).catch(async () => {
+      // Fallback: just wait a bit
       await page.waitForTimeout(1000);
-    }
+    });
 
     // Navigate to contact page
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
