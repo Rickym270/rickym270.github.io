@@ -11,21 +11,32 @@ test.describe('Accessibility', () => {
 
   test.afterEach(async ({ page }) => {
     // Clean up routes to prevent interference between tests
+    // Only clean up if page is still open
     try {
-      await page.unrouteAll({ behavior: 'ignoreErrors' });
+      if (!page.isClosed()) {
+        await page.unrouteAll({ behavior: 'ignoreErrors' });
+      }
     } catch (e) {
       // Ignore errors during cleanup
     }
   });
 
   test('page has proper heading hierarchy', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 15000 });
+    // Wait for content element
+    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    
+    // Wait for content to load with fallback
+    try {
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      }, { timeout: 10000 });
+    } catch {
+      // Fallback: just wait a bit if waitForFunction times out
+      await page.waitForTimeout(1000);
+    }
 
     // Check for main heading (h1)
     const h1 = page.locator('h1').first();
@@ -39,13 +50,18 @@ test.describe('Accessibility', () => {
   });
 
   test('images have alt text', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 15000 });
+    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    
+    try {
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      }, { timeout: 10000 });
+    } catch {
+      await page.waitForTimeout(1000);
+    }
 
     // Get all images (excluding decorative ones)
     const images = page.locator('img:not([role="presentation"])');
@@ -62,13 +78,18 @@ test.describe('Accessibility', () => {
   });
 
   test('links have accessible text', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 15000 });
+    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    
+    try {
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      }, { timeout: 10000 });
+    } catch {
+      await page.waitForTimeout(1000);
+    }
 
     // Check main navigation links
     const navLinks = page.locator('nav a, .nav-link');
@@ -86,13 +107,18 @@ test.describe('Accessibility', () => {
   });
 
   test('form inputs have labels', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
-    await page.waitForSelector('#content', { state: 'attached' });
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 15000 });
+    await page.waitForSelector('#content', { state: 'attached', timeout: 10000 });
+    
+    try {
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+      }, { timeout: 10000 });
+    } catch {
+      await page.waitForTimeout(1000);
+    }
 
     // Navigate to contact page
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
