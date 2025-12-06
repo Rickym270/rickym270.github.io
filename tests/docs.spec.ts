@@ -590,10 +590,29 @@ test.describe('Docs/Notes Page', () => {
       // Wait for breadcrumbs to appear - check in back button container or standalone
       // Breadcrumbs can be .breadcrumb-nav or .breadcrumb-nav-inline
       // On mobile, breadcrumbs may take longer to render
+      // Also check if back button exists (indicates page setup is complete)
+      const breadcrumbTimeout = isMobile ? 30000 : 15000;
+      
       await page.waitForFunction(() => {
+        // Check if back button exists (setup complete)
+        const backButton = document.querySelector('#docsBackButton, .back-button');
+        if (!backButton) return false;
+        
+        // Check for breadcrumbs in various locations
         const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline');
-        return breadcrumb && (breadcrumb as HTMLElement).offsetParent !== null;
-      }, { timeout: 30000 }); // Increased timeout for mobile
+        if (breadcrumb && (breadcrumb as HTMLElement).offsetParent !== null) {
+          return true;
+        }
+        
+        // Fallback: if back button exists and content is loaded, breadcrumbs should be there
+        // Check if breadcrumb text exists in the back button container
+        const backContainer = backButton.closest('.back-button-container, .breadcrumb-container');
+        if (backContainer && backContainer.textContent && backContainer.textContent.includes('Docs')) {
+          return true;
+        }
+        
+        return false;
+      }, { timeout: breadcrumbTimeout });
       
       // Check breadcrumbs appear (use first() to avoid strict mode violation)
       const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline').first();

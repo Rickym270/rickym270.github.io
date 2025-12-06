@@ -33,7 +33,11 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('home page hero section matches baseline', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Firefox needs networkidle for reliable navigation
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const timeout = browserName === 'firefox' ? 60000 : 20000;
+    await page.goto('/', { waitUntil, timeout });
     
     // Wait for content to load
     await page.waitForFunction(() => {
