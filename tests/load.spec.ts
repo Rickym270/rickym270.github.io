@@ -170,10 +170,23 @@ test.describe('Load and Stress Tests', () => {
     // Toggle theme multiple times rapidly
     for (let i = 0; i < 10; i++) {
       if (isMobile) {
-        await page.locator('#mobile-menu-toggle').click();
-        await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+        // Check if sidebar is already open
+        const sidebar = page.locator('#mobile-sidebar');
+        const isActive = await sidebar.getAttribute('class')?.includes('active');
+        
+        if (!isActive) {
+          await page.locator('#mobile-menu-toggle').click();
+          await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+        }
+        
         await page.locator('#mobile-theme-toggle, [data-theme-toggle]').click();
         await page.waitForTimeout(200);
+        
+        // Close sidebar after toggle to prevent interference
+        if (isActive) {
+          await page.locator('body').click({ position: { x: 10, y: 10 } });
+          await page.waitForTimeout(100);
+        }
       } else {
         await page.locator('#theme-toggle, [data-theme-toggle]').click();
         await page.waitForTimeout(200);

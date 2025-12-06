@@ -159,9 +159,17 @@ test.describe('End-to-End User Journeys', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('#mobile-language-switcher button[data-lang="es"], #mobile-language-toggle button[data-lang="es"]').click();
+      await page.locator('#mobile-language-switcher button[data-lang="es"], #mobile-language-toggle button[data-lang="es"]').first().click();
     } else {
-      await page.locator('#language-switcher button[data-lang="es"], #language-switcher-medium button[data-lang="es"]').click();
+      // Use first() to handle multiple language switchers (desktop and medium screen)
+      // Try desktop first, then medium screen
+      const desktopSwitcher = page.locator('#language-switcher button[data-lang="es"]');
+      const mediumSwitcher = page.locator('#language-switcher-medium button[data-lang="es"]');
+      if (await desktopSwitcher.count() > 0) {
+        await desktopSwitcher.first().click();
+      } else {
+        await mediumSwitcher.first().click();
+      }
     }
     
     // Wait for translation
@@ -179,9 +187,16 @@ test.describe('End-to-End User Journeys', () => {
     
     // Switch back to English
     if (isMobile) {
-      await page.locator('#mobile-language-switcher button[data-lang="en"], #mobile-language-toggle button[data-lang="en"]').click();
+      await page.locator('#mobile-language-switcher button[data-lang="en"], #mobile-language-toggle button[data-lang="en"]').first().click();
     } else {
-      await page.locator('#language-switcher button[data-lang="en"], #language-switcher-medium button[data-lang="en"]').click();
+      // Try desktop first, then medium screen
+      const desktopSwitcher = page.locator('#language-switcher button[data-lang="en"]');
+      const mediumSwitcher = page.locator('#language-switcher-medium button[data-lang="en"]');
+      if (await desktopSwitcher.count() > 0) {
+        await desktopSwitcher.first().click();
+      } else {
+        await mediumSwitcher.first().click();
+      }
     }
     
     await page.waitForTimeout(1000);
@@ -225,6 +240,13 @@ test.describe('End-to-End User Journeys', () => {
     
     // Navigate to Projects with dark theme
     if (isMobile) {
+      // Close sidebar first if it's open (from theme toggle)
+      const sidebar = page.locator('#mobile-sidebar');
+      if (await sidebar.getAttribute('class')?.includes('active')) {
+        // Click outside or toggle again to close
+        await page.locator('body').click({ position: { x: 10, y: 10 } });
+        await page.waitForTimeout(500);
+      }
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
