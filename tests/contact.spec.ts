@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Contact Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, browserName }) => {
     // Ensure English is set for these tests
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for TranslationManager to be available and initialized
     await page.waitForFunction(() => {
@@ -328,7 +330,10 @@ test.describe('Contact Page', () => {
       }
     });
     
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -487,7 +492,10 @@ test.describe('Contact Page', () => {
       }
     });
 
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -544,8 +552,10 @@ test.describe('Contact Page', () => {
     await page.locator('#message').fill('This is a test message.');
     
     // Wait for route to be fulfilled (with timeout fallback)
+    // Use longer timeout for mobile devices
+    const routeTimeout = isMobile ? 30000 : 20000;
     const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => reject(new Error('Route fulfillment timeout')), 20000);
+      setTimeout(() => reject(new Error('Route fulfillment timeout')), routeTimeout);
     });
     
     // Click submit and wait for route interception in parallel

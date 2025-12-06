@@ -86,7 +86,7 @@ test.describe('Home Page Initial Load', () => {
     // Verify home content is visible
     const homeBanner = page.locator('#content #homeBanner');
     const bannerVisible = await homeBanner.isVisible({ timeout: 5000 }).catch(() => false);
-    
+
     if (bannerVisible) {
       await expect(homeBanner).toBeVisible({ timeout: 5000 });
     } else {
