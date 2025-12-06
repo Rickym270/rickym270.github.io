@@ -218,15 +218,33 @@ test.describe('Docs/Notes Page', () => {
       await expect(viewMoreLink).toBeVisible();
       await viewMoreLink.click();
       
-      // Wait for category content to load
-      await page.waitForTimeout(1500);
+      // Wait for category content to load first
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        // Check for category content (toc_title, toc_list, or substantial text)
+        const hasContent = content.querySelector('.toc_title, .toc_list') || 
+                          (content.textContent && content.textContent.trim().length > 50);
+        return !!hasContent;
+      }, { timeout: 15000 });
       
-      // Wait for back button and breadcrumbs to appear
-      await page.waitForSelector('#docsBackButton', { timeout: 5000 });
+      await page.waitForTimeout(1000); // Give back button time to render
+      
+      // Wait for back button to appear - use waitForFunction for more reliable detection
+      // On mobile, back button may take longer to render
+      const backButtonTimeout = isMobile ? 30000 : 10000;
+      await page.waitForFunction(() => {
+        const backButton = document.querySelector('#docsBackButton');
+        if (!backButton) return false;
+        // Check if the button inside is visible
+        const button = backButton.querySelector('#docsBackBtn');
+        return button && (button as HTMLElement).offsetParent !== null;
+      }, { timeout: backButtonTimeout });
       
       // Back button SHOULD be visible on category index page
+      // If waitForFunction passed, button should be there, but give it a moment
       const backButtonAfterCategory = page.locator('#docsBackButton');
-      await expect(backButtonAfterCategory).toBeVisible({ timeout: 3000 });
+      await expect(backButtonAfterCategory).toBeVisible({ timeout: isMobile ? 10000 : 5000 });
       
       // Check for circular back button
       const backBtn = page.locator('#docsBackBtn');
@@ -238,7 +256,8 @@ test.describe('Docs/Notes Page', () => {
       
       // Click on an actual article
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
-      if (await articleLink.isVisible({ timeout: 5000 })) {
+      const articleLinkTimeout = isMobile ? 10000 : 5000;
+      if (await articleLink.isVisible({ timeout: articleLinkTimeout })) {
         await articleLink.click();
         
         // Wait for article content to load - use more flexible selector
@@ -257,7 +276,7 @@ test.describe('Docs/Notes Page', () => {
         
         // Back button SHOULD still be visible on article page
         const backButtonOnArticle = page.locator('#docsBackButton');
-        await expect(backButtonOnArticle).toBeVisible({ timeout: 5000 });
+        await expect(backButtonOnArticle).toBeVisible({ timeout: isMobile ? 10000 : 5000 });
         
         // Breadcrumbs should show article name (use first() to avoid strict mode violation)
         const breadcrumbsOnArticle = page.locator('.breadcrumb-nav').first();
@@ -271,7 +290,7 @@ test.describe('Docs/Notes Page', () => {
         
         // Should return to category index (Back button still visible)
         const backButtonAfterBack = page.locator('#docsBackButton');
-        await expect(backButtonAfterBack).toBeVisible({ timeout: 3000 });
+        await expect(backButtonAfterBack).toBeVisible({ timeout: isMobile ? 10000 : 5000 });
       }
     }
   });
@@ -372,7 +391,8 @@ test.describe('Docs/Notes Page', () => {
       
       // Find an article link (e.g., "Executing commands")
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').filter({ hasText: /Executing|commands|CMDs/i }).first();
-      if (await articleLink.isVisible({ timeout: 5000 })) {
+      const articleLinkTimeout = isMobile ? 10000 : 5000;
+      if (await articleLink.isVisible({ timeout: articleLinkTimeout })) {
         await articleLink.click();
         
         // Wait for article content to load - check for data-content-loaded attribute or any content
@@ -614,7 +634,8 @@ test.describe('Docs/Notes Page', () => {
       
       // Click on an article
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
-      if (await articleLink.isVisible({ timeout: 5000 })) {
+      const articleLinkTimeout = isMobile ? 10000 : 5000;
+      if (await articleLink.isVisible({ timeout: articleLinkTimeout })) {
         await articleLink.click();
         
         // Wait for article content to load
