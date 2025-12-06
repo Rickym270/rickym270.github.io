@@ -208,11 +208,28 @@ test.describe('Docs/Notes Page', () => {
       await expect(viewMoreLink).toBeVisible();
       await viewMoreLink.click();
       
-      // Wait for category content to load
-      await page.waitForTimeout(1500);
+      // Wait for category content to load first
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        // Check for category content (toc_title, toc_list, or substantial text)
+        const hasContent = content.querySelector('.toc_title, .toc_list') || 
+                          (content.textContent && content.textContent.trim().length > 50);
+        return !!hasContent;
+      }, { timeout: 15000 });
       
-      // Wait for back button and breadcrumbs to appear
-      await page.waitForSelector('#docsBackButton', { timeout: 5000 });
+      await page.waitForTimeout(1000); // Give back button time to render
+      
+      // Wait for back button to appear - use waitForFunction for more reliable detection
+      // On mobile, back button may take longer to render
+      const backButtonTimeout = isMobile ? 15000 : 10000;
+      await page.waitForFunction(() => {
+        const backButton = document.querySelector('#docsBackButton');
+        if (!backButton) return false;
+        // Check if the button inside is visible
+        const button = backButton.querySelector('#docsBackBtn');
+        return button && (button as HTMLElement).offsetParent !== null;
+      }, { timeout: backButtonTimeout });
       
       // Back button SHOULD be visible on category index page
       const backButtonAfterCategory = page.locator('#docsBackButton');
@@ -675,10 +692,28 @@ test.describe('Docs/Notes Page', () => {
     if (await pythonCard.isVisible({ timeout: 2000 })) {
       const viewMoreLink = pythonCard.locator('.notes-card-link');
       await viewMoreLink.click();
-      await page.waitForTimeout(1500);
+      // Wait for category content to load first
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        // Check for category content (toc_title, toc_list, or substantial text)
+        const hasContent = content.querySelector('.toc_title, .toc_list') || 
+                          (content.textContent && content.textContent.trim().length > 50);
+        return !!hasContent;
+      }, { timeout: 15000 });
       
-      // Wait for back button to appear
-      await page.waitForSelector('#docsBackBtn', { timeout: 5000 });
+      await page.waitForTimeout(1000); // Give back button time to render
+      
+      // Wait for back button to appear - use waitForFunction for more reliable detection
+      // On mobile, back button may take longer to render
+      const backButtonTimeout = isMobile ? 15000 : 10000;
+      await page.waitForFunction(() => {
+        const backButton = document.querySelector('#docsBackButton');
+        if (!backButton) return false;
+        // Check if the button inside is visible
+        const button = backButton.querySelector('#docsBackBtn');
+        return button && (button as HTMLElement).offsetParent !== null;
+      }, { timeout: backButtonTimeout });
       
       // Check for circular back button
       const backButton = page.locator('#docsBackBtn');
