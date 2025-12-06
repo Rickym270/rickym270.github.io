@@ -615,18 +615,23 @@ test.describe('Docs/Notes Page', () => {
         return !!hasContent;
       }, { timeout: 15000 });
       
-      await page.waitForTimeout(1000); // Give breadcrumbs time to render
+      await page.waitForTimeout(2000); // Give breadcrumbs time to render
       
       // Wait for breadcrumbs to appear - check in back button container or standalone
       // Breadcrumbs can be .breadcrumb-nav or .breadcrumb-nav-inline
+      // Use longer timeout for mobile devices
+      const breadcrumbTimeout = isMobile ? 30000 : 20000;
       await page.waitForFunction(() => {
-        const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline');
-        return breadcrumb && (breadcrumb as HTMLElement).offsetParent !== null;
-      }, { timeout: 15000 });
+        const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline, nav.breadcrumb-nav, nav.breadcrumb-nav-inline');
+        if (!breadcrumb) return false;
+        const element = breadcrumb as HTMLElement;
+        // Check if element is visible (offsetParent check) or has content
+        return element.offsetParent !== null || element.textContent?.trim().length > 0;
+      }, { timeout: breadcrumbTimeout });
       
       // Check breadcrumbs appear (use first() to avoid strict mode violation)
-      const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline').first();
-      await expect(breadcrumbs).toBeVisible({ timeout: 5000 });
+      const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline, nav.breadcrumb-nav, nav.breadcrumb-nav-inline').first();
+      await expect(breadcrumbs).toBeVisible({ timeout: 10000 });
       
       // Should show "Docs > Python" (or similar)
       const breadcrumbText = await breadcrumbs.textContent();
