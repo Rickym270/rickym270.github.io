@@ -18,6 +18,8 @@ SMTP_FROM_EMAIL=your-email@gmail.com
 GH_TOKEN=your-github-token
 ADMIN_API_KEY=your-admin-key
 TURNSTILE_SECRET_KEY=your-turnstile-secret
+PROJECTS_GITHUB_TTL_MINUTES=720
+PROJECTS_COMMIT_STATUS_TTL_MINUTES=60
 ```
 
 ## How It Works

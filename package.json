@@ -17,7 +17,7 @@
     "test:api": "playwright test --project=api",
     "test:e2e": "playwright test --project=chromium --project=chromium-iphone --project=firefox",
     "test:webkit": "playwright test --project=webkit",
-    "serve": "http-server -p 4321 -c-1 .",
+    "serve": "http-server -p 4321 -c-1 -d false -i false .",
     "locators:update": "node scripts/update-locators.js"
   },
   "devDependencies": {
