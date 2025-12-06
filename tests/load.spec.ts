@@ -172,7 +172,8 @@ test.describe('Load and Stress Tests', () => {
       if (isMobile) {
         // Check if sidebar is already open
         const sidebar = page.locator('#mobile-sidebar');
-        const isActive = await sidebar.getAttribute('class')?.includes('active');
+        const classAttr = await sidebar.getAttribute('class');
+        const isActive = classAttr ? classAttr.includes('active') : false;
         
         if (!isActive) {
           await page.locator('#mobile-menu-toggle').click();

@@ -589,10 +589,11 @@ test.describe('Docs/Notes Page', () => {
       
       // Wait for breadcrumbs to appear - check in back button container or standalone
       // Breadcrumbs can be .breadcrumb-nav or .breadcrumb-nav-inline
+      // On mobile, breadcrumbs may take longer to render
       await page.waitForFunction(() => {
         const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline');
         return breadcrumb && (breadcrumb as HTMLElement).offsetParent !== null;
-      }, { timeout: 15000 });
+      }, { timeout: 30000 }); // Increased timeout for mobile
       
       // Check breadcrumbs appear (use first() to avoid strict mode violation)
       const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline').first();

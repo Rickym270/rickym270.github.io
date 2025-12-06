@@ -242,7 +242,8 @@ test.describe('End-to-End User Journeys', () => {
     if (isMobile) {
       // Close sidebar first if it's open (from theme toggle)
       const sidebar = page.locator('#mobile-sidebar');
-      if (await sidebar.getAttribute('class')?.includes('active')) {
+      const classAttr = await sidebar.getAttribute('class');
+      if (classAttr && classAttr.includes('active')) {
         // Click outside or toggle again to close
         await page.locator('body').click({ position: { x: 10, y: 10 } });
         await page.waitForTimeout(500);
