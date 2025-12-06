@@ -10,9 +10,12 @@ test.describe('Accessibility', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    // Clean up routes and event listeners to prevent interference between tests
-    await page.unrouteAll({ behavior: 'ignoreErrors' });
-    page.removeAllListeners();
+    // Clean up routes to prevent interference between tests
+    try {
+      await page.unrouteAll({ behavior: 'ignoreErrors' });
+    } catch (e) {
+      // Ignore errors during cleanup
+    }
   });
 
   test('page has proper heading hierarchy', async ({ page }) => {

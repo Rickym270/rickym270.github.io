@@ -4,9 +4,12 @@ test.describe('SEO & Meta Tags', () => {
   test.describe.configure({ timeout: 120000 });
 
   test.afterEach(async ({ page }) => {
-    // Clean up routes and event listeners to prevent interference between tests
-    await page.unrouteAll({ behavior: 'ignoreErrors' });
-    page.removeAllListeners();
+    // Clean up routes to prevent interference between tests
+    try {
+      await page.unrouteAll({ behavior: 'ignoreErrors' });
+    } catch (e) {
+      // Ignore errors during cleanup
+    }
   });
 
   test('home page has proper meta tags', async ({ page }) => {

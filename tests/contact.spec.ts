@@ -26,21 +26,12 @@ test.describe('Contact Page', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    // Clean up routes and event listeners to prevent interference between tests
-    await page.unrouteAll({ behavior: 'ignoreErrors' });
-    // Remove all event listeners to prevent memory leaks
-    page.removeAllListeners();
-    // Clear any pending timeouts/intervals in the page context
-    await page.evaluate(() => {
-      // Clear any pending timeouts
-      let id = setTimeout(() => {}, 0);
-      while (id--) {
-        clearTimeout(id);
-        clearInterval(id);
-      }
-    }).catch(() => {
-      // Ignore errors if page is already closed
-    });
+    // Clean up routes to prevent interference between tests
+    try {
+      await page.unrouteAll({ behavior: 'ignoreErrors' });
+    } catch (e) {
+      // Ignore errors during cleanup
+    }
   });
 
   test('contact page loads with form fields', async ({ page }) => {
