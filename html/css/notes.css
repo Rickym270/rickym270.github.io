@@ -186,30 +186,30 @@
 }
 
 /* ============================================
-   Back Button & Breadcrumbs Container - New Design
+   Back Button & Breadcrumbs Container - Flat UI Design
    ============================================ */
 #docsBackButton {
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: 0;
     margin-bottom: var(--spacing-lg);
     margin-top: var(--spacing-lg);
-    background: var(--color-bg-secondary);
-    border-radius: var(--radius-md);
+    background: transparent;
     border: none;
+    border-radius: 0;
 }
 
 /* ============================================
-   Circular Back Button - New Design
+   Back Button - Flat UI Design
    ============================================ */
 .btn-back-circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    border-radius: 50% !important;
+    border-radius: var(--radius-sm);
     color: var(--color-text-primary);
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -218,15 +218,16 @@
 
 .btn-back-circle:hover,
 .btn-back-circle:focus {
-    background: var(--color-bg-tertiary);
+    background: var(--color-bg-primary);
     border-color: var(--color-accent);
     color: var(--color-accent);
     outline: none;
 }
 
 .btn-back-circle:active {
-    background: var(--color-bg-tertiary);
-    transform: scale(0.95);
+    background: var(--color-bg-secondary);
+    border-color: var(--color-accent);
+    transform: scale(0.98);
 }
 
 .btn-back-circle svg {
@@ -239,42 +240,85 @@
    Navigation Container - Flat UI
    ============================================ */
 .docs-nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: var(--spacing-md);
-    width: 100%;
-    min-width: 0;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: var(--spacing-md) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
 }
 
 #docsBackButton .container.docs-nav-container {
-    max-width: 100%;
-    padding-left: 0;
-    padding-right: 0;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    background: transparent !important;
 }
 
 /* ============================================
-   Breadcrumb Navigation - New Design
+   Breadcrumb Navigation - Modern Design
    ============================================ */
-.breadcrumb-nav {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-xs);
-    font-size: 0.875rem;
-    line-height: 1.5;
-    font-family: var(--font-primary);
+nav.breadcrumb-nav,
+.breadcrumb-nav,
+#docsBackButton nav.breadcrumb-nav,
+#docsBackButton .breadcrumb-nav,
+.docs-nav-container nav.breadcrumb-nav,
+.docs-nav-container .breadcrumb-nav,
+#content nav.breadcrumb-nav,
+#content .breadcrumb-nav {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: var(--spacing-xs) !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    font-family: var(--font-primary) !important;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    background: var(--color-bg-secondary) !important;
+    background-color: var(--color-bg-secondary) !important;
+    border-radius: var(--radius-md) !important;
+    margin: 0 !important;
 }
 
-.breadcrumb-nav-inline {
-    margin-left: auto;
-    flex-shrink: 1;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    overflow: hidden;
+nav.breadcrumb-nav-inline,
+.breadcrumb-nav-inline,
+#docsBackButton nav.breadcrumb-nav-inline,
+#docsBackButton .breadcrumb-nav-inline,
+.docs-nav-container nav.breadcrumb-nav-inline,
+.docs-nav-container .breadcrumb-nav-inline,
+#content nav.breadcrumb-nav-inline,
+#content .breadcrumb-nav-inline {
+    margin-left: auto !important;
+    flex-shrink: 1 !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    background: var(--color-bg-secondary) !important;
+    background-color: var(--color-bg-secondary) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+}
+
+/* Ensure breadcrumb styling applies when both classes are present */
+nav.breadcrumb-nav.breadcrumb-nav-inline,
+.breadcrumb-nav.breadcrumb-nav-inline,
+#docsBackButton nav.breadcrumb-nav.breadcrumb-nav-inline,
+#docsBackButton .breadcrumb-nav.breadcrumb-nav-inline,
+.docs-nav-container nav.breadcrumb-nav.breadcrumb-nav-inline,
+.docs-nav-container .breadcrumb-nav.breadcrumb-nav-inline,
+#content nav.breadcrumb-nav.breadcrumb-nav-inline,
+#content .breadcrumb-nav.breadcrumb-nav-inline {
+    background: var(--color-bg-secondary) !important;
+    background-color: var(--color-bg-secondary) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .breadcrumb-nav-inline .breadcrumb-item,
@@ -283,63 +327,73 @@
 }
 
 .breadcrumb-item {
-    color: var(--color-accent);
-    font-weight: 400;
-    display: inline-block;
+    color: var(--color-text-secondary) !important;
+    font-weight: 400 !important;
+    display: inline-block !important;
 }
 
 .breadcrumb-item.breadcrumb-active {
-    color: var(--color-accent-hover);
-    font-weight: 600;
+    color: var(--color-text-primary) !important;
+    font-weight: 500 !important;
 }
 
 .breadcrumb-link {
-    color: var(--color-accent);
-    text-decoration: none;
-    font-weight: 400;
-    display: inline-block;
-    transition: color var(--transition-fast);
+    color: var(--color-text-secondary) !important;
+    text-decoration: none !important;
+    font-weight: 400 !important;
+    display: inline-block !important;
+    transition: color var(--transition-fast) !important;
 }
 
 .breadcrumb-link:hover {
-    color: var(--color-accent-hover);
-    text-decoration: underline;
+    color: var(--color-accent) !important;
+    text-decoration: none !important;
 }
 
 .breadcrumb-separator {
-    color: var(--color-text-tertiary);
-    margin: 0 var(--spacing-xs);
-    font-weight: 300;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--color-accent) !important;
+    margin: 0 var(--spacing-xs) !important;
+    font-weight: 300 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .breadcrumb-separator svg {
-    width: 8px;
-    height: 8px;
-    display: block;
+    width: 8px !important;
+    height: 8px !important;
+    display: block !important;
+    fill: var(--color-accent) !important;
 }
 
 /* Dark mode breadcrumbs */
+[data-theme="dark"] .breadcrumb-nav,
+[data-theme="dark"] .breadcrumb-nav-inline {
+    background: var(--color-bg-secondary) !important;
+}
+
 [data-theme="dark"] .breadcrumb-item {
-    color: var(--color-accent);
+    color: var(--color-text-secondary) !important;
 }
 
 [data-theme="dark"] .breadcrumb-item.breadcrumb-active {
-    color: var(--color-accent-hover);
+    color: var(--color-text-primary) !important;
 }
 
 [data-theme="dark"] .breadcrumb-link {
-    color: var(--color-accent);
+    color: var(--color-text-secondary) !important;
 }
 
 [data-theme="dark"] .breadcrumb-link:hover {
-    color: var(--color-accent-hover);
+    color: var(--color-accent) !important;
 }
 
 [data-theme="dark"] .breadcrumb-separator {
-    color: var(--color-text-tertiary);
+    color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] .breadcrumb-separator svg {
+    fill: var(--color-accent) !important;
 }
 
 [data-theme="dark"] .btn-back-circle {
@@ -349,30 +403,48 @@
 }
 
 [data-theme="dark"] .btn-back-circle:hover {
-    background: var(--color-bg-tertiary);
+    background: var(--color-bg-primary);
     border-color: var(--color-accent);
     color: var(--color-accent);
 }
 
 [data-theme="dark"] #docsBackButton {
-    background: var(--color-bg-secondary);
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
+}
+
+[data-theme="dark"] #docsBackButton:hover {
+    border-color: var(--color-accent);
 }
 
 /* Light mode specific */
+[data-theme="light"] .breadcrumb-nav,
+[data-theme="light"] .breadcrumb-nav-inline {
+    background: var(--color-bg-secondary) !important;
+}
+
 [data-theme="light"] .breadcrumb-item {
-    color: var(--color-accent);
+    color: var(--color-text-secondary) !important;
 }
 
 [data-theme="light"] .breadcrumb-item.breadcrumb-active {
-    color: var(--color-accent-hover);
+    color: var(--color-text-primary) !important;
 }
 
 [data-theme="light"] .breadcrumb-link {
-    color: var(--color-accent);
+    color: var(--color-text-secondary) !important;
 }
 
 [data-theme="light"] .breadcrumb-link:hover {
-    color: var(--color-accent-hover);
+    color: var(--color-accent) !important;
+}
+
+[data-theme="light"] .breadcrumb-separator {
+    color: var(--color-accent) !important;
+}
+
+[data-theme="light"] .breadcrumb-separator svg {
+    fill: var(--color-accent) !important;
 }
 
 [data-theme="light"] .btn-back-circle {
@@ -382,13 +454,18 @@
 }
 
 [data-theme="light"] .btn-back-circle:hover {
-    background: var(--color-bg-tertiary);
+    background: var(--color-bg-primary);
     border-color: var(--color-accent);
     color: var(--color-accent);
 }
 
 [data-theme="light"] #docsBackButton {
-    background: var(--color-bg-secondary);
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
+}
+
+[data-theme="light"] #docsBackButton:hover {
+    border-color: var(--color-accent);
 }
 
 /* ============================================
