@@ -9,6 +9,12 @@ test.describe('Error Handling', () => {
     });
   });
 
+  test.afterEach(async ({ page }) => {
+    // Clean up routes and event listeners to prevent interference between tests
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+    page.removeAllListeners();
+  });
+
   test('handles API failure gracefully on projects page', async ({ page }) => {
     // Intercept API calls and return error
     await page.route('**/api/projects', async (route) => {

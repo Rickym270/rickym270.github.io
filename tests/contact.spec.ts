@@ -25,6 +25,24 @@ test.describe('Contact Page', () => {
     await page.waitForTimeout(500);
   });
 
+  test.afterEach(async ({ page }) => {
+    // Clean up routes and event listeners to prevent interference between tests
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+    // Remove all event listeners to prevent memory leaks
+    page.removeAllListeners();
+    // Clear any pending timeouts/intervals in the page context
+    await page.evaluate(() => {
+      // Clear any pending timeouts
+      let id = setTimeout(() => {}, 0);
+      while (id--) {
+        clearTimeout(id);
+        clearInterval(id);
+      }
+    }).catch(() => {
+      // Ignore errors if page is already closed
+    });
+  });
+
   test('contact page loads with form fields', async ({ page }) => {
     await page.goto('/');
     

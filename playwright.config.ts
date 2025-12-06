@@ -20,7 +20,7 @@ export default defineConfig({
   webServer: {
     command: 'npx http-server -p 4321 -c-1 .',
     url: 'http://localhost:4321',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
     timeout: 60_000,
   },
   projects: [

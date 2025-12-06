@@ -3,6 +3,12 @@ import { test, expect } from '@playwright/test';
 test.describe('SEO & Meta Tags', () => {
   test.describe.configure({ timeout: 120000 });
 
+  test.afterEach(async ({ page }) => {
+    // Clean up routes and event listeners to prevent interference between tests
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+    page.removeAllListeners();
+  });
+
   test('home page has proper meta tags', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
