@@ -82,10 +82,10 @@ curl -s -X POST http://localhost:8080/api/contact \
 - Contact (view messages - admin only)
 ```bash
 # First, ensure server was started with ADMIN_API_KEY set:
-# ADMIN_API_KEY="my-secret-key" ./mvnw -DskipTests spring-boot:run
+# ADMIN_API_KEY="your-admin-key" ./mvnw -DskipTests spring-boot:run
 
-# Then list all stored messages
-curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+# Then list all stored messages (use environment variable, never hardcode keys)
+curl -s -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 ```
 
 **Note**: Contact messages are stored in-memory and will be cleared on server restart. You must POST at least one message before the GET endpoint returns data.
@@ -127,12 +127,12 @@ Expected: `201 Created` with the saved message including `id`, `subject`, and `r
 
 ```bash
 cd api
-ADMIN_API_KEY="my-secret-key" ./mvnw -DskipTests spring-boot:run
+ADMIN_API_KEY="your-admin-key" ./mvnw -DskipTests spring-boot:run
 ```
 
-Then retrieve all messages:
+Then retrieve all messages (use environment variable, never hardcode keys):
 ```bash
-curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+curl -s -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 ```
 
 Expected: `200 OK` with an array of all stored messages.

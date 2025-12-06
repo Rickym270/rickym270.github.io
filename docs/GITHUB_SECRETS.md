@@ -91,6 +91,7 @@ For local development, use the `.env` file (see `api/.env.example`):
 ❌ **DON'T:**
 - Commit `.env` files to git
 - Hardcode secrets in code
+- **Hardcode secrets in documentation examples** - always use environment variables (e.g., `${ADMIN_API_KEY}`) or placeholders (e.g., `your-admin-key`)
 - Share secrets in chat/email
 - Use production secrets in development
 
@@ -109,4 +110,18 @@ For local development, use the `.env` file (see `api/.env.example`):
 ### Contact form works locally but not in CI
 - Ensure all required secrets are configured in GitHub
 - Check that secrets are not empty or contain placeholder values
+
+## Documentation Examples
+
+When writing documentation that includes API key examples:
+
+✅ **DO:**
+- Use environment variable references: `curl -H "X-API-Key: \${ADMIN_API_KEY}" ...`
+- Use clear placeholders: `ADMIN_API_KEY="your-admin-key"`
+- Add security warnings: "Never hardcode API keys in production"
+
+❌ **DON'T:**
+- Use example keys like `"my-secret-key"` or `"test-key-123"` that could be mistaken for real keys
+- Hardcode actual API keys in documentation
+- Include credentials in code examples without warnings
 
