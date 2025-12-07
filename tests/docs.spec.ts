@@ -657,8 +657,8 @@ test.describe('Docs/Notes Page', () => {
       await viewMoreLink.click();
       await page.waitForTimeout(1500);
       
-      // Wait for back button to appear
-      await page.waitForSelector('#docsBackBtn', { timeout: 5000 });
+      // Wait for back button to appear - mobile needs more time
+      await page.waitForSelector('#docsBackBtn', { timeout: 15000 });
       
       // Check for circular back button
       const backButton = page.locator('#docsBackBtn');

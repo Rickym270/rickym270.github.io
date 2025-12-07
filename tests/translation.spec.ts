@@ -449,11 +449,11 @@ test.describe('Translation feature', () => {
     try {
       await page.waitForSelector('#content h1[data-translate="skills.title"]', { timeout: 15000, state: 'visible' });
     } catch {
-      // Fallback for WebKit - wait for any heading with Skills/Habilidades text and check visibility
+      // Fallback for WebKit/mobile - wait for any heading with Skills/Habilidades text and check visibility
       await page.waitForFunction(() => {
         const heading = document.querySelector('#content h1, #content h3') as HTMLElement;
         return heading && (heading.textContent?.includes('Skills') || heading.textContent?.includes('Habilidades')) && heading.offsetParent !== null;
-      }, { timeout: 10000 });
+      }, { timeout: 20000 }); // Increased timeout for mobile
     }
     
     // Wait for translation to be applied - check that it's actually in Spanish

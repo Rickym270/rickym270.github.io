@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Home page content', () => {
   test('banner image centered with dark background and hero content', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default 'load' for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     // Ensure Home loaded into #content and banner is visible
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
