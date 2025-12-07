@@ -163,32 +163,14 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForTimeout(2000); // Give time for content to load
     
     // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
-    // On mobile, content structure might be different, so make this wait more flexible
-    try {
-      await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000 });
-    } catch (e) {
-      // Fallback: check if content has loaded with substantial text (mobile might have different structure)
-      const content = page.locator('#content');
-      const contentText = await content.textContent();
-      if (!contentText || contentText.trim().length < 50) {
-        // If no substantial content, wait a bit more and check again
-        await page.waitForTimeout(2000);
-        const contentTextAfterWait = await content.textContent();
-        if (!contentTextAfterWait || contentTextAfterWait.trim().length < 50) {
-          throw new Error('Category content did not load - no substantial text found');
-        }
-      }
-    }
+    await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000 });
     await page.waitForTimeout(1000); // Additional wait for content to stabilize
     
     // Should load Python index page content - check for Contents section or article links
     const content = page.locator('#content');
     const contentText = await content.textContent();
     // Check if content loaded (either Contents section, article links, or category name)
-    // Make the check more lenient - just verify we have substantial content
-    expect(contentText && contentText.trim().length > 50).toBeTruthy();
-    // Also check for any indication of Python category content
-    expect(contentText).toMatch(/Contents|Executing|Jinja|Python|article|FAQPages|toc|category/i);
+    expect(contentText).toMatch(/Contents|Executing|Jinja|Python|article|FAQPages/i);
   });
 
   test('Back button and breadcrumbs appear on category and article pages', async ({ page }) => {
@@ -230,26 +212,11 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForTimeout(1500);
       
       // Wait for back button and breadcrumbs to appear - mobile needs more time
-      try {
-        await page.waitForSelector('#docsBackButton', { timeout: 15000 });
-      } catch (e) {
-        // Fallback: check if back button exists in DOM even if not immediately visible
-        const backButtonExists = await page.evaluate(() => {
-          return document.querySelector('#docsBackButton') !== null;
-        });
-        if (!backButtonExists) {
-          // Give it more time - mobile JavaScript execution can be slower
-          await page.waitForTimeout(2000);
-          await page.waitForSelector('#docsBackButton', { timeout: 10000 });
-        } else {
-          // Element exists, just wait for it to become visible
-          await page.waitForTimeout(1000);
-        }
-      }
+      await page.waitForSelector('#docsBackButton', { timeout: 15000 });
       
       // Back button SHOULD be visible on category index page
       const backButtonAfterCategory = page.locator('#docsBackButton');
-      await expect(backButtonAfterCategory).toBeVisible({ timeout: 10000 });
+      await expect(backButtonAfterCategory).toBeVisible({ timeout: 3000 });
       
       // Check for circular back button
       const backBtn = page.locator('#docsBackBtn');

@@ -282,7 +282,7 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use glob pattern for reliable interception
+    // Use glob pattern for reliable route matching
     await page.route('**/api/contact', async (route) => {
       // Only intercept once
       if (!requestIntercepted) {
@@ -440,7 +440,7 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use glob pattern for reliable interception
+    // Use glob pattern for reliable route matching
     await page.route('**/api/contact', async (route) => {
       routeFulfilled = true;
       resolveRouteFulfill();
