@@ -20,8 +20,10 @@ export default defineConfig({
   webServer: {
     command: 'npx http-server -p 4321 -c-1 -d false .',
     url: 'http://localhost:4321/index.html',
-    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
-    timeout: 60_000,
+    reuseExistingServer: process.env.CI ? true : false, // Reuse manually started server in CI
+    timeout: 90_000, // Increased to 90s for CI reliability (matches Firefox timeout)
+    stdout: 'pipe', // Capture stdout for debugging
+    stderr: 'pipe', // Capture stderr for debugging
   },
   projects: [
     // UI tests (require browsers)
