@@ -282,17 +282,8 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use function-based route matching for more reliable interception on mobile
-    // This matches both absolute URLs (https://...) and any path containing /api/contact
-    await page.route((url) => {
-      // Playwright route function receives a URL object with a 'url' property (full URL string)
-      // Also has pathname, search, etc. properties
-      const urlString = url.url || '';
-      const pathname = url.pathname || '';
-      
-      // Match any URL containing /api/contact
-      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
-    }, async (route) => {
+    // Use glob pattern for reliable interception
+    await page.route('**/api/contact', async (route) => {
       // Only intercept once
       if (!requestIntercepted) {
         requestIntercepted = true;
@@ -449,17 +440,8 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use function-based route matching for more reliable interception on mobile
-    // This matches both absolute URLs (https://...) and any path containing /api/contact
-    await page.route((url) => {
-      // Playwright route function receives a URL object with a 'url' property (full URL string)
-      // Also has pathname, search, etc. properties
-      const urlString = url.url || '';
-      const pathname = url.pathname || '';
-      
-      // Match any URL containing /api/contact
-      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
-    }, async (route) => {
+    // Use glob pattern for reliable interception
+    await page.route('**/api/contact', async (route) => {
       routeFulfilled = true;
       resolveRouteFulfill();
       // Fulfill the route after resolving the promise
