@@ -339,33 +339,33 @@ test.describe('Tutorials Page', () => {
         // Check for Next Lesson link
         const nextLink = page.locator('.lesson-nav-link').filter({ hasText: /Next|→/i }).first();
         if (await nextLink.isVisible({ timeout: 2000 })) {
-          // Get current URL before clicking
+          // Get current URL and title before clicking
           const currentUrl = page.url();
+          const initialTitle = await page.locator('.lesson-title').textContent().catch(() => 'Introduction');
           await nextLink.click();
           
-          // Wait for URL to change or content to update - mobile needs more time
+          // Wait for navigation to complete - check URL change or title change
           await page.waitForFunction(
-            (url) => {
+            ({ url, title }) => {
               const hrefChanged = window.location.href !== url;
               const titleElement = document.querySelector('.lesson-title');
-              const titleChanged = titleElement && titleElement.textContent?.trim() !== 'Introduction';
+              const titleChanged = titleElement && titleElement.textContent?.trim() !== title;
               return hrefChanged || !!titleChanged;
             },
-            currentUrl,
-            { timeout: 20000 } // Increased timeout for mobile
+            { url: currentUrl, title: initialTitle },
+            { timeout: 15000 } // Increased timeout for mobile
           );
           
-          // Additional wait for content to stabilize
-          await page.waitForTimeout(1500);
+          // Wait for content to stabilize and verify lesson title changed
+          await page.waitForTimeout(1000);
           
-          // Verify next lesson loaded - use more lenient check
+          // Verify next lesson loaded - use more robust checks
           const lessonTitle = page.locator('.lesson-title');
           await expect(lessonTitle).toBeVisible({ timeout: 10000 });
-          // Check that title is not "Introduction" - allow for partial matches
-          const titleText = await lessonTitle.textContent();
-          if (titleText) {
-            expect(titleText.trim().toLowerCase()).not.toBe('introduction');
-          }
+          // Verify title is not "Introduction" (next lesson should have different title)
+          const newTitle = await lessonTitle.textContent();
+          expect(newTitle).toBeTruthy();
+          expect(newTitle?.trim().toLowerCase()).not.toBe('introduction');
         }
       }
     }

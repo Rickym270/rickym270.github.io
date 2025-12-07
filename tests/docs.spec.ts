@@ -145,25 +145,34 @@ test.describe('Docs/Notes Page', () => {
     const pythonCard = page.locator('.notes-category-card.python');
     const viewMoreLink = pythonCard.locator('.notes-card-link');
     await expect(viewMoreLink).toBeVisible();
+    
+    // Get URL before navigation to detect change
+    const urlBefore = page.url();
     await viewMoreLink.click();
     
-    // Wait for category content to load - wait for back button first (indicates navigation happened)
-    // On mobile, back button might have different ID or take longer to appear
-    await page.waitForFunction(() => {
-      const content = document.querySelector('#content');
-      if (!content) return false;
-      // Check for back button (could be #docsBackButton, #docsBackBtn, or .docs-back-button)
-      const backButton = content.querySelector('#docsBackButton, #docsBackBtn, .docs-back-button, .lesson-back-button');
-      if (backButton) return true;
-      // Also check if category content is loaded (toc_title, toc_list, or substantial text)
-      const hasContent = content.querySelector('.toc_title, .toc_list') || 
-                         (content.textContent && content.textContent.trim().length > 100);
-      return hasContent;
-    }, { timeout: 20000 });
-    await page.waitForTimeout(2000); // Give time for content to load
+    // Wait for navigation to complete - check for URL change or back button appearance
+    await page.waitForFunction(
+      ({ url }) => {
+        // Check if URL changed (SPA navigation)
+        if (window.location.href !== url) return true;
+        
+        // Check if back button appeared (indicates category page loaded)
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        const backButton = content.querySelector('#docsBackButton, #docsBackBtn');
+        if (backButton && (backButton as HTMLElement).offsetParent !== null) return true;
+        
+        // Check if category content is loaded
+        const hasContent = content.querySelector('.toc_title, .toc_list') || 
+                           (content.textContent && content.textContent.trim().length > 100);
+        return !!hasContent;
+      },
+      { url: urlBefore },
+      { timeout: 20000 }
+    );
     
-    // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
-    await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000 });
+    // Wait for actual category content to load (toc_title or toc_list)
+    await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000, state: 'visible' });
     await page.waitForTimeout(1000); // Additional wait for content to stabilize
     
     // Should load Python index page content - check for Contents section or article links
