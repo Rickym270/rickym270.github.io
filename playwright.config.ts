@@ -10,8 +10,9 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   outputDir: path.join(rootDir, 'test-results'),
   // Enable parallel test execution within each project
-  // Use 4 workers in CI for better performance (GitHub Actions runners have 2 cores with hyperthreading)
-  workers: process.env.CI ? 4 : undefined, // 4 workers in CI, auto-detect locally
+  // Use 2 workers in CI to reduce resource contention and improve test stability
+  // Reduced from 4 to minimize intermittent failures from shared server resources
+  workers: process.env.CI ? 2 : undefined, // 2 workers in CI, auto-detect locally
   fullyParallel: true, // Run all tests in parallel (within each project)
   use: {
     baseURL: 'http://localhost:4321',

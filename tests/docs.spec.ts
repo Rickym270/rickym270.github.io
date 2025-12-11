@@ -560,7 +560,10 @@ test.describe('Docs/Notes Page', () => {
   });
 
   test('breadcrumbs navigation works correctly', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default load for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);

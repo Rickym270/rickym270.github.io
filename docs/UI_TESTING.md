@@ -109,6 +109,8 @@ Configuration is in `playwright.config.ts`:
 - **Expect timeout**: 10 seconds
 - **Web server**: Automatically starts `http-server` on port 4321
 - **Browsers**: Chromium, Firefox, Chromium-iPhone (mobile emulation)
+- **Workers**: 2 in CI (reduced from 4 to minimize resource contention and improve test stability)
+- **Parallel execution**: Enabled within each browser project
 - **Trace**: Enabled on first retry for debugging
 
 ## Test Suites

@@ -53,7 +53,7 @@ rickym270.github.io/
 5. **locator-normalize.yml**: Locator normalization (⚠️ Check if needed)
 
 ### Workflow Efficiency Issues
-- ✅ Good: Parallel test execution (4 workers in CI)
+- ✅ Good: Parallel test execution (2 workers in CI, reduced from 4 to improve stability)
 - ✅ Good: Skip keywords for selective testing
 - ⚠️ Could improve: Cache optimization
 - ⚠️ Could improve: Matrix strategy for multiple Node versions
