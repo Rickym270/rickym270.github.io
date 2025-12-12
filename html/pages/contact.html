@@ -129,12 +129,11 @@
             const submitText = document.getElementById('submit-text');
             const submitSpinner = document.getElementById('submit-spinner');
             
-            // Turnstile site key - replace with your actual site key
-            const TURNSTILE_SITE_KEY = 'YOUR_SITE_KEY_HERE';
-            
+            // Use the global TURNSTILE_SITE_KEY declared above, don't redeclare
             // Helper function to check if Turnstile is properly configured
             function isTurnstileConfigured() {
-                return TURNSTILE_SITE_KEY && 
+                return typeof TURNSTILE_SITE_KEY !== 'undefined' &&
+                       TURNSTILE_SITE_KEY && 
                        TURNSTILE_SITE_KEY !== 'YOUR_SITE_KEY_HERE' && 
                        TURNSTILE_SITE_KEY.trim().length > 0 &&
                        TURNSTILE_SITE_KEY.length > 20; // Valid Turnstile keys are longer
