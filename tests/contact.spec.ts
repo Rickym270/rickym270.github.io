@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Contact Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, browserName }) => {
     // Ensure English is set for these tests
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for TranslationManager to be available and initialized
     await page.waitForFunction(() => {
@@ -319,7 +321,10 @@ test.describe('Contact Page', () => {
       }
     });
     
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -469,7 +474,10 @@ test.describe('Contact Page', () => {
       }
     });
 
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -527,17 +535,10 @@ test.describe('Contact Page', () => {
     
     // Wait for route to be fulfilled (with timeout fallback)
     // Increase timeout for mobile devices which may be slower
-    const timeoutDuration = isMobile ? 40000 : 25000;
+    const timeoutDuration = isMobile ? 30000 : 20000;
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
     });
-    
-    // Also set up waitForResponse as additional check for route interception
-    // This provides more reliable detection across browsers/devices
-    const responsePromise = page.waitForResponse(
-      (response) => response.url().includes('/api/contact'),
-      { timeout: timeoutDuration }
-    ).catch(() => null);
     
     // Click submit and wait for route interception in parallel
     const clickPromise = submitBtn.click().catch(err => {
@@ -546,15 +547,14 @@ test.describe('Contact Page', () => {
     });
     
     // Wait for route fulfillment with timeout
-    // Also wait for response as backup - if we see a response, the request was made
+    // Note: waitForResponse may not work with route.fulfill(), so we rely on routeFulfillPromise
     const routePromise = Promise.race([routeFulfillPromise, timeoutPromise]);
     
     try {
       await Promise.all([clickPromise, routePromise]);
-      // Verify response was also detected (backup check)
-      const response = await responsePromise;
-      if (!response && !routeFulfilled) {
-        throw new Error('Route was not intercepted and no response detected');
+      // Verify route was intercepted
+      if (!routeFulfilled) {
+        throw new Error('Route was not intercepted and fulfilled');
       }
     } catch (error) {
       if (!routeFulfilled) {
