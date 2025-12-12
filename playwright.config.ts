@@ -30,7 +30,8 @@ try {
 }
 // #endregion
 
-export default defineConfig({
+// Build config conditionally - in CI, server is started manually, so don't configure webServer
+const config: any = {
   testDir: 'tests',
   timeout: process.env.CI ? 45_000 : 60_000, // Reduce timeout in CI to fail faster and allow more tests to run
   expect: { timeout: 10_000 },
@@ -44,20 +45,26 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:4321', // Use 127.0.0.1 instead of localhost for better CI reliability
     trace: 'on-first-retry',
   },
-  webServer: {
+};
+
+// Only configure webServer locally - in CI, server is started manually by workflow
+if (!process.env.CI) {
+  config.webServer = {
     // Use simple Node.js HTTP server that explicitly serves index.html for root path
     // This avoids http-server's issue with not serving index.html for / (returns 404)
     // The simple server explicitly handles / -> index.html mapping
     command: `node "${path.join(rootDir, 'scripts', 'start-web-server-simple.js')}"`,
     url: 'http://127.0.0.1:4321/index.html', // Use 127.0.0.1 for consistency
-    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
+    reuseExistingServer: false, // Auto-start server locally
     timeout: 60_000,
     stdout: 'pipe', // Capture stdout to see server logs
     stderr: 'pipe', // Capture stderr to see server errors
     // Ensure server is actually ready before tests start
     // Playwright will wait for the URL to respond with 200 status
-  },
-  projects: [
+  };
+}
+
+config.projects = [
     // UI tests (require browsers)
     {
       name: 'chromium',
@@ -102,11 +109,13 @@ export default defineConfig({
       testMatch: /$^/, // Match nothing - this is just for server startup
       // Run: bash scripts/start-api-server.sh (or use the CI workflow approach)
     },
-  ],
-  reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: path.join(rootDir, 'playwright-report') }],
-  ],
-});
+];
+
+config.reporter = [
+  ['list'],
+  ['html', { open: 'never', outputFolder: path.join(rootDir, 'playwright-report') }],
+];
+
+export default defineConfig(config);
 
 

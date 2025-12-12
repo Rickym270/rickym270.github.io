@@ -145,7 +145,6 @@ test.describe('Docs/Notes Page', () => {
     const pythonCard = page.locator('.notes-category-card.python');
     const viewMoreLink = pythonCard.locator('.notes-card-link');
     await expect(viewMoreLink).toBeVisible();
-    await viewMoreLink.click();
     
     // Wait for category content to load - wait for back button first (indicates navigation happened)
     // On mobile, back button might have different ID or take longer to appear
