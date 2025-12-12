@@ -6,13 +6,13 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   testDir: 'tests',
-  timeout: 60_000,
+  timeout: process.env.CI ? 45_000 : 60_000, // Reduce timeout in CI to fail faster and allow more tests to run
   expect: { timeout: 10_000 },
   outputDir: path.join(rootDir, 'test-results'),
   // Enable parallel test execution within each project
-  // Use 2 workers in CI to reduce resource contention and improve test stability
-  // Reduced from 4 to minimize intermittent failures from shared server resources
-  workers: process.env.CI ? 2 : undefined, // 2 workers in CI, auto-detect locally
+  // Use 4 workers in CI for better throughput (GitHub Actions runners have 2 cores with hyperthreading)
+  // This helps complete ~400+ tests within the CI timeout
+  workers: process.env.CI ? 4 : undefined, // 4 workers in CI, auto-detect locally
   fullyParallel: true, // Run all tests in parallel (within each project)
   use: {
     baseURL: 'http://localhost:4321',
@@ -40,7 +40,7 @@ export default defineConfig({
         navigationTimeout: 45_000, // 45 seconds for navigation
       },
       testIgnore: /api.*\.spec\.ts/,
-      timeout: 90_000, // 90 seconds per test (mobile is slower)
+      timeout: process.env.CI ? 60_000 : 90_000, // Reduced in CI to allow more tests to complete
       expect: { timeout: 15_000 }, // 15 seconds for expect assertions
     },
     {
@@ -52,7 +52,7 @@ export default defineConfig({
         actionTimeout: 30_000,
       },
       testIgnore: /api.*\.spec\.ts/,
-      timeout: 90_000, // 90 seconds per test for Firefox
+      timeout: process.env.CI ? 60_000 : 90_000, // Reduced in CI to allow more tests to complete
     },
     // API tests (no browser needed)
     {

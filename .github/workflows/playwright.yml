@@ -20,7 +20,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 60  # Increased from 35 to accommodate ~400+ tests across 3 browser projects
     env:
       TZ: America/New_York
     steps:
