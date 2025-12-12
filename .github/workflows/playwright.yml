@@ -246,7 +246,7 @@ jobs:
         run: |
           echo "Waiting for UI server to start on port 4321..."
           # Use 127.0.0.1 instead of localhost for CI reliability
-          # Check /index.html instead of / because http-server returns 404 for root path
+          # Check /index.html instead of / because http-server returns 404 for root path (http-server bug)
           npx wait-on http://127.0.0.1:4321/index.html --timeout 60000 --interval 2000 || {
             echo "ERROR: UI server failed to start within timeout"
             echo "Checking if server process is still running:"
