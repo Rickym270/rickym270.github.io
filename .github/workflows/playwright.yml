@@ -213,7 +213,7 @@ jobs:
         working-directory: ./api
         run: |
           echo "Waiting for API server to start..."
-          npx wait-on http://localhost:8080/api/health --timeout 120000 --interval 2000 || {
+          npx wait-on http://127.0.0.1:8080/api/health --timeout 120000 --interval 2000 || {
             echo "ERROR: API server failed to start within timeout"
             echo "Checking if server process is still running:"
             if [ -f api-server.pid ]; then
@@ -245,7 +245,7 @@ jobs:
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         run: |
           echo "Waiting for UI server to start on port 4321..."
-          npx wait-on http://localhost:4321 --timeout 60000 --interval 2000 || {
+          npx wait-on http://127.0.0.1:4321 --timeout 60000 --interval 2000 || {
             echo "ERROR: UI server failed to start within timeout"
             echo "Checking if server process is still running:"
             if [ -f ui-server.pid ]; then
