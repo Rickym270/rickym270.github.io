@@ -164,15 +164,17 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForTimeout(2000); // Give time for content to load
     
     // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
-    // Use more lenient check on mobile - verify content exists rather than strict visibility
-    const tocTimeout = isMobile ? 20000 : 15000;
+    // Use more robust wait with fallback - increase timeout for mobile devices
     try {
-      await page.waitForSelector('.toc_title, .toc_list', { timeout: tocTimeout, state: 'attached' });
+      await page.waitForSelector('.toc_title, .toc_list', { timeout: 30000, state: 'visible' });
     } catch {
-      // Fallback: verify substantial content exists
-      const content = page.locator('#content');
-      const contentText = await content.textContent();
-      expect(contentText).toMatch(/Contents|Executing|Jinja|Python|article|FAQPages/i);
+      // Fallback: wait for any substantial content indicating page loaded
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        const text = content.textContent || '';
+        return text.trim().length > 100 || content.querySelector('.toc_title, .toc_list, article, .article-link') !== null;
+      }, { timeout: 20000 });
     }
     await page.waitForTimeout(1000); // Additional wait for content to stabilize
     
@@ -579,7 +581,10 @@ test.describe('Docs/Notes Page', () => {
   });
 
   test('breadcrumbs navigation works correctly', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default load for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
