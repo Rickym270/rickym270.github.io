@@ -46,14 +46,15 @@ rickym270.github.io/
 ## Workflow Analysis
 
 ### Current Workflows
-1. **playwright.yml**: Main test workflow (✅ Well optimized)
+1. **playwright.yml**: Main test workflow - runs on PRs, pushes, and schedule (✅ Well optimized)
 2. **deploy.yml**: API & site deployment (✅ Good)
-3. **locator-maintenance.yml**: Test maintenance (✅ Good)
+3. **locator-maintenance.yml**: Test maintenance - runs on schedule (daily 10:00 UTC) and manual dispatch only (✅ Good)
+   - Removed pull_request trigger to avoid duplicate test runs with playwright.yml
 4. **update-content.yml**: Content updates (✅ Good)
 5. **locator-normalize.yml**: Locator normalization (⚠️ Check if needed)
 
 ### Workflow Efficiency Issues
-- ✅ Good: Parallel test execution (4 workers in CI)
+- ✅ Good: Parallel test execution (2 workers in CI, reduced from 4 to improve stability)
 - ✅ Good: Skip keywords for selective testing
 - ⚠️ Could improve: Cache optimization
 - ⚠️ Could improve: Matrix strategy for multiple Node versions
