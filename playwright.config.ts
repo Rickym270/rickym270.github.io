@@ -1,8 +1,34 @@
 import { defineConfig, devices } from '@playwright/test';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
+
+// #region agent log
+// Debug: Log rootDir and verify index.html exists
+const logPath = path.join(rootDir, '.cursor', 'debug.log');
+const logData = {
+  sessionId: 'debug-session',
+  runId: 'config-init',
+  hypothesisId: 'A',
+  location: 'playwright.config.ts:8',
+  message: 'webServer configuration debug',
+  data: {
+    rootDir: rootDir,
+    rootDirExists: fs.existsSync(rootDir),
+    indexHtmlPath: path.join(rootDir, 'index.html'),
+    indexHtmlExists: fs.existsSync(path.join(rootDir, 'index.html')),
+    cwd: process.cwd(),
+  },
+  timestamp: Date.now()
+};
+try {
+  fs.appendFileSync(logPath, JSON.stringify(logData) + '\n');
+} catch (e) {
+  // Ignore if log file can't be written
+}
+// #endregion
 
 export default defineConfig({
   testDir: 'tests',
@@ -15,14 +41,15 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined, // 2 workers in CI, auto-detect locally
   fullyParallel: true, // Run all tests in parallel (within each project)
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: 'http://127.0.0.1:4321', // Use 127.0.0.1 instead of localhost for better CI reliability
     trace: 'on-first-retry',
   },
   webServer: {
-    // Use absolute path directly - http-server will serve index.html for / by default
-    // Using rootDir as absolute path ensures correct directory regardless of where command runs
-    command: `npx http-server -p 4321 -c-1 -d false -i false "${rootDir}"`,
-    url: 'http://localhost:4321/index.html',
+    // Use simple Node.js HTTP server that explicitly serves index.html for root path
+    // This avoids http-server's issue with not serving index.html for / (returns 404)
+    // The simple server explicitly handles / -> index.html mapping
+    command: `node "${path.join(rootDir, 'scripts', 'start-web-server-simple.js')}"`,
+    url: 'http://127.0.0.1:4321/index.html', // Use 127.0.0.1 for consistency
     reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
     timeout: 60_000,
     stdout: 'pipe', // Capture stdout to see server logs

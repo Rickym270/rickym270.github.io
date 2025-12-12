@@ -250,7 +250,8 @@ jobs:
           npx playwright test ${{ steps.skip-check.outputs.projects }} --reporter=list,github || {
             echo "Tests failed or timed out"
             echo "Checking if webServer is still running:"
-            curl -s http://localhost:4321/index.html > /dev/null && echo "webServer is responding" || echo "webServer is NOT responding"
+            curl -s http://127.0.0.1:4321/index.html > /dev/null && echo "webServer is responding" || echo "webServer is NOT responding"
+            curl -s http://127.0.0.1:4321/ > /dev/null && echo "webServer root path is responding" || echo "webServer root path is NOT responding"
             exit 1
           }
 
