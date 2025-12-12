@@ -33,14 +33,14 @@ curl -s -X POST http://localhost:8080/api/contact \
 **Step 1**: Start server with `ADMIN_API_KEY` set:
 ```bash
 cd api
-ADMIN_API_KEY="my-secret-key" ./mvnw -DskipTests spring-boot:run
+ADMIN_API_KEY="your-admin-key" ./mvnw -DskipTests spring-boot:run
 ```
 
 **Step 2**: Submit at least one message (see POST example above).
 
-**Step 3**: Retrieve all messages:
+**Step 3**: Retrieve all messages (use environment variable, never hardcode keys):
 ```bash
-curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+curl -s -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 ```
 
 **Expected**:
@@ -176,7 +176,8 @@ curl -s -i -X POST http://localhost:8080/api/contact \
 ### Empty array on fresh server
 ```bash
 # Start fresh server, GET immediately (no POST yet)
-curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+# Use environment variable, never hardcode keys
+curl -s -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 ```
 
 **Expected**: `200 OK` with empty array `[]`.
@@ -197,9 +198,9 @@ done
 **Expected**: All requests succeed with `201 Created`, no errors or timeouts.
 
 ### Retrieve large list
-After submitting 20+ messages, retrieve all:
+After submitting 20+ messages, retrieve all (use environment variable, never hardcode keys):
 ```bash
-curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+curl -s -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 ```
 
 **Expected**: `200 OK` with array of all 20+ messages, stable latency.
@@ -234,12 +235,12 @@ curl -s -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
 ```bash
 # Restart server with key set
 cd api
-ADMIN_API_KEY="my-secret-key" ./mvnw -DskipTests spring-boot:run
+ADMIN_API_KEY="your-admin-key" ./mvnw -DskipTests spring-boot:run
 ```
 
 Alternatively, pass as JVM system property:
 ```bash
-./mvnw -DskipTests -DADMIN_API_KEY="my-secret-key" spring-boot:run
+./mvnw -DskipTests -DADMIN_API_KEY="your-admin-key" spring-boot:run
 ```
 
 ### GET returns empty array
@@ -254,11 +255,11 @@ Alternatively, pass as JVM system property:
 
 **Fix**: The controller now trims both values, but ensure no newlines or tabs:
 ```bash
-# Bad
-curl -H "X-API-Key: my-secret-key " http://localhost:8080/api/contact
+# Bad (trailing space, and never hardcode keys - use environment variable)
+curl -H "X-API-Key: ${ADMIN_API_KEY} " http://localhost:8080/api/contact
 
 # Good
-curl -H "X-API-Key: my-secret-key" http://localhost:8080/api/contact
+curl -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 ```
 
 ---

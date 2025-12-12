@@ -71,10 +71,17 @@ npx playwright test --project=chromium-iphone
 
 ### Running Tests in CI
 
-Tests run automatically in GitHub Actions on:
-- Pull requests
-- Pushes to main
-- Daily schedule (6:00 UTC)
+There are two GitHub Actions workflows for testing:
+
+**Playwright Tests** (`playwright.yml`) - Main test workflow for PR validation:
+- Runs on: Pull requests, pushes to master, daily schedule (6:00 UTC), manual dispatch
+- Supports skip keywords: `[skip ui]`, `[skip api]`, etc.
+- Purpose: Validate code changes in PRs
+
+**Locator Maintenance** (`locator-maintenance.yml`) - Test maintenance workflow:
+- Runs on: Daily schedule (10:00 UTC), manual dispatch only
+- Note: Does NOT run on pull requests to avoid duplicate test runs
+- Purpose: Run all tests and normalize locators if tests fail
 
 The CI workflow:
 1. Checks out code
@@ -109,6 +116,8 @@ Configuration is in `playwright.config.ts`:
 - **Expect timeout**: 10 seconds
 - **Web server**: Automatically starts `http-server` on port 4321
 - **Browsers**: Chromium, Firefox, Chromium-iPhone (mobile emulation)
+- **Workers**: 2 in CI (reduced from 4 to minimize resource contention and improve test stability)
+- **Parallel execution**: Enabled within each browser project
 - **Trace**: Enabled on first retry for debugging
 
 ## Test Suites

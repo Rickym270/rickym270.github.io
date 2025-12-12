@@ -70,11 +70,11 @@ async function fetchProjectsFromAPI() {
     } else {
         // Fallback standalone fetch
         try {
-            const response = await fetch(`${API_BASE_URL_FALLBACK}/api/projects`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
+        const response = await fetch(`${API_BASE_URL_FALLBACK}/api/projects`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
         } catch (error) {
             // Enhance error message for CORS/network issues
             if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {

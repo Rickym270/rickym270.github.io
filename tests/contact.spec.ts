@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Contact Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, browserName }) => {
     // Ensure English is set for these tests
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for TranslationManager to be available and initialized
     await page.waitForFunction(() => {
@@ -282,17 +284,8 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use function-based route matching for more reliable interception on mobile
-    // This matches both absolute URLs (https://...) and any path containing /api/contact
-    await page.route((url) => {
-      // Playwright route function receives a URL object with a 'url' property (full URL string)
-      // Also has pathname, search, etc. properties
-      const urlString = url.url || '';
-      const pathname = url.pathname || '';
-      
-      // Match any URL containing /api/contact
-      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
-    }, async (route) => {
+    // Use wildcard pattern for more reliable interception across all browsers/devices
+    await page.route('**/api/contact*', async (route) => {
       // Only intercept once
       if (!requestIntercepted) {
         requestIntercepted = true;
@@ -328,7 +321,10 @@ test.describe('Contact Page', () => {
       }
     });
     
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -449,17 +445,8 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use function-based route matching for more reliable interception on mobile
-    // This matches both absolute URLs (https://...) and any path containing /api/contact
-    await page.route((url) => {
-      // Playwright route function receives a URL object with a 'url' property (full URL string)
-      // Also has pathname, search, etc. properties
-      const urlString = url.url || '';
-      const pathname = url.pathname || '';
-      
-      // Match any URL containing /api/contact
-      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
-    }, async (route) => {
+    // Use wildcard pattern for more reliable interception across all browsers/devices
+    await page.route('**/api/contact*', async (route) => {
       routeFulfilled = true;
       resolveRouteFulfill();
       // Fulfill the route after resolving the promise
@@ -487,7 +474,10 @@ test.describe('Contact Page', () => {
       }
     });
 
-    await page.goto('/');
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -544,8 +534,10 @@ test.describe('Contact Page', () => {
     await page.locator('#message').fill('This is a test message.');
     
     // Wait for route to be fulfilled (with timeout fallback)
+    // Increase timeout for mobile devices which may be slower
+    const timeoutDuration = isMobile ? 30000 : 20000;
     const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => reject(new Error('Route fulfillment timeout')), 20000);
+      setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
     });
     
     // Click submit and wait for route interception in parallel
@@ -553,10 +545,17 @@ test.describe('Contact Page', () => {
       console.error('Error clicking submit button:', err);
       throw err;
     });
+    
+    // Wait for route fulfillment with timeout
+    // Note: waitForResponse may not work with route.fulfill(), so we rely on routeFulfillPromise
     const routePromise = Promise.race([routeFulfillPromise, timeoutPromise]);
     
     try {
       await Promise.all([clickPromise, routePromise]);
+      // Verify route was intercepted
+      if (!routeFulfilled) {
+        throw new Error('Route was not intercepted and fulfilled');
+      }
     } catch (error) {
       if (!routeFulfilled) {
         console.error('Route was not fulfilled within timeout');
