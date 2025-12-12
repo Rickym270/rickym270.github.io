@@ -235,8 +235,10 @@ jobs:
       - name: Start UI server
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         run: |
-          # Start http-server on port 4321 in the background
-          npm run serve > ui-server.log 2>&1 &
+          # Start simple Node.js server on port 4321 in the background
+          # Use simple server instead of http-server because http-server returns 404 for /
+          # Tests use page.goto('/') which fails with http-server but works with simple server
+          node scripts/start-web-server-simple.js > ui-server.log 2>&1 &
           UI_PID=$!
           echo $UI_PID > ui-server.pid
           echo "UI server started with PID: $UI_PID on port 4321"
@@ -246,8 +248,8 @@ jobs:
         run: |
           echo "Waiting for UI server to start on port 4321..."
           # Use 127.0.0.1 instead of localhost for CI reliability
-          # Check /index.html instead of / because http-server returns 404 for root path (http-server bug)
-          npx wait-on http://127.0.0.1:4321/index.html --timeout 60000 --interval 2000 || {
+          # Check / (root path) - simple server serves it correctly, unlike http-server
+          npx wait-on http://127.0.0.1:4321/ --timeout 60000 --interval 2000 || {
             echo "ERROR: UI server failed to start within timeout"
             echo "Checking if server process is still running:"
             if [ -f ui-server.pid ]; then
@@ -315,8 +317,9 @@ jobs:
             kill $(cat ui-server.pid) || true
             rm ui-server.pid || true
           fi
-          # Also try to kill any http-server process on port 4321 as fallback
+          # Also try to kill any server process on port 4321 as fallback
           fuser -k 4321/tcp 2>/dev/null || true
+          pkill -f "start-web-server-simple" || true
 
       - name: Upload API server logs
         if: always()
