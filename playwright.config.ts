@@ -50,7 +50,7 @@ export default defineConfig({
     // The simple server explicitly handles / -> index.html mapping
     command: `node "${path.join(rootDir, 'scripts', 'start-web-server-simple.js')}"`,
     url: 'http://127.0.0.1:4321/index.html', // Use 127.0.0.1 for consistency
-    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
+    reuseExistingServer: process.env.CI ? true : false, // Reuse manually started server in CI, auto-start locally
     timeout: 60_000,
     stdout: 'pipe', // Capture stdout to see server logs
     stderr: 'pipe', // Capture stderr to see server errors
