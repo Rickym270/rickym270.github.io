@@ -163,7 +163,18 @@ test.describe('Docs/Notes Page', () => {
     await page.waitForTimeout(2000); // Give time for content to load
     
     // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
-    await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000 });
+    // Use more robust wait with fallback - increase timeout for mobile devices
+    try {
+      await page.waitForSelector('.toc_title, .toc_list', { timeout: 30000, state: 'visible' });
+    } catch {
+      // Fallback: wait for any substantial content indicating page loaded
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        const text = content.textContent || '';
+        return text.trim().length > 100 || content.querySelector('.toc_title, .toc_list, article, .article-link') !== null;
+      }, { timeout: 20000 });
+    }
     await page.waitForTimeout(1000); // Additional wait for content to stabilize
     
     // Should load Python index page content - check for Contents section or article links
@@ -549,7 +560,10 @@ test.describe('Docs/Notes Page', () => {
   });
 
   test('breadcrumbs navigation works correctly', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default load for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);

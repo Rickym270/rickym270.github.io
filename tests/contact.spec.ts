@@ -282,17 +282,8 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use function-based route matching for more reliable interception on mobile
-    // This matches both absolute URLs (https://...) and any path containing /api/contact
-    await page.route((url) => {
-      // Playwright route function receives a URL object with a 'url' property (full URL string)
-      // Also has pathname, search, etc. properties
-      const urlString = url.url || '';
-      const pathname = url.pathname || '';
-      
-      // Match any URL containing /api/contact
-      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
-    }, async (route) => {
+    // Use wildcard pattern for more reliable interception across all browsers/devices
+    await page.route('**/api/contact*', async (route) => {
       // Only intercept once
       if (!requestIntercepted) {
         requestIntercepted = true;
@@ -449,17 +440,8 @@ test.describe('Contact Page', () => {
     });
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use function-based route matching for more reliable interception on mobile
-    // This matches both absolute URLs (https://...) and any path containing /api/contact
-    await page.route((url) => {
-      // Playwright route function receives a URL object with a 'url' property (full URL string)
-      // Also has pathname, search, etc. properties
-      const urlString = url.url || '';
-      const pathname = url.pathname || '';
-      
-      // Match any URL containing /api/contact
-      return urlString.includes('/api/contact') || pathname.includes('/api/contact');
-    }, async (route) => {
+    // Use wildcard pattern for more reliable interception across all browsers/devices
+    await page.route('**/api/contact*', async (route) => {
       routeFulfilled = true;
       resolveRouteFulfill();
       // Fulfill the route after resolving the promise
@@ -544,19 +526,36 @@ test.describe('Contact Page', () => {
     await page.locator('#message').fill('This is a test message.');
     
     // Wait for route to be fulfilled (with timeout fallback)
+    // Increase timeout for mobile devices which may be slower
+    const timeoutDuration = isMobile ? 40000 : 25000;
     const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => reject(new Error('Route fulfillment timeout')), 20000);
+      setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
     });
+    
+    // Also set up waitForResponse as additional check for route interception
+    // This provides more reliable detection across browsers/devices
+    const responsePromise = page.waitForResponse(
+      (response) => response.url().includes('/api/contact'),
+      { timeout: timeoutDuration }
+    ).catch(() => null);
     
     // Click submit and wait for route interception in parallel
     const clickPromise = submitBtn.click().catch(err => {
       console.error('Error clicking submit button:', err);
       throw err;
     });
+    
+    // Wait for route fulfillment with timeout
+    // Also wait for response as backup - if we see a response, the request was made
     const routePromise = Promise.race([routeFulfillPromise, timeoutPromise]);
     
     try {
       await Promise.all([clickPromise, routePromise]);
+      // Verify response was also detected (backup check)
+      const response = await responsePromise;
+      if (!response && !routeFulfilled) {
+        throw new Error('Route was not intercepted and no response detected');
+      }
     } catch (error) {
       if (!routeFulfilled) {
         console.error('Route was not fulfilled within timeout');
