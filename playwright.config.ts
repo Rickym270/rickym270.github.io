@@ -19,9 +19,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    // Use absolute path to ensure correct directory
-    // http-server should automatically serve index.html for /, but we use rootDir to ensure correct path
-    command: `cd "${rootDir}" && npx http-server -p 4321 -c-1 -d false -i false .`,
+    // Use absolute path directly - http-server will serve index.html for / by default
+    // Using rootDir as absolute path ensures correct directory regardless of where command runs
+    command: `npx http-server -p 4321 -c-1 -d false -i false "${rootDir}"`,
     url: 'http://localhost:4321/index.html',
     reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
     timeout: 60_000,
