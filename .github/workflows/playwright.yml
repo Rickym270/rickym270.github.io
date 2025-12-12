@@ -238,12 +238,21 @@ jobs:
         # Supports: [skip ci], [skip ui], [skip api], [skip perf], [skip ada], [skip load]
         # UI tests cover: home, skills, projects, contact, docs, tutorials, navbar, theme, translation, responsive, SPA navigation, code blocks
         # API tests cover: health, stats, meta, home, projects, contact, github-activity
+        timeout-minutes: 55  # Set timeout for this step (slightly less than job timeout)
         run: |
           if [ -z "${{ steps.skip-check.outputs.projects }}" ]; then
             echo "⚠️  No tests to run (all skipped)"
             exit 0
           fi
-          npx playwright test ${{ steps.skip-check.outputs.projects }}
+          echo "Starting Playwright tests with projects: ${{ steps.skip-check.outputs.projects }}"
+          echo "CI environment: CI=$CI"
+          echo "Workers will be set to 2 in CI (see playwright.config.ts)"
+          npx playwright test ${{ steps.skip-check.outputs.projects }} --reporter=list,github || {
+            echo "Tests failed or timed out"
+            echo "Checking if webServer is still running:"
+            curl -s http://localhost:4321/index.html > /dev/null && echo "webServer is responding" || echo "webServer is NOT responding"
+            exit 1
+          }
 
       - name: Skip tests notification
         if: steps.skip-check.outputs.skip_all == 'true' || (steps.skip-check.outputs.projects == '' && steps.skip-check.outputs.skip_all != 'true')

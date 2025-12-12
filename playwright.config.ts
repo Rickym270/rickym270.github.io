@@ -10,9 +10,9 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   outputDir: path.join(rootDir, 'test-results'),
   // Enable parallel test execution within each project
-  // Use 4 workers in CI for better throughput (GitHub Actions runners have 2 cores with hyperthreading)
-  // This helps complete ~400+ tests within the CI timeout
-  workers: process.env.CI ? 4 : undefined, // 4 workers in CI, auto-detect locally
+  // Use 2 workers in CI to avoid resource contention and ensure webServer stability
+  // With 3 browser projects running in parallel, 2 workers per project = 6 concurrent test executions
+  workers: process.env.CI ? 2 : undefined, // 2 workers in CI, auto-detect locally
   fullyParallel: true, // Run all tests in parallel (within each project)
   use: {
     baseURL: 'http://localhost:4321',
@@ -23,6 +23,10 @@ export default defineConfig({
     url: 'http://localhost:4321/index.html',
     reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean state
     timeout: 60_000,
+    stdout: 'pipe', // Capture stdout to see server logs
+    stderr: 'pipe', // Capture stderr to see server errors
+    // Ensure server is actually ready before tests start
+    // Playwright will wait for the URL to respond with 200 status
   },
   projects: [
     // UI tests (require browsers)
