@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["slug", "name", "repo"],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly project identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Project name"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Project description/summary"
+    },
+    "repo": {
+      "type": "string",
+      "format": "uri",
+      "description": "GitHub repository URL"
+    },
+    "tech": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of technologies/languages used"
+    },
+    "featured": {
+      "type": "boolean",
+      "description": "Whether the project is featured",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "description": "Project status (e.g., 'complete', 'in-progress')"
+    }
+  },
+  "additionalProperties": true
+}
