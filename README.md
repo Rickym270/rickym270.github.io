@@ -170,7 +170,27 @@ This site hosts notes, tutorials, and projects. It started as a Python teaching 
 Run all tests:
 ```bash
 npm test  # Runs Playwright UI tests
+npm run test:unit  # Runs frontend unit tests (Vitest)
 cd api && ./mvnw test  # Runs API unit tests
 ```
+
+### Frontend Unit Tests
+
+Fast, deterministic unit tests for pure JavaScript functions. Tests run without starting a web server or browser.
+
+**Run unit tests:**
+```bash
+npm run test:unit        # Run once
+npm run test:unit:watch  # Watch mode for development
+```
+
+**What's tested:**
+- Project name normalization and matching logic
+- Image path generation for projects
+- API error handling and enhancement
+- Translation lookup with fallback logic
+- Language preference detection
+
+Tests are located in `tests/unit/` and test pure helper functions from `html/js/lib/`.
 
 See [Documentation Index](docs/README.md) for complete testing guides.
