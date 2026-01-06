@@ -28,7 +28,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: /api.*\.spec\.ts/,
+      testIgnore: '**/api/**/*.spec.ts',
     },
     {
       name: 'chromium-iphone',
@@ -50,7 +50,7 @@ export default defineConfig({
         navigationTimeout: 60_000,
         actionTimeout: 30_000,
       },
-      testIgnore: /api.*\.spec\.ts/,
+      testIgnore: '**/api/**/*.spec.ts',
       timeout: 90_000, // 90 seconds per test for Firefox
     },
     // API tests (no browser needed)
