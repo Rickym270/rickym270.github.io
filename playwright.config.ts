@@ -38,7 +38,7 @@ export default defineConfig({
         actionTimeout: 20_000, // 20 seconds for actions
         navigationTimeout: 45_000, // 45 seconds for navigation
       },
-      testIgnore: /api.*\.spec\.ts/,
+      testIgnore: '**/api/**/*.spec.ts',
       timeout: 90_000, // 90 seconds per test (mobile is slower)
       expect: { timeout: 15_000 }, // 15 seconds for expect assertions
     },
