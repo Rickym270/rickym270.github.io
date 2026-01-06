@@ -15,7 +15,10 @@ test.describe('Performance', () => {
   test('page loads within acceptable time', async ({ page }) => {
     const startTime = Date.now();
     
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Firefox needs networkidle instead of domcontentloaded for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -33,7 +36,10 @@ test.describe('Performance', () => {
   });
 
   test('SPA navigation is fast', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Firefox needs networkidle instead of domcontentloaded for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {

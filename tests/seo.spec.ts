@@ -19,11 +19,10 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('home page has proper meta tags', async ({ page }) => {
-    // Firefox needs networkidle for reliable navigation
+    // Firefox needs networkidle instead of domcontentloaded for reliability
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const timeout = browserName === 'firefox' ? 60000 : 20000;
-    await page.goto('/', { waitUntil, timeout });
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to fully load
     // Wait for page to be ready - check if content element exists

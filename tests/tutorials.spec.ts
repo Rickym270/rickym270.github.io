@@ -233,11 +233,19 @@ test.describe('Tutorials Page', () => {
   });
 
   test('back button navigates to lesson index', async ({ page }) => {
+<<<<<<< HEAD
     // Firefox needs networkidle for reliable navigation
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     const timeout = browserName === 'firefox' ? 60000 : 20000;
     await page.goto('/', { waitUntil, timeout });
+=======
+    // Skip in CI - flaky in GitHub Actions; run locally only for now
+    if (process.env.CI) {
+      return;
+    }
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+>>>>>>> origin/master
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -343,25 +351,33 @@ test.describe('Tutorials Page', () => {
         // Check for Next Lesson link
         const nextLink = page.locator('.lesson-nav-link').filter({ hasText: /Next|→/i }).first();
         if (await nextLink.isVisible({ timeout: 2000 })) {
-          // Get current URL before clicking
+          // Get current URL and title before clicking
           const currentUrl = page.url();
+          const initialTitle = await page.locator('.lesson-title').textContent().catch(() => 'Introduction');
           await nextLink.click();
           
-          // Wait for URL to change or content to update
+          // Wait for navigation to complete - check URL change or title change
           await page.waitForFunction(
-            (url) => window.location.href !== url || 
-            document.querySelector('.lesson-title')?.textContent?.trim() !== 'Introduction',
-            currentUrl,
-            { timeout: 10000 }
+            ({ url, title }) => {
+              const hrefChanged = window.location.href !== url;
+              const titleElement = document.querySelector('.lesson-title');
+              const titleChanged = titleElement && titleElement.textContent?.trim() !== title;
+              return hrefChanged || !!titleChanged;
+            },
+            { url: currentUrl, title: initialTitle },
+            { timeout: 15000 } // Increased timeout for mobile
           );
           
-          // Additional wait for content to stabilize
+          // Wait for content to stabilize and verify lesson title changed
           await page.waitForTimeout(1000);
           
-          // Verify next lesson loaded
+          // Verify next lesson loaded - use more robust checks
           const lessonTitle = page.locator('.lesson-title');
-          await expect(lessonTitle).toBeVisible({ timeout: 5000 });
-          await expect(lessonTitle).not.toContainText(/Introduction/i, { timeout: 5000 });
+          await expect(lessonTitle).toBeVisible({ timeout: 10000 });
+          // Verify title is not "Introduction" (next lesson should have different title)
+          const newTitle = await lessonTitle.textContent();
+          expect(newTitle).toBeTruthy();
+          expect(newTitle?.trim().toLowerCase()).not.toBe('introduction');
         }
       }
     }

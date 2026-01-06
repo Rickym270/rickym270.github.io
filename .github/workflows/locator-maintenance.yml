@@ -1,8 +1,8 @@
 name: Locator Maintenance
 
 on:
-  pull_request:
-    branches: [ master ]
+  # Removed pull_request trigger to avoid duplicate test runs with Playwright Tests workflow
+  # This workflow now runs on schedule and manual dispatch only
   schedule:
     - cron: '0 10 * * *'
   workflow_dispatch:
@@ -91,7 +91,7 @@ jobs:
         working-directory: ./api
         run: |
           echo "Waiting for API server to start..."
-          npx wait-on http://localhost:8080/api/health --timeout 120000 --interval 2000 || {
+          npx wait-on http://127.0.0.1:8080/api/health --timeout 120000 --interval 2000 || {
             echo "ERROR: API server failed to start within timeout"
             echo "Checking if server process is still running:"
             if [ -f api-server.pid ]; then

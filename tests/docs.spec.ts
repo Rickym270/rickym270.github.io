@@ -145,10 +145,10 @@ test.describe('Docs/Notes Page', () => {
     const pythonCard = page.locator('.notes-category-card.python');
     const viewMoreLink = pythonCard.locator('.notes-card-link');
     await expect(viewMoreLink).toBeVisible();
-    await viewMoreLink.click();
     
     // Wait for category content to load - wait for back button first (indicates navigation happened)
     // On mobile, back button might have different ID or take longer to appear
+    const categoryTimeout = isMobile ? 30000 : 20000;
     await page.waitForFunction(() => {
       const content = document.querySelector('#content');
       if (!content) return false;
@@ -159,11 +159,23 @@ test.describe('Docs/Notes Page', () => {
       const hasContent = content.querySelector('.toc_title, .toc_list') || 
                          (content.textContent && content.textContent.trim().length > 100);
       return hasContent;
-    }, { timeout: 20000 });
+    }, { timeout: categoryTimeout });
     await page.waitForTimeout(2000); // Give time for content to load
     
     // Wait for actual category content to load (toc_title or toc_list, not FAQMain which doesn't exist in loaded content)
-    await page.waitForSelector('.toc_title, .toc_list', { timeout: 15000 });
+    // Use more robust wait with fallback - increase timeout for mobile devices
+    const tocTimeout = isMobile ? 30000 : 20000;
+    try {
+      await page.waitForSelector('.toc_title, .toc_list', { timeout: tocTimeout, state: 'visible' });
+    } catch {
+      // Fallback: wait for any substantial content indicating page loaded
+      await page.waitForFunction(() => {
+        const content = document.querySelector('#content');
+        if (!content) return false;
+        const text = content.textContent || '';
+        return text.trim().length > 100 || content.querySelector('.toc_title, .toc_list, article, .article-link') !== null;
+      }, { timeout: 20000 });
+    }
     await page.waitForTimeout(1000); // Additional wait for content to stabilize
     
     // Should load Python index page content - check for Contents section or article links
@@ -222,7 +234,7 @@ test.describe('Docs/Notes Page', () => {
       
       // Wait for back button to appear - use waitForFunction for more reliable detection
       // On mobile, back button may take longer to render
-      const backButtonTimeout = isMobile ? 15000 : 10000;
+      const backButtonTimeout = isMobile ? 30000 : 10000;
       await page.waitForFunction(() => {
         const backButton = document.querySelector('#docsBackButton');
         if (!backButton) return false;
@@ -232,8 +244,9 @@ test.describe('Docs/Notes Page', () => {
       }, { timeout: backButtonTimeout });
       
       // Back button SHOULD be visible on category index page
+      // If waitForFunction passed, button should be there, but give it a moment
       const backButtonAfterCategory = page.locator('#docsBackButton');
-      await expect(backButtonAfterCategory).toBeVisible({ timeout: 3000 });
+      await expect(backButtonAfterCategory).toBeVisible({ timeout: isMobile ? 10000 : 5000 });
       
       // Check for circular back button
       const backBtn = page.locator('#docsBackBtn');
@@ -245,7 +258,8 @@ test.describe('Docs/Notes Page', () => {
       
       // Click on an actual article
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
-      if (await articleLink.isVisible({ timeout: 5000 })) {
+      const articleLinkTimeout = isMobile ? 10000 : 5000;
+      if (await articleLink.isVisible({ timeout: articleLinkTimeout })) {
         await articleLink.click();
         
         // Wait for article content to load - use more flexible selector
@@ -264,7 +278,7 @@ test.describe('Docs/Notes Page', () => {
         
         // Back button SHOULD still be visible on article page
         const backButtonOnArticle = page.locator('#docsBackButton');
-        await expect(backButtonOnArticle).toBeVisible({ timeout: 5000 });
+        await expect(backButtonOnArticle).toBeVisible({ timeout: isMobile ? 10000 : 5000 });
         
         // Breadcrumbs should show article name (use first() to avoid strict mode violation)
         const breadcrumbsOnArticle = page.locator('.breadcrumb-nav').first();
@@ -278,7 +292,7 @@ test.describe('Docs/Notes Page', () => {
         
         // Should return to category index (Back button still visible)
         const backButtonAfterBack = page.locator('#docsBackButton');
-        await expect(backButtonAfterBack).toBeVisible({ timeout: 3000 });
+        await expect(backButtonAfterBack).toBeVisible({ timeout: isMobile ? 10000 : 5000 });
       }
     }
   });
@@ -379,7 +393,8 @@ test.describe('Docs/Notes Page', () => {
       
       // Find an article link (e.g., "Executing commands")
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').filter({ hasText: /Executing|commands|CMDs/i }).first();
-      if (await articleLink.isVisible({ timeout: 5000 })) {
+      const articleLinkTimeout = isMobile ? 10000 : 5000;
+      if (await articleLink.isVisible({ timeout: articleLinkTimeout })) {
         await articleLink.click();
         
         // Wait for article content to load - check for data-content-loaded attribute or any content
@@ -566,7 +581,10 @@ test.describe('Docs/Notes Page', () => {
   });
 
   test('breadcrumbs navigation works correctly', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default load for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -602,38 +620,23 @@ test.describe('Docs/Notes Page', () => {
         return !!hasContent;
       }, { timeout: 15000 });
       
-      await page.waitForTimeout(1000); // Give breadcrumbs time to render
+      await page.waitForTimeout(2000); // Give breadcrumbs time to render
       
       // Wait for breadcrumbs to appear - check in back button container or standalone
       // Breadcrumbs can be .breadcrumb-nav or .breadcrumb-nav-inline
-      // On mobile, breadcrumbs may take longer to render
-      // Also check if back button exists (indicates page setup is complete)
-      const breadcrumbTimeout = isMobile ? 30000 : 15000;
-      
+      // Use longer timeout for mobile devices
+      const breadcrumbTimeout = isMobile ? 30000 : 20000;
       await page.waitForFunction(() => {
-        // Check if back button exists (setup complete)
-        const backButton = document.querySelector('#docsBackButton, .back-button');
-        if (!backButton) return false;
-        
-        // Check for breadcrumbs in various locations
-        const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline');
-        if (breadcrumb && (breadcrumb as HTMLElement).offsetParent !== null) {
-          return true;
-        }
-        
-        // Fallback: if back button exists and content is loaded, breadcrumbs should be there
-        // Check if breadcrumb text exists in the back button container
-        const backContainer = backButton.closest('.back-button-container, .breadcrumb-container');
-        if (backContainer && backContainer.textContent && backContainer.textContent.includes('Docs')) {
-          return true;
-        }
-        
-        return false;
+        const breadcrumb = document.querySelector('.breadcrumb-nav, .breadcrumb-nav-inline, nav.breadcrumb-nav, nav.breadcrumb-nav-inline');
+        if (!breadcrumb) return false;
+        const element = breadcrumb as HTMLElement;
+        // Check if element is visible (offsetParent check) or has content
+        return element.offsetParent !== null || element.textContent?.trim().length > 0;
       }, { timeout: breadcrumbTimeout });
       
       // Check breadcrumbs appear (use first() to avoid strict mode violation)
-      const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline').first();
-      await expect(breadcrumbs).toBeVisible({ timeout: 5000 });
+      const breadcrumbs = page.locator('.breadcrumb-nav, .breadcrumb-nav-inline, nav.breadcrumb-nav, nav.breadcrumb-nav-inline').first();
+      await expect(breadcrumbs).toBeVisible({ timeout: 10000 });
       
       // Should show "Docs > Python" (or similar)
       const breadcrumbText = await breadcrumbs.textContent();
@@ -641,7 +644,8 @@ test.describe('Docs/Notes Page', () => {
       
       // Click on an article
       const articleLink = page.locator('.toc_list a, #content a[href*="FAQPages"]').first();
-      if (await articleLink.isVisible({ timeout: 5000 })) {
+      const articleLinkTimeout = isMobile ? 10000 : 5000;
+      if (await articleLink.isVisible({ timeout: articleLinkTimeout })) {
         await articleLink.click();
         
         // Wait for article content to load

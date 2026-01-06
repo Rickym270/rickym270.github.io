@@ -280,14 +280,20 @@ $(document).ready(function(){
     // Prevent text selection on skill badges globally
     // Use event delegation to handle dynamically loaded content
     document.addEventListener('mousedown', function(e) {
+        // Check if target is an Element and has closest method
+        if (e.target && e.target.nodeType === Node.ELEMENT_NODE && e.target.closest) {
         if (e.target.closest('.skill-badge')) {
             e.preventDefault();
+            }
         }
     }, { passive: false });
     
     document.addEventListener('selectstart', function(e) {
+        // Check if target is an Element and has closest method
+        if (e.target && e.target.nodeType === Node.ELEMENT_NODE && e.target.closest) {
         if (e.target.closest('.skill-badge')) {
             e.preventDefault();
+            }
         }
     });
 });

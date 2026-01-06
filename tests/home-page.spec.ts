@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Home page content', () => {
   test('banner image centered with dark background and hero content', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default 'load' for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     // Ensure Home loaded into #content and banner is visible
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -259,12 +262,24 @@ test.describe('Home page content', () => {
   });
   
   test('Quick Stats cards have centered content and proper text size', async ({ page }) => {
-    await page.goto('/');
+    // Firefox needs networkidle instead of default 'load' for reliability
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
-    // Wait for stats section to potentially load
-    await page.waitForTimeout(3000);
-    
+    // Wait for stats section to load - use proper wait instead of arbitrary timeout
     const statsSection = page.locator('#stats-section');
+    // Stats section may not always be present, so check if it exists first
+    const statsExists = await statsSection.count() > 0;
+    if (!statsExists) {
+      // Wait a bit for stats to potentially load (they load asynchronously)
+      await page.waitForFunction(() => {
+        return document.querySelector('#stats-section') !== null;
+      }, { timeout: 5000 }).catch(() => {
+        // Stats section may not be present - skip test if it doesn't exist
+      });
+    }
+    
     const statsVisible = await statsSection.isVisible({ timeout: 2000 }).catch(() => false);
     
     if (statsVisible) {
