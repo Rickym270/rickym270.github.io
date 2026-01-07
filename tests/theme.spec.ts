@@ -86,18 +86,10 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   });
 
   test('links are white in dark mode and black in light mode', async ({ page }) => {
-<<<<<<< HEAD
-    // Firefox needs networkidle for reliable navigation
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
-    const timeout = browserName === 'firefox' ? 60000 : 20000;
-    await page.goto('/', { waitUntil, timeout });
-=======
     // Firefox needs networkidle instead of domcontentloaded for reliability
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
->>>>>>> origin/master
     
     // Wait for content to load
     // Wait for page to be ready - check if content element exists

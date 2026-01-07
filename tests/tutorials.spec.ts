@@ -233,19 +233,11 @@ test.describe('Tutorials Page', () => {
   });
 
   test('back button navigates to lesson index', async ({ page }) => {
-<<<<<<< HEAD
-    // Firefox needs networkidle for reliable navigation
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const timeout = browserName === 'firefox' ? 60000 : 20000;
-    await page.goto('/', { waitUntil, timeout });
-=======
     // Skip in CI - flaky in GitHub Actions; run locally only for now
     if (process.env.CI) {
       return;
     }
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
->>>>>>> origin/master
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
