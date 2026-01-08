@@ -27,6 +27,18 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 ### Main Testing Guides
 - **[API Testing](TESTING.md)** - Complete guide for testing the Spring Boot API
 - **[UI Testing](UI_TESTING.md)** - Complete guide for Playwright E2E tests
+- **[Testing Index](testing/README.md)** - Overview of all test documentation
+
+### Test Types
+- **Accessibility Tests** (`tests/accessibility.spec.ts`) - WCAG compliance testing
+- **API Contract Tests** (`tests/api-contract.spec.ts`) - OpenAPI contract validation
+- **Error Handling Tests** (`tests/error-handling.spec.ts`) - Edge case and error scenarios
+- **Load Tests** (`tests/load.spec.ts`) - Stress testing and concurrent requests
+- **Performance Tests** (`tests/performance.spec.ts`) - Performance metrics and timing
+- **Security Tests** (`tests/security.spec.ts`) - Security headers and vulnerability testing
+- **SEO Tests** (`tests/seo.spec.ts`) - Meta tags and SEO validation
+- **User Journey Tests** (`tests/user-journey.spec.ts`) - End-to-end user workflows
+- **Visual Regression Tests** (`tests/visual-regression.spec.ts`) - Screenshot comparison
 
 ### Individual Test Documentation
 - **[Contact API Tests](testing/contact.md)** - Testing the contact form API endpoint

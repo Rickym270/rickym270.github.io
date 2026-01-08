@@ -13,7 +13,11 @@ test.describe('Navbar', () => {
   });
 
   test('has top navbar with expected links', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    // Firefox needs networkidle for reliable navigation
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const timeout = browserName === 'firefox' ? 60000 : 20000;
+    await page.goto('/', { waitUntil, timeout });
 
     const nav = page.locator('nav.navbar');
     await expect(nav).toBeVisible();

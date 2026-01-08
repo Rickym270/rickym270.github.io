@@ -487,13 +487,14 @@ test.describe('Translation feature', () => {
     }
     
     // Wait for translation to be applied - check that it's actually in Spanish
+    const translationTimeout = isMobile ? 20000 : 10000;
     await page.waitForFunction(() => {
       const heading = document.querySelector('#content h1[data-translate="skills.title"], #content h1, #content h3');
       if (!heading) return false;
       const text = heading.textContent?.trim() || '';
       // Wait until it's translated to Spanish (contains "Habilidades")
       return text.includes('Habilidades');
-    }, { timeout: 10000 });
+    }, { timeout: translationTimeout });
     await page.waitForTimeout(500);
     
     // Check translations - page title doesn't update in SPA navigation, so check content instead

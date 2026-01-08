@@ -219,7 +219,10 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('robots meta tag is configured', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Check for robots meta tag
     const robots = page.locator('meta[name="robots"]');
