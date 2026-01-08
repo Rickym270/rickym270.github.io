@@ -23,19 +23,31 @@ const config: any = {
 
 // Only configure webServer locally - in CI, server is started manually by workflow
 if (!process.env.CI) {
-  config.webServer = {
-    // Use simple Node.js HTTP server that explicitly serves index.html for root path
-    // This avoids http-server's issue with not serving index.html for / (returns 404)
-    // The simple server explicitly handles / -> index.html mapping
-    command: `node "${path.join(rootDir, 'scripts', 'start-web-server-simple.js')}"`,
-    url: 'http://127.0.0.1:4321/index.html', // Use 127.0.0.1 for consistency
-    reuseExistingServer: false, // Auto-start server locally
-    timeout: 60_000,
-    stdout: 'pipe', // Capture stdout to see server logs
-    stderr: 'pipe', // Capture stderr to see server errors
-    // Ensure server is actually ready before tests start
-    // Playwright will wait for the URL to respond with 200 status
-  };
+  // Configure UI server (for browser-based tests)
+  config.webServer = [
+    {
+      // Use simple Node.js HTTP server that explicitly serves index.html for root path
+      // This avoids http-server's issue with not serving index.html for / (returns 404)
+      // The simple server explicitly handles / -> index.html mapping
+      command: `node "${path.join(rootDir, 'scripts', 'start-web-server-simple.js')}"`,
+      url: 'http://127.0.0.1:4321/index.html', // Use 127.0.0.1 for consistency
+      reuseExistingServer: false, // Auto-start server locally
+      timeout: 60_000,
+      stdout: 'pipe', // Capture stdout to see server logs
+      stderr: 'pipe', // Capture stderr to see server errors
+      // Ensure server is actually ready before tests start
+      // Playwright will wait for the URL to respond with 200 status
+    },
+    {
+      // API server for API contract tests
+      command: `bash "${path.join(rootDir, 'scripts', 'start-api-server.sh')}"`,
+      url: 'http://127.0.0.1:8080/api/health',
+      reuseExistingServer: true, // Reuse if already running
+      timeout: 120_000, // API server takes longer to start (builds JAR)
+      stdout: 'pipe',
+      stderr: 'pipe',
+    }
+  ];
 }
 
 config.projects = [
@@ -43,7 +55,7 @@ config.projects = [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: '**/api/**/*.spec.ts',
+      testIgnore: '**/*api*.spec.ts',
     },
     {
       name: 'chromium-iphone',
@@ -53,7 +65,7 @@ config.projects = [
         actionTimeout: 20_000, // 20 seconds for actions
         navigationTimeout: 45_000, // 45 seconds for navigation
       },
-      testIgnore: '**/api/**/*.spec.ts',
+      testIgnore: '**/*api*.spec.ts',
       timeout: process.env.CI ? 60_000 : 90_000, // Reduced in CI to allow more tests to complete
       expect: { timeout: 15_000 }, // 15 seconds for expect assertions
     },
@@ -65,7 +77,7 @@ config.projects = [
         navigationTimeout: 60_000,
         actionTimeout: 30_000,
       },
-      testIgnore: '**/api/**/*.spec.ts',
+      testIgnore: '**/*api*.spec.ts',
       timeout: process.env.CI ? 60_000 : 90_000, // Reduced in CI to allow more tests to complete
     },
     // API tests (no browser needed)

@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+// Use baseURL from project config if available, otherwise fallback to localhost:8080
+// The 'api' project sets baseURL to http://localhost:8080
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 test.describe('API Contract Tests', () => {
@@ -136,7 +138,8 @@ test.describe('API Contract Tests', () => {
         email: 'contract@test.com',
         subject: 'Contract Test Subject',
         message: 'Testing API contract compliance'
-      }
+      },
+      timeout: 30000
     });
     
     expect(response.ok()).toBeTruthy();
