@@ -1,9 +1,11 @@
 name: Deploy to Google Cloud
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Playwright Tests"]
+    types:
+      - completed
     branches: [ master ]
-    # Trigger on any push to master (we'll check for changes in the workflow)
   workflow_dispatch:
     # Allow manual triggering with options
     inputs:
@@ -27,6 +29,10 @@ jobs:
     name: Deploy API to Cloud Run
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Only run if Playwright Tests passed (for workflow_run trigger) or manual dispatch
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     defaults:
       run:
         working-directory: ./api
@@ -35,6 +41,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Need full history to check for changes
+          # For workflow_run events, checkout the commit that triggered the original workflow
+          ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+          sha: ${{ github.event.workflow_run.head_sha }}
 
       - name: Check for API changes
         id: check-api-changes
@@ -55,16 +64,30 @@ jobs:
               fi
             fi
           else
-            # Check if API files changed in this push
-            # Compare with the base commit (before this push)
-            BASE_SHA="${{ github.event.before }}"
-            HEAD_SHA="${{ github.event.after }}"
+            # workflow_run event - check if API files changed
+            # For push events, compare HEAD with HEAD~1 (previous commit)
+            # For PR events, compare with the base branch
+            HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
             
-            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" == "0000000000000000000000000000000000000000" ]; then
-              # First commit or can't determine base - check if api/ exists and has files
+            # Try to get the base SHA from the workflow_run event
+            # For push events, use HEAD~1; for PR events, use the base SHA
+            if [ -n "${{ github.event.workflow_run.pull_requests[0].base.sha }}" ]; then
+              BASE_SHA="${{ github.event.workflow_run.pull_requests[0].base.sha }}"
+            else
+              # For push events, compare with previous commit
+              BASE_SHA="${HEAD_SHA}~1"
+            fi
+            
+            # Verify BASE_SHA exists, otherwise use HEAD~1 as fallback
+            if ! git rev-parse --verify "$BASE_SHA" > /dev/null 2>&1; then
+              BASE_SHA="${HEAD_SHA}~1"
+            fi
+            
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" == "0000000000000000000000000000000000000000" ] || ! git rev-parse --verify "$BASE_SHA" > /dev/null 2>&1; then
+              # Can't determine base - check if api/ exists and has files
               if [ -d "api" ] && [ -n "$(find api -type f -name '*.java' -o -name 'pom.xml' -o -name '*.properties' 2>/dev/null | head -1)" ]; then
                 echo "changed=true" >> $GITHUB_OUTPUT
-                echo "✅ Initial commit or unable to determine base - deploying API"
+                echo "✅ Unable to determine base commit - deploying API (files exist)"
               else
                 echo "changed=false" >> $GITHUB_OUTPUT
                 echo "⏭️  No API directory or files found - skipping deployment"
