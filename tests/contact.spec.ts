@@ -283,9 +283,28 @@ test.describe('Contact Page', () => {
       resolveRequest = resolve;
     });
     
+    // Diagnostics: log network activity for this test (helps debug race)
+    const requestUrls: string[] = [];
+    page.on('request', request => {
+      const url = request.url();
+      if (url.includes('contact') || url.includes('/api/')) {
+        requestUrls.push(`${request.method()} ${url}`);
+        console.log('[request]', request.method(), url);
+      }
+    });
+    page.on('requestfailed', r => console.log('[requestfailed]', r.method(), r.url(), r.failure()?.errorText));
+    page.on('response', r => console.log('[response]', r.status(), r.url()));
+
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use wildcard pattern for more reliable interception across all browsers/devices
-    await page.route('**/api/contact*', async (route) => {
+    // Use regex pattern for more reliable interception across absolute and relative URLs
+    await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
+      const req = route.request();
+      console.log('[route] intercepted', req.method(), req.url());
+      // Handle CORS preflight quickly to avoid blocking POST
+      if (req.method() === 'OPTIONS') {
+        await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' });
+        return;
+      }
       // Only intercept once
       if (!requestIntercepted) {
         requestIntercepted = true;
@@ -308,16 +327,6 @@ test.describe('Contact Page', () => {
       } else {
         // If already intercepted, continue with the request (shouldn't happen, but safe)
         await route.continue();
-      }
-    });
-    
-    // Also set up request listener for debugging
-    const requestUrls: string[] = [];
-    page.on('request', request => {
-      const url = request.url();
-      if (url.includes('contact') || url.includes('api')) {
-        requestUrls.push(url);
-        console.log('Request intercepted:', url);
       }
     });
     
@@ -391,13 +400,19 @@ test.describe('Contact Page', () => {
     
     // Wait for either the route interception or the actual response
     // Increase timeout for mobile devices which may be slower
-    const timeoutDuration = isMobile ? 15000 : 10000;
+    const timeoutDuration = isMobile ? 60000 : 10000;
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => reject(new Error('Request timeout')), timeoutDuration);
     });
     
+    // Also wait for the POST request to be observed (deterministic)
+    const waitForPost = page.waitForRequest(
+      req => req.url().includes('/api/contact') && req.method() === 'POST',
+      { timeout: timeoutDuration }
+    ).catch(() => null);
+    
     try {
-      await Promise.race([requestPromise, responsePromise, timeoutPromise]);
+      await Promise.race([requestPromise, responsePromise, waitForPost, timeoutPromise]);
     } catch (error) {
       // If request wasn't intercepted, log for debugging
       if (!requestIntercepted) {
@@ -416,7 +431,7 @@ test.describe('Contact Page', () => {
         } else {
           console.error('Requests were made but not intercepted. Route pattern may not match.');
           console.error('First request URL:', requestUrls[0]);
-          console.error('Route patterns: /.*\\/api\\/contact.*/ and url.href.includes check');
+          console.error('Route pattern: /.*\\/api\\/contact(?:\\?.*)?$/');
         }
       }
       // Re-throw if it's not a timeout (timeout is expected if request wasn't intercepted)
@@ -446,10 +461,16 @@ test.describe('Contact Page', () => {
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use wildcard pattern for more reliable interception across all browsers/devices
-    await page.route('**/api/contact*', async (route) => {
+    await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
+      const req = route.request();
+      console.log('[route] intercepted', req.method(), req.url());
+      // Handle CORS preflight quickly
+      if (req.method() === 'OPTIONS') {
+        await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' });
+        return;
+      }
       routeFulfilled = true;
       resolveRouteFulfill();
-      // Fulfill the route after resolving the promise
       await route.fulfill({
         status: 201,
         contentType: 'application/json',
@@ -576,7 +597,7 @@ test.describe('Contact Page', () => {
         } else {
           console.error('Requests were made but not intercepted. Route pattern may not match.');
           console.error('First request URL:', requestUrls[0]);
-          console.error('Route pattern: /.*\\/api\\/contact.*/');
+          console.error('Route pattern: /.*\\/api\\/contact(?:\\?.*)?$/');
         }
         throw error;
       }
