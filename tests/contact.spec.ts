@@ -459,30 +459,40 @@ test.describe('Contact Page', () => {
       resolveRouteFulfill = resolve;
     });
     
+    // Use networkidle for Firefox, domcontentloaded for others
+    const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    
     // Set up route BEFORE navigation - Playwright routes persist across navigation
-    // Use wildcard pattern for more reliable interception across all browsers/devices
+    // Use regex pattern for more reliable interception across absolute and relative URLs
     await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
       const req = route.request();
       console.log('[route] intercepted', req.method(), req.url());
-      // Handle CORS preflight quickly
+      // Handle CORS preflight quickly to avoid blocking POST
       if (req.method() === 'OPTIONS') {
         await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' });
         return;
       }
       routeFulfilled = true;
-      resolveRouteFulfill();
-      await route.fulfill({
-        status: 201,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'test-id-123',
-          name: 'Test User',
-          email: 'test@example.com',
-          subject: 'Test Subject',
-          message: 'This is a test message.',
-          receivedAt: new Date().toISOString()
-        })
-      });
+      try {
+        await route.fulfill({
+          status: 201,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 'test-id-123',
+            name: 'Test User',
+            email: 'test@example.com',
+            subject: 'Test Subject',
+            message: 'This is a test message.',
+            receivedAt: new Date().toISOString()
+          })
+        });
+        // Resolve promise AFTER route.fulfill completes successfully
+        resolveRouteFulfill();
+      } catch (fulfillError) {
+        // Reset routeFulfilled if fulfill failed
+        routeFulfilled = false;
+        throw fulfillError;
+      }
     });
     
     // Also set up request listener for debugging
@@ -490,13 +500,13 @@ test.describe('Contact Page', () => {
     page.on('request', request => {
       const url = request.url();
       if (url.includes('contact') || url.includes('api')) {
-        requestUrls.push(url);
+        requestUrls.push(`${request.method()} ${url}`);
         console.log('Request intercepted:', url);
       }
     });
+    page.on('requestfailed', r => console.log('[requestfailed]', r.method(), r.url(), r.failure()?.errorText));
+    page.on('response', r => console.log('[response]', r.status(), r.url()));
 
-    // Use networkidle for Firefox, domcontentloaded for others
-    const browserName = page.context().browser()?.browserType().name() || 'chromium';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     await page.goto('/', { waitUntil, timeout: 90000 });
     
