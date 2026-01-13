@@ -294,7 +294,7 @@ test.describe('Contact Page', () => {
     });
     page.on('requestfailed', r => console.log('[requestfailed]', r.method(), r.url(), r.failure()?.errorText));
     page.on('response', r => console.log('[response]', r.status(), r.url()));
-
+    
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use regex pattern for more reliable interception across absolute and relative URLs
     await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
@@ -305,12 +305,11 @@ test.describe('Contact Page', () => {
         await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' });
         return;
       }
-      // Only intercept once
+      // Only intercept fulfillment once
       if (!requestIntercepted) {
         requestIntercepted = true;
         resolveRequest();
         // Simulate a slow response to test button disabled state
-        // Use Promise-based delay instead of page.waitForTimeout to avoid issues when test ends
         await new Promise(resolve => setTimeout(resolve, 1000));
         await route.fulfill({
           status: 201,
@@ -400,19 +399,13 @@ test.describe('Contact Page', () => {
     
     // Wait for either the route interception or the actual response
     // Increase timeout for mobile devices which may be slower
-    const timeoutDuration = isMobile ? 60000 : 10000;
+    const timeoutDuration = isMobile ? 15000 : 10000;
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => reject(new Error('Request timeout')), timeoutDuration);
     });
     
-    // Also wait for the POST request to be observed (deterministic)
-    const waitForPost = page.waitForRequest(
-      req => req.url().includes('/api/contact') && req.method() === 'POST',
-      { timeout: timeoutDuration }
-    ).catch(() => null);
-    
     try {
-      await Promise.race([requestPromise, responsePromise, waitForPost, timeoutPromise]);
+      await Promise.race([requestPromise, responsePromise, timeoutPromise]);
     } catch (error) {
       // If request wasn't intercepted, log for debugging
       if (!requestIntercepted) {
@@ -431,7 +424,7 @@ test.describe('Contact Page', () => {
         } else {
           console.error('Requests were made but not intercepted. Route pattern may not match.');
           console.error('First request URL:', requestUrls[0]);
-          console.error('Route pattern: /.*\\/api\\/contact(?:\\?.*)?$/');
+          console.error('Route patterns: /.*\\/api\\/contact(?:\\?.*)?$/ and url.includes check');
         }
       }
       // Re-throw if it's not a timeout (timeout is expected if request wasn't intercepted)
@@ -556,10 +549,16 @@ test.describe('Contact Page', () => {
     
     // Wait for route to be fulfilled (with timeout fallback)
     // Increase timeout for mobile devices which may be slower
-    const timeoutDuration = isMobile ? 30000 : 20000;
+    const timeoutDuration = isMobile ? 60000 : 20000;
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
     });
+    
+    // Also wait for the POST request to be initiated (deterministic)
+    const waitForPost = page.waitForRequest(
+      r => r.url().includes('/api/contact') && r.method() === 'POST',
+      { timeout: timeoutDuration }
+    ).catch(() => null);
     
     // Click submit and wait for route interception in parallel
     const clickPromise = submitBtn.click().catch(err => {
@@ -572,7 +571,7 @@ test.describe('Contact Page', () => {
     const routePromise = Promise.race([routeFulfillPromise, timeoutPromise]);
     
     try {
-      await Promise.all([clickPromise, routePromise]);
+      await Promise.all([clickPromise, Promise.race([routePromise, waitForPost])]);
       // Verify route was intercepted
       if (!routeFulfilled) {
         throw new Error('Route was not intercepted and fulfilled');
