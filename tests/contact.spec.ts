@@ -461,11 +461,17 @@ test.describe('Contact Page', () => {
     
     // Use networkidle for Firefox, domcontentloaded for others
     const browserName = page.context().browser()?.browserType().name() || 'chromium';
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'contact.spec.ts:462',message:'Test start',data:{browserName:browserName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,B'})}).catch(()=>{});
+    // #endregion
     
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use regex pattern for more reliable interception across absolute and relative URLs
     await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
       const req = route.request();
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'contact.spec.ts:468',message:'Route handler entered',data:{method:req.method(),url:req.url()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
       console.log('[route] intercepted', req.method(), req.url());
       // Handle CORS preflight quickly to avoid blocking POST
       if (req.method() === 'OPTIONS') {
@@ -473,6 +479,9 @@ test.describe('Contact Page', () => {
         return;
       }
       routeFulfilled = true;
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'contact.spec.ts:476',message:'Route fulfill start',data:{method:req.method(),url:req.url()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
       try {
         await route.fulfill({
           status: 201,
@@ -501,6 +510,9 @@ test.describe('Contact Page', () => {
       const url = request.url();
       if (url.includes('contact') || url.includes('api')) {
         requestUrls.push(`${request.method()} ${url}`);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'contact.spec.ts:507',message:'Request observed',data:{method:request.method(),url:url,matchesPattern:!!url.match(/.*\/api\/contact(?:\?.*)?$/)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
         console.log('Request intercepted:', url);
       }
     });
