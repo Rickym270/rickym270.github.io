@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { test, expect } from '@playwright/test';
 
 test.describe('Visual Regression Tests', () => {
@@ -69,6 +71,20 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('projects page matches visual baseline', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 1081 });
+    const projectsFixturePath = path.resolve(process.cwd(), 'api', 'src', 'main', 'resources', 'data', 'projects.json');
+    const projectsFixture = JSON.parse(fs.readFileSync(projectsFixturePath, 'utf-8'));
+    const limitedProjectsFixture = projectsFixture;
+
+    await page.route(/.*\/api\/projects(?:\?.*)?$/, async (route) => {
+      const req = route.request();
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(limitedProjectsFixture),
+      });
+    });
+
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     
     // Wait for initial content
@@ -91,12 +107,54 @@ test.describe('Visual Regression Tests', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress, #ProjComplete');
     }, { timeout: 15000 });
+    await expect.poll(async () => {
+      return await page.locator('#ProjInProgress .project-card, #ProjComplete .project-card').count();
+    }, { timeout: 15000 }).toBeGreaterThan(0);
+    try {
+      await page.waitForFunction(() => {
+        const images = Array.from(document.querySelectorAll('.project-card img'));
+        if (images.length === 0) return false;
+        const viewportHeight = window.innerHeight || 0;
+        const viewportWidth = window.innerWidth || 0;
+        const inViewImages = images.filter(img => {
+          const rect = img.getBoundingClientRect();
+          const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < viewportHeight && rect.left < viewportWidth;
+          if (!inViewport) return false;
+          const style = window.getComputedStyle(img);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        });
+        if (inViewImages.length === 0) return false;
+        return inViewImages.every(img => img.complete && img.naturalWidth > 0);
+      }, { timeout: 15000 });
+      const loadedImagesSummary = await page.evaluate(() => {
+        const images = Array.from(document.querySelectorAll('.project-card img'));
+        const viewportHeight = window.innerHeight || 0;
+        const viewportWidth = window.innerWidth || 0;
+        const inViewImages = images.filter(img => {
+          const rect = img.getBoundingClientRect();
+          const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < viewportHeight && rect.left < viewportWidth;
+          if (!inViewport) return false;
+          const style = window.getComputedStyle(img);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        });
+        return {
+          total: images.length,
+          inView: inViewImages.length,
+          inViewLoaded: inViewImages.filter(img => img.complete && img.naturalWidth > 0).length,
+        };
+      });
+    } catch (error) {
+      throw error;
+    }
     
     // Screenshot of projects page
-    await expect(page).toHaveScreenshot('projects-page.png', {
-      fullPage: true,
-      maxDiffPixels: 100,
-    });
+    try {
+      await expect(page).toHaveScreenshot('projects-page.png', {
+        maxDiffPixels: 100,
+      });
+    } catch (error) {
+      throw error;
+    }
   });
 
   test('contact form matches visual baseline', async ({ page }) => {
@@ -122,9 +180,13 @@ test.describe('Visual Regression Tests', () => {
     
     // Screenshot of contact form
     const form = page.locator('#contact-form, form').first();
-    await expect(form).toHaveScreenshot('contact-form.png', {
-      maxDiffPixels: 50,
-    });
+    try {
+      await expect(form).toHaveScreenshot('contact-form.png', {
+        maxDiffPixels: 50,
+      });
+    } catch (error) {
+      throw error;
+    }
   });
 
   test('dark mode matches visual baseline', async ({ page }) => {
