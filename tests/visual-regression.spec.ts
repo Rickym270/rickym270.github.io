@@ -20,6 +20,7 @@ async function getProjectsRenderState(page: Parameters<typeof test>[0]['page']) 
     const cards = Array.from(document.querySelectorAll('.project-card'));
     const images = Array.from(document.querySelectorAll('.project-card img'));
     const loadedImages = images.filter(img => img.complete && img.naturalWidth > 0).length;
+    const bodyFont = window.getComputedStyle(document.body).fontFamily;
     return {
       viewport: { width: window.innerWidth, height: window.innerHeight },
       dpr: window.devicePixelRatio,
@@ -29,6 +30,42 @@ async function getProjectsRenderState(page: Parameters<typeof test>[0]['page']) 
       cards: cards.length,
       images: images.length,
       imagesLoaded: loadedImages,
+      bodyFont,
+    };
+  });
+}
+
+async function getProjectsLayoutDetails(page: Parameters<typeof test>[0]['page']) {
+  return await page.evaluate(() => {
+    const sectionSelectors = ['#ProjInProgress', '#ProjComplete', '#ProjComingSoon'];
+    const sections = sectionSelectors.map(selector => {
+      const section = document.querySelector(selector);
+      const title = section?.querySelector('h2, h3, .section-title')?.textContent?.trim() || null;
+      const cards = Array.from(section?.querySelectorAll('.project-card') || []);
+      const cardTitles = cards
+        .map(card => card.querySelector('h3, h4, .project-title')?.textContent?.trim() || null)
+        .filter(Boolean)
+        .slice(0, 6);
+      const rect = section?.getBoundingClientRect();
+      return {
+        selector,
+        title,
+        cardCount: cards.length,
+        cardTitles,
+        rect: rect
+          ? {
+              top: rect.top,
+              height: rect.height,
+            }
+          : null,
+      };
+    });
+    const titleSample = document.querySelector('.project-card h3, .project-card h4, .project-title');
+    const titleFont = titleSample ? window.getComputedStyle(titleSample).fontFamily : null;
+    return {
+      sections,
+      titleFont,
+      contentLoaded: document.querySelector('#content')?.getAttribute('data-content-loaded') || null,
     };
   });
 }
@@ -254,16 +291,20 @@ test.describe('Visual Regression Tests', () => {
         });
         await waitForProjectsLayoutStability(page);
         const projectsStateAfterResize = await getProjectsRenderState(page);
+        const projectsLayoutAfterResize = await getProjectsLayoutDetails(page);
         logEvent('visual-regression.spec.ts:194', 'Projects render state after resize', {
           browserName,
           expectedSnapshotSize,
           projectsStateAfterResize,
+          projectsLayoutAfterResize,
         }, 'VR4');
       }
       const projectsStateBeforeShot = await getProjectsRenderState(page);
+      const projectsLayoutBeforeShot = await getProjectsLayoutDetails(page);
       logEvent('visual-regression.spec.ts:203', 'Projects render state before screenshot', {
         browserName,
         projectsStateBeforeShot,
+        projectsLayoutBeforeShot,
       }, 'VR3');
       const screenshotOptions = expectedSnapshotSize
         ? { maxDiffPixels: 100 }
