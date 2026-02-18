@@ -247,29 +247,31 @@ test.describe('Visual Regression Tests', () => {
     
     // Screenshot of projects page
     try {
+      if (expectedSnapshotSize) {
+        await page.setViewportSize({
+          width: expectedSnapshotSize.width,
+          height: expectedSnapshotSize.height,
+        });
+        await waitForProjectsLayoutStability(page);
+        const projectsStateAfterResize = await getProjectsRenderState(page);
+        logEvent('visual-regression.spec.ts:194', 'Projects render state after resize', {
+          browserName,
+          expectedSnapshotSize,
+          projectsStateAfterResize,
+        }, 'VR4');
+      }
       const projectsStateBeforeShot = await getProjectsRenderState(page);
-      logEvent('visual-regression.spec.ts:184', 'Projects render state before screenshot', {
+      logEvent('visual-regression.spec.ts:203', 'Projects render state before screenshot', {
         browserName,
         projectsStateBeforeShot,
       }, 'VR3');
       const screenshotOptions = expectedSnapshotSize
-        ? {
-            clip: {
-              x: 0,
-              y: 0,
-              width: expectedSnapshotSize.width,
-              height: expectedSnapshotSize.height,
-            },
-            maxDiffPixels: 100,
-          }
-        : {
-            fullPage: true,
-            maxDiffPixels: 100,
-          };
+        ? { maxDiffPixels: 100 }
+        : { fullPage: true, maxDiffPixels: 100 };
       await expect(page).toHaveScreenshot('projects-page.png', screenshotOptions);
     } catch (error) {
       const projectsStateOnShotError = await getProjectsRenderState(page);
-      logEvent('visual-regression.spec.ts:205', 'Projects screenshot failed', {
+      logEvent('visual-regression.spec.ts:214', 'Projects screenshot failed', {
         browserName,
         error: error instanceof Error ? error.message : String(error),
         projectsStateOnShotError,
