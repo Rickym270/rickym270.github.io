@@ -2,6 +2,37 @@ import fs from 'fs';
 import path from 'path';
 import { test, expect } from '@playwright/test';
 
+const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
+
+function logEvent(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+  if (process.env.CI) {
+    console.log('[visual-regression]', JSON.stringify({ location, message, data, runId, hypothesisId }));
+  }
+}
+
+async function getProjectsRenderState(page: Parameters<typeof test>[0]['page']) {
+  return await page.evaluate(() => {
+    const content = document.querySelector('#content');
+    const cards = Array.from(document.querySelectorAll('.project-card'));
+    const images = Array.from(document.querySelectorAll('.project-card img'));
+    const loadedImages = images.filter(img => img.complete && img.naturalWidth > 0).length;
+    return {
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      dpr: window.devicePixelRatio,
+      bodyScrollHeight: document.body.scrollHeight,
+      documentScrollHeight: document.documentElement.scrollHeight,
+      contentHeight: content?.getBoundingClientRect().height || 0,
+      cards: cards.length,
+      images: images.length,
+      imagesLoaded: loadedImages,
+    };
+  });
+}
+
 test.describe('Visual Regression Tests', () => {
   test.describe.configure({ timeout: 120000 });
 
@@ -72,6 +103,7 @@ test.describe('Visual Regression Tests', () => {
 
   test('projects page matches visual baseline', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1081 });
+    const browserName = page.context().browser()?.browserType().name() || 'unknown';
     const projectsFixturePath = path.resolve(process.cwd(), 'api', 'src', 'main', 'resources', 'data', 'projects.json');
     const projectsFixture = JSON.parse(fs.readFileSync(projectsFixturePath, 'utf-8'));
     const limitedProjectsFixture = projectsFixture;
@@ -110,6 +142,11 @@ test.describe('Visual Regression Tests', () => {
     await expect.poll(async () => {
       return await page.locator('#ProjInProgress .project-card, #ProjComplete .project-card').count();
     }, { timeout: 15000 }).toBeGreaterThan(0);
+    const projectsStateAfterLoad = await getProjectsRenderState(page);
+    logEvent('visual-regression.spec.ts:124', 'Projects render state after load', {
+      browserName,
+      projectsStateAfterLoad,
+    }, 'VR1');
     try {
       await page.waitForFunction(() => {
         const images = Array.from(document.querySelectorAll('.project-card img'));
@@ -143,17 +180,38 @@ test.describe('Visual Regression Tests', () => {
           inViewLoaded: inViewImages.filter(img => img.complete && img.naturalWidth > 0).length,
         };
       });
+      logEvent('visual-regression.spec.ts:160', 'Projects images in-view summary', {
+        browserName,
+        loadedImagesSummary,
+      }, 'VR2');
     } catch (error) {
+      const projectsStateOnImageWaitError = await getProjectsRenderState(page);
+      logEvent('visual-regression.spec.ts:166', 'Projects image wait failed', {
+        browserName,
+        error: error instanceof Error ? error.message : String(error),
+        projectsStateOnImageWaitError,
+      }, 'VR2');
       throw error;
     }
     
     // Screenshot of projects page
     try {
+      const projectsStateBeforeShot = await getProjectsRenderState(page);
+      logEvent('visual-regression.spec.ts:177', 'Projects render state before screenshot', {
+        browserName,
+        projectsStateBeforeShot,
+      }, 'VR3');
       await expect(page).toHaveScreenshot('projects-page.png', {
         fullPage: true,
         maxDiffPixels: 100,
       });
     } catch (error) {
+      const projectsStateOnShotError = await getProjectsRenderState(page);
+      logEvent('visual-regression.spec.ts:186', 'Projects screenshot failed', {
+        browserName,
+        error: error instanceof Error ? error.message : String(error),
+        projectsStateOnShotError,
+      }, 'VR3');
       throw error;
     }
   });
