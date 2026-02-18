@@ -252,13 +252,24 @@ test.describe('Visual Regression Tests', () => {
         browserName,
         projectsStateBeforeShot,
       }, 'VR3');
-      await expect(page).toHaveScreenshot('projects-page.png', {
-        fullPage: true,
-        maxDiffPixels: 100,
-      });
+      const screenshotOptions = expectedSnapshotSize
+        ? {
+            clip: {
+              x: 0,
+              y: 0,
+              width: expectedSnapshotSize.width,
+              height: expectedSnapshotSize.height,
+            },
+            maxDiffPixels: 100,
+          }
+        : {
+            fullPage: true,
+            maxDiffPixels: 100,
+          };
+      await expect(page).toHaveScreenshot('projects-page.png', screenshotOptions);
     } catch (error) {
       const projectsStateOnShotError = await getProjectsRenderState(page);
-      logEvent('visual-regression.spec.ts:193', 'Projects screenshot failed', {
+      logEvent('visual-regression.spec.ts:205', 'Projects screenshot failed', {
         browserName,
         error: error instanceof Error ? error.message : String(error),
         projectsStateOnShotError,
