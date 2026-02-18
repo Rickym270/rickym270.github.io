@@ -33,6 +33,29 @@ async function getProjectsRenderState(page: Parameters<typeof test>[0]['page']) 
   });
 }
 
+async function waitForProjectsLayoutStability(page: Parameters<typeof test>[0]['page']) {
+  await page.waitForFunction(() => {
+    const images = Array.from(document.querySelectorAll('.project-card img'));
+    const loadedImages = images.filter(img => img.complete && img.naturalWidth > 0).length;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const now = performance.now();
+    const state = (window as any).__vrLayoutState || {
+      lastHeight: 0,
+      lastImagesLoaded: 0,
+      lastChange: now,
+    };
+    const heightChanged = state.lastHeight !== scrollHeight;
+    const imagesChanged = state.lastImagesLoaded !== loadedImages;
+    if (heightChanged || imagesChanged) {
+      state.lastHeight = scrollHeight;
+      state.lastImagesLoaded = loadedImages;
+      state.lastChange = now;
+    }
+    (window as any).__vrLayoutState = state;
+    return now - state.lastChange > 750;
+  }, { timeout: 15000 });
+}
+
 test.describe('Visual Regression Tests', () => {
   test.describe.configure({ timeout: 120000 });
 
@@ -193,11 +216,18 @@ test.describe('Visual Regression Tests', () => {
       }, 'VR2');
       throw error;
     }
+
+    await waitForProjectsLayoutStability(page);
+    const projectsStateAfterStability = await getProjectsRenderState(page);
+    logEvent('visual-regression.spec.ts:176', 'Projects render state after stability', {
+      browserName,
+      projectsStateAfterStability,
+    }, 'VR3');
     
     // Screenshot of projects page
     try {
       const projectsStateBeforeShot = await getProjectsRenderState(page);
-      logEvent('visual-regression.spec.ts:177', 'Projects render state before screenshot', {
+      logEvent('visual-regression.spec.ts:184', 'Projects render state before screenshot', {
         browserName,
         projectsStateBeforeShot,
       }, 'VR3');
@@ -207,7 +237,7 @@ test.describe('Visual Regression Tests', () => {
       });
     } catch (error) {
       const projectsStateOnShotError = await getProjectsRenderState(page);
-      logEvent('visual-regression.spec.ts:186', 'Projects screenshot failed', {
+      logEvent('visual-regression.spec.ts:193', 'Projects screenshot failed', {
         browserName,
         error: error instanceof Error ? error.message : String(error),
         projectsStateOnShotError,
