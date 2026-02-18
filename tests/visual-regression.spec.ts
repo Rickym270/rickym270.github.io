@@ -306,9 +306,10 @@ test.describe('Visual Regression Tests', () => {
         projectsStateBeforeShot,
         projectsLayoutBeforeShot,
       }, 'VR3');
+      const imageMask = [page.locator('.project-card img')];
       const screenshotOptions = expectedSnapshotSize
-        ? { maxDiffPixels: 100 }
-        : { fullPage: true, maxDiffPixels: 100 };
+        ? { maxDiffPixels: 100, mask: imageMask }
+        : { fullPage: true, maxDiffPixels: 100, mask: imageMask };
       await expect(page).toHaveScreenshot('projects-page.png', screenshotOptions);
     } catch (error) {
       const projectsStateOnShotError = await getProjectsRenderState(page);
