@@ -56,6 +56,20 @@ async function waitForProjectsLayoutStability(page: Parameters<typeof test>[0]['
   }, { timeout: 15000 });
 }
 
+function readPngDimensions(filePath: string) {
+  try {
+    const buffer = fs.readFileSync(filePath);
+    if (buffer.length < 24) return null;
+    const isPng = buffer.readUInt32BE(0) === 0x89504e47;
+    if (!isPng) return null;
+    const width = buffer.readUInt32BE(16);
+    const height = buffer.readUInt32BE(20);
+    return { width, height };
+  } catch {
+    return null;
+  }
+}
+
 test.describe('Visual Regression Tests', () => {
   test.describe.configure({ timeout: 120000 });
 
@@ -124,7 +138,7 @@ test.describe('Visual Regression Tests', () => {
     });
   });
 
-  test('projects page matches visual baseline', async ({ page }) => {
+  test('projects page matches visual baseline', async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 1280, height: 1081 });
     const browserName = page.context().browser()?.browserType().name() || 'unknown';
     const projectsFixturePath = path.resolve(process.cwd(), 'api', 'src', 'main', 'resources', 'data', 'projects.json');
@@ -218,6 +232,13 @@ test.describe('Visual Regression Tests', () => {
     }
 
     await waitForProjectsLayoutStability(page);
+    const expectedSnapshotPath = testInfo.snapshotPath('projects-page.png');
+    const expectedSnapshotSize = readPngDimensions(expectedSnapshotPath);
+    logEvent('visual-regression.spec.ts:181', 'Projects expected snapshot size', {
+      browserName,
+      expectedSnapshotPath,
+      expectedSnapshotSize,
+    }, 'VR4');
     const projectsStateAfterStability = await getProjectsRenderState(page);
     logEvent('visual-regression.spec.ts:176', 'Projects render state after stability', {
       browserName,
