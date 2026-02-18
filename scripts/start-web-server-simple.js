@@ -12,6 +12,14 @@ const __dirname = dirname(__filename);
 const repoRoot = resolve(__dirname, '..');
 
 const PORT = 4321;
+const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
+
+function logEvent(location, message, data, hypothesisId) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+}
 const MIME_TYPES = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -74,12 +82,40 @@ const server = createServer((req, res) => {
   }
 });
 
+logEvent('start-web-server-simple.js:81', 'Server init', {
+  port: PORT,
+  host: '127.0.0.1',
+  repoRoot,
+  nodeVersion: process.version,
+}, 'H1');
+
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Server running at http://127.0.0.1:${PORT}/`);
+  const address = server.address();
+  logEvent('start-web-server-simple.js:90', 'Server listening', { address }, 'H1');
 });
 
 // Handle errors
 server.on('error', (err) => {
   console.error('Server error:', err);
+  logEvent('start-web-server-simple.js:97', 'Server error', {
+    message: err?.message,
+    code: err?.code,
+    name: err?.name,
+  }, 'H2');
   process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+  logEvent('start-web-server-simple.js:106', 'Server SIGTERM', {}, 'H3');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  logEvent('start-web-server-simple.js:111', 'Server SIGINT', {}, 'H3');
+  process.exit(0);
+});
+
+process.on('exit', (code) => {
+  logEvent('start-web-server-simple.js:116', 'Server exit', { code }, 'H3');
 });

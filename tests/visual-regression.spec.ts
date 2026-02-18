@@ -150,6 +150,7 @@ test.describe('Visual Regression Tests', () => {
     // Screenshot of projects page
     try {
       await expect(page).toHaveScreenshot('projects-page.png', {
+        fullPage: true,
         maxDiffPixels: 100,
       });
     } catch (error) {

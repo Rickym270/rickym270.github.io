@@ -235,6 +235,11 @@ jobs:
       - name: Start UI server
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         run: |
+          echo "Starting UI server (pwd=$(pwd))"
+          echo "Node version: $(node -v)"
+          echo "UI script exists? $(ls -l scripts/start-web-server-simple.js 2>/dev/null || echo 'missing')"
+          echo "UI server start time: $(date -u)"
+          echo "UI server start time: $(date -u)" > ui-server.log
           # Start simple Node.js server on port 4321 in the background
           # Use simple server instead of http-server because http-server returns 404 for /
           # Tests use page.goto('/') which fails with http-server but works with simple server
@@ -242,6 +247,13 @@ jobs:
           UI_PID=$!
           echo $UI_PID > ui-server.pid
           echo "UI server started with PID: $UI_PID on port 4321"
+          sleep 2
+          if kill -0 $UI_PID 2>/dev/null; then
+            echo "UI server process is running (PID: $UI_PID)"
+          else
+            echo "UI server process is NOT running (PID: $UI_PID)"
+          fi
+          ls -l ui-server.pid ui-server.log || true
 
       - name: Wait for UI server to be ready
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
