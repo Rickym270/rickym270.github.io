@@ -7,7 +7,6 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 // Build config conditionally - in CI, server is started manually, so don't configure webServer
 const config: any = {
   testDir: 'tests',
-  globalSetup: path.join(rootDir, 'tests', 'global-setup.ts'),
   timeout: process.env.CI ? 45_000 : 60_000, // Reduce timeout in CI to fail faster and allow more tests to run
   expect: { timeout: 10_000 },
   outputDir: path.join(rootDir, 'test-results'),
