@@ -1,5 +1,17 @@
 import { test, expect } from '@playwright/test';
 
+const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
+
+function logEvent(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+  if (process.env.CI) {
+    console.log('[error-handling]', JSON.stringify({ location, message, data, runId, hypothesisId }));
+  }
+}
+
 test.describe('Error Handling', () => {
   test.describe.configure({ timeout: 120000 });
 
@@ -21,6 +33,10 @@ test.describe('Error Handling', () => {
   test('handles API failure gracefully on projects page', async ({ page }) => {
     // Intercept API calls and return error
     await page.route('**/api/projects', async (route) => {
+      logEvent('error-handling.spec.ts:26', 'Projects API forced error', {
+        url: route.request().url(),
+        method: route.request().method(),
+      }, 'EH1');
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -58,9 +74,28 @@ test.describe('Error Handling', () => {
     // Should show error message or fallback content
     const errorMessage = page.locator('.alert, .alert-warning, .alert-danger');
     const errorCount = await errorMessage.count();
-    
+
     // Either error message is shown or static content is displayed
     const hasContent = await page.locator('#ProjInProgress, #ProjComplete').count();
+    const contentState = await page.evaluate(() => {
+      const c = document.querySelector('#content');
+      const alertCount = document.querySelectorAll('.alert, .alert-warning, .alert-danger').length;
+      const inProgress = document.querySelectorAll('#ProjInProgress').length;
+      const complete = document.querySelectorAll('#ProjComplete').length;
+      const cards = document.querySelectorAll('.project-card').length;
+      return {
+        contentLoaded: c?.getAttribute('data-content-loaded') || null,
+        alertCount,
+        inProgress,
+        complete,
+        cards,
+      };
+    });
+    logEvent('error-handling.spec.ts:70', 'Projects error handling state', {
+      errorCount,
+      hasContent,
+      contentState,
+    }, 'EH2');
     expect(errorCount > 0 || hasContent > 0).toBeTruthy();
   });
 
