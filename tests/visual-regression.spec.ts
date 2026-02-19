@@ -1,6 +1,53 @@
 import fs from 'fs';
 import path from 'path';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page, type TestInfo } from '@playwright/test';
+
+const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
+
+function logEvent(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+  if (process.env.CI) {
+    console.log('[visual-regression]', JSON.stringify({ location, message, data, runId, hypothesisId }));
+  }
+}
+
+function readPngDimensions(filePath: string) {
+  try {
+    if (!fs.existsSync(filePath)) return null;
+    const buffer = fs.readFileSync(filePath);
+    if (buffer.length < 24) return null;
+    return {
+      width: buffer.readUInt32BE(16),
+      height: buffer.readUInt32BE(20),
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function getProjectsRenderState(page: Page) {
+  return await page.evaluate(() => {
+    const content = document.querySelector('#content');
+    const cards = Array.from(document.querySelectorAll('.project-card'));
+    const images = Array.from(document.querySelectorAll<HTMLImageElement>('.project-card img'));
+    const loadedImages = images.filter(img => img.complete && img.naturalWidth > 0).length;
+    const bodyFont = window.getComputedStyle(document.body).fontFamily;
+    return {
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      dpr: window.devicePixelRatio,
+      bodyScrollHeight: document.body.scrollHeight,
+      documentScrollHeight: document.documentElement.scrollHeight,
+      contentHeight: content?.getBoundingClientRect().height || 0,
+      cards: cards.length,
+      images: images.length,
+      imagesLoaded: loadedImages,
+      bodyFont,
+    };
+  });
+}
 
 async function waitForProjectsLayoutStability(page: Page) {
   await page.waitForFunction(() => {
@@ -36,8 +83,7 @@ test.describe('Visual Regression Tests', () => {
     await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
     });
-  });
-
+});
   test('home page matches visual baseline', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
@@ -93,12 +139,20 @@ test.describe('Visual Regression Tests', () => {
     });
   });
 
-  test('projects page matches visual baseline', async ({ page }) => {
+  test('projects page matches visual baseline', async ({ page }, testInfo: TestInfo) => {
     await page.setViewportSize({ width: 1280, height: 1081 });
     const browserName = page.context().browser()?.browserType().name() || 'unknown';
     const projectsFixturePath = path.resolve(process.cwd(), 'api', 'src', 'main', 'resources', 'data', 'projects.json');
     const projectsFixture = JSON.parse(fs.readFileSync(projectsFixturePath, 'utf-8'));
     const limitedProjectsFixture = projectsFixture;
+    const snapshotPath = testInfo.snapshotPath('projects-page.png');
+    const snapshotDimensions = readPngDimensions(snapshotPath);
+    logEvent('visual-regression.spec.ts:52', 'Projects snapshot meta', {
+      browserName,
+      snapshotPath,
+      snapshotExists: fs.existsSync(snapshotPath),
+      snapshotDimensions,
+    }, 'H1');
 
     await page.route(/.*\/api\/projects(?:\?.*)?$/, async (route) => {
       await route.fulfill({
@@ -150,6 +204,11 @@ test.describe('Visual Regression Tests', () => {
     }, { timeout: 15000 });
 
     await waitForProjectsLayoutStability(page);
+    const projectsStateAfterStability = await getProjectsRenderState(page);
+    logEvent('visual-regression.spec.ts:104', 'Projects render state after stability', {
+      browserName,
+      projectsStateAfterStability,
+    }, 'H2');
 
     // Screenshot of projects page
     if (browserName !== 'chromium') {
@@ -161,7 +220,17 @@ test.describe('Visual Regression Tests', () => {
       maxDiffPixels: 100,
       mask: imageMask,
     };
-    await expect(page).toHaveScreenshot('projects-page.png', screenshotOptions);
+    try {
+      await expect(page).toHaveScreenshot('projects-page.png', screenshotOptions);
+    } catch (error) {
+      const projectsStateOnShotError = await getProjectsRenderState(page);
+      logEvent('visual-regression.spec.ts:121', 'Projects screenshot failed', {
+        browserName,
+        error: error instanceof Error ? error.message : String(error),
+        projectsStateOnShotError,
+      }, 'H3');
+      throw error;
+    }
   });
 
   test('contact form matches visual baseline', async ({ page }) => {
@@ -267,4 +336,3 @@ test.describe('Visual Regression Tests', () => {
     });
   });
 });
-
