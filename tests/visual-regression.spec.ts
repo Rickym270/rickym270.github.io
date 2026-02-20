@@ -145,20 +145,48 @@ test.describe('Visual Regression Tests', () => {
     const projectsFixturePath = path.resolve(process.cwd(), 'api', 'src', 'main', 'resources', 'data', 'projects.json');
     const projectsFixture = JSON.parse(fs.readFileSync(projectsFixturePath, 'utf-8'));
     const limitedProjectsFixture = projectsFixture;
+    const projectsFixtureCount = Array.isArray(projectsFixture)
+      ? projectsFixture.length
+      : Array.isArray((projectsFixture as { projects?: unknown[] }).projects)
+        ? (projectsFixture as { projects?: unknown[] }).projects?.length
+        : null;
+    const projectsFixtureBytes = fs.statSync(projectsFixturePath).size;
+    // #region agent log
+    logEvent('visual-regression.spec.ts:50', 'Projects fixture meta', {
+      projectsFixturePath,
+      projectsFixtureBytes,
+      projectsFixtureCount,
+    }, 'H4');
+    // #endregion
     const snapshotPath = testInfo.snapshotPath('projects-page.png');
     const snapshotDimensions = readPngDimensions(snapshotPath);
-    logEvent('visual-regression.spec.ts:52', 'Projects snapshot meta', {
+    // #region agent log
+    logEvent('visual-regression.spec.ts:62', 'Projects snapshot meta', {
       browserName,
       snapshotPath,
       snapshotExists: fs.existsSync(snapshotPath),
       snapshotDimensions,
     }, 'H1');
+    // #endregion
 
+    const projectsResponseBody = JSON.stringify(limitedProjectsFixture);
+    let projectsRouteLogged = false;
     await page.route(/.*\/api\/projects(?:\?.*)?$/, async (route) => {
+      if (!projectsRouteLogged) {
+        projectsRouteLogged = true;
+        // #region agent log
+        logEvent('visual-regression.spec.ts:76', 'Projects route intercepted', {
+          url: route.request().url(),
+          method: route.request().method(),
+          responseBytes: Buffer.byteLength(projectsResponseBody),
+          projectsFixtureCount,
+        }, 'H4');
+        // #endregion
+      }
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify(limitedProjectsFixture),
+        body: projectsResponseBody,
       });
     });
 
@@ -203,12 +231,35 @@ test.describe('Visual Regression Tests', () => {
       return inViewImages.every(img => img.complete && img.naturalWidth > 0);
     }, { timeout: 15000 });
 
+    const projectsStateBeforeStability = await getProjectsRenderState(page);
+    const projectsDomMetaBeforeStability = await page.evaluate(() => {
+      const content = document.querySelector('#content');
+      const footer = document.querySelector('footer');
+      const sections = Array.from(document.querySelectorAll('#ProjInProgress, #ProjComplete'));
+      return {
+        contentTextLength: content?.textContent?.length || 0,
+        footerHeight: footer?.getBoundingClientRect().height || 0,
+        footerTop: footer?.getBoundingClientRect().top || 0,
+        sectionHeights: sections.map(section => section.getBoundingClientRect().height),
+        fontsStatus: document.fonts?.status || 'unknown',
+      };
+    });
+    // #region agent log
+    logEvent('visual-regression.spec.ts:112', 'Projects pre-stability metrics', {
+      browserName,
+      projectsStateBeforeStability,
+      projectsDomMetaBeforeStability,
+    }, 'H5');
+    // #endregion
+
     await waitForProjectsLayoutStability(page);
     const projectsStateAfterStability = await getProjectsRenderState(page);
-    logEvent('visual-regression.spec.ts:104', 'Projects render state after stability', {
+    // #region agent log
+    logEvent('visual-regression.spec.ts:124', 'Projects render state after stability', {
       browserName,
       projectsStateAfterStability,
     }, 'H2');
+    // #endregion
 
     // Screenshot of projects page
     if (browserName !== 'chromium') {
