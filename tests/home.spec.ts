@@ -1,5 +1,17 @@
 import { test, expect } from '@playwright/test';
 
+const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
+
+function logEvent(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch(LOG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+  if (process.env.CI) {
+    console.log('[home-spec]', JSON.stringify({ location, message, data, runId, hypothesisId }));
+  }
+}
+
 test.describe('Home Page Initial Load', () => {
   // Set timeout for all tests in this describe block
   test.describe.configure({ timeout: 120000 }); // 2 minutes
@@ -44,6 +56,12 @@ test.describe('Home Page Initial Load', () => {
     
     // Use domcontentloaded for faster loads
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    // #region agent log
+    logEvent('home.spec.ts:50', 'Home navigation test start', {
+      url: page.url(),
+      viewport: page.viewportSize(),
+    }, 'H6');
+    // #endregion
     
     // Wait for home content to load initially
     await page.waitForFunction(() => {
@@ -62,12 +80,51 @@ test.describe('Home Page Initial Load', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
+    // #region agent log
+    logEvent('home.spec.ts:73', 'Home navigation away clicked', {
+      isMobile,
+      urlAfterClick: page.url(),
+    }, 'H7');
+    // #endregion
     
     // Wait for projects page to load
-    await page.waitForFunction(() => {
+    try {
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+      }, { timeout: 15000 });
+    } catch (error) {
+      const projectsWaitState = await page.evaluate(() => {
+        const c = document.querySelector('#content');
+        return {
+          url: window.location.href,
+          contentLoaded: c?.getAttribute('data-content-loaded'),
+          hasProjectsRows: !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row'),
+          contentTextLength: c?.textContent?.length || 0,
+        };
+      });
+      // #region agent log
+      logEvent('home.spec.ts:87', 'Projects waitForFunction failed', {
+        error: error instanceof Error ? error.message : String(error),
+        projectsWaitState,
+      }, 'H9');
+      // #endregion
+      throw error;
+    }
+    const projectsLoadedState = await page.evaluate(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
-    }, { timeout: 15000 });
+      return {
+        url: window.location.href,
+        contentLoaded: c?.getAttribute('data-content-loaded'),
+        hasProjectsRows: !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row'),
+        contentTextLength: c?.textContent?.length || 0,
+      };
+    });
+    // #region agent log
+    logEvent('home.spec.ts:105', 'Projects page loaded state', {
+      projectsLoadedState,
+    }, 'H9');
+    // #endregion
     
     // Navigate back to Home
     if (isMobile) {
@@ -76,12 +133,53 @@ test.describe('Home Page Initial Load', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
+    // #region agent log
+    logEvent('home.spec.ts:90', 'Home navigation back clicked', {
+      isMobile,
+      urlAfterClick: page.url(),
+    }, 'H7');
+    // #endregion
+    const homeNavPreWaitState = await page.evaluate(() => {
+      const c = document.querySelector('#content');
+      return {
+        url: window.location.href,
+        contentLoaded: c?.getAttribute('data-content-loaded'),
+        hasHomeBanner: !!c?.querySelector('#homeBanner'),
+        hasHeroContent: !!c?.querySelector('.hero-content, .hero-text-column'),
+        contentTextLength: c?.textContent?.length || 0,
+      };
+    });
+    // #region agent log
+    logEvent('home.spec.ts:102', 'Home pre-wait state', {
+      homeNavPreWaitState,
+    }, 'H8');
+    // #endregion
     
     // Wait for home content to load again - use more efficient selector
-    await page.waitForSelector('#content #homeBanner, #content .hero-content, #content .hero-text-column', { 
-      timeout: 15000,
-      state: 'attached' 
-    });
+    try {
+      await page.waitForSelector('#content #homeBanner, #content .hero-content, #content .hero-text-column', { 
+        timeout: 15000,
+        state: 'attached' 
+      });
+    } catch (error) {
+      const waitState = await page.evaluate(() => {
+        const c = document.querySelector('#content');
+        return {
+          url: window.location.href,
+          contentLoaded: c?.getAttribute('data-content-loaded'),
+          hasHomeBanner: !!c?.querySelector('#homeBanner'),
+          hasHeroContent: !!c?.querySelector('.hero-content, .hero-text-column'),
+          contentTextLength: c?.textContent?.length || 0,
+        };
+      });
+      // #region agent log
+      logEvent('home.spec.ts:109', 'Home waitForSelector failed', {
+        error: error instanceof Error ? error.message : String(error),
+        waitState,
+      }, 'H8');
+      // #endregion
+      throw error;
+    }
     
     // Verify home content is visible
     const homeBanner = page.locator('#content #homeBanner');
