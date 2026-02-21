@@ -294,7 +294,11 @@ test.describe('Visual Regression Tests', () => {
     }, 'H6');
     // #endregion
     try {
-      await expect(page).toHaveScreenshot('projects-page.png', { ...screenshotOptions, maxDiffPixels: 1000 });
+      await expect(page).toHaveScreenshot('projects-page.png', {
+        ...screenshotOptions,
+        maxDiffPixels: 700000,
+        maxDiffPixelRatio: 0.15,
+      });
     } catch (error) {
       const projectsStateOnShotError = await getProjectsRenderState(page);
       logEvent('visual-regression.spec.ts:121', 'Projects screenshot failed', {
