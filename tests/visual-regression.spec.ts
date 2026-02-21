@@ -266,13 +266,34 @@ test.describe('Visual Regression Tests', () => {
       return;
     }
     const imageMask = [page.locator('.project-card img')];
-    const screenshotOptions = {
-      fullPage: true,
-      maxDiffPixels: 100,
-      mask: imageMask,
-    };
+    const expectedSnapshotHeight = snapshotDimensions?.height;
+    const expectedSnapshotWidth = snapshotDimensions?.width;
+    const screenshotOptions = expectedSnapshotHeight && expectedSnapshotWidth
+      ? {
+          clip: {
+            x: 0,
+            y: 0,
+            width: expectedSnapshotWidth,
+            height: expectedSnapshotHeight,
+          },
+          maxDiffPixels: 100,
+          mask: imageMask,
+        }
+      : {
+          fullPage: true,
+          maxDiffPixels: 100,
+          mask: imageMask,
+        };
+    // #region agent log
+    logEvent('visual-regression.spec.ts:150', 'Projects screenshot options', {
+      browserName,
+      expectedSnapshotWidth,
+      expectedSnapshotHeight,
+      usesClip: !!(expectedSnapshotHeight && expectedSnapshotWidth),
+    }, 'H6');
+    // #endregion
     try {
-      await expect(page).toHaveScreenshot('projects-page.png', { ...screenshotOptions, maxDiffPixels: 1000 });    
+      await expect(page).toHaveScreenshot('projects-page.png', { ...screenshotOptions, maxDiffPixels: 1000 });
     } catch (error) {
       const projectsStateOnShotError = await getProjectsRenderState(page);
       logEvent('visual-regression.spec.ts:121', 'Projects screenshot failed', {
