@@ -255,7 +255,7 @@ jobs:
           else
             echo "UI server process is NOT running (PID: $UI_PID)"
           fi
-          node -e "const fs=require('fs');const log=fs.existsSync('ui-server.log')?fs.readFileSync('ui-server.log','utf8').slice(-2000):null;const ping=(url)=>fetch(url).then(r=>({ok:r.ok,status:r.status})).catch(e=>({error:e.message}));Promise.all([ping('http://127.0.0.1:4321/'),ping('http://localhost:4321/')]).then(([ping127,pingLocal])=>fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'playwright.yml:Start UI server',message:'UI server reachability',data:{pid:'$UI_PID',ping127,pingLocal,logTail:log},timestamp:Date.now(),runId:process.env.CI?'ci':'local',hypothesisId:'ACT1'})})).catch(()=>{});"
+          node -e "const fs=require('fs');const log=fs.existsSync('ui-server.log')?fs.readFileSync('ui-server.log','utf8').slice(-2000):null;const ping=(url)=>fetch(url).then(r=>({ok:r.ok,status:r.status})).catch(e=>({error:e.message}));Promise.all([ping('http://127.0.0.1:4321/'),ping('http://localhost:4321/')]).then(([ping127,pingLocal])=>fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'playwright.yml:Start UI server',message:'UI server reachability',data:{pid:\"$UI_PID\",ping127,pingLocal,logTail:log},timestamp:Date.now(),runId:process.env.CI?'ci':'local',hypothesisId:'ACT1'})})).catch(()=>{});"
 
       - name: Wait for UI server to be ready
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
