@@ -406,7 +406,6 @@ async function initProjects() {
             loadProjectClassification(),
             fetchProjectsFromAPI()
         ]);
-        
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
@@ -428,7 +427,6 @@ async function initProjects() {
         }
     } catch (error) {
         console.error('Error loading projects:', error);
-        
         // Show detailed error message
         const errorMsg = document.createElement('div');
         errorMsg.className = 'alert alert-warning';

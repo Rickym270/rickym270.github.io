@@ -452,6 +452,7 @@ test.describe('Contact Page', () => {
     // Mock the API endpoint to prevent actual email sending
     // Use Promise to track when request is intercepted and fulfilled
     let routeFulfilled = false;
+    let routeFulfillCompleted = false;
     let routeFulfillPromise: Promise<void>;
     let resolveRouteFulfill: () => void;
     
@@ -461,7 +462,6 @@ test.describe('Contact Page', () => {
     
     // Use networkidle for Firefox, domcontentloaded for others
     const browserName = page.context().browser()?.browserType().name() || 'chromium';
-    
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use regex pattern for more reliable interception across absolute and relative URLs
     await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
@@ -486,11 +486,13 @@ test.describe('Contact Page', () => {
             receivedAt: new Date().toISOString()
           })
         });
+        routeFulfillCompleted = true;
         // Resolve promise AFTER route.fulfill completes successfully
         resolveRouteFulfill();
       } catch (fulfillError) {
         // Reset routeFulfilled if fulfill failed
         routeFulfilled = false;
+        routeFulfillCompleted = false;
         throw fulfillError;
       }
     });
@@ -567,9 +569,6 @@ test.describe('Contact Page', () => {
     // Wait for route to be fulfilled (with timeout fallback)
     // Increase timeout for mobile devices which may be slower
     const timeoutDuration = isMobile ? 60000 : 20000;
-    const timeoutPromise = new Promise<void>((_, reject) => {
-      setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
-    });
     
     // Also wait for the POST request to be initiated (deterministic)
     const waitForPost = page.waitForRequest(
@@ -585,16 +584,20 @@ test.describe('Contact Page', () => {
     
     // Wait for route fulfillment with timeout
     // Note: waitForResponse may not work with route.fulfill(), so we rely on routeFulfillPromise
-    const routePromise = Promise.race([routeFulfillPromise, timeoutPromise]);
-    
     try {
-      await Promise.all([clickPromise, Promise.race([routePromise, waitForPost])]);
-      // Verify route was intercepted
-      if (!routeFulfilled) {
-        throw new Error('Route was not intercepted and fulfilled');
-      }
+      await Promise.all([clickPromise, waitForPost, routeFulfillPromise]);
+      await expect.poll(() => routeFulfillCompleted, { timeout: timeoutDuration }).toBe(true);
+      const messageState = await page.evaluate(() => {
+        const el = document.getElementById('form-message');
+        return {
+          exists: !!el,
+          className: el?.className || '',
+          display: el ? window.getComputedStyle(el).display : '',
+          text: el?.textContent?.trim() || '',
+        };
+      });
     } catch (error) {
-      if (!routeFulfilled) {
+      if (!routeFulfillCompleted) {
         console.error('Route was not fulfilled within timeout');
         console.error('Request URLs captured:', requestUrls);
         // Check if form submitted (button should be disabled during submission)
@@ -615,6 +618,15 @@ test.describe('Contact Page', () => {
           console.error('First request URL:', requestUrls[0]);
           console.error('Route pattern: /.*\\/api\\/contact(?:\\?.*)?$/');
         }
+        const messageState = await page.evaluate(() => {
+          const el = document.getElementById('form-message');
+          return {
+            exists: !!el,
+            className: el?.className || '',
+            display: el ? window.getComputedStyle(el).display : '',
+            text: el?.textContent?.trim() || '',
+          };
+        });
         throw error;
       }
     }

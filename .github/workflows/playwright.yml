@@ -106,6 +106,11 @@ jobs:
             SKIP_LOAD=true
             echo "⚠️  [skip load] detected - skipping load tests"
           fi
+
+          if [ -n "$ACT" ]; then
+            SKIP_API=true
+            echo "⚠️  ACT detected - skipping API tests"
+          fi
           
           # Set outputs
           echo "skip_all=$SKIP_ALL" >> $GITHUB_OUTPUT
@@ -235,6 +240,8 @@ jobs:
       - name: Start UI server
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         run: |
+          node -e "fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'playwright.yml:Start UI server',message:'UI server start begin',data:{cwd:process.cwd(),node:process.version,scriptExists:require('fs').existsSync('scripts/start-web-server-simple.js')},timestamp:Date.now(),runId:process.env.CI?'ci':'local',hypothesisId:'ACT1'})}).catch(()=>{});"
+          echo "UI server start time: $(date -u)" > ui-server.log
           # Start simple Node.js server on port 4321 in the background
           # Use simple server instead of http-server because http-server returns 404 for /
           # Tests use page.goto('/') which fails with http-server but works with simple server
@@ -242,6 +249,13 @@ jobs:
           UI_PID=$!
           echo $UI_PID > ui-server.pid
           echo "UI server started with PID: $UI_PID on port 4321"
+          sleep 2
+          if kill -0 $UI_PID 2>/dev/null; then
+            echo "UI server process is running (PID: $UI_PID)"
+          else
+            echo "UI server process is NOT running (PID: $UI_PID)"
+          fi
+          node -e "const fs=require('fs');const log=fs.existsSync('ui-server.log')?fs.readFileSync('ui-server.log','utf8').slice(-2000):null;const ping=(url)=>fetch(url).then(r=>({ok:r.ok,status:r.status})).catch(e=>({error:e.message}));Promise.all([ping('http://127.0.0.1:4321/'),ping('http://localhost:4321/')]).then(([ping127,pingLocal])=>fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'playwright.yml:Start UI server',message:'UI server reachability',data:{pid:'$UI_PID',ping127,pingLocal,logTail:log},timestamp:Date.now(),runId:process.env.CI?'ci':'local',hypothesisId:'ACT1'})})).catch(()=>{});"
 
       - name: Wait for UI server to be ready
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
@@ -251,6 +265,7 @@ jobs:
           # Check / (root path) - simple server serves it correctly, unlike http-server
           npx wait-on http://127.0.0.1:4321/ --timeout 60000 --interval 2000 || {
             echo "ERROR: UI server failed to start within timeout"
+            node -e "const fs=require('fs');const log=fs.existsSync('ui-server.log')?fs.readFileSync('ui-server.log','utf8').slice(-2000):null;const ping=(url)=>fetch(url).then(r=>({ok:r.ok,status:r.status})).catch(e=>({error:e.message}));Promise.all([ping('http://127.0.0.1:4321/'),ping('http://localhost:4321/')]).then(([ping127,pingLocal])=>fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'playwright.yml:Wait UI server',message:'UI server wait failed',data:{ping127,pingLocal,logTail:log},timestamp:Date.now(),runId:process.env.CI?'ci':'local',hypothesisId:'ACT2'})})).catch(()=>{});"
             echo "Checking if server process is still running:"
             if [ -f ui-server.pid ]; then
               PID=$(cat ui-server.pid)
@@ -322,7 +337,7 @@ jobs:
           pkill -f "start-web-server-simple" || true
 
       - name: Upload API server logs
-        if: always()
+        if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
           name: api-server-logs
@@ -331,7 +346,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload UI server logs
-        if: always()
+        if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
           name: ui-server-logs
