@@ -56,6 +56,19 @@ test.describe('Home Page Initial Load', () => {
     
     // Use domcontentloaded for faster loads
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const spaConsoleLogs: string[] = [];
+    // #region agent log
+    page.on('console', (msg) => {
+      const text = msg.text();
+      if (text.includes('[spa]')) {
+        spaConsoleLogs.push(text);
+        logEvent('home.spec.ts:48', 'SPA console message', { text }, 'H10');
+        if (process.env.CI) {
+          console.log('[spa-forward]', text);
+        }
+      }
+    });
+    // #endregion
     // #region agent log
     logEvent('home.spec.ts:50', 'Home navigation test start', {
       url: page.url(),

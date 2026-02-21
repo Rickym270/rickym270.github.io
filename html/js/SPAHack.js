@@ -5,7 +5,7 @@ $(document).ready(function(){
         // #region agent log
         fetch(LOG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:location,message:message,data:data,timestamp:Date.now(),runId:runId,hypothesisId:hypothesisId})}).catch(function(){});
         // #endregion
-        if (typeof console !== 'undefined' && runId === 'ci') {
+        if (typeof console !== 'undefined') {
             console.log('[spa]', JSON.stringify({ location: location, message: message, data: data, runId: runId, hypothesisId: hypothesisId }));
         }
     }
@@ -146,7 +146,9 @@ $(document).ready(function(){
                 logSpaEvent('SPAHack.js:137', 'SPA nav click', {
                     href: $(this).attr("href"),
                     dataUrl: $(this).attr("data-url"),
-                    sectionUrl: sectionUrl
+                    sectionUrl: sectionUrl,
+                    contentLoaded: jQuery("#content").attr("data-content-loaded"),
+                    contentTextLength: jQuery("#content").text().length
                 }, 'H10');
                 // #endregion
                 // Append cache-busting param to force fresh fetch of HTML sections
@@ -258,7 +260,8 @@ $(document).ready(function(){
                         sectionUrl: sectionUrl,
                         status: status,
                         responseLength: response ? response.length : 0,
-                        hasHomeBanner: response ? response.indexOf('homeBanner') !== -1 : false
+                        hasHomeBanner: response ? response.indexOf('homeBanner') !== -1 : false,
+                        contentTextLength: jQuery("#content").text().length
                     }, 'H12');
                     // #endregion
                     // Mark content as loaded for testing
