@@ -268,14 +268,14 @@ test.describe('Visual Regression Tests', () => {
     const imageMask = [page.locator('.project-card img')];
     const expectedSnapshotHeight = snapshotDimensions?.height;
     const expectedSnapshotWidth = snapshotDimensions?.width;
+    const originalViewport = page.viewportSize();
+    if (expectedSnapshotHeight && expectedSnapshotWidth) {
+      await page.setViewportSize({ width: expectedSnapshotWidth, height: expectedSnapshotHeight });
+      await waitForProjectsLayoutStability(page);
+    }
     const screenshotOptions = expectedSnapshotHeight && expectedSnapshotWidth
       ? {
-          clip: {
-            x: 0,
-            y: 0,
-            width: expectedSnapshotWidth,
-            height: expectedSnapshotHeight,
-          },
+          fullPage: false,
           maxDiffPixels: 100,
           mask: imageMask,
         }
@@ -289,7 +289,8 @@ test.describe('Visual Regression Tests', () => {
       browserName,
       expectedSnapshotWidth,
       expectedSnapshotHeight,
-      usesClip: !!(expectedSnapshotHeight && expectedSnapshotWidth),
+      usesBaselineViewport: !!(expectedSnapshotHeight && expectedSnapshotWidth),
+      originalViewport,
     }, 'H6');
     // #endregion
     try {
@@ -302,6 +303,10 @@ test.describe('Visual Regression Tests', () => {
         projectsStateOnShotError,
       }, 'H3');
       throw error;
+    } finally {
+      if (originalViewport && expectedSnapshotHeight && expectedSnapshotWidth) {
+        await page.setViewportSize(originalViewport);
+      }
     }
   });
 
