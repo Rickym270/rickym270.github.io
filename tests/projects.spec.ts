@@ -111,6 +111,21 @@ test.describe('Projects Page', () => {
     }
   });
 
+  test('uses local API base when running on localhost', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+
+    await page.waitForFunction(() => typeof window.API_BASE_URL !== 'undefined', { timeout: 10000 });
+
+    const { hostname, apiBaseUrl } = await page.evaluate(() => ({
+      hostname: window.location.hostname,
+      apiBaseUrl: (window as unknown as { API_BASE_URL?: string }).API_BASE_URL || '',
+    }));
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      await expect(apiBaseUrl).toBe('http://localhost:8080');
+    }
+  });
+
   test('shows loading message in each section while projects load', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
     
