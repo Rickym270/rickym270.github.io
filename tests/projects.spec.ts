@@ -111,6 +111,50 @@ test.describe('Projects Page', () => {
     }
   });
 
+  test('renders project cards when API returns data', async ({ page }) => {
+    const mockProjects = [
+      {
+        name: 'Local API Project',
+        summary: 'Mock project for UI rendering.',
+        status: 'complete',
+        tech: ['TypeScript'],
+        slug: 'local-api-project'
+      },
+      {
+        name: 'In Progress Project',
+        summary: 'Second mock project.',
+        status: 'in-progress',
+        tech: ['JavaScript'],
+        slug: 'in-progress-project'
+      }
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+
+    await page.waitForSelector('#content .project-card', { timeout: 15000 });
+
+    const cards = page.locator('#content .project-card');
+    await expect(cards).toHaveCount(2);
+    await expect(page.locator('#content .card-title', { hasText: 'Local API Project' })).toBeVisible();
+    await expect(page.locator('#content .card-title', { hasText: 'In Progress Project' })).toBeVisible();
+
+    const errorVisible = await page.locator('text=/Unable to load projects from API/i').isVisible().catch(() => false);
+    expect(errorVisible).toBeFalsy();
+  });
+
   test('uses local API base when running on localhost', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
 
