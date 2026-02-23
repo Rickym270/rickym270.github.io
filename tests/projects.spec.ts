@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
 
+function logDebug(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'301aa9'},body:JSON.stringify({sessionId:'301aa9',location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+}
+
 test.describe('Projects Page', () => {
   // Set timeout for all tests in this describe block
   test.describe.configure({ timeout: 120000 }); // 2 minutes
@@ -130,11 +137,28 @@ test.describe('Projects Page', () => {
     ];
 
     await page.route('**/api/projects**', async (route) => {
+      // #region agent log
+      logDebug('projects.spec.ts:127', 'Projects API route intercepted', {
+        url: route.request().url(),
+        method: route.request().method(),
+        responseBytes: JSON.stringify(mockProjects).length,
+      }, 'PR1');
+      // #endregion
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify(mockProjects),
       });
+    });
+    page.on('request', (request) => {
+      if (request.url().includes('/api/projects')) {
+        // #region agent log
+        logDebug('projects.spec.ts:139', 'Projects API request seen', {
+          url: request.url(),
+          method: request.method(),
+        }, 'PR1');
+        // #endregion
+      }
     });
 
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
@@ -145,6 +169,21 @@ test.describe('Projects Page', () => {
     }, { timeout: 15000 });
 
     await page.waitForSelector('#content .project-card', { timeout: 15000 });
+
+    const projectsState = await page.evaluate(() => {
+      const cards = document.querySelectorAll('#content .project-card').length;
+      return {
+        apiBaseUrl: (window as unknown as { API_BASE_URL?: string }).API_BASE_URL || null,
+        cards,
+        cacheCount: Array.isArray((window as unknown as { projectsCache?: unknown }).projectsCache)
+          ? (window as unknown as { projectsCache?: unknown[] }).projectsCache?.length
+          : null,
+        hasCachePromise: !!(window as unknown as { projectsCachePromise?: unknown }).projectsCachePromise,
+      };
+    });
+    // #region agent log
+    logDebug('projects.spec.ts:165', 'Projects render state', projectsState, 'PR2');
+    // #endregion
 
     const cards = page.locator('#content .project-card');
     await expect(cards).toHaveCount(2);

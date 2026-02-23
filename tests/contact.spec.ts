@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
 
+function logDebug(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
+  const runId = process.env.CI ? 'ci' : 'local';
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'301aa9'},body:JSON.stringify({sessionId:'301aa9',location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  // #endregion
+}
+
 test.describe('Contact Page', () => {
   test.beforeEach(async ({ page, browserName }) => {
     // Ensure English is set for these tests
@@ -290,6 +297,12 @@ test.describe('Contact Page', () => {
       if (url.includes('contact') || url.includes('/api/')) {
         requestUrls.push(`${request.method()} ${url}`);
         console.log('[request]', request.method(), url);
+        // #region agent log
+        logDebug('contact.spec.ts:292', 'Contact request seen', {
+          url,
+          method: request.method(),
+        }, 'CT1');
+        // #endregion
       }
     });
     page.on('requestfailed', r => console.log('[requestfailed]', r.method(), r.url(), r.failure()?.errorText));
@@ -298,6 +311,12 @@ test.describe('Contact Page', () => {
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use regex pattern for more reliable interception across absolute and relative URLs
     await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
+      // #region agent log
+      logDebug('contact.spec.ts:303', 'Contact API route intercepted', {
+        url: route.request().url(),
+        method: route.request().method(),
+      }, 'CT1');
+      // #endregion
       const req = route.request();
       console.log('[route] intercepted', req.method(), req.url());
       // Handle CORS preflight quickly to avoid blocking POST
@@ -442,6 +461,12 @@ test.describe('Contact Page', () => {
     
     // Verify the request was intercepted (not sent to real API)
     // If it wasn't intercepted, the error above should have provided debugging info
+    // #region agent log
+    logDebug('contact.spec.ts:445', 'Contact intercepted flag', {
+      requestIntercepted,
+      requestUrls,
+    }, 'CT2');
+    // #endregion
     expect(requestIntercepted).toBe(true);
     
     // Clean up routes to prevent errors when test ends
