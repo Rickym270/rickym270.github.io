@@ -9,7 +9,15 @@
     try {
         var g = (typeof globalThis !== 'undefined') ? globalThis : window;
         if (typeof g.API_BASE_URL === 'undefined') {
-            g.API_BASE_URL = 'https://ricky-api-745807383723.us-east1.run.app';
+            var isLocalHost = false;
+            try {
+                isLocalHost = !!(g.location && (g.location.hostname === 'localhost' || g.location.hostname === '127.0.0.1'));
+            } catch (e) {
+                isLocalHost = false;
+            }
+            g.API_BASE_URL = isLocalHost
+                ? 'http://localhost:8080'
+                : 'https://ricky-api-745807383723.us-east1.run.app';
         }
     } catch (e) {
         // Fallback for unusual environments

@@ -5,7 +5,16 @@
 // API Base URL - fallback if api.js isn't loaded
 // Use var or check if already defined to prevent redeclaration errors in SPA navigation
 if (typeof API_BASE_URL_FALLBACK === 'undefined') {
-    var API_BASE_URL_FALLBACK = 'https://ricky-api-745807383723.us-east1.run.app';
+    var isLocalHost = false;
+    try {
+        isLocalHost = (typeof window !== 'undefined') &&
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    } catch (e) {
+        isLocalHost = false;
+    }
+    var API_BASE_URL_FALLBACK = isLocalHost
+        ? 'http://localhost:8080'
+        : 'https://ricky-api-745807383723.us-east1.run.app';
 }
 
 // Cache for project classification
