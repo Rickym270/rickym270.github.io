@@ -2,8 +2,12 @@ import { test, expect } from '@playwright/test';
 
 function logDebug(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
   const runId = process.env.CI ? 'ci' : 'local';
+  const payload = { sessionId: '301aa9', location, message, data, timestamp: Date.now(), runId, hypothesisId };
+  if (process.env.CI) {
+    console.log('[debug-log]', JSON.stringify(payload));
+  }
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'301aa9'},body:JSON.stringify({sessionId:'301aa9',location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'301aa9'},body:JSON.stringify(payload)}).catch((error)=>{ if (process.env.CI) { console.error('[debug-log-error]', error?.message || String(error)); } });
   // #endregion
 }
 

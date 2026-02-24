@@ -2,8 +2,12 @@ import { test, expect } from '@playwright/test';
 
 function logDebug(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
   const runId = process.env.CI ? 'ci' : 'local';
+  const payload = { sessionId: '301aa9', location, message, data, timestamp: Date.now(), runId, hypothesisId };
+  if (process.env.CI) {
+    console.log('[debug-log]', JSON.stringify(payload));
+  }
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'301aa9'},body:JSON.stringify({sessionId:'301aa9',location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'301aa9'},body:JSON.stringify(payload)}).catch((error)=>{ if (process.env.CI) { console.error('[debug-log-error]', error?.message || String(error)); } });
   // #endregion
 }
 
@@ -168,6 +172,22 @@ test.describe('Projects Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
     }, { timeout: 15000 });
 
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress .row, #ProjComplete .row');
+    }, { timeout: 15000 });
+
+    await page.waitForSelector('#content #ProjInProgress', { timeout: 15000, state: 'attached' });
+    await page.waitForSelector('#content #ProjComplete', { timeout: 15000, state: 'attached' });
     await page.waitForSelector('#content .project-card', { timeout: 15000 });
 
     const projectsState = await page.evaluate(() => {
@@ -197,7 +217,7 @@ test.describe('Projects Page', () => {
   test('uses local API base when running on localhost', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
 
-    await page.waitForFunction(() => typeof window.API_BASE_URL !== 'undefined', { timeout: 10000 });
+    await page.waitForFunction(() => typeof (window as unknown as { API_BASE_URL?: string }).API_BASE_URL !== 'undefined', { timeout: 10000 });
 
     const { hostname, apiBaseUrl } = await page.evaluate(() => ({
       hostname: window.location.hostname,
