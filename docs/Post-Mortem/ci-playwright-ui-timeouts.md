@@ -14,6 +14,7 @@ Playwright UI tests for the Projects page and Contact visual regression timed ou
 - `renders project cards when API returns data` timed out waiting for project cards.
 - `contact form matches visual baseline` timed out waiting for the contact form on mobile.
 - Debug logging was ineffective in CI, delaying diagnosis.
+ix/projects-debug-logs
 - `page has canonical URL` timed out in Firefox while waiting for `page.goto('/')` to reach `domcontentloaded`.
 
 ## Root Cause
