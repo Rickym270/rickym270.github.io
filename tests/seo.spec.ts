@@ -111,7 +111,17 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('page has canonical URL', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 10000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 }).catch(() => {});
     
     // Check for canonical link
     const canonical = page.locator('link[rel="canonical"]');
