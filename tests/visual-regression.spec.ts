@@ -321,10 +321,15 @@ test.describe('Visual Regression Tests', () => {
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
     }, { timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
 
     // Navigate to contact
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     if (isMobile) {
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
@@ -333,7 +338,11 @@ test.describe('Visual Regression Tests', () => {
     }
 
     // Wait for contact form to load
-    await page.waitForSelector('#contact-form, form', { timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form, form');
+    }, { timeout: 15000 });
+    await page.waitForSelector('#contact-form, form', { timeout: 15000, state: 'visible' });
 
     // Screenshot of contact form
     const form = page.locator('#contact-form, form').first();
