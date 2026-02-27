@@ -78,42 +78,20 @@ test.describe('End-to-End User Journeys', () => {
   });
 
   test('complete user journey: contact form submission', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    
-    // Wait for initial content
-    await page.waitForFunction(() => {
-      return document.querySelector('#content') !== null;
-    }, { timeout: 15000 });
-    
-    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
-    
-    // Navigate to Contact
-    if (isMobile) {
-      await page.locator('#mobile-menu-toggle').click();
-      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
-    } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
-    }
-    
-    // Wait for contact form
-    await page.waitForSelector('#contact-form, form', { timeout: 15000 });
-    
-    // Fill out form
-    await page.locator('input[name="name"], #name').fill('Test User');
-    await page.locator('input[name="email"], #email').fill('test@example.com');
-    await page.locator('input[name="subject"], #subject').fill('Test Subject');
-    await page.locator('textarea[name="message"], #message').fill('This is a test message from an E2E user journey test.');
-    
-    // Intercept API call
+    // Set up route BEFORE navigation - required for reliable interception on mobile
     let requestIntercepted = false;
     let routeFulfilled = false;
     let resolveRouteFulfill: (() => void) | null = null;
     const routeFulfillPromise = new Promise<void>((resolve) => {
       resolveRouteFulfill = resolve;
     });
-    
-    await page.route(/.*\/api\/contact/, async (route) => {
+
+    await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
+      const req = route.request();
+      if (req.method() === 'OPTIONS') {
+        await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' });
+        return;
+      }
       requestIntercepted = true;
       await route.fulfill({
         status: 201,
@@ -130,6 +108,41 @@ test.describe('End-to-End User Journeys', () => {
       routeFulfilled = true;
       if (resolveRouteFulfill) resolveRouteFulfill();
     });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    
+    // Wait for initial content
+    await page.waitForFunction(() => {
+      return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
+    
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    
+    // Navigate to Contact
+    if (isMobile) {
+      await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/contact.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
+    }
+    
+    // Wait for contact form and SPA content
+    await page.waitForFunction(
+      () => {
+        const c = document.querySelector('#content');
+        return c && (c.getAttribute('data-content-loaded') === 'true' || !!c.querySelector('#contact-form'));
+      },
+      { timeout: 15000 }
+    );
+    await page.waitForSelector('#contact-form, form', { timeout: 5000 });
+    
+    // Fill out form
+    await page.locator('input[name="name"], #name').fill('Test User');
+    await page.locator('input[name="email"], #email').fill('test@example.com');
+    await page.locator('input[name="subject"], #subject').fill('Test Subject');
+    await page.locator('textarea[name="message"], #message').fill('This is a test message from an E2E user journey test.');
     
     // Submit form
     const clickPromise = page.locator('button[type="submit"], #submit-btn').click();
@@ -157,11 +170,18 @@ test.describe('End-to-End User Journeys', () => {
     // Wait a moment for DOM to update after API response
     await page.waitForTimeout(500);
     
-    // Wait for success message
-    await page.waitForSelector('#form-message.alert-success, .alert-success', { timeout: 10000 });
+    // Wait for success message - mobile needs longer timeout, use flexible wait
+    const successTimeout = isMobile ? 20000 : 10000;
+    await page.waitForFunction(
+      () => {
+        const el = document.getElementById('form-message');
+        return el && el.classList.contains('alert-success') && !el.classList.contains('d-none');
+      },
+      { timeout: successTimeout }
+    );
     
     // Verify success
-    const successMessage = page.locator('#form-message.alert-success, .alert-success');
+    const successMessage = page.locator('#form-message.alert-success');
     await expect(successMessage).toBeVisible();
     
     // Verify API was called
