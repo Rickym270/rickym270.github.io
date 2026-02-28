@@ -32,7 +32,9 @@ test.describe('Home page content', () => {
   });
 
   test('hero buttons link to LinkedIn and Github correctly', async ({ page }) => {
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     // Wait for content to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -46,7 +48,9 @@ test.describe('Home page content', () => {
   });
 
   test('two-column content: left story, right skills', async ({ page }) => {
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -80,7 +84,9 @@ test.describe('Home page content', () => {
   });
 
   test('hero portrait image is properly displayed', async ({ page }) => {
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     const banner = page.locator('#content #homeBanner');
     await expect(banner).toBeVisible();
@@ -106,7 +112,9 @@ test.describe('Home page content', () => {
   });
 
   test('View All Skills button has transparent fill and blue outline', async ({ page }) => {
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     const viewAllSkillsBtn = page.locator('#content a').filter({ hasText: /View All Skills/i });
     await expect(viewAllSkillsBtn).toBeVisible({ timeout: 2000 });
@@ -138,7 +146,9 @@ test.describe('Home page content', () => {
   });
 
   test('View All Skills button navigates to skills page via SPA', async ({ page }) => {
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for content to load
     // Wait for page to be ready - check if content element exists
@@ -227,7 +237,9 @@ test.describe('Home page content', () => {
   });
 
   test('Quick Stats displays last updated in correct format', async ({ page }) => {
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for stats section to potentially load
     await page.waitForTimeout(3000);
