@@ -379,6 +379,15 @@ window.resetProjectsInit = function resetProjectsInit() {
     window.projectsInitialized = false;
 };
 
+// Debug logging helper
+var LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
+function logProjectsEvent(location, message, data, hypothesisId) {
+    var runId = (typeof process !== 'undefined' && process.env && process.env.CI) ? 'ci' : 'local';
+    // #region agent log
+    fetch(LOG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:location,message:message,data:data,timestamp:Date.now(),runId:runId,hypothesisId:hypothesisId})}).catch(function(){});
+    // #endregion
+}
+
 /**
  * Initialize projects page - load and render projects from API
  */
@@ -389,6 +398,12 @@ async function initProjects() {
     }
     projectsInitialized = true;
     window.projectsInitialized = true;
+    // #region agent log
+    logProjectsEvent('projects.js:384', 'initProjects start', {
+        url: window.location.href,
+        contentLoaded: document.querySelector('#content')?.getAttribute('data-content-loaded') || null
+    }, 'P1');
+    // #endregion
     try {
         // Show loading state in each section
         const inProgressRow = document.querySelector('#ProjInProgress .row');
@@ -415,6 +430,12 @@ async function initProjects() {
             loadProjectClassification(),
             fetchProjectsFromAPI()
         ]);
+        // #region agent log
+        logProjectsEvent('projects.js:413', 'Projects data loaded', {
+            classificationLoaded: !!classification,
+            projectsCount: Array.isArray(projects) ? projects.length : null
+        }, 'P2');
+        // #endregion
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
@@ -435,6 +456,13 @@ async function initProjects() {
             }
         }
     } catch (error) {
+        // #region agent log
+        logProjectsEvent('projects.js:436', 'initProjects error', {
+            name: error && error.name,
+            message: error && error.message,
+            apiUrl: (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : (typeof API_BASE_URL_FALLBACK !== 'undefined' ? API_BASE_URL_FALLBACK : null))
+        }, 'P3');
+        // #endregion
         console.error('Error loading projects:', error);
         // Show detailed error message
         const errorMsg = document.createElement('div');

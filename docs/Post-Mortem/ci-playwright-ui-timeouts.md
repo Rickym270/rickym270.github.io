@@ -14,8 +14,8 @@ Playwright UI tests for the Projects page and Contact visual regression timed ou
 - `renders project cards when API returns data` timed out waiting for project cards.
 - `contact form matches visual baseline` timed out waiting for the contact form on mobile.
 - Debug logging was ineffective in CI, delaying diagnosis.
-ix/projects-debug-logs
 - `page has canonical URL` timed out in Firefox while waiting for `page.goto('/')` to reach `domcontentloaded`.
+- `two-column content: left story, right skills` timed out in Firefox while waiting for `page.goto('/')` to reach `load`.
 
 ## Root Cause
 1. The projects render test never navigated to the Projects page before asserting `.project-card` elements, so the content was never loaded.
@@ -34,6 +34,7 @@ ix/projects-debug-logs
 - Updated the projects render test to navigate to the Projects page and wait for section attachment before asserting cards.
 - Strengthened the contact visual test with SPA readiness waits and mobile navigation waits before asserting the form.
 - Updated the canonical URL test to use Firefox `networkidle` with explicit timeouts and readiness waits.
+- Applied Firefox `networkidle` for all remaining `page.goto('/')` calls in home-page.spec.ts (hero buttons, two-column content, hero portrait, View All Skills, Quick Stats displays).
 
 ## Why This Approach
 The fixes align tests with the real SPA navigation flow, which removes reliance on implicit timing. Adding console logs to `logDebug` provides immediate visibility in CI regardless of external services.
