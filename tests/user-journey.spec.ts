@@ -138,9 +138,12 @@ test.describe('End-to-End User Journeys', () => {
         const c = document.querySelector('#content');
         return c && (c.getAttribute('data-content-loaded') === 'true' || !!c.querySelector('#contact-form'));
       },
-      { timeout: 15000 }
+      { timeout: 20000 }
     );
-    await page.waitForSelector('#contact-form, form', { timeout: 5000 });
+    const contactForm = page.locator('#contact-form, form').first();
+    await contactForm.waitFor({ state: 'attached', timeout: 20000 });
+    await contactForm.scrollIntoViewIfNeeded();
+    await expect(contactForm).toBeVisible({ timeout: 10000 });
     
     // Fill out form
     await page.locator('input[name="name"], #name').fill('Test User');

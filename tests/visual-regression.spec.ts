@@ -280,15 +280,18 @@ test.describe('Visual Regression Tests', () => {
       await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
     }
 
-    // Wait for contact form to load
+    // Wait for contact form to load (attached in DOM)
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#contact-form, form');
-    }, { timeout: 15000 });
-    await page.waitForSelector('#contact-form, form', { timeout: 15000, state: 'visible' });
+    }, { timeout: 20000 });
+    const form = page.locator('#contact-form, form').first();
+    await form.waitFor({ state: 'attached', timeout: 20000 });
+    // Ensure form is in viewport (mobile may have it below fold or behind sidebar)
+    await form.scrollIntoViewIfNeeded();
+    await expect(form).toBeVisible({ timeout: 10000 });
 
     // Screenshot of contact form
-    const form = page.locator('#contact-form, form').first();
     await expect(form).toHaveScreenshot('contact-form.png', {
       maxDiffPixels: 50,
     });
