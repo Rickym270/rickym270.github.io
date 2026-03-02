@@ -31,7 +31,7 @@ if (!process.env.CI) {
       // The simple server explicitly handles / -> index.html mapping
       command: `node "${path.join(rootDir, 'scripts', 'start-web-server-simple.js')}"`,
       url: 'http://127.0.0.1:4321/index.html', // Use 127.0.0.1 for consistency
-      reuseExistingServer: false, // Auto-start server locally
+      reuseExistingServer: true, // Auto-start server locally
       timeout: 60_000,
       stdout: 'pipe', // Capture stdout to see server logs
       stderr: 'pipe', // Capture stderr to see server errors
