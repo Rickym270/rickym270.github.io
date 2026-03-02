@@ -209,6 +209,18 @@
     "codingDescription": "Essentially algorithm notes where I explore the \"English\" translation of code. Dive into problem-solving approaches and algorithmic thinking.",
     "viewChallenges": "View Challenges →"
   },
+  "engineering": {
+    "title": "Ricky Martinez - Engineering",
+    "heading": "Engineering From Constraint",
+    "subtitle": "Articles on software engineering, process, and building under constraints.",
+    "comingSoon": "More articles coming soon."
+  },
+  "lifestyle": {
+    "title": "Ricky Martinez - Personal",
+    "heading": "Personal",
+    "subtitle": "Life, interests, and beyond the code.",
+    "comingSoon": "More articles coming soon."
+  },
   "lessons": {
     "pythonTutorial": {
       "title": "Python Tutorial",
