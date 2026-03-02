@@ -1,0 +1,61 @@
+# Manually trigger to update visual regression snapshots on Linux (matches CI environment).
+# Use when navbar/layout changes require new baselines for chromium-linux, chromium-iphone-linux, firefox-linux.
+name: Update Visual Snapshots
+
+on:
+  workflow_dispatch:
+    # Run from the branch you want to update (select in Actions UI when triggering)
+
+jobs:
+  update-snapshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write  # Needed to push updated snapshots
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Start UI server
+        run: |
+          node scripts/start-web-server-simple.js > ui-server.log 2>&1 &
+          echo $! > ui-server.pid
+          npx wait-on http://127.0.0.1:4321/ --timeout 30000
+          echo "UI server ready"
+
+      - name: Update visual regression snapshots
+        run: |
+          npx playwright test tests/visual-regression.spec.ts \
+            --update-snapshots \
+            --project=chromium \
+            --project=chromium-iphone \
+            --project=firefox
+
+      - name: Commit and push updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet tests/visual-regression.spec.ts-snapshots/; then
+            echo "No snapshot changes"
+          else
+            git add tests/visual-regression.spec.ts-snapshots/
+            git commit -m "chore: update visual regression snapshots (Linux)"
+            git push
+          fi
+
+      - name: Stop UI server
+        if: always()
+        run: |
+          [ -f ui-server.pid ] && kill $(cat ui-server.pid) 2>/dev/null || true

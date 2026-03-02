@@ -1,17 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
-
-function logEvent(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
-  const runId = process.env.CI ? 'ci' : 'local';
-  // #region agent log
-  fetch(LOG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
-  // #endregion
-  if (process.env.CI) {
-    console.log('[home-spec]', JSON.stringify({ location, message, data, runId, hypothesisId }));
-  }
-}
-
 test.describe('Home Page Initial Load', () => {
   // Set timeout for all tests in this describe block
   test.describe.configure({ timeout: 120000 }); // 2 minutes
@@ -56,25 +44,6 @@ test.describe('Home Page Initial Load', () => {
     
     // Use domcontentloaded for faster loads
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
-    const spaConsoleLogs: string[] = [];
-    // #region agent log
-    page.on('console', (msg) => {
-      const text = msg.text();
-      if (text.includes('[spa]')) {
-        spaConsoleLogs.push(text);
-        logEvent('home.spec.ts:48', 'SPA console message', { text }, 'H10');
-        if (process.env.CI) {
-          console.log('[spa-forward]', text);
-        }
-      }
-    });
-    // #endregion
-    // #region agent log
-    logEvent('home.spec.ts:50', 'Home navigation test start', {
-      url: page.url(),
-      viewport: page.viewportSize(),
-    }, 'H6');
-    // #endregion
     
     // Wait for home content to load initially
     await page.waitForFunction(() => {
@@ -93,12 +62,6 @@ test.describe('Home Page Initial Load', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
-    // #region agent log
-    logEvent('home.spec.ts:73', 'Home navigation away clicked', {
-      isMobile,
-      urlAfterClick: page.url(),
-    }, 'H7');
-    // #endregion
     
     // Wait for projects page to load
     try {
@@ -116,12 +79,6 @@ test.describe('Home Page Initial Load', () => {
           contentTextLength: c?.textContent?.length || 0,
         };
       });
-      // #region agent log
-      logEvent('home.spec.ts:87', 'Projects waitForFunction failed', {
-        error: error instanceof Error ? error.message : String(error),
-        projectsWaitState,
-      }, 'H9');
-      // #endregion
       throw error;
     }
     const projectsLoadedState = await page.evaluate(() => {
@@ -133,11 +90,6 @@ test.describe('Home Page Initial Load', () => {
         contentTextLength: c?.textContent?.length || 0,
       };
     });
-    // #region agent log
-    logEvent('home.spec.ts:105', 'Projects page loaded state', {
-      projectsLoadedState,
-    }, 'H9');
-    // #endregion
     
     // Navigate back to Home
     if (isMobile) {
@@ -146,12 +98,6 @@ test.describe('Home Page Initial Load', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
-    // #region agent log
-    logEvent('home.spec.ts:90', 'Home navigation back clicked', {
-      isMobile,
-      urlAfterClick: page.url(),
-    }, 'H7');
-    // #endregion
     const homeNavPreWaitState = await page.evaluate(() => {
       const c = document.querySelector('#content');
       return {
@@ -162,11 +108,6 @@ test.describe('Home Page Initial Load', () => {
         contentTextLength: c?.textContent?.length || 0,
       };
     });
-    // #region agent log
-    logEvent('home.spec.ts:102', 'Home pre-wait state', {
-      homeNavPreWaitState,
-    }, 'H8');
-    // #endregion
     
     // Wait for home content to load again - use more efficient selector
     try {
@@ -185,12 +126,6 @@ test.describe('Home Page Initial Load', () => {
           contentTextLength: c?.textContent?.length || 0,
         };
       });
-      // #region agent log
-      logEvent('home.spec.ts:109', 'Home waitForSelector failed', {
-        error: error instanceof Error ? error.message : String(error),
-        waitState,
-      }, 'H8');
-      // #endregion
       throw error;
     }
     

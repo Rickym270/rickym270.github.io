@@ -114,6 +114,8 @@ html {
     font-family: var(--font-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Reserve scrollbar space to prevent navbar layout shift when content height changes */
+    scrollbar-gutter: stable;
 }
 
 /* Override style.css html background */
@@ -193,24 +195,27 @@ a:not(.btn):not(.nav-link):not(.dropdown-item) {
    ============================================ */
 .navbar {
     min-height: var(--nav-height);
-    background-color: var(--color-bg-primary) !important;
+    height: 64px;
+    background-color: rgba(255, 255, 255, 0.8) !important;
     border-bottom: 1px solid var(--color-border);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: min-height var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
     padding: 0 var(--spacing-lg);
     z-index: 1030;
-    /* Ensure navbar stays on top and accounts for iOS safe area */
     top: 0;
     left: 0;
     right: 0;
 }
 
-/* Set padding for navbar container div */
+/* Set padding for navbar container div - match reference h-16 */
 body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
 .navbar > .container {
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding-top: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Desktop (992px+): Show original single-row layout, hide two-row structure */
@@ -220,42 +225,56 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
         display: none !important;
     }
     
-    /* Container uses grid to properly center nav links between brand and controls */
+    /* Container: three-section layout - Brand | Nav (centered) | Controls */
     .navbar > .container {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;
         align-items: center;
+        justify-content: space-between;
         width: 100%;
-        gap: var(--spacing-lg);
+        gap: var(--spacing-md);
     }
     
     /* Brand name - left aligned */
     .navbar-brand-name {
-        grid-column: 1;
-        justify-self: start;
+        flex-shrink: 0;
+        z-index: 1;
     }
     
-    /* Show original navbar-nav structure - use contents to break out of flex */
+    /* Show original navbar-nav structure; override style.css flex-wrap to prevent layout shift on language change */
     .navbar-nav {
         display: contents !important;
+        flex-wrap: nowrap !important;
     }
     
     .navbar-nav > div {
         display: flex;
         align-items: center;
-        gap: var(--spacing-xs);
+        gap: 1rem; /* Tighter spacing, no extra padding from style.css */
     }
     
-    /* Nav links container - centered in middle grid column */
+    /* Nav links container - flex:1, centered block (contiguous, no gap) */
     .navbar-nav > div:first-child {
-        grid-column: 2;
-        justify-self: center;
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+        flex-wrap: nowrap; /* Prevent wrap when language changes */
     }
     
-    /* Controls container - right aligned in third grid column */
+    /* Override style.css: remove dropdown padding that creates space between Docs and Blog */
+    .navbar-nav .nav-item.dropdown {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Override style.css: use gap for spacing, not padding-right */
+    .navbar-nav .nav-item {
+        padding-right: 0 !important;
+    }
+    
+    /* Controls container - right aligned */
     .navbar-nav > div:last-child {
-        grid-column: 3;
-        justify-self: end;
+        flex-shrink: 0;
+        z-index: 1;
     }
     
     /* Show desktop brand name */
@@ -431,10 +450,17 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
     }
 }
 
+/* Blog/Engineering/Personal active state - blue text + underline (reference) */
+.nav-link-active {
+    color: var(--color-accent) !important;
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: calc(var(--spacing-sm) - 2px) !important;
+}
+
 .nav-link {
     color: var(--color-text-secondary) !important;
     font-weight: 500;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     padding: var(--spacing-sm) var(--spacing-md) !important;
     transition: color var(--transition-fast);
     position: relative;
@@ -481,7 +507,7 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
 }
 
 .nav-link:hover {
-    color: var(--color-text-primary) !important;
+    color: var(--color-accent) !important;
 }
 
 .nav-item.active .nav-link {
@@ -524,6 +550,7 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
     box-shadow: var(--shadow-lg);
     padding: var(--spacing-xs);
     margin-top: var(--spacing-sm);
+    z-index: 1100;
 }
 
 /* Fix dropdown hover - allow moving mouse to menu */
@@ -587,6 +614,106 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
 [data-theme="dark"] .dropdown-item:hover {
     background-color: var(--color-bg-secondary) !important;
     color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .navbar {
+    background-color: rgba(10, 10, 10, 0.8) !important;
+}
+
+/* Blog dropdown - Articles header and icons */
+.dropdown-header-articles {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+}
+
+.dropdown-item-with-icon {
+    display: flex !important;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.dropdown-item-icon {
+    font-size: 1.125rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+    font-family: 'Material Symbols Outlined', sans-serif;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.dropdown-menu-blog .dropdown-item-with-icon {
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.dropdown-menu-blog .dropdown-item-with-icon:nth-child(3) {
+    border-top: 1px solid var(--color-border);
+}
+
+/* Language pill - reference style */
+/* Language pill - reference: rounded-full px-3 py-1 */
+.nav-lang-pill {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem; /* px-3 py-1 */
+    gap: 0.25rem;
+}
+
+.nav-lang-pill:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+.nav-lang-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    padding: 0;
+    transition: color var(--transition-fast);
+}
+
+.nav-lang-btn:hover,
+.nav-lang-btn.active {
+    color: var(--color-accent);
+}
+
+.nav-lang-sep {
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Utility button - round theme toggle (reference: no border, rounded-full) */
+.nav-utility-btn {
+    border-radius: 9999px !important;
+    padding: var(--spacing-sm) !important;
+}
+
+.theme-toggle.nav-utility-btn {
+    border: none !important;
+}
+
+.nav-utility-btn:hover {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+/* Theme icon visibility (sun in light mode, yellow sun in dark mode) */
+.theme-icon-sun.hidden,
+.theme-icon-sunny.hidden {
+    display: none !important;
+}
+
+/* Dark mode: yellow sun (wb_sunny) per reference */
+.theme-icon-sunny {
+    color: #facc15;
 }
 
 /* Dark Mode Toggle */
@@ -3498,6 +3625,24 @@ pre code {
     border-color: var(--color-accent);
 }
 
+/* Override for pill-style language switcher (nav-lang-pill) */
+#language-switcher .nav-lang-pill .nav-lang-btn,
+#language-switcher-medium .nav-lang-btn {
+    min-width: auto;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+#language-switcher .nav-lang-pill .nav-lang-btn.active,
+#language-switcher .nav-lang-pill .nav-lang-btn[aria-pressed="true"],
+#language-switcher-medium .nav-lang-btn.active,
+#language-switcher-medium .nav-lang-btn[aria-pressed="true"] {
+    background: none;
+    border: none;
+    color: var(--color-accent);
+}
+
 /* Ensure navbar items don't cause layout shifts */
 .navbar-nav > div {
     flex-shrink: 0;
@@ -3580,6 +3725,12 @@ pre code {
         min-width: 36px;
         padding: 0.2rem 0.4rem;
         font-size: 0.8rem;
+    }
+    
+    #language-switcher .nav-lang-pill .nav-lang-btn,
+    #language-switcher-medium .nav-lang-btn {
+        min-width: auto;
+        padding: 0;
     }
     
     .hero-subtitle {

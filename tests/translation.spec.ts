@@ -743,11 +743,15 @@ test.describe('Translation feature', () => {
     }
     await page.waitForTimeout(500);
     
-    // Navigate to Tutorials - use navbar-links for desktop, mobile sidebar for mobile
+    // Navigate to Tutorials - mobile sidebar for mobile, Docs dropdown for desktop (Tutorials is inside Docs)
     if (isMobile) {
       await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Tutoriales' }).first().click();
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Documentos' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Documentos' })
+      );
+      await docsButton.hover();
+      await page.locator('.dropdown-menu').first().getByRole('link', { name: 'Tutoriales' }).click();
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');

@@ -209,6 +209,18 @@
     "codingDescription": "Básicamente notas de algoritmos donde exploro la traducción \"en inglés\" del código. Sumérgete en enfoques de resolución de problemas y pensamiento algorítmico.",
     "viewChallenges": "Ver Desafíos →"
   },
+  "engineering": {
+    "title": "Ricky Martinez - Ingeniería",
+    "heading": "Ingeniería desde la Restricción",
+    "subtitle": "Artículos sobre ingeniería de software, proceso y construcción bajo restricciones.",
+    "comingSoon": "Más artículos próximamente."
+  },
+  "lifestyle": {
+    "title": "Ricky Martinez - Personal",
+    "heading": "Personal",
+    "subtitle": "Vida, intereses y más allá del código.",
+    "comingSoon": "Más artículos próximamente."
+  },
   "lessons": {
     "pythonTutorial": {
       "title": "Tutorial de Python",

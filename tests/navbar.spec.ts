@@ -35,16 +35,23 @@ test.describe('Navbar', () => {
       await expect(navbarLinks.getByRole('link', { name: 'Skills' })).toBeVisible();
       await expect(nav.getByRole('link', { name: 'Ricky Martinez' })).toBeVisible();
 
-      // Docs dropdown and its items
+      // Docs dropdown and its items (Notes, Tutorials)
       const docs = nav.getByRole('button', { name: 'Docs' }).or(nav.getByRole('link', { name: 'Docs' }));
       await expect(docs).toBeVisible();
       await docs.hover();
-      // Use first visible dropdown menu (desktop or medium screen)
-      const menu = page.locator('.dropdown-menu').first();
-      await expect(menu).toBeVisible();
-      await expect(menu.getByRole('link', { name: 'Notes' })).toBeVisible();
+      const docsMenu = page.locator('.dropdown-menu').first();
+      await expect(docsMenu).toBeVisible();
+      await expect(docsMenu.getByRole('link', { name: 'Notes' })).toBeVisible();
+      await expect(docsMenu.getByRole('link', { name: 'Tutorials' })).toBeVisible();
 
-      await expect(navbarLinks.getByRole('link', { name: 'Tutorials' })).toBeVisible();
+      // Blog dropdown and its items (Engineering, Personal)
+      const blog = nav.getByRole('button', { name: 'Blog' }).or(nav.getByRole('link', { name: 'Blog' }));
+      await expect(blog).toBeVisible();
+      await blog.hover();
+      const blogMenu = page.locator('.dropdown-menu-blog').first();
+      await expect(blogMenu).toBeVisible();
+      await expect(blogMenu.getByRole('link', { name: 'Engineering' })).toBeVisible();
+      await expect(blogMenu.getByRole('link', { name: 'Personal' })).toBeVisible();
     } else {
       // Mobile: check for hamburger menu and RM brand
       const hamburger = page.locator('#mobile-menu-toggle');
