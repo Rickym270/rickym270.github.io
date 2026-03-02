@@ -140,13 +140,17 @@ test.describe('SPA Navigation', () => {
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
-    // Click Tutorials - handle mobile
+    // Click Tutorials - handle mobile (Docs dropdown on desktop)
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
       await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
     } else {
-      await page.locator('#navbar-links').getByRole('link', { name: 'Tutorials' }).first().click();
+      const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
+      );
+      await docsButton.hover();
+      await page.locator('.dropdown-menu').first().getByRole('link', { name: 'Tutorials' }).click();
     }
     
     // Wait for content to load - use waitForFunction for better reliability

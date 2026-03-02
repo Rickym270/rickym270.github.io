@@ -576,8 +576,9 @@ test.describe('Docs/Notes Page', () => {
     // Menu should still be visible
     await expect(dropdownMenu).toBeVisible();
     
-    // Menu items should be visible
+    // Menu items should be visible (Notes, Tutorials)
     await expect(dropdownMenu.getByRole('link', { name: 'Notes' })).toBeVisible();
+    await expect(dropdownMenu.getByRole('link', { name: 'Tutorials' })).toBeVisible();
   });
 
   test('breadcrumbs navigation works correctly', async ({ page }) => {
