@@ -10,6 +10,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
         
         <!-- Bootstrap 4 (kept for grid system) -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -356,24 +357,18 @@
                     });
                 }
                 
-                // Sync theme toggle
+                // Sync theme toggle (mobile keeps emoji; theme.js updates it when setTheme runs)
                 if (mobileThemeToggle && desktopThemeToggle) {
-                    // Update mobile theme icon when theme changes
                     const mobileThemeIcon = document.getElementById('mobile-theme-icon');
-                    const desktopThemeIcon = document.getElementById('theme-icon');
-                    
-                    if (mobileThemeIcon && desktopThemeIcon) {
-                        const observer = new MutationObserver(function(mutations) {
-                            mobileThemeIcon.textContent = desktopThemeIcon.textContent;
-                        });
-                        
-                        observer.observe(desktopThemeIcon, {
-                            childList: true,
-                            characterData: true
-                        });
-                        
-                        // Initial sync
-                        mobileThemeIcon.textContent = desktopThemeIcon.textContent;
+                    const htmlEl = document.documentElement;
+                    if (mobileThemeIcon && htmlEl) {
+                        const syncMobileIcon = function() {
+                            const theme = htmlEl.getAttribute('data-theme') || 'light';
+                            mobileThemeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+                        };
+                        const observer = new MutationObserver(syncMobileIcon);
+                        observer.observe(htmlEl, { attributes: true, attributeFilter: ['data-theme'] });
+                        syncMobileIcon();
                     }
                 }
                 
@@ -570,53 +565,51 @@
                 <ul class="navbar-nav mr-auto d-flex flex-row align-items-center justify-content-between w-100" id="navbar-links">
                     <div class="d-flex align-items-center">
                         <li class="nav-item active">
-                            <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">
-                                <span class="nav-icon">🏠</span> Home
-                            </a>
+                            <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Projects" data-url="html/pages/projects.html" data-translate="nav.projects">
-                                <span class="nav-icon">📁</span> Projects
-                            </a>
+                            <a class="nav-link" href="#Projects" data-url="html/pages/projects.html" data-translate="nav.projects">Projects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Skills" data-url="html/pages/skills.html" data-translate="nav.skills">
-                                <span class="nav-icon">⚡</span> Skills
-                            </a>
+                            <a class="nav-link" href="#Skills" data-url="html/pages/skills.html" data-translate="nav.skills">Skills</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">
-                                <span class="nav-icon">✉️</span> Contact
-                            </a>
+                            <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">Contact</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">
-                              <span class="nav-icon">📝</span> Docs
-                            </a>
+                        <li class="nav-item dropdown" id="navbarDropdownDocs">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">Docs</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="dropdown-item" href="#" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
+                                <a class="dropdown-item" href="#" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">
-                                <span class="nav-icon">📚</span> Tutorials
-                            </a>
+                        <li class="nav-item dropdown" id="navbarDropdownBlog">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                            <div class="dropdown-menu dropdown-menu-blog" aria-labelledby="navbarDropdownBlogLink">
+                                <div class="dropdown-header-articles">Articles</div>
+                                <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/engineering.html">
+                                    <span class="material-symbols-outlined dropdown-item-icon">engineering</span>
+                                    Engineering
+                                </a>
+                                <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/lifestyle.html">
+                                    <span class="material-symbols-outlined dropdown-item-icon">person</span>
+                                    Personal
+                                </a>
+                            </div>
                         </li>
                     </div>
                     <div class="d-flex align-items-center">
                         <li class="nav-item ml-2" id="language-switcher">
-                            <div class="btn-group" role="group" aria-label="Language selector">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="en" aria-pressed="true" title="English">
-                                    EN
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="es" aria-pressed="false" title="Español">
-                                    ES
-                                </button>
+                            <div class="nav-lang-pill" role="group" aria-label="Language selector">
+                                <button type="button" class="nav-lang-btn" data-lang="en" aria-pressed="true" title="English">EN</button>
+                                <span class="nav-lang-sep">|</span>
+                                <button type="button" class="nav-lang-btn" data-lang="es" aria-pressed="false" title="Español">ES</button>
                             </div>
                         </li>
                         <li class="nav-item ml-2">
-                            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
-                                <span id="theme-icon">🌙</span>
+                            <button class="theme-toggle nav-utility-btn" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                                <span class="material-symbols-outlined theme-icon-sun" id="theme-icon-sun">light_mode</span>
+                                <span class="material-symbols-outlined theme-icon-sunny hidden" id="theme-icon-sunny">wb_sunny</span>
                             </button>
                         </li>
                     </div>
@@ -629,24 +622,16 @@
                         </a>
                         <ul class="navbar-nav-main">
                             <li class="nav-item active">
-                                <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">
-                                    <span class="nav-icon">🏠</span> Home
-                                </a>
+                                <a class="nav-link" href="#" data-url="html/pages/home.html" data-translate="nav.home">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#Projects" data-url="html/pages/projects.html" data-translate="nav.projects">
-                                    <span class="nav-icon">📁</span> Projects
-                                </a>
+                                <a class="nav-link" href="#Projects" data-url="html/pages/projects.html" data-translate="nav.projects">Projects</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#Skills" data-url="html/pages/skills.html" data-translate="nav.skills">
-                                    <span class="nav-icon">⚡</span> Skills
-                                </a>
+                                <a class="nav-link" href="#Skills" data-url="html/pages/skills.html" data-translate="nav.skills">Skills</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">
-                                    <span class="nav-icon">✉️</span> Contact
-                                </a>
+                                <a class="nav-link" href="#Contact" data-url="html/pages/contact.html" data-translate="nav.contact">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -655,29 +640,39 @@
                             <span class="navbar-brand-name-second">Martinez</span>
                         </a>
                         <ul class="navbar-nav-secondary">
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown" id="navbarDropdownDocsMedium">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.docs">
                                   Docs
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkMedium">
                                     <a class="dropdown-item" href="#" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
+                                    <a class="dropdown-item" href="#" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
                                 </div>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#tutorials" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
+                            <li class="nav-item dropdown" id="navbarDropdownBlogMedium">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                                <div class="dropdown-menu dropdown-menu-blog" aria-labelledby="navbarDropdownBlogLinkMedium">
+                                    <div class="dropdown-header-articles">Articles</div>
+                                    <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/engineering.html">
+                                        <span class="material-symbols-outlined dropdown-item-icon">engineering</span>
+                                        Engineering
+                                    </a>
+                                    <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/lifestyle.html">
+                                        <span class="material-symbols-outlined dropdown-item-icon">person</span>
+                                        Personal
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                         <div class="navbar-controls">
-                            <div class="btn-group" role="group" aria-label="Language selector" id="language-switcher-medium">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="en" aria-pressed="true" title="English">
-                                    EN
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-lang="es" aria-pressed="false" title="Español">
-                                    ES
-                                </button>
+                            <div class="nav-lang-pill" role="group" aria-label="Language selector" id="language-switcher-medium">
+                                <button type="button" class="nav-lang-btn" data-lang="en" aria-pressed="true" title="English">EN</button>
+                                <span class="nav-lang-sep">|</span>
+                                <button type="button" class="nav-lang-btn" data-lang="es" aria-pressed="false" title="Español">ES</button>
                             </div>
-                            <button class="theme-toggle" id="theme-toggle-medium" aria-label="Toggle dark mode" title="Toggle dark mode">
-                                <span class="theme-icon-medium">🌙</span>
+                            <button class="theme-toggle nav-utility-btn" id="theme-toggle-medium" aria-label="Toggle dark mode" title="Toggle dark mode">
+                                <span class="material-symbols-outlined theme-icon-sun theme-icon-medium" id="theme-icon-sun-medium">light_mode</span>
+                                <span class="material-symbols-outlined theme-icon-sunny theme-icon-medium hidden" id="theme-icon-sunny-medium">wb_sunny</span>
                             </button>
                         </div>
                     </div>

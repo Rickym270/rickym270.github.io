@@ -1,14 +1,4 @@
 $(document).ready(function(){
-    var LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
-    function logSpaEvent(location, message, data, hypothesisId) {
-        var runId = (typeof process !== 'undefined' && process.env && process.env.CI) ? 'ci' : 'local';
-        // #region agent log
-        fetch(LOG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:location,message:message,data:data,timestamp:Date.now(),runId:runId,hypothesisId:hypothesisId})}).catch(function(){});
-        // #endregion
-        if (typeof console !== 'undefined') {
-            console.log('[spa]', JSON.stringify({ location: location, message: message, data: data, runId: runId, hypothesisId: hypothesisId }));
-        }
-    }
     // Prevent double initialization - only run default load once per page load
     if (typeof window.spaInitialized !== 'undefined') {
         return; // Already initialized, don't run again
@@ -70,16 +60,33 @@ $(document).ready(function(){
             'html/pages/projects.html': 'a[data-url="html/pages/projects.html"]',
             'html/pages/skills.html': 'a[data-url="html/pages/skills.html"]',
             'html/pages/docs.html': 'a[data-url="html/pages/docs.html"]',
-            'html/pages/tutorials.html': 'a[data-url="html/pages/tutorials.html"]'
+            'html/pages/tutorials.html': 'a[data-url="html/pages/tutorials.html"]',
+            'html/pages/engineering.html': 'a[data-url="html/pages/engineering.html"]',
+            'html/pages/lifestyle.html': 'a[data-url="html/pages/lifestyle.html"]'
         };
         
-        // Special handling for dropdown items (like Docs > Notes)
+        // Special handling for dropdown items (Docs > Notes, Blog > Engineering/Personal)
         var dropdownMapping = {
             'html/pages/docs.html': {
-                dropdownParent: 'li.nav-item.dropdown',
-                dropdownToggle: 'a.dropdown-toggle[data-translate="nav.docs"]'
+                dropdownParent: '#navbarDropdownDocs, #navbarDropdownDocsMedium',
+                dropdownToggle: '#navbarDropdownMenuLink, #navbarDropdownMenuLinkMedium'
+            },
+            'html/pages/tutorials.html': {
+                dropdownParent: '#navbarDropdownDocs, #navbarDropdownDocsMedium',
+                dropdownToggle: '#navbarDropdownMenuLink, #navbarDropdownMenuLinkMedium'
+            },
+            'html/pages/engineering.html': {
+                dropdownParent: '#navbarDropdownBlog',
+                dropdownToggle: '#navbarDropdownBlogLink, #navbarDropdownBlogLinkMedium'
+            },
+            'html/pages/lifestyle.html': {
+                dropdownParent: '#navbarDropdownBlog',
+                dropdownToggle: '#navbarDropdownBlogLink, #navbarDropdownBlogLinkMedium'
             }
         };
+        
+        // Remove nav-link-active from all nav links (Blog active underline)
+        jQuery('.nav-link, .dropdown-toggle').removeClass('nav-link-active');
         
         // Find matching nav item and add active class
         for (var mappedUrl in navMapping) {
@@ -104,6 +111,14 @@ $(document).ready(function(){
                     if (dropdownToggle.length) {
                         dropdownToggle.addClass('active');
                         dropdownToggle.closest('li.nav-item').addClass('active');
+                        // Blog dropdown: add nav-link-active (blue underline) when on Engineering/Personal
+                        if (mappedUrl === 'html/pages/engineering.html' || mappedUrl === 'html/pages/lifestyle.html') {
+                            dropdownToggle.addClass('nav-link-active');
+                        }
+                        // Docs dropdown: add nav-link-active when on Notes/Tutorials
+                        if (mappedUrl === 'html/pages/docs.html' || mappedUrl === 'html/pages/tutorials.html') {
+                            dropdownToggle.addClass('nav-link-active');
+                        }
                     }
                 } else if (navLink.length) {
                     // Regular nav item - highlight normally
@@ -142,15 +157,6 @@ $(document).ready(function(){
                 }
             }
             if(sectionUrl){
-                // #region agent log
-                logSpaEvent('SPAHack.js:137', 'SPA nav click', {
-                    href: $(this).attr("href"),
-                    dataUrl: $(this).attr("data-url"),
-                    sectionUrl: sectionUrl,
-                    contentLoaded: jQuery("#content").attr("data-content-loaded"),
-                    contentTextLength: jQuery("#content").text().length
-                }, 'H10');
-                // #endregion
                 // Append cache-busting param to force fresh fetch of HTML sections
                 var bust = "v=20251110";
                 if (sectionUrl.indexOf('?') === -1) {
@@ -244,26 +250,9 @@ $(document).ready(function(){
                     if (status === "error") {
                         console.error("Failed to load " + sectionUrl + ":", xhr && xhr.status, xhr && xhr.statusText);
                         jQuery("#content").attr("data-content-loaded", "error");
-                        // #region agent log
-                        logSpaEvent('SPAHack.js:231', 'SPA load error', {
-                            sectionUrl: sectionUrl,
-                            status: status,
-                            xhrStatus: xhr && xhr.status,
-                            xhrStatusText: xhr && xhr.statusText
-                        }, 'H11');
-                        // #endregion
                         return;
                     }
                     console.log("Loaded " + sectionUrl);
-                    // #region agent log
-                    logSpaEvent('SPAHack.js:238', 'SPA load complete', {
-                        sectionUrl: sectionUrl,
-                        status: status,
-                        responseLength: response ? response.length : 0,
-                        hasHomeBanner: response ? response.indexOf('homeBanner') !== -1 : false,
-                        contentTextLength: jQuery("#content").text().length
-                    }, 'H12');
-                    // #endregion
                     // Mark content as loaded for testing
                     jQuery("#content").attr("data-content-loaded", "true");
                         // Reinitialize theme after content loads

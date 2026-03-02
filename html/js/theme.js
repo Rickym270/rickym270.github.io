@@ -7,7 +7,6 @@
 (function() {
     const THEME_KEY = 'portfolio-theme';
     let themeToggle = null;
-    let themeIcon = null;
     const html = document.documentElement;
     
     // Get initial theme preference
@@ -42,17 +41,27 @@
             }
         }
         
-        // Update icon (find it again in case DOM changed)
-        themeIcon = document.getElementById('theme-icon');
-        const themeIconMedium = document.querySelector('.theme-icon-medium');
-        if (themeIcon) {
-            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        // Update icons: light mode = sun (light_mode), dark mode = yellow sun (wb_sunny) per reference
+        const themeIconSun = document.getElementById('theme-icon-sun');
+        const themeIconSunny = document.getElementById('theme-icon-sunny');
+        const themeIconSunMedium = document.getElementById('theme-icon-sun-medium');
+        const themeIconSunnyMedium = document.getElementById('theme-icon-sunny-medium');
+        const showSun = theme === 'light';
+        const showSunny = theme === 'dark';
+        if (themeIconSun) {
+            themeIconSun.classList.toggle('hidden', !showSun);
         }
-        if (themeIconMedium) {
-            themeIconMedium.textContent = theme === 'dark' ? '☀️' : '🌙';
+        if (themeIconSunny) {
+            themeIconSunny.classList.toggle('hidden', !showSunny);
+        }
+        if (themeIconSunMedium) {
+            themeIconSunMedium.classList.toggle('hidden', !showSun);
+        }
+        if (themeIconSunnyMedium) {
+            themeIconSunnyMedium.classList.toggle('hidden', !showSunny);
         }
         
-        // Update mobile theme icon
+        // Update mobile theme icon (keeps emoji)
         const mobileThemeIcon = document.getElementById('mobile-theme-icon');
         if (mobileThemeIcon) {
             mobileThemeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
@@ -126,7 +135,8 @@
         // Check if click is on the desktop button or its children
         if (target && (
             target.id === 'theme-toggle' || 
-            target.id === 'theme-icon' ||
+            target.id === 'theme-icon-sun' ||
+            target.id === 'theme-icon-sunny' ||
             (target.parentElement && target.parentElement.id === 'theme-toggle')
         )) {
             e.preventDefault();
@@ -136,6 +146,8 @@
         // Check if click is on the medium screen button or its children
         if (target && (
             target.id === 'theme-toggle-medium' || 
+            target.id === 'theme-icon-sun-medium' ||
+            target.id === 'theme-icon-sunny-medium' ||
             target.classList.contains('theme-icon-medium') ||
             (target.parentElement && target.parentElement.id === 'theme-toggle-medium')
         )) {
