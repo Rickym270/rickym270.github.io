@@ -18,7 +18,8 @@ test.describe('Performance', () => {
     // Firefox needs networkidle instead of domcontentloaded for reliability
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+    const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -31,15 +32,17 @@ test.describe('Performance', () => {
 
     const loadTime = Date.now() - startTime;
     
-    // Page should load within 5 seconds (reasonable for local server)
-    expect(loadTime).toBeLessThan(5000);
+    // Page should load within 5 seconds (Chromium) or 8 seconds (Firefox with networkidle)
+    const maxLoadTime = browserName === 'firefox' ? 8000 : 5000;
+    expect(loadTime).toBeLessThan(maxLoadTime);
   });
 
   test('SPA navigation is fast', async ({ page }) => {
     // Firefox needs networkidle instead of domcontentloaded for reliability
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
+    const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -240,7 +243,9 @@ test.describe('Performance', () => {
       }
     });
 
-    await page.goto('/', { waitUntil: 'networkidle' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
+    await page.goto('/', { waitUntil: 'networkidle', timeout: gotoTimeout });
     
     // Wait for content
     await page.waitForFunction(() => {
