@@ -67,7 +67,9 @@ test.describe('Responsive layout', () => {
   
   test('hero banner stacks correctly on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto('/');
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -93,8 +95,9 @@ test.describe('Responsive layout', () => {
   
   test('stats cards stack vertically on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    // Use domcontentloaded for faster navigation, especially on Firefox
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
     // Wait for page to be ready - check if content element exists

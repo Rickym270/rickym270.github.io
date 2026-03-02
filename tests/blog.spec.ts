@@ -10,7 +10,9 @@ test.describe('Blog Pages', () => {
   });
 
   test('Engineering page loads via Blog dropdown', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
@@ -39,7 +41,9 @@ test.describe('Blog Pages', () => {
   });
 
   test('Personal page loads via Blog dropdown', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');

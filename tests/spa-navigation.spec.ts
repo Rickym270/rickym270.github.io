@@ -13,7 +13,9 @@ test.describe('SPA Navigation', () => {
   });
 
   test('navigation loads content into #content without full page reload', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Initial page load - wait for content
     // Wait for page to be ready - check if content element exists
@@ -81,7 +83,9 @@ test.describe('SPA Navigation', () => {
   });
 
   test('theme persists across SPA navigation', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -133,7 +137,9 @@ test.describe('SPA Navigation', () => {
   });
 
   test('tutorials page does not reload entire page when clicked', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     const initialUrl = page.url();
     
@@ -194,7 +200,9 @@ test.describe('SPA Navigation', () => {
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists

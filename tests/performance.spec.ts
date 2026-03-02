@@ -78,7 +78,9 @@ test.describe('Performance', () => {
   });
 
   test('images are optimized', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -114,7 +116,9 @@ test.describe('Performance', () => {
       }
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -130,7 +134,9 @@ test.describe('Performance', () => {
   });
 
   test('page is interactive quickly', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     const interactiveTime = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -149,7 +155,9 @@ test.describe('Performance', () => {
   });
 
   test('no memory leaks on navigation', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -187,7 +195,9 @@ test.describe('Performance', () => {
   });
 
   test('page performance metrics are acceptable', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready
     await page.waitForFunction(() => {

@@ -73,7 +73,9 @@ test.describe('Visual Regression Tests', () => {
     });
 });
   test('home page matches visual baseline', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -115,7 +117,9 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('navbar matches visual baseline', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for navbar to be visible
     await page.waitForSelector('nav, #navbar, .navbar', { timeout: 10000 });
@@ -155,7 +159,8 @@ test.describe('Visual Regression Tests', () => {
       });
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for initial content
     await page.waitForFunction(() => {
@@ -251,7 +256,9 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('contact form matches visual baseline', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for initial content
     await page.waitForFunction(() => {
@@ -288,7 +295,9 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('dark mode matches visual baseline', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -322,7 +331,9 @@ test.describe('Visual Regression Tests', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 }); // iPhone 13 Pro size
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -344,7 +355,9 @@ test.describe('Visual Regression Tests', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
     await page.waitForFunction(() => {

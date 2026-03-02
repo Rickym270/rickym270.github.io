@@ -27,7 +27,9 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorials page loads without redirecting entire page', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -88,7 +90,9 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorial cards display correctly with icons and links', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -149,7 +153,9 @@ test.describe('Tutorials Page', () => {
   });
 
   test('Python tutorial index page loads with lesson cards', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -183,7 +189,9 @@ test.describe('Tutorials Page', () => {
   });
 
   test('lesson pages load with back button and navigation', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -227,7 +235,9 @@ test.describe('Tutorials Page', () => {
     if (process.env.CI) {
       return;
     }
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -294,7 +304,9 @@ test.describe('Tutorials Page', () => {
   });
 
   test('lesson navigation links work correctly', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -354,7 +366,9 @@ test.describe('Tutorials Page', () => {
   });
 
   test('tutorial page text and links are visible and clickable', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists

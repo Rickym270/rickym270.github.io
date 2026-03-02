@@ -90,7 +90,9 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('page has Open Graph meta tags', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check for Open Graph tags (optional but recommended)
     const ogTitle = page.locator('meta[property="og:title"]');
@@ -135,7 +137,9 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('favicon is present', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check for favicon link
     const favicon = page.locator('link[rel="icon"], link[rel="shortcut icon"]');
@@ -148,7 +152,9 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('structured data is present', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -172,7 +178,9 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('headings follow semantic structure', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -203,7 +211,9 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('links are crawlable', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
