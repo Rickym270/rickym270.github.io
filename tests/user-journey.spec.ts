@@ -5,7 +5,9 @@ test.describe('End-to-End User Journeys', () => {
 
   test('complete user journey: browse portfolio', async ({ page }) => {
     // Start at home page
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -109,7 +111,9 @@ test.describe('End-to-End User Journeys', () => {
       if (resolveRouteFulfill) resolveRouteFulfill();
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
     await page.waitForFunction(() => {
@@ -189,7 +193,9 @@ test.describe('End-to-End User Journeys', () => {
   });
 
   test('complete user journey: language switching', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
     await page.waitForFunction(() => {
@@ -258,7 +264,9 @@ test.describe('End-to-End User Journeys', () => {
   });
 
   test('complete user journey: theme switching and navigation', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
     await page.waitForFunction(() => {
@@ -345,7 +353,9 @@ test.describe('End-to-End User Journeys', () => {
   });
 
   test('complete user journey: view documentation', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
     await page.waitForFunction(() => {
@@ -395,7 +405,9 @@ test.describe('End-to-End User Journeys', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 });
     
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
     await page.waitForFunction(() => {

@@ -13,7 +13,9 @@ test.describe('Projects Page', () => {
   });
 
   test('navigates to Projects via navbar and renders content', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -136,7 +138,9 @@ test.describe('Projects Page', () => {
         body: JSON.stringify(mockProjects),
       });
     });
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -183,7 +187,9 @@ test.describe('Projects Page', () => {
   });
 
   test('uses local API base when running on localhost', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => typeof (window as unknown as { API_BASE_URL?: string }).API_BASE_URL !== 'undefined', { timeout: 10000 });
 
@@ -198,7 +204,9 @@ test.describe('Projects Page', () => {
   });
 
   test('shows loading message in each section while projects load', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -251,7 +259,9 @@ test.describe('Projects Page', () => {
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
     test.setTimeout(90000); // Increase timeout for this test (90 seconds)
     
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -354,7 +364,9 @@ test.describe('Projects Page', () => {
   });
 
   test('project icons are visible in dark mode', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -407,7 +419,9 @@ test.describe('Projects Page', () => {
   });
 
   test('projects page has correct title and subtitle', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -516,7 +530,9 @@ test.describe('Projects Page', () => {
   });
 
   test('project sections exist (In Progress, Complete, Coming Soon)', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists

@@ -22,7 +22,9 @@ test.describe('Accessibility', () => {
   });
 
   test('page has proper heading hierarchy', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -69,7 +71,9 @@ test.describe('Accessibility', () => {
   });
 
   test('images have alt text', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -110,7 +114,9 @@ test.describe('Accessibility', () => {
   });
 
   test('links have accessible text', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -152,7 +158,9 @@ test.describe('Accessibility', () => {
   });
 
   test('form inputs have labels', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -208,7 +216,9 @@ test.describe('Accessibility', () => {
   });
 
   test('buttons have accessible names', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -235,7 +245,9 @@ test.describe('Accessibility', () => {
   });
 
   test('page has skip to main content link', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check for skip link (common a11y pattern)
     const skipLink = page.locator('a[href="#content"], a[href="#main"], .skip-link, [class*="skip"]');
@@ -248,7 +260,9 @@ test.describe('Accessibility', () => {
   });
 
   test('color contrast meets WCAG standards', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -276,7 +290,9 @@ test.describe('Accessibility', () => {
   });
 
   test('keyboard navigation works', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -312,7 +328,9 @@ test.describe('Accessibility', () => {
   });
 
   test('ARIA landmarks are present', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {

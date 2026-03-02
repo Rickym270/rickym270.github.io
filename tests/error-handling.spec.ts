@@ -28,7 +28,9 @@ test.describe('Error Handling', () => {
       });
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -86,7 +88,9 @@ test.describe('Error Handling', () => {
       await route.abort();
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -121,7 +125,9 @@ test.describe('Error Handling', () => {
   });
 
   test('handles invalid form submission', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -206,7 +212,9 @@ test.describe('Error Handling', () => {
       // Navigation failed - verify we can still navigate to home (proves page is functional)
       if (!page.isClosed()) {
         try {
-          await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 8000 });
+          const browserName = page.context().browser()?.browserType().name() || '';
+          const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+          await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
           const homeUrl = page.url();
           expect(homeUrl).toBeTruthy();
         } catch (e) {
@@ -230,7 +238,9 @@ test.describe('Error Handling', () => {
       }
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -254,7 +264,9 @@ test.describe('Error Handling', () => {
   });
 
   test('handles missing translation keys gracefully', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
@@ -309,7 +321,9 @@ test.describe('Error Handling', () => {
       };
     });
 
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Page should still load and function
     // Wait for page to be ready - check if content element exists
