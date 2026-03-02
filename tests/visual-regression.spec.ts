@@ -2,18 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { test, expect, type Page, type TestInfo } from '@playwright/test';
 
-const LOG_ENDPOINT = 'http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c';
-
-function logEvent(location: string, message: string, data: Record<string, unknown>, hypothesisId: string) {
-  const runId = process.env.CI ? 'ci' : 'local';
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location,message,data,timestamp:Date.now(),runId,hypothesisId})}).catch(()=>{});
-  // #endregion
-  if (process.env.CI) {
-    console.log('[visual-regression]', JSON.stringify({ location, message, data, runId, hypothesisId }));
-  }
-}
-
 function readPngDimensions(filePath: string) {
   try {
     if (!fs.existsSync(filePath)) return null;
@@ -151,37 +139,14 @@ test.describe('Visual Regression Tests', () => {
         ? (projectsFixture as { projects?: unknown[] }).projects?.length
         : null;
     const projectsFixtureBytes = fs.statSync(projectsFixturePath).size;
-    // #region agent log
-    logEvent('visual-regression.spec.ts:50', 'Projects fixture meta', {
-      projectsFixturePath,
-      projectsFixtureBytes,
-      projectsFixtureCount,
-    }, 'H4');
-    // #endregion
     const snapshotPath = testInfo.snapshotPath('projects-page.png');
     const snapshotDimensions = readPngDimensions(snapshotPath);
-    // #region agent log
-    logEvent('visual-regression.spec.ts:62', 'Projects snapshot meta', {
-      browserName,
-      snapshotPath,
-      snapshotExists: fs.existsSync(snapshotPath),
-      snapshotDimensions,
-    }, 'H1');
-    // #endregion
 
     const projectsResponseBody = JSON.stringify(limitedProjectsFixture);
     let projectsRouteLogged = false;
     await page.route(/.*\/api\/projects(?:\?.*)?$/, async (route) => {
       if (!projectsRouteLogged) {
         projectsRouteLogged = true;
-        // #region agent log
-        logEvent('visual-regression.spec.ts:76', 'Projects route intercepted', {
-          url: route.request().url(),
-          method: route.request().method(),
-          responseBytes: Buffer.byteLength(projectsResponseBody),
-          projectsFixtureCount,
-        }, 'H4');
-        // #endregion
       }
       await route.fulfill({
         status: 200,
@@ -244,22 +209,8 @@ test.describe('Visual Regression Tests', () => {
         fontsStatus: document.fonts?.status || 'unknown',
       };
     });
-    // #region agent log
-    logEvent('visual-regression.spec.ts:112', 'Projects pre-stability metrics', {
-      browserName,
-      projectsStateBeforeStability,
-      projectsDomMetaBeforeStability,
-    }, 'H5');
-    // #endregion
 
     await waitForProjectsLayoutStability(page);
-    const projectsStateAfterStability = await getProjectsRenderState(page);
-    // #region agent log
-    logEvent('visual-regression.spec.ts:124', 'Projects render state after stability', {
-      browserName,
-      projectsStateAfterStability,
-    }, 'H2');
-    // #endregion
 
     // Screenshot of projects page
     if (browserName !== 'chromium') {
@@ -284,15 +235,6 @@ test.describe('Visual Regression Tests', () => {
           maxDiffPixels: 100,
           mask: imageMask,
         };
-    // #region agent log
-    logEvent('visual-regression.spec.ts:150', 'Projects screenshot options', {
-      browserName,
-      expectedSnapshotWidth,
-      expectedSnapshotHeight,
-      usesBaselineViewport: !!(expectedSnapshotHeight && expectedSnapshotWidth),
-      originalViewport,
-    }, 'H6');
-    // #endregion
     try {
       await expect(page).toHaveScreenshot('projects-page.png', {
         ...screenshotOptions,
@@ -300,12 +242,6 @@ test.describe('Visual Regression Tests', () => {
         maxDiffPixelRatio: 0.15,
       });
     } catch (error) {
-      const projectsStateOnShotError = await getProjectsRenderState(page);
-      logEvent('visual-regression.spec.ts:121', 'Projects screenshot failed', {
-        browserName,
-        error: error instanceof Error ? error.message : String(error),
-        projectsStateOnShotError,
-      }, 'H3');
       throw error;
     } finally {
       if (originalViewport && expectedSnapshotHeight && expectedSnapshotWidth) {
