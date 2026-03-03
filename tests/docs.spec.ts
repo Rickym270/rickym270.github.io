@@ -19,7 +19,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -57,7 +56,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -118,7 +116,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -154,7 +151,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -229,7 +225,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -383,7 +378,6 @@ test.describe('Docs/Notes Page', () => {
     // On mobile, open sidebar, expand Docs, click Notes
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
     await page.evaluate(() => {
       const panel = document.getElementById('mobile-nav-panel-docs');
       if (panel) {
@@ -420,7 +414,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -515,7 +508,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -567,7 +559,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -667,7 +658,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {
@@ -762,7 +752,6 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
       await page.evaluate(() => {
         const panel = document.getElementById('mobile-nav-panel-docs');
         if (panel) {

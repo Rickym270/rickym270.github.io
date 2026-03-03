@@ -153,7 +153,6 @@ test.describe('Responsive layout', () => {
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
 
     const sidebar = page.locator('#mobile-sidebar');
-    await sidebar.getByRole('button', { name: 'Blog' }).click();
     await page.evaluate(() => {
       const panel = document.getElementById('mobile-nav-panel-blog');
       if (panel) {

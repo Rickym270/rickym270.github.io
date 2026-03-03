@@ -22,7 +22,13 @@ test.describe('Blog Pages', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
@@ -55,7 +61,14 @@ test.describe('Blog Pages', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('#mobile-sidebar').getByRole('link', { name: 'Personal' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Personal' }).click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Blog' })

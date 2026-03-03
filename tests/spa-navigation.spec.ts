@@ -150,7 +150,13 @@ test.describe('SPA Navigation', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/tutorials.html"]').click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(

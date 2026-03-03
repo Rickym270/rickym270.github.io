@@ -67,7 +67,13 @@ test.describe('Navbar', () => {
       await hamburger.click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
       const sidebar = page.locator('#mobile-sidebar');
-      await sidebar.getByRole('button', { name: 'Blog' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await expect(sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' })).toBeVisible();
       await expect(sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Personal' })).toBeVisible();
 

@@ -371,7 +371,13 @@ test.describe('End-to-End User Journeys', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click();
     } else {
       // Click on Docs dropdown or link

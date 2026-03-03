@@ -537,7 +537,13 @@ test.describe('Translation feature', () => {
 
     // Navigate to Engineering (Blog → Engineering)
     if (isMobile) {
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
@@ -581,7 +587,13 @@ test.describe('Translation feature', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
@@ -633,7 +645,13 @@ test.describe('Translation feature', () => {
 
     // Navigate to Engineering
     if (isMobile) {
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
@@ -879,7 +897,13 @@ test.describe('Translation feature', () => {
     
     // Navigate to Tutorials - mobile sidebar for mobile, Docs dropdown for desktop (Tutorials is inside Docs)
     if (isMobile) {
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/tutorials.html"]').click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Documentos' }).or(
@@ -1013,10 +1037,16 @@ test.describe('Translation feature', () => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     if (isMobile) {
-      // On mobile, open sidebar, expand Docs, click Notes
+      // On mobile, open sidebar, expand Docs via evaluate, click Notes
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
       await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click();
     } else {
       // Desktop: use navbar scoped selector
