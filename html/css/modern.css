@@ -3292,6 +3292,8 @@ pre code {
     cursor: pointer;
     transition: background-color var(--transition-fast);
     box-shadow: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .mobile-nav-group-toggle:hover {
@@ -3322,7 +3324,8 @@ pre code {
 }
 
 .mobile-nav-group-panel.mobile-nav-group-panel-open {
-    display: block;
+    display: block !important;
+    visibility: visible;
 }
 
 .mobile-nav-subitem {

@@ -311,11 +311,36 @@
                     }
                     closeSidebar();
                 }
+                var _lastMobileToggleClick = { toggle: null, time: 0 };
+                var _lastMobileToggleTouchend = { toggle: null, time: 0 };
+                var _lastMobileToggleRun = { id: '', time: 0 };
+                var _mobileToggleDebounceMs = 400;
+                var _mobileToggleRunGuardMs = 120;
+                if (typeof window._mobileNavToggleHandling === 'undefined') window._mobileNavToggleHandling = false;
                 function handleMobileNavGroupToggle(e) {
                     var toggle = e.target.closest('.mobile-nav-group-toggle');
                     if (!toggle || !document.getElementById('mobile-sidebar').contains(toggle)) return;
+                    var now = Date.now();
+                    var suppressTouch = _lastMobileToggleTouchend.toggle === toggle && (now - _lastMobileToggleTouchend.time) < _mobileToggleDebounceMs;
+                    var suppressClick = _lastMobileToggleClick.toggle === toggle && (now - _lastMobileToggleClick.time) < _mobileToggleDebounceMs;
+                    if (suppressTouch) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    if (suppressClick) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    _lastMobileToggleClick.toggle = toggle;
+                    _lastMobileToggleClick.time = now;
                     e.preventDefault();
                     e.stopPropagation();
+                    runMobileNavGroupToggle(toggle);
+                }
+                function runMobileNavGroupToggle(toggle) {
+                    if (!toggle || !document.getElementById('mobile-sidebar').contains(toggle)) return;
                     var expanded = toggle.getAttribute('aria-expanded') === 'true';
                     var panelId = toggle.getAttribute('aria-controls');
                     var panel = panelId ? document.getElementById(panelId) : null;
@@ -342,6 +367,43 @@
                         });
                     }
                 }
+                function handleToggleByPointerOrTouch(e) {
+                    if (window._mobileNavToggleHandling) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    window._mobileNavToggleHandling = true;
+                    var toggle = e.target.closest('.mobile-nav-group-toggle');
+                    if (!toggle || !document.getElementById('mobile-sidebar').contains(toggle)) {
+                        window._mobileNavToggleHandling = false;
+                        return;
+                    }
+                    var now = Date.now();
+                    var toggleId = toggle.id || '';
+                    if (_lastMobileToggleRun.id === toggleId && (now - _lastMobileToggleRun.time) < _mobileToggleRunGuardMs) {
+                        window._mobileNavToggleHandling = false;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    _lastMobileToggleRun = { id: toggleId, time: now };
+                    var skip = _lastMobileToggleTouchend.toggle === toggle && (now - _lastMobileToggleTouchend.time) < _mobileToggleDebounceMs;
+                    if (skip) { window._mobileNavToggleHandling = false; return; }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    _lastMobileToggleTouchend.toggle = toggle;
+                    _lastMobileToggleTouchend.time = now;
+                    var toggleToRun = toggle;
+                    requestAnimationFrame(function() {
+                        window._mobileNavToggleHandling = false;
+                        if (toggleToRun && document.getElementById('mobile-sidebar') && document.getElementById('mobile-sidebar').contains(toggleToRun)) {
+                            runMobileNavGroupToggle(toggleToRun);
+                        }
+                    });
+                }
+                document.addEventListener('touchend', handleToggleByPointerOrTouch, { passive: false, capture: true });
+                document.addEventListener('pointerup', handleToggleByPointerOrTouch, { passive: false, capture: true });
                 document.addEventListener('click', handleMobileNavGroupToggle, true);
                 if (mobileSidebarNav) {
                     mobileSidebarNav.addEventListener('click', function(e) {
@@ -412,7 +474,6 @@
                 // DOM already loaded
                 initMobileSidebar();
             }
-            
             // Also use jQuery ready as fallback
             $(document).ready(function() {
                 // Re-initialize if elements weren't found the first time
@@ -560,12 +621,12 @@
                 <div class="mobile-nav-group">
                     <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-blog" id="mobile-nav-toggle-blog">
                         <span class="mobile-nav-icon">📋</span>
-                        <span class="mobile-nav-label">Blog</span>
+                        <span class="mobile-nav-label" data-translate="nav.blog">Blog</span>
                         <span class="mobile-nav-chevron" aria-hidden="true"></span>
                     </button>
                     <div class="mobile-nav-group-panel" id="mobile-nav-panel-blog" aria-hidden="true">
-                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/engineering.html">Engineering</a>
-                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/lifestyle.html">Personal</a>
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/engineering.html" data-translate="nav.engineering">Engineering</a>
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/lifestyle.html" data-translate="nav.personal">Personal</a>
                     </div>
                 </div>
             </nav>
@@ -623,16 +684,16 @@
                             </div>
                         </li>
                         <li class="nav-item dropdown" id="navbarDropdownBlog">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.blog">Blog</a>
                             <div class="dropdown-menu dropdown-menu-blog" aria-labelledby="navbarDropdownBlogLink">
-                                <div class="dropdown-header-articles">Articles</div>
+                                <div class="dropdown-header-articles" data-translate="nav.articles">Articles</div>
                                 <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/engineering.html">
                                     <span class="material-symbols-outlined dropdown-item-icon">engineering</span>
-                                    Engineering
+                                    <span data-translate="nav.engineering">Engineering</span>
                                 </a>
                                 <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/lifestyle.html">
                                     <span class="material-symbols-outlined dropdown-item-icon">person</span>
-                                    Personal
+                                    <span data-translate="nav.personal">Personal</span>
                                 </a>
                             </div>
                         </li>
@@ -689,16 +750,16 @@
                                 </div>
                             </li>
                             <li class="nav-item dropdown" id="navbarDropdownBlogMedium">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.blog">Blog</a>
                                 <div class="dropdown-menu dropdown-menu-blog" aria-labelledby="navbarDropdownBlogLinkMedium">
-                                    <div class="dropdown-header-articles">Articles</div>
+                                    <div class="dropdown-header-articles" data-translate="nav.articles">Articles</div>
                                     <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/engineering.html">
                                         <span class="material-symbols-outlined dropdown-item-icon">engineering</span>
-                                        Engineering
+                                        <span data-translate="nav.engineering">Engineering</span>
                                     </a>
                                     <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/lifestyle.html">
                                         <span class="material-symbols-outlined dropdown-item-icon">person</span>
-                                        Personal
+                                        <span data-translate="nav.personal">Personal</span>
                                     </a>
                                 </div>
                             </li>
