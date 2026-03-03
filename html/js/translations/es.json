@@ -6,7 +6,11 @@
     "contact": "Contacto",
     "docs": "Documentos",
     "notes": "Notas",
-    "tutorials": "Tutoriales"
+    "tutorials": "Tutoriales",
+    "blog": "Blog",
+    "engineering": "Ingeniería",
+    "personal": "Personal",
+    "articles": "Artículos"
   },
   "settings": {
     "language": "Idioma",
