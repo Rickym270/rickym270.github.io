@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Living With MS Changed the Way I Engineer Software — Ricky Martinez</title>
+    <meta name="description" content="A senior automation engineer on building for variability, determinism, and recovery—and how living with multiple sclerosis sharpened his approach to software and systems.">
+    <meta property="og:title" content="How Living With MS Changed the Way I Engineer Software">
+    <meta property="og:description" content="A senior automation engineer on building for variability, determinism, and recovery—and how living with multiple sclerosis sharpened his approach to software and systems.">
+    <meta property="og:url" content="https://rickym270.github.io/html/pages/engineering/post-1.html">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/html/imgs/og/engineering-post-1.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How Living With MS Changed the Way I Engineer Software">
+    <meta name="twitter:description" content="A senior automation engineer on building for variability, determinism, and recovery—and how living with multiple sclerosis sharpened his approach to software and systems.">
+    <meta name="twitter:image" content="/html/imgs/og/engineering-post-1.png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/html/css/modern.css">
+    <link rel="stylesheet" href="/html/css/style.css">
+</head>
+<body>
+    <div class="container container-padding-top article-content post-content">
+        <header class="post-hero text-center">
+            <div class="post-meta mb-3">
+                <time datetime="2025-02-28">Feb 28, 2025</time>
+                <span class="mx-2" aria-hidden="true">·</span>
+                <span>Engineering</span>
+                <span class="mx-2" aria-hidden="true">·</span>
+                <span id="reading-time">— min read</span>
+            </div>
+            <h1 class="post-title">How Living With MS Changed the Way I Engineer Software</h1>
+        </header>
+
+        <article id="post-body">
+            <p>I'm a senior automation engineer living with multiple sclerosis.</p>
+            <p>MS introduces variability in energy, cognition, and physical strength and consistency. Some days are sharp, where I feel like I can solve any hard technical problem. Some require pacing because my brain decided 'nope'.</p>
+            <p>That variability changed how I think about engineering systems. I no longer design for ideal conditions. I design for constraints and the "unexpected".</p>
+            <p>And that has fundamentally improved the way I build software.</p>
+
+            <h2>Variability Exposes Systems</h2>
+            <p>Recently, I ran into a frustrating issue with my CI pipeline on one of my repos.</p>
+            <p>Two GitHub Actions jobs were running Playwright tests simultaneously. Locally, everything passed. In CI, tests started failing intermittently.</p>
+            <p>At first glance, it looked like selector flakiness.</p>
+            <p>Plot twist – it wasn't.</p>
+            <p>The real issue was resource contention — concurrent jobs binding to the same ports, spinning up browsers simultaneously, creating race conditions that only appeared under shared runner constraints.</p>
+            <p>The problem wasn't "fix the selector," it was:</p>
+            <blockquote>Design the system such that it behaves predictably under constrained resources.</blockquote>
+            <p>Living with MS makes you sensitive to variability. You stop assuming stability and start engineering for degradation.</p>
+            <p>That mindset made the difference in debugging the pipeline.</p>
+
+            <h2>Determinism Is Not a Luxury</h2>
+            <p>When cognitive energy fluctuates, unpredictability becomes expensive.</p>
+            <p>Non-deterministic pipelines, unclear error messages, hidden state transitions — they all increase cognitive tax.</p>
+            <p>So I have a strong bias toward determinism.</p>
+            <p>In my Playwright tests, I ensured:</p>
+            <ul>
+                <li>Explicit waits instead of implicit timing assumptions.</li>
+                <li>Isolated servers.</li>
+                <li>Clear teardown logic.</li>
+                <li>Reduced parallelism when resource contention matters.</li>
+            </ul>
+            <p>In CI:</p>
+            <ul>
+                <li>Separate concerns across PRs.</li>
+                <li>Controlled concurrency.</li>
+                <li>Clear failure diagnostics.</li>
+            </ul>
+            <blockquote>Deterministic systems reduce mental overhead. They preserve energy — for both humans and machines.</blockquote>
+
+            <h2>Automation as Energy Conservation</h2>
+            <p>Automation is often framed as productive, fast responses towards repetitive tasks.</p>
+            <p>For me, it's sustainability.</p>
+            <p>When I built my personal site, I didn't want manual content maintenance. So I automated it.</p>
+            <p><strong>Example: GitHub → Website Sync</strong></p>
+            <p>Instead of manually updating my projects page:</p>
+            <ul>
+                <li>A GitHub Action queries the GitHub API.</li>
+                <li>It extracts repository metadata.</li>
+                <li>It transforms that data.</li>
+                <li>It updates the site.</li>
+                <li>It redeploys.</li>
+            </ul>
+            <p>That system:</p>
+            <ul>
+                <li>Reduces repetitive effort.</li>
+                <li>Eliminates human sync errors.</li>
+                <li>Keeps the portfolio accurate automatically.</li>
+            </ul>
+            <p>Automation protects against inconsistency — especially when energy fluctuates or brain fog hits.</p>
+
+            <h2>Building My Own Markup Language</h2>
+            <p>At one point, I was journaling directly into my site.</p>
+            <p>But writing raw HTML was time consuming and cumbersome.</p>
+            <p>So I created a lightweight markup system tailored to how I write notes.</p>
+            <p>I defined:</p>
+            <ul>
+                <li>Simple structural markers.</li>
+                <li>Formatting shortcuts.</li>
+                <li>A predictable syntax aligned with my thinking patterns.</li>
+            </ul>
+            <p>Then I built a script to:</p>
+            <ul>
+                <li>Parse the custom markup.</li>
+                <li>Transform it into valid HTML.</li>
+                <li>Auto-generate pages.</li>
+            </ul>
+            <p>Why? Because reducing friction, steps, and simplifying processes matters.</p>
+            <p>When cognitive load increases, even small formatting decisions become noise. Designing a system aligned with my thought process removed unnecessary mental tax.</p>
+            <p>That's not just accessibility — it's being proactive.</p>
+
+            <h2>Accessibility Is Architectural</h2>
+            <p>Accessibility is often treated as:</p>
+            <ul>
+                <li>A front-end audit.</li>
+                <li>A compliance task.</li>
+                <li>A checklist item.</li>
+            </ul>
+            <p>But accessibility is a system property.</p>
+            <p>When I build:</p>
+            <ul>
+                <li>Clear logs.</li>
+                <li>Idempotent APIs.</li>
+                <li>Retry-safe workflows.</li>
+                <li>Graceful degradation.</li>
+                <li>Offline-capable designs.</li>
+            </ul>
+            <blockquote>That's accessibility. A system that handles degraded network conditions is accessible. A workflow that survives interruption is accessible. An API that tolerates retries is accessible.</blockquote>
+            <p>Living with neurological variability makes this obvious.</p>
+            <p>Resilient systems assume variance.</p>
+
+            <h2>Engineering for Recovery</h2>
+            <p>Constraint changes your default question.</p>
+            <p>Instead of: "Does this work?"</p>
+            <p>You ask: "What happens when it partially works?"</p>
+            <p>Instead of: "Is this correct?"</p>
+            <p>You ask: "Is this recoverable? What happens if it fails mid-flight?"</p>
+            <p>In my automation scripts and pipelines, I build for recovery:</p>
+            <ul>
+                <li>Fallback logic.</li>
+                <li>Clear error states.</li>
+                <li>Safe retries.</li>
+                <li>Observable behavior.</li>
+            </ul>
+            <p>Because failure isn't rare. It's normal.</p>
+            <p>And recoverability defines robustness.</p>
+
+            <h2>Constraint Sharpens Design</h2>
+            <p>Living with MS hasn't reduced my engineering capability.</p>
+            <p>It refined it.</p>
+            <p>It sharpened my sensitivity to:</p>
+            <ul>
+                <li>Hidden complexity.</li>
+                <li>Cognitive overhead.</li>
+                <li>Fragile state management.</li>
+                <li>Unnecessary manual steps.</li>
+                <li>Silent failure modes.</li>
+            </ul>
+            <p>Constraint removes excess.</p>
+            <p>It forces clarity.</p>
+            <p>It rewards simplicity.</p>
+
+            <h2>Closing</h2>
+            <p>Engineering from constraint produces stronger systems.</p>
+            <p>It prioritizes:</p>
+            <ul>
+                <li>Determinism over assumption.</li>
+                <li>Recovery over perfection.</li>
+                <li>Automation over repetition.</li>
+                <li>Architecture over patchwork.</li>
+            </ul>
+            <p>MS introduced variability into my life.</p>
+            <p>So I build software that assumes variability too.</p>
+            <blockquote>And systems that assume variance are more resilient — for everyone.</blockquote>
+            <p>I'm currently exploring engineering roles focused on automation, resilience, and accessibility. If this perspective resonates, I'd welcome a conversation.</p>
+        </article>
+    </div>
+
+    <script>
+        (function() {
+            var el = document.getElementById('reading-time');
+            var body = document.getElementById('post-body');
+            if (el && body) {
+                var text = body.innerText || body.textContent || '';
+                var words = text.trim().split(/\s+/).filter(Boolean).length;
+                var mins = Math.max(1, Math.ceil(words / 200));
+                el.textContent = mins + ' min read';
+            }
+        })();
+    </script>
+</body>
+</html>
