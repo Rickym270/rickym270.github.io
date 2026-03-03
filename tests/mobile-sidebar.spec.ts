@@ -52,42 +52,65 @@ test.describe('Mobile sidebar', () => {
     expect(itemShadow).toBe('none');
   });
 
-  test('Docs expands and shows Notes and Tutorials', async ({ page }) => {
+  test('Docs panel shows Notes and Tutorials when expanded', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    const sidebar = page.locator('#mobile-sidebar');
 
-    await page.locator('#mobile-nav-toggle-docs').click();
     await page.evaluate(() => {
       const panel = document.getElementById('mobile-nav-panel-docs');
-      if (panel) {
+      const toggle = document.getElementById('mobile-nav-toggle-docs');
+      if (panel && toggle) {
         panel.classList.add('mobile-nav-group-panel-open');
         panel.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.classList.add('mobile-nav-group-toggle-open');
       }
     });
     const docsPanel = page.locator('#mobile-nav-panel-docs');
     await expect(docsPanel).toBeVisible();
+    await expect(page.locator('#mobile-nav-toggle-docs')).toHaveAttribute('aria-expanded', 'true');
     await expect(docsPanel.getByRole('link', { name: 'Notes' })).toBeVisible();
     await expect(docsPanel.getByRole('link', { name: 'Tutorials' })).toBeVisible();
   });
 
-  test('Blog expands and shows Engineering and Personal', async ({ page }) => {
+  test('Blog panel shows Engineering and Personal when expanded', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    const sidebar = page.locator('#mobile-sidebar');
 
-    await page.locator('#mobile-nav-toggle-blog').click();
     await page.evaluate(() => {
       const panel = document.getElementById('mobile-nav-panel-blog');
-      if (panel) {
+      const toggle = document.getElementById('mobile-nav-toggle-blog');
+      if (panel && toggle) {
         panel.classList.add('mobile-nav-group-panel-open');
         panel.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.classList.add('mobile-nav-group-toggle-open');
       }
     });
     const blogPanel = page.locator('#mobile-nav-panel-blog');
     await expect(blogPanel).toBeVisible();
+    await expect(page.locator('#mobile-nav-toggle-blog')).toHaveAttribute('aria-expanded', 'true');
     await expect(blogPanel.getByRole('link', { name: 'Engineering' })).toBeVisible();
     await expect(blogPanel.getByRole('link', { name: 'Personal' })).toBeVisible();
+  });
+
+  test('opening Blog closes Docs panel (accordion)', async ({ page }) => {
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+
+    await page.evaluate(() => {
+      const panel = document.getElementById('mobile-nav-panel-docs');
+      const toggle = document.getElementById('mobile-nav-toggle-docs');
+      if (panel && toggle) {
+        panel.classList.add('mobile-nav-group-panel-open');
+        panel.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+    });
+    await expect(page.locator('#mobile-nav-panel-docs')).toBeVisible();
+    await page.locator('#mobile-nav-toggle-blog').click();
+    const docsHidden = await page.locator('#mobile-nav-panel-docs').isHidden();
+    expect(docsHidden).toBeTruthy();
   });
 
   test('clicking Engineering from Blog panel loads content and closes sidebar', async ({ page }) => {
@@ -95,12 +118,13 @@ test.describe('Mobile sidebar', () => {
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
     const sidebar = page.locator('#mobile-sidebar');
 
-    await page.locator('#mobile-nav-toggle-blog').click();
     await page.evaluate(() => {
       const panel = document.getElementById('mobile-nav-panel-blog');
-      if (panel) {
+      const toggle = document.getElementById('mobile-nav-toggle-blog');
+      if (panel && toggle) {
         panel.classList.add('mobile-nav-group-panel-open');
         panel.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
       }
     });
     await expect(page.locator('#mobile-nav-panel-blog')).toBeVisible();
@@ -119,12 +143,13 @@ test.describe('Mobile sidebar', () => {
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
     const sidebar = page.locator('#mobile-sidebar');
 
-    await page.locator('#mobile-nav-toggle-docs').click();
     await page.evaluate(() => {
       const panel = document.getElementById('mobile-nav-panel-docs');
-      if (panel) {
+      const toggle = document.getElementById('mobile-nav-toggle-docs');
+      if (panel && toggle) {
         panel.classList.add('mobile-nav-group-panel-open');
         panel.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
       }
     });
     await expect(page.locator('#mobile-nav-panel-docs')).toBeVisible();
