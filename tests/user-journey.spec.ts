@@ -371,7 +371,8 @@ test.describe('End-to-End User Journeys', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click();
     } else {
       // Click on Docs dropdown or link
       await page.locator('#navbar-links a:has-text("Docs"), #navbar-links a:has-text("Notes")').first().click();

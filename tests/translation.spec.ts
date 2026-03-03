@@ -519,6 +519,140 @@ test.describe('Translation feature', () => {
     await expect(frameworks).toHaveText('Frameworks y Bibliotecas');
   });
 
+  test('Engineering post content is translated when language is Spanish', async ({ page }) => {
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+
+    // Switch to Spanish first
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
+      await esButton.click();
+      await page.waitForTimeout(300);
+    } else {
+      const esButton = page.locator('#language-switcher button[data-lang="es"]');
+      await esButton.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Navigate to Engineering (Blog → Engineering)
+    if (isMobile) {
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('h1');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+
+    // Click the post link (Spanish title after translation)
+    const postLink = page.locator('#content a[data-url="html/pages/engineering/post-1.html"]');
+    await expect(postLink).toBeVisible({ timeout: 5000 });
+    await postLink.click();
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-title');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+
+    // Assert post title is Spanish
+    const postTitle = page.locator('#content .post-title[data-translate="engineering.post1.title"], #content h1.post-title');
+    await expect(postTitle).toBeVisible({ timeout: 5000 });
+    await expect(postTitle).toContainText('Cómo vivir con EM');
+
+    // Assert at least one body segment is Spanish
+    const firstParagraph = page.locator('#content #post-body p[data-translate="engineering.post1.p1"]');
+    await expect(firstParagraph).toBeVisible({ timeout: 5000 });
+    await expect(firstParagraph).toContainText('esclerosis múltiple');
+  });
+
+  test('Engineering post updates when language is switched after loading post', async ({ page }) => {
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+
+    // Navigate to Engineering then open post (English)
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-1.html"]');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(300);
+
+    await page.locator('#content a[data-url="html/pages/engineering/post-1.html"]').click();
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return !!c?.querySelector('#post-body');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+
+    // Switch to Spanish
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('#mobile-language-switcher button[data-lang="es"]').click();
+    } else {
+      await page.locator('#language-switcher button[data-lang="es"]').click();
+    }
+    await page.waitForTimeout(500);
+
+    await expect(page.locator('#content .post-title')).toContainText('Cómo vivir con EM');
+    await expect(page.locator('#content #post-body p[data-translate="engineering.post1.p1"]')).toContainText('esclerosis múltiple');
+  });
+
+  test('Engineering landing page shows translated post title in Spanish', async ({ page }) => {
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+
+    // Switch to Spanish
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('#mobile-language-switcher button[data-lang="es"]').click();
+      await page.waitForTimeout(300);
+    } else {
+      await page.locator('#language-switcher button[data-lang="es"]').click();
+      await page.waitForTimeout(500);
+    }
+
+    // Navigate to Engineering
+    if (isMobile) {
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Blog' }).click();
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-1.html"]');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+
+    const postLink = page.locator('#content a[data-url="html/pages/engineering/post-1.html"]');
+    await expect(postLink).toBeVisible({ timeout: 5000 });
+    await expect(postLink).toHaveText('Cómo vivir con EM cambió mi forma de ingeniería de software');
+  });
+
   test('contact page translates correctly', async ({ page }) => {
     // Check if we're on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -745,7 +879,8 @@ test.describe('Translation feature', () => {
     
     // Navigate to Tutorials - mobile sidebar for mobile, Docs dropdown for desktop (Tutorials is inside Docs)
     if (isMobile) {
-      await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/tutorials.html"]').click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Documentos' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Documentos' })
@@ -878,10 +1013,11 @@ test.describe('Translation feature', () => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     if (isMobile) {
-      // On mobile, open sidebar and click Docs
+      // On mobile, open sidebar, expand Docs, click Notes
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click();
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(

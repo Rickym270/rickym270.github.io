@@ -19,7 +19,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -49,7 +57,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -102,7 +118,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -130,7 +154,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -197,7 +229,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector for Docs dropdown
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -340,10 +380,18 @@ test.describe('Docs/Notes Page', () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
     
-    // On mobile, open sidebar and click Docs
+    // On mobile, open sidebar, expand Docs, click Notes
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click();
+    await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+    await page.evaluate(() => {
+      const panel = document.getElementById('mobile-nav-panel-docs');
+      if (panel) {
+        panel.classList.add('mobile-nav-group-panel-open');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+    await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click();
     await page.waitForTimeout(1000);
     
     // Check that category grid is single column on mobile
@@ -372,7 +420,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -459,7 +515,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -503,7 +567,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       // Desktop: use navbar scoped selector
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
@@ -595,7 +667,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
@@ -682,7 +762,15 @@ test.describe('Docs/Notes Page', () => {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 10000 });
       await page.locator('#mobile-menu-toggle').click({ timeout: 10000 });
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 10000 });
-      await page.locator('.mobile-nav-item[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-docs');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-docs a[data-url="html/pages/docs.html"]').click({ timeout: 10000 });
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })

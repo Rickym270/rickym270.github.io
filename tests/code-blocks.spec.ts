@@ -45,8 +45,8 @@ test.describe('Code Blocks', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const docsLink = page.locator('.mobile-nav-item').filter({ hasText: /Docs|Notes/i });
-      await docsLink.click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs').getByRole('link', { name: 'Notes' }).click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
@@ -95,8 +95,8 @@ test.describe('Code Blocks', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const docsLink = page.locator('.mobile-nav-item').filter({ hasText: /Docs|Notes/i });
-      await docsLink.click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs').getByRole('link', { name: 'Notes' }).click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
@@ -164,8 +164,8 @@ test.describe('Code Blocks', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const docsLink = page.locator('.mobile-nav-item').filter({ hasText: /Docs|Notes/i });
-      await docsLink.click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs').getByRole('link', { name: 'Notes' }).click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
@@ -214,8 +214,8 @@ test.describe('Code Blocks', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const docsLink = page.locator('.mobile-nav-item').filter({ hasText: /Docs|Notes/i });
-      await docsLink.click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs').getByRole('link', { name: 'Notes' }).click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })
@@ -271,8 +271,8 @@ test.describe('Code Blocks', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      const docsLink = page.locator('.mobile-nav-item').filter({ hasText: /Docs|Notes/i });
-      await docsLink.click();
+      await page.locator('#mobile-sidebar').getByRole('button', { name: 'Docs' }).click();
+      await page.locator('#mobile-nav-panel-docs').getByRole('link', { name: 'Notes' }).click();
     } else {
       const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Docs' })

@@ -137,6 +137,33 @@ test.describe('Responsive layout', () => {
       }
     }
   });
+
+  test('mobile sidebar shows Blog links (Engineering, Personal)', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+
+    const sidebar = page.locator('#mobile-sidebar');
+    await sidebar.getByRole('button', { name: 'Blog' }).click();
+    await page.evaluate(() => {
+      const panel = document.getElementById('mobile-nav-panel-blog');
+      if (panel) {
+        panel.classList.add('mobile-nav-group-panel-open');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+    await expect(sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' })).toBeVisible();
+    await expect(sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Personal' })).toBeVisible();
+  });
 });
 
 

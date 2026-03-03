@@ -24,166 +24,166 @@
             <div class="post-meta mb-3">
                 <time datetime="2025-02-28">Feb 28, 2025</time>
                 <span class="mx-2" aria-hidden="true">·</span>
-                <span>Engineering</span>
+                <span data-translate="engineering.post1.category">Engineering</span>
                 <span class="mx-2" aria-hidden="true">·</span>
-                <span id="reading-time">— min read</span>
+                <span id="reading-time"><span id="reading-time-num">—</span> <span data-translate="engineering.post1.readTimeSuffix">min read</span></span>
             </div>
-            <h1 class="post-title">How Living With MS Changed the Way I Engineer Software</h1>
+            <h1 class="post-title" data-translate="engineering.post1.title">How Living With MS Changed the Way I Engineer Software</h1>
         </header>
 
         <article id="post-body">
-            <p>I'm a senior automation engineer living with multiple sclerosis.</p>
-            <p>MS introduces variability in energy, cognition, and physical strength and consistency. Some days are sharp, where I feel like I can solve any hard technical problem. Some require pacing because my brain decided 'nope'.</p>
-            <p>That variability changed how I think about engineering systems. I no longer design for ideal conditions. I design for constraints and the "unexpected".</p>
-            <p>And that has fundamentally improved the way I build software.</p>
+            <p data-translate="engineering.post1.p1">I'm a senior automation engineer living with multiple sclerosis.</p>
+            <p data-translate="engineering.post1.p2">MS introduces variability in energy, cognition, and physical strength and consistency. Some days are sharp, where I feel like I can solve any hard technical problem. Some require pacing because my brain decided 'nope'.</p>
+            <p data-translate="engineering.post1.p3">That variability changed how I think about engineering systems. I no longer design for ideal conditions. I design for constraints and the "unexpected".</p>
+            <p data-translate="engineering.post1.p4">And that has fundamentally improved the way I build software.</p>
 
-            <h2>Variability Exposes Systems</h2>
-            <p>Recently, I ran into a frustrating issue with my CI pipeline on one of my repos.</p>
-            <p>Two GitHub Actions jobs were running Playwright tests simultaneously. Locally, everything passed. In CI, tests started failing intermittently.</p>
-            <p>At first glance, it looked like selector flakiness.</p>
-            <p>Plot twist – it wasn't.</p>
-            <p>The real issue was resource contention — concurrent jobs binding to the same ports, spinning up browsers simultaneously, creating race conditions that only appeared under shared runner constraints.</p>
-            <p>The problem wasn't "fix the selector," it was:</p>
-            <blockquote>Design the system such that it behaves predictably under constrained resources.</blockquote>
-            <p>Living with MS makes you sensitive to variability. You stop assuming stability and start engineering for degradation.</p>
-            <p>That mindset made the difference in debugging the pipeline.</p>
+            <h2 data-translate="engineering.post1.h2Variability">Variability Exposes Systems</h2>
+            <p data-translate="engineering.post1.p5">Recently, I ran into a frustrating issue with my CI pipeline on one of my repos.</p>
+            <p data-translate="engineering.post1.p6">Two GitHub Actions jobs were running Playwright tests simultaneously. Locally, everything passed. In CI, tests started failing intermittently.</p>
+            <p data-translate="engineering.post1.p7">At first glance, it looked like selector flakiness.</p>
+            <p data-translate="engineering.post1.p8">Plot twist – it wasn't.</p>
+            <p data-translate="engineering.post1.p9">The real issue was resource contention — concurrent jobs binding to the same ports, spinning up browsers simultaneously, creating race conditions that only appeared under shared runner constraints.</p>
+            <p data-translate="engineering.post1.p10">The problem wasn't "fix the selector," it was:</p>
+            <blockquote data-translate="engineering.post1.blockquote1">Design the system such that it behaves predictably under constrained resources.</blockquote>
+            <p data-translate="engineering.post1.p11">Living with MS makes you sensitive to variability. You stop assuming stability and start engineering for degradation.</p>
+            <p data-translate="engineering.post1.p12">That mindset made the difference in debugging the pipeline.</p>
 
-            <h2>Determinism Is Not a Luxury</h2>
-            <p>When cognitive energy fluctuates, unpredictability becomes expensive.</p>
-            <p>Non-deterministic pipelines, unclear error messages, hidden state transitions — they all increase cognitive tax.</p>
-            <p>So I have a strong bias toward determinism.</p>
-            <p>In my Playwright tests, I ensured:</p>
+            <h2 data-translate="engineering.post1.h2Determinism">Determinism Is Not a Luxury</h2>
+            <p data-translate="engineering.post1.p13">When cognitive energy fluctuates, unpredictability becomes expensive.</p>
+            <p data-translate="engineering.post1.p14">Non-deterministic pipelines, unclear error messages, hidden state transitions — they all increase cognitive tax.</p>
+            <p data-translate="engineering.post1.p15">So I have a strong bias toward determinism.</p>
+            <p data-translate="engineering.post1.p16">In my Playwright tests, I ensured:</p>
             <ul>
-                <li>Explicit waits instead of implicit timing assumptions.</li>
-                <li>Isolated servers.</li>
-                <li>Clear teardown logic.</li>
-                <li>Reduced parallelism when resource contention matters.</li>
+                <li data-translate="engineering.post1.li1">Explicit waits instead of implicit timing assumptions.</li>
+                <li data-translate="engineering.post1.li2">Isolated servers.</li>
+                <li data-translate="engineering.post1.li3">Clear teardown logic.</li>
+                <li data-translate="engineering.post1.li4">Reduced parallelism when resource contention matters.</li>
             </ul>
-            <p>In CI:</p>
+            <p data-translate="engineering.post1.p17">In CI:</p>
             <ul>
-                <li>Separate concerns across PRs.</li>
-                <li>Controlled concurrency.</li>
-                <li>Clear failure diagnostics.</li>
+                <li data-translate="engineering.post1.li5">Separate concerns across PRs.</li>
+                <li data-translate="engineering.post1.li6">Controlled concurrency.</li>
+                <li data-translate="engineering.post1.li7">Clear failure diagnostics.</li>
             </ul>
-            <blockquote>Deterministic systems reduce mental overhead. They preserve energy — for both humans and machines.</blockquote>
+            <blockquote data-translate="engineering.post1.blockquote2">Deterministic systems reduce mental overhead. They preserve energy — for both humans and machines.</blockquote>
 
-            <h2>Automation as Energy Conservation</h2>
-            <p>Automation is often framed as productive, fast responses towards repetitive tasks.</p>
-            <p>For me, it's sustainability.</p>
-            <p>When I built my personal site, I didn't want manual content maintenance. So I automated it.</p>
-            <p><strong>Example: GitHub → Website Sync</strong></p>
-            <p>Instead of manually updating my projects page:</p>
+            <h2 data-translate="engineering.post1.h2Automation">Automation as Energy Conservation</h2>
+            <p data-translate="engineering.post1.p18">Automation is often framed as productive, fast responses towards repetitive tasks.</p>
+            <p data-translate="engineering.post1.p19">For me, it's sustainability.</p>
+            <p data-translate="engineering.post1.p20">When I built my personal site, I didn't want manual content maintenance. So I automated it.</p>
+            <p data-translate="engineering.post1.p21" data-translate-html><strong>Example: GitHub → Website Sync</strong></p>
+            <p data-translate="engineering.post1.p22">Instead of manually updating my projects page:</p>
             <ul>
-                <li>A GitHub Action queries the GitHub API.</li>
-                <li>It extracts repository metadata.</li>
-                <li>It transforms that data.</li>
-                <li>It updates the site.</li>
-                <li>It redeploys.</li>
+                <li data-translate="engineering.post1.li8">A GitHub Action queries the GitHub API.</li>
+                <li data-translate="engineering.post1.li9">It extracts repository metadata.</li>
+                <li data-translate="engineering.post1.li10">It transforms that data.</li>
+                <li data-translate="engineering.post1.li11">It updates the site.</li>
+                <li data-translate="engineering.post1.li12">It redeploys.</li>
             </ul>
-            <p>That system:</p>
+            <p data-translate="engineering.post1.p23">That system:</p>
             <ul>
-                <li>Reduces repetitive effort.</li>
-                <li>Eliminates human sync errors.</li>
-                <li>Keeps the portfolio accurate automatically.</li>
+                <li data-translate="engineering.post1.li13">Reduces repetitive effort.</li>
+                <li data-translate="engineering.post1.li14">Eliminates human sync errors.</li>
+                <li data-translate="engineering.post1.li15">Keeps the portfolio accurate automatically.</li>
             </ul>
-            <p>Automation protects against inconsistency — especially when energy fluctuates or brain fog hits.</p>
+            <p data-translate="engineering.post1.p24">Automation protects against inconsistency — especially when energy fluctuates or brain fog hits.</p>
 
-            <h2>Building My Own Markup Language</h2>
-            <p>At one point, I was journaling directly into my site.</p>
-            <p>But writing raw HTML was time consuming and cumbersome.</p>
-            <p>So I created a lightweight markup system tailored to how I write notes.</p>
-            <p>I defined:</p>
+            <h2 data-translate="engineering.post1.h2Markup">Building My Own Markup Language</h2>
+            <p data-translate="engineering.post1.p25">At one point, I was journaling directly into my site.</p>
+            <p data-translate="engineering.post1.p26">But writing raw HTML was time consuming and cumbersome.</p>
+            <p data-translate="engineering.post1.p27">So I created a lightweight markup system tailored to how I write notes.</p>
+            <p data-translate="engineering.post1.p28">I defined:</p>
             <ul>
-                <li>Simple structural markers.</li>
-                <li>Formatting shortcuts.</li>
-                <li>A predictable syntax aligned with my thinking patterns.</li>
+                <li data-translate="engineering.post1.li16">Simple structural markers.</li>
+                <li data-translate="engineering.post1.li17">Formatting shortcuts.</li>
+                <li data-translate="engineering.post1.li18">A predictable syntax aligned with my thinking patterns.</li>
             </ul>
-            <p>Then I built a script to:</p>
+            <p data-translate="engineering.post1.p29">Then I built a script to:</p>
             <ul>
-                <li>Parse the custom markup.</li>
-                <li>Transform it into valid HTML.</li>
-                <li>Auto-generate pages.</li>
+                <li data-translate="engineering.post1.li19">Parse the custom markup.</li>
+                <li data-translate="engineering.post1.li20">Transform it into valid HTML.</li>
+                <li data-translate="engineering.post1.li21">Auto-generate pages.</li>
             </ul>
-            <p>Why? Because reducing friction, steps, and simplifying processes matters.</p>
-            <p>When cognitive load increases, even small formatting decisions become noise. Designing a system aligned with my thought process removed unnecessary mental tax.</p>
-            <p>That's not just accessibility — it's being proactive.</p>
+            <p data-translate="engineering.post1.p30">Why? Because reducing friction, steps, and simplifying processes matters.</p>
+            <p data-translate="engineering.post1.p31">When cognitive load increases, even small formatting decisions become noise. Designing a system aligned with my thought process removed unnecessary mental tax.</p>
+            <p data-translate="engineering.post1.p32">That's not just accessibility — it's being proactive.</p>
 
-            <h2>Accessibility Is Architectural</h2>
-            <p>Accessibility is often treated as:</p>
+            <h2 data-translate="engineering.post1.h2Accessibility">Accessibility Is Architectural</h2>
+            <p data-translate="engineering.post1.p33">Accessibility is often treated as:</p>
             <ul>
-                <li>A front-end audit.</li>
-                <li>A compliance task.</li>
-                <li>A checklist item.</li>
+                <li data-translate="engineering.post1.li22">A front-end audit.</li>
+                <li data-translate="engineering.post1.li23">A compliance task.</li>
+                <li data-translate="engineering.post1.li24">A checklist item.</li>
             </ul>
-            <p>But accessibility is a system property.</p>
-            <p>When I build:</p>
+            <p data-translate="engineering.post1.p34">But accessibility is a system property.</p>
+            <p data-translate="engineering.post1.p35">When I build:</p>
             <ul>
-                <li>Clear logs.</li>
-                <li>Idempotent APIs.</li>
-                <li>Retry-safe workflows.</li>
-                <li>Graceful degradation.</li>
-                <li>Offline-capable designs.</li>
+                <li data-translate="engineering.post1.li25">Clear logs.</li>
+                <li data-translate="engineering.post1.li26">Idempotent APIs.</li>
+                <li data-translate="engineering.post1.li27">Retry-safe workflows.</li>
+                <li data-translate="engineering.post1.li28">Graceful degradation.</li>
+                <li data-translate="engineering.post1.li29">Offline-capable designs.</li>
             </ul>
-            <blockquote>That's accessibility. A system that handles degraded network conditions is accessible. A workflow that survives interruption is accessible. An API that tolerates retries is accessible.</blockquote>
-            <p>Living with neurological variability makes this obvious.</p>
-            <p>Resilient systems assume variance.</p>
+            <blockquote data-translate="engineering.post1.blockquote3">That's accessibility. A system that handles degraded network conditions is accessible. A workflow that survives interruption is accessible. An API that tolerates retries is accessible.</blockquote>
+            <p data-translate="engineering.post1.p36">Living with neurological variability makes this obvious.</p>
+            <p data-translate="engineering.post1.p37">Resilient systems assume variance.</p>
 
-            <h2>Engineering for Recovery</h2>
-            <p>Constraint changes your default question.</p>
-            <p>Instead of: "Does this work?"</p>
-            <p>You ask: "What happens when it partially works?"</p>
-            <p>Instead of: "Is this correct?"</p>
-            <p>You ask: "Is this recoverable? What happens if it fails mid-flight?"</p>
-            <p>In my automation scripts and pipelines, I build for recovery:</p>
+            <h2 data-translate="engineering.post1.h2Recovery">Engineering for Recovery</h2>
+            <p data-translate="engineering.post1.p38">Constraint changes your default question.</p>
+            <p data-translate="engineering.post1.p39">Instead of: "Does this work?"</p>
+            <p data-translate="engineering.post1.p40">You ask: "What happens when it partially works?"</p>
+            <p data-translate="engineering.post1.p41">Instead of: "Is this correct?"</p>
+            <p data-translate="engineering.post1.p42">You ask: "Is this recoverable? What happens if it fails mid-flight?"</p>
+            <p data-translate="engineering.post1.p43">In my automation scripts and pipelines, I build for recovery:</p>
             <ul>
-                <li>Fallback logic.</li>
-                <li>Clear error states.</li>
-                <li>Safe retries.</li>
-                <li>Observable behavior.</li>
+                <li data-translate="engineering.post1.li30">Fallback logic.</li>
+                <li data-translate="engineering.post1.li31">Clear error states.</li>
+                <li data-translate="engineering.post1.li32">Safe retries.</li>
+                <li data-translate="engineering.post1.li33">Observable behavior.</li>
             </ul>
-            <p>Because failure isn't rare. It's normal.</p>
-            <p>And recoverability defines robustness.</p>
+            <p data-translate="engineering.post1.p44">Because failure isn't rare. It's normal.</p>
+            <p data-translate="engineering.post1.p45">And recoverability defines robustness.</p>
 
-            <h2>Constraint Sharpens Design</h2>
-            <p>Living with MS hasn't reduced my engineering capability.</p>
-            <p>It refined it.</p>
-            <p>It sharpened my sensitivity to:</p>
+            <h2 data-translate="engineering.post1.h2Constraint">Constraint Sharpens Design</h2>
+            <p data-translate="engineering.post1.p46">Living with MS hasn't reduced my engineering capability.</p>
+            <p data-translate="engineering.post1.p47">It refined it.</p>
+            <p data-translate="engineering.post1.p48">It sharpened my sensitivity to:</p>
             <ul>
-                <li>Hidden complexity.</li>
-                <li>Cognitive overhead.</li>
-                <li>Fragile state management.</li>
-                <li>Unnecessary manual steps.</li>
-                <li>Silent failure modes.</li>
+                <li data-translate="engineering.post1.li34">Hidden complexity.</li>
+                <li data-translate="engineering.post1.li35">Cognitive overhead.</li>
+                <li data-translate="engineering.post1.li36">Fragile state management.</li>
+                <li data-translate="engineering.post1.li37">Unnecessary manual steps.</li>
+                <li data-translate="engineering.post1.li38">Silent failure modes.</li>
             </ul>
-            <p>Constraint removes excess.</p>
-            <p>It forces clarity.</p>
-            <p>It rewards simplicity.</p>
+            <p data-translate="engineering.post1.p49">Constraint removes excess.</p>
+            <p data-translate="engineering.post1.p50">It forces clarity.</p>
+            <p data-translate="engineering.post1.p51">It rewards simplicity.</p>
 
-            <h2>Closing</h2>
-            <p>Engineering from constraint produces stronger systems.</p>
-            <p>It prioritizes:</p>
+            <h2 data-translate="engineering.post1.h2Closing">Closing</h2>
+            <p data-translate="engineering.post1.p52">Engineering from constraint produces stronger systems.</p>
+            <p data-translate="engineering.post1.p53">It prioritizes:</p>
             <ul>
-                <li>Determinism over assumption.</li>
-                <li>Recovery over perfection.</li>
-                <li>Automation over repetition.</li>
-                <li>Architecture over patchwork.</li>
+                <li data-translate="engineering.post1.li39">Determinism over assumption.</li>
+                <li data-translate="engineering.post1.li40">Recovery over perfection.</li>
+                <li data-translate="engineering.post1.li41">Automation over repetition.</li>
+                <li data-translate="engineering.post1.li42">Architecture over patchwork.</li>
             </ul>
-            <p>MS introduced variability into my life.</p>
-            <p>So I build software that assumes variability too.</p>
-            <blockquote>And systems that assume variance are more resilient — for everyone.</blockquote>
-            <p>I'm currently exploring engineering roles focused on automation, resilience, and accessibility. If this perspective resonates, I'd welcome a conversation.</p>
+            <p data-translate="engineering.post1.p54">MS introduced variability into my life.</p>
+            <p data-translate="engineering.post1.p55">So I build software that assumes variability too.</p>
+            <blockquote data-translate="engineering.post1.blockquote4">And systems that assume variance are more resilient — for everyone.</blockquote>
+            <p data-translate="engineering.post1.p56">I'm currently exploring engineering roles focused on automation, resilience, and accessibility. If this perspective resonates, I'd welcome a conversation.</p>
         </article>
     </div>
 
     <script>
         (function() {
-            var el = document.getElementById('reading-time');
+            var numEl = document.getElementById('reading-time-num');
             var body = document.getElementById('post-body');
-            if (el && body) {
+            if (numEl && body) {
                 var text = body.innerText || body.textContent || '';
                 var words = text.trim().split(/\s+/).filter(Boolean).length;
                 var mins = Math.max(1, Math.ceil(words / 200));
-                el.textContent = mins + ' min read';
+                numEl.textContent = mins;
             }
         })();
     </script>
