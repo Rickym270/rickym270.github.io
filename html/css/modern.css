@@ -2929,6 +2929,98 @@ pre code {
     opacity: 0;
 }
 
+/* ============================================
+   Blog post (post-content) - narrow article column
+   ============================================ */
+#content .container.post-content,
+.container.post-content {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+}
+
+/* All post text (except code) follows theme: black in light mode, white in dark mode */
+#content .container.post-content *:not(pre):not(code),
+.container.post-content *:not(pre):not(code) {
+    color: inherit;
+}
+
+#content .container.post-content blockquote,
+.container.post-content blockquote {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-sm) 0 var(--spacing-sm) var(--spacing-lg);
+    border-left: 4px solid var(--color-accent);
+    color: var(--color-text-primary);
+    font-style: italic;
+}
+
+#content .container.post-content .post-hero,
+.container.post-content .post-hero {
+    margin-bottom: var(--spacing-2xl);
+}
+
+#content .container.post-content .post-meta,
+.container.post-content .post-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+}
+
+#content .container.post-content .post-title,
+.container.post-content .post-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+}
+
+#content .container.post-content h2,
+.container.post-content h2 {
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-top: var(--spacing-2xl);
+    margin-bottom: var(--spacing-md);
+}
+
+#content .container.post-content pre,
+#content .container.post-content code,
+.container.post-content pre,
+.container.post-content code {
+    font-family: var(--font-mono);
+}
+
+#content .container.post-content pre,
+.container.post-content pre {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    overflow-x: auto;
+    margin: var(--spacing-lg) 0;
+}
+
+#content .container.post-content code,
+.container.post-content code {
+    font-size: 0.875rem;
+    background-color: var(--color-bg-secondary);
+    padding: 0.125em 0.35em;
+    border-radius: var(--radius-sm);
+}
+
+@media (max-width: 768px) {
+    #content .container.post-content,
+    .container.post-content {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+    #content .container.post-content .post-title,
+    .container.post-content .post-title {
+        font-size: 1.5rem;
+    }
+}
+
 /* Divider - consolidated from multiple definitions */
 .divider {
     height: 1px;
