@@ -24,14 +24,14 @@ try {
     process.exit(1);
   }
   
-  // Check version matches
-  const requiredMajorMinor = nvmrcVersion.split('.').slice(0, 2).join('.');
-  const currentMajorMinor = nodeVersion.split('.').slice(0, 2).join('.');
-  
-  if (currentMajorMinor !== requiredMajorMinor) {
-    console.error(`❌ Node version mismatch!`);
+  // Require Node 18+ (match .nvmrc major as minimum; allow newer LTS/current)
+  const requiredMajor = parseInt(nvmrcVersion.split('.')[0], 10);
+  const currentMajor = parseInt(nodeVersion.split('.')[0], 10);
+
+  if (currentMajor < requiredMajor) {
+    console.error(`❌ Node version too old!`);
     console.error(`   Current: ${process.version}`);
-    console.error(`   Required: v${nvmrcVersion}`);
+    console.error(`   Required: v${requiredMajor}.x or higher (e.g. v${nvmrcVersion})`);
     console.error(`   Run: nvm use`);
     process.exit(1);
   }

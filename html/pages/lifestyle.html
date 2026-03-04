@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title data-translate-title="lifestyle.title">Ricky Martinez - Personal</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/html/css/modern.css">
         <link rel="stylesheet" href="/html/css/style.css">
+        <link rel="stylesheet" href="/html/css/blog.css">
     </head>
     <body>
         <div class="container">
@@ -14,9 +16,83 @@
                 <h1 class="section-title" data-translate="lifestyle.heading">Personal</h1>
                 <p class="section-subtitle" data-translate="lifestyle.subtitle">Life, interests, and beyond the code.</p>
             </div>
-            <div class="section">
-                <p data-translate="lifestyle.comingSoon">More articles coming soon.</p>
-            </div>
+
+            <!-- Featured Post (Coming Soon) -->
+            <section class="blog-featured blog-featured-placeholder" aria-labelledby="featured-title-personal">
+                <div class="blog-featured-content">
+                    <span class="blog-featured-label" data-translate="blog.featuredPost">Featured Post</span>
+                    <h2 id="featured-title-personal" class="blog-featured-title" data-translate="blog.comingSoon">Coming Soon</h2>
+                    <p class="blog-featured-description"><span data-translate="blog.comingSoon">Coming Soon</span></p>
+                </div>
+            </section>
+
+            <!-- Latest Insights -->
+            <section class="blog-insights-section" aria-labelledby="insights-title-personal">
+                <div class="blog-insights-header">
+                    <h2 id="insights-title-personal" class="blog-insights-title" data-translate="blog.latestInsights">Latest Insights</h2>
+                    <p class="blog-insights-subtitle" data-translate="lifestyle.latestInsightsSubtitle">Thoughts on life, interests, and beyond the code.</p>
+                </div>
+
+                <div class="blog-category-pills" role="group" aria-label="Category filter">
+                    <span class="blog-category-pill active" data-translate="blog.allPosts">All Posts</span>
+                    <span class="blog-category-pill" data-translate="blog.life">Life</span>
+                    <span class="blog-category-pill" data-translate="blog.travel">Travel</span>
+                    <span class="blog-category-pill" data-translate="blog.hobbies">Hobbies</span>
+                </div>
+
+                <div class="blog-cards-grid">
+                    <!-- Placeholder card 1 -->
+                    <article class="blog-card placeholder">
+                        <div class="blog-card-link" style="pointer-events: none;">
+                            <div class="blog-card-image-placeholder" aria-hidden="true"><span data-translate="blog.comingSoon">Coming Soon</span></div>
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span class="blog-card-category">—</span>
+                                    <span class="blog-card-date">—</span>
+                                </div>
+                                <h3 class="blog-card-title" data-translate="blog.comingSoon">Coming Soon</h3>
+                                <p class="blog-card-description">—</p>
+                                <div class="blog-card-tags"></div>
+                                <span class="blog-coming-soon-badge" data-translate="blog.comingSoon">Coming Soon</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Placeholder card 2 -->
+                    <article class="blog-card placeholder">
+                        <div class="blog-card-link" style="pointer-events: none;">
+                            <div class="blog-card-image-placeholder" aria-hidden="true"><span data-translate="blog.comingSoon">Coming Soon</span></div>
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span class="blog-card-category">—</span>
+                                    <span class="blog-card-date">—</span>
+                                </div>
+                                <h3 class="blog-card-title" data-translate="blog.comingSoon">Coming Soon</h3>
+                                <p class="blog-card-description">—</p>
+                                <div class="blog-card-tags"></div>
+                                <span class="blog-coming-soon-badge" data-translate="blog.comingSoon">Coming Soon</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Placeholder card 3 -->
+                    <article class="blog-card placeholder">
+                        <div class="blog-card-link" style="pointer-events: none;">
+                            <div class="blog-card-image-placeholder" aria-hidden="true"><span data-translate="blog.comingSoon">Coming Soon</span></div>
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span class="blog-card-category">—</span>
+                                    <span class="blog-card-date">—</span>
+                                </div>
+                                <h3 class="blog-card-title" data-translate="blog.comingSoon">Coming Soon</h3>
+                                <p class="blog-card-description">—</p>
+                                <div class="blog-card-tags"></div>
+                                <span class="blog-coming-soon-badge" data-translate="blog.comingSoon">Coming Soon</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
         </div>
     </body>
 </html>
