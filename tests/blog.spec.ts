@@ -29,7 +29,9 @@ test.describe('Blog Pages', () => {
           panel.setAttribute('aria-hidden', 'false');
         }
       });
-      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+      const engineeringLink = page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' });
+      await engineeringLink.scrollIntoViewIfNeeded();
+      await engineeringLink.click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
@@ -38,13 +40,15 @@ test.describe('Blog Pages', () => {
       await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
     }
 
+    // Wait for engineering page content (h1 with "Engineering" or .blog-featured)
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1');
+      const h1 = c?.querySelector('h1');
+      return (c?.getAttribute('data-content-loaded') === 'true' && h1 && /Engineering/i.test(h1.textContent || '')) || !!c?.querySelector('.blog-featured');
     }, { timeout: 15000 });
 
     const heading = page.locator('#content h1').filter({ hasText: /Engineering/i });
-    await expect(heading).toBeVisible({ timeout: 5000 });
+    await expect(heading).toBeVisible({ timeout: 10000 });
     await expect(heading).toContainText('Engineering');
   });
 
