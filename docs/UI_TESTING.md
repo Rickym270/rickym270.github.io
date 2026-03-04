@@ -59,6 +59,7 @@ npm run test:e2e
 ```bash
 # Run a specific test file
 npx playwright test tests/navbar.spec.ts
+npx playwright test tests/blog.spec.ts
 
 # Run tests matching a pattern
 npx playwright test navbar
@@ -96,6 +97,7 @@ The CI workflow:
 Tests are located in the `tests/` directory:
 
 - `navbar.spec.ts` - Navigation bar functionality
+- `blog.spec.ts` - Blog listing pages (Engineering, Personal), Featured Post, Latest Insights, navigation to post, post detail (banner, hero, body)
 - `home-page.spec.ts` - Home page content and layout
 - `home.spec.ts` - Home page navigation and interactions
 - `skills.spec.ts` - Skills page display and categorization

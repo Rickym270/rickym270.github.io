@@ -30,6 +30,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **[Testing Index](testing/README.md)** - Overview of all test documentation
 
 ### Test Types
+- **Blog Tests** (`tests/blog.spec.ts`) - Blog listing pages (Engineering, Personal), Featured Post, Latest Insights, navigation to post, post detail structure (banner, hero, body)
 - **Accessibility Tests** (`tests/accessibility.spec.ts`) - WCAG compliance testing
 - **API Contract Tests** (`tests/api-contract.spec.ts`) - OpenAPI contract validation
 - **Error Handling Tests** (`tests/error-handling.spec.ts`) - Edge case and error scenarios
@@ -48,6 +49,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **[Projects API Tests](testing/projects.md)** - Testing the projects API
 - **[Stats API Tests](testing/stats.md)** - Testing the stats API
 - **[Tutorials Tests](testing/tutorials.md)** - Testing the tutorials page
+- **[Blog Tests](testing/blog.md)** - Engineering and Personal listing pages, Featured Post, Latest Insights, navigation to post, post detail structure (banner, hero, body)
 
 ## Project Information
 
@@ -81,7 +83,8 @@ docs/
 │   ├── meta.md
 │   ├── projects.md
 │   ├── stats.md
-│   └── tutorials.md
+│   ├── tutorials.md
+│   └── blog.md
 └── contracts/                   # API contracts
     └── openapi.yml
 ```

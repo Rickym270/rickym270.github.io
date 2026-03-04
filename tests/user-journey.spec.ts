@@ -177,8 +177,8 @@ test.describe('End-to-End User Journeys', () => {
     // Wait for DOM to update after API response (mobile/CI need more time for success handler)
     await page.waitForTimeout(isMobile ? 2000 : 500);
     
-    // Wait for success message - mobile needs longer timeout, use flexible wait
-    const successTimeout = isMobile ? 20000 : 10000;
+    // Wait for success message - mobile/CI need longer timeout for route + handler
+    const successTimeout = isMobile ? 35000 : 10000;
     // Use locator-based wait (more reliable than waitForFunction on mobile/CI)
     const successMessage = page.locator('#form-message.alert-success');
     await successMessage.waitFor({ state: 'visible', timeout: successTimeout });

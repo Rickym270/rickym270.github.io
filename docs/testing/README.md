@@ -31,6 +31,10 @@ This directory contains detailed documentation for testing individual API endpoi
 
 ## UI Testing
 
+- **[Blog Tests](blog.md)** - Blog listing pages (Engineering, Personal), post detail structure (banner, hero, body)
+  - Featured Post, Latest Insights, category pills, cards
+  - SPA navigation to post, dark mode CTA visibility
+
 - **[Tutorials Tests](tutorials.md)** - Testing the tutorials page
   - Tutorial card display
   - Lesson navigation
@@ -49,6 +53,7 @@ For comprehensive testing documentation, see:
 tests/
 ├── api-*.spec.ts          # API endpoint tests
 ├── accessibility.spec.ts  # Accessibility tests
+├── blog.spec.ts           # Blog listing, post navigation, post detail (banner, hero, body)
 ├── contact.spec.ts        # Contact form tests
 ├── docs.spec.ts           # Documentation page tests
 ├── error-handling.spec.ts # Error scenario tests
@@ -109,6 +114,10 @@ npx playwright test --grep "API"
 
 ### Error Handling
 - `tests/error-handling.spec.ts` - Error scenario tests
+
+### Blog
+- [Blog Tests](blog.md)
+- `tests/blog.spec.ts` - Blog listing pages (Engineering, Personal), Featured Post, Latest Insights, SPA navigation to post, post detail structure (banner, hero, body)
 
 ## CI/CD Testing
 

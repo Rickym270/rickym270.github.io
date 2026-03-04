@@ -218,8 +218,10 @@
     "heading": "Ingeniería desde la Restricción",
     "subtitle": "Artículos sobre ingeniería de software, proceso y construcción bajo restricciones.",
     "comingSoon": "Más artículos próximamente.",
+    "latestInsightsSubtitle": "Reflexiones sobre ingeniería, productividad y el futuro del desarrollo web.",
     "post1": {
       "title": "Cómo vivir con EM cambió mi forma de ingeniería de software",
+      "featuredDescription": "Explorando los matices de construir bajo restricciones: desde determinismo y recuperación hasta automatización y accesibilidad.",
       "category": "Ingeniería",
       "readTimeSuffix": "min de lectura",
       "p1": "Soy un ingeniero de automatización senior que vive con esclerosis múltiple.",
@@ -338,7 +340,25 @@
     "title": "Ricky Martinez - Personal",
     "heading": "Personal",
     "subtitle": "Vida, intereses y más allá del código.",
-    "comingSoon": "Más artículos próximamente."
+    "comingSoon": "Más artículos próximamente.",
+    "latestInsightsSubtitle": "Reflexiones sobre vida, intereses y más allá del código."
+  },
+  "blog": {
+    "featuredPost": "Artículo Destacado",
+    "latestInsights": "Últimas Reflexiones",
+    "searchPlaceholder": "Buscar artículos...",
+    "readArticle": "Leer Artículo",
+    "readMore": "Leer más",
+    "comingSoon": "Próximamente",
+    "allPosts": "Todos los Artículos",
+    "webDev": "Web Dev",
+    "automation": "Automatización",
+    "devops": "DevOps",
+    "productivity": "Productividad",
+    "security": "Seguridad",
+    "life": "Vida",
+    "travel": "Viajes",
+    "hobbies": "Aficiones"
   },
   "lessons": {
     "pythonTutorial": {

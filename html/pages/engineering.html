@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title data-translate-title="engineering.title">Ricky Martinez - Engineering</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/html/css/modern.css">
         <link rel="stylesheet" href="/html/css/style.css">
+        <link rel="stylesheet" href="/html/css/blog.css">
     </head>
     <body>
         <div class="container">
@@ -14,12 +16,89 @@
                 <h1 class="section-title" data-translate="engineering.heading">Engineering From Constraint</h1>
                 <p class="section-subtitle" data-translate="engineering.subtitle">Articles on software engineering, process, and building under constraints.</p>
             </div>
-            <div class="section">
-                <p data-translate="engineering.comingSoon">More articles coming soon.</p>
-                <p class="mt-3">
-                    <a href="#" class="inline-load" data-url="html/pages/engineering/post-1.html" data-translate="engineering.post1.title">How Living With MS Changed the Way I Engineer Software</a>
-                </p>
-            </div>
+
+            <!-- Featured Post -->
+            <section class="blog-featured" aria-labelledby="featured-title">
+                <div class="blog-featured-content">
+                    <span class="blog-featured-label" data-translate="blog.featuredPost">Featured Post</span>
+                    <h2 id="featured-title" class="blog-featured-title" data-translate="engineering.post1.title">How Living With MS Changed the Way I Engineer Software</h2>
+                    <p class="blog-featured-description" data-translate="engineering.post1.featuredDescription">Exploring the nuances of building under constraints—from determinism and recovery to automation and accessibility.</p>
+                    <a href="#" class="blog-featured-cta inline-load" data-url="html/pages/engineering/post-1.html" data-translate="blog.readArticle">Read Article</a>
+                    <p class="blog-featured-meta">Feb 28, 2025 • 12 <span data-translate="engineering.post1.readTimeSuffix">min read</span></p>
+                </div>
+            </section>
+
+            <!-- Latest Insights -->
+            <section class="blog-insights-section" aria-labelledby="insights-title">
+                <div class="blog-insights-header">
+                    <h2 id="insights-title" class="blog-insights-title" data-translate="blog.latestInsights">Latest Insights</h2>
+                    <p class="blog-insights-subtitle" data-translate="engineering.latestInsightsSubtitle">Thoughts on engineering, productivity, and the future of web development.</p>
+                </div>
+
+                <div class="blog-category-pills" role="group" aria-label="Category filter">
+                    <span class="blog-category-pill active" data-translate="blog.allPosts">All Posts</span>
+                    <span class="blog-category-pill" data-translate="blog.webDev">Web Dev</span>
+                    <span class="blog-category-pill" data-translate="blog.automation">Automation</span>
+                    <span class="blog-category-pill" data-translate="blog.devops">DevOps</span>
+                    <span class="blog-category-pill" data-translate="blog.productivity">Productivity</span>
+                </div>
+
+                <div class="blog-cards-grid">
+                    <!-- Card 1: Real post -->
+                    <article class="blog-card">
+                        <a href="#" class="blog-card-link inline-load" data-url="html/pages/engineering/post-1.html">
+                            <img src="/html/imgs/blog-featured-banner.png" alt="" class="blog-card-image" loading="lazy">
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span class="blog-card-category" data-translate="engineering.post1.category">Engineering</span>
+                                    <span class="blog-card-date">Feb 28, 2025</span>
+                                </div>
+                                <h3 class="blog-card-title" data-translate="engineering.post1.title">How Living With MS Changed the Way I Engineer Software</h3>
+                                <p class="blog-card-description" data-translate="engineering.post1.featuredDescription">Exploring the nuances of building under constraints—from determinism and recovery to automation and accessibility.</p>
+                                <div class="blog-card-tags">
+                                    <span class="blog-card-tag">AUTOMATION</span>
+                                    <span class="blog-card-tag">RESILIENCE</span>
+                                </div>
+                                <span class="blog-card-read-more"><span data-translate="blog.readMore">Read more</span> →</span>
+                            </div>
+                        </a>
+                    </article>
+
+                    <!-- Card 2: Placeholder -->
+                    <article class="blog-card placeholder">
+                        <div class="blog-card-link" style="pointer-events: none;">
+                            <div class="blog-card-image-placeholder" aria-hidden="true"><span data-translate="blog.comingSoon">Coming Soon</span></div>
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span class="blog-card-category">—</span>
+                                    <span class="blog-card-date">—</span>
+                                </div>
+                                <h3 class="blog-card-title" data-translate="blog.comingSoon">Coming Soon</h3>
+                                <p class="blog-card-description">—</p>
+                                <div class="blog-card-tags"></div>
+                                <span class="blog-coming-soon-badge" data-translate="blog.comingSoon">Coming Soon</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Card 3: Placeholder -->
+                    <article class="blog-card placeholder">
+                        <div class="blog-card-link" style="pointer-events: none;">
+                            <div class="blog-card-image-placeholder" aria-hidden="true"><span data-translate="blog.comingSoon">Coming Soon</span></div>
+                            <div class="blog-card-body">
+                                <div class="blog-card-meta">
+                                    <span class="blog-card-category">—</span>
+                                    <span class="blog-card-date">—</span>
+                                </div>
+                                <h3 class="blog-card-title" data-translate="blog.comingSoon">Coming Soon</h3>
+                                <p class="blog-card-description">—</p>
+                                <div class="blog-card-tags"></div>
+                                <span class="blog-coming-soon-badge" data-translate="blog.comingSoon">Coming Soon</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
         </div>
     </body>
 </html>

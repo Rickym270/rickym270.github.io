@@ -218,8 +218,10 @@
     "heading": "Engineering From Constraint",
     "subtitle": "Articles on software engineering, process, and building under constraints.",
     "comingSoon": "More articles coming soon.",
+    "latestInsightsSubtitle": "Thoughts on engineering, productivity, and the future of web development.",
     "post1": {
       "title": "How Living With MS Changed the Way I Engineer Software",
+      "featuredDescription": "Exploring the nuances of building under constraints—from determinism and recovery to automation and accessibility.",
       "category": "Engineering",
       "readTimeSuffix": "min read",
       "p1": "I'm a senior automation engineer living with multiple sclerosis.",
@@ -331,14 +333,32 @@
       "p54": "MS introduced variability into my life.",
       "p55": "So I build software that assumes variability too.",
       "blockquote4": "And systems that assume variance are more resilient — for everyone.",
-      "p56": "I'm currently exploring engineering roles focused on automation, resilience, and accessibility. If this perspective resonates, I'd welcome a conversation."
+      "p56": "I'm currently exploring engineering roles focused on automation, testing, and accessibility. If this perspective resonates, I'd welcome a conversation."
     }
   },
   "lifestyle": {
     "title": "Ricky Martinez - Personal",
     "heading": "Personal",
     "subtitle": "Life, interests, and beyond the code.",
-    "comingSoon": "More articles coming soon."
+    "comingSoon": "More articles coming soon.",
+    "latestInsightsSubtitle": "Thoughts on life, interests, and beyond the code."
+  },
+  "blog": {
+    "featuredPost": "Featured Post",
+    "latestInsights": "Latest Insights",
+    "searchPlaceholder": "Search articles...",
+    "readArticle": "Read Article",
+    "readMore": "Read more",
+    "comingSoon": "Coming Soon",
+    "allPosts": "All Posts",
+    "webDev": "Web Dev",
+    "automation": "Automation",
+    "devops": "DevOps",
+    "productivity": "Productivity",
+    "security": "Security",
+    "life": "Life",
+    "travel": "Travel",
+    "hobbies": "Hobbies"
   },
   "lessons": {
     "pythonTutorial": {

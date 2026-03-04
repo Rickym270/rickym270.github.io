@@ -28,7 +28,7 @@ rickym270.github.io/
 ## Current Test Coverage
 
 ### ✅ Well Covered
-- **UI Tests**: Home, Projects, Skills, Contact, Docs, Tutorials, Navbar
+- **UI Tests**: Home, Projects, Skills, Contact, Docs, Tutorials, Blog (Engineering, Personal), Navbar
 - **API Tests**: Health, Stats, Meta, Projects, Contact, CORS, GitHub Activity
 - **Functional Tests**: SPA Navigation, Theme Toggle, Translation, Responsive Design
 - **Code Blocks**: Syntax highlighting, copy functionality
@@ -99,6 +99,7 @@ rickym270.github.io/
 **Low Priority:**
 - `tests/user-journey.spec.ts` - Complete end-to-end user workflows
 - `tests/api-contract.spec.ts` - OpenAPI contract validation
+- `tests/blog.spec.ts` - Blog listing UI (Featured Post, Latest Insights, cards), SPA navigation to post, post detail structure (banner, hero, body)
 
 ### Test Coverage Summary
 
