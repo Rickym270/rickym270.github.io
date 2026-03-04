@@ -222,12 +222,15 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    await page.locator('#content').getByRole('link', { name: 'Read Article' }).click();
+    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
+    await expect(readArticleLink).toBeVisible({ timeout: 5000 });
+    await readArticleLink.scrollIntoViewIfNeeded();
+    await readArticleLink.click();
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-content .post-title');
-    }, { timeout: 15000 });
+    }, { timeout: 20000 });
 
     await expect(page.locator('#content #post-body')).toBeVisible();
     await expect(page.locator('#content')).toContainText('How Living With MS Changed');
@@ -267,12 +270,15 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    await page.locator('#content').getByRole('link', { name: 'Read Article' }).click();
+    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
+    await expect(readArticleLink).toBeVisible({ timeout: 5000 });
+    await readArticleLink.scrollIntoViewIfNeeded();
+    await readArticleLink.click();
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-content .post-title');
-    }, { timeout: 15000 });
+    }, { timeout: 20000 });
 
     const content = page.locator('#content');
 

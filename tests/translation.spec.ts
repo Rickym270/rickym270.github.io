@@ -553,8 +553,8 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // Click the post link (Spanish title after translation)
-    const postLink = page.locator('#content a[data-url="html/pages/engineering/post-1.html"]');
+    // Click the Featured "Read Article" link (single element; card link would also work)
+    const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
     await expect(postLink).toBeVisible({ timeout: 5000 });
     await postLink.click();
 
@@ -603,7 +603,7 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
 
-    await page.locator('#content a[data-url="html/pages/engineering/post-1.html"]').click();
+    await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]').click();
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body');
@@ -661,9 +661,10 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    const postLink = page.locator('#content a[data-url="html/pages/engineering/post-1.html"]');
-    await expect(postLink).toBeVisible({ timeout: 5000 });
-    await expect(postLink).toHaveText('Cómo vivir con EM cambió mi forma de ingeniería de software');
+    // Card title is inside the card link; use the non-placeholder card so we have one match
+    const cardTitle = page.locator('#content .blog-card:not(.placeholder) .blog-card-title');
+    await expect(cardTitle).toBeVisible({ timeout: 5000 });
+    await expect(cardTitle).toHaveText('Cómo vivir con EM cambió mi forma de ingeniería de software');
   });
 
   test('contact page translates correctly', async ({ page }) => {
