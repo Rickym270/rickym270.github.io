@@ -84,7 +84,7 @@
                 const mobileSidebar = document.getElementById('mobile-sidebar');
                 const mobileSidebarClose = document.getElementById('mobile-sidebar-close');
                 const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
-                const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+                const mobileSidebarNav = document.querySelector('.mobile-sidebar-nav');
                 const mobileLangBtns = document.querySelectorAll('.mobile-lang-btn');
                 const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
                 const desktopThemeToggle = document.getElementById('theme-toggle');
@@ -284,46 +284,133 @@
                     mobileNavOverlay.addEventListener('click', closeSidebar);
                 }
                 
-                // Handle mobile nav item clicks
-                mobileNavItems.forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        // Handle SPA navigation
-                        const url = this.getAttribute('data-url');
-                        if (url) {
-                            e.preventDefault();
-                            // Use jQuery SPA navigation if available
-                            if (typeof jQuery !== 'undefined' && jQuery.fn.load) {
-                                jQuery('#content').load(url + '?v=20251110', function() {
-                                    // Update active nav items using the SPA function
-                                    if (typeof window.updateActiveNavItem === 'function') {
-                                        window.updateActiveNavItem(url);
-                                    } else {
-                                        // Fallback: update manually
-                                        jQuery('li.nav-item').removeClass('active');
-                                        jQuery('.mobile-nav-item').removeClass('active');
-                                        jQuery(`a[data-url="${url}"]`).closest('li.nav-item').addClass('active');
-                                        jQuery(`a[data-url="${url}"]`).addClass('active');
-                                    }
-                                    
-                                    // Reinitialize theme and translations
-                                    if (typeof window.reinitTheme === 'function') {
-                                        window.reinitTheme();
-                                    }
-                                    if (typeof window.TranslationManager !== 'undefined') {
-                                        window.TranslationManager.applyTranslations();
-                                    }
-                                    
-                                    // Reinitialize page-specific scripts
-                                    if (url.includes('projects.html') && typeof window.initProjects === 'function') {
-                                        window.resetProjectsInit();
-                                        window.initProjects();
-                                    }
-                                });
+                // Handle mobile nav item and subitem clicks (event delegation)
+                function handleMobileNavLinkClick(e) {
+                    const link = e.target.closest('a.mobile-nav-item, a.mobile-nav-subitem');
+                    if (!link) return;
+                    const url = link.getAttribute('data-url');
+                    if (!url) return;
+                    e.preventDefault();
+                    if (typeof jQuery !== 'undefined' && jQuery.fn.load) {
+                        jQuery('#content').load(url + '?v=20251110', function() {
+                            if (typeof window.updateActiveNavItem === 'function') {
+                                window.updateActiveNavItem(url);
+                            } else {
+                                jQuery('li.nav-item').removeClass('active');
+                                jQuery('.mobile-nav-item, .mobile-nav-subitem').removeClass('active');
+                                jQuery(`a[data-url="${url}"]`).closest('li.nav-item').addClass('active');
+                                jQuery(`a[data-url="${url}"]`).addClass('active');
                             }
-                            closeSidebar();
+                            if (typeof window.reinitTheme === 'function') window.reinitTheme();
+                            if (typeof window.TranslationManager !== 'undefined') window.TranslationManager.applyTranslations();
+                            if (url.includes('projects.html') && typeof window.initProjects === 'function') {
+                                window.resetProjectsInit();
+                                window.initProjects();
+                            }
+                        });
+                    }
+                    closeSidebar();
+                }
+                var _lastMobileToggleClick = { toggle: null, time: 0 };
+                var _lastMobileToggleTouchend = { toggle: null, time: 0 };
+                var _lastMobileToggleRun = { id: '', time: 0 };
+                var _mobileToggleDebounceMs = 400;
+                var _mobileToggleRunGuardMs = 120;
+                if (typeof window._mobileNavToggleHandling === 'undefined') window._mobileNavToggleHandling = false;
+                function handleMobileNavGroupToggle(e) {
+                    var toggle = e.target.closest('.mobile-nav-group-toggle');
+                    if (!toggle || !document.getElementById('mobile-sidebar').contains(toggle)) return;
+                    var now = Date.now();
+                    var suppressTouch = _lastMobileToggleTouchend.toggle === toggle && (now - _lastMobileToggleTouchend.time) < _mobileToggleDebounceMs;
+                    var suppressClick = _lastMobileToggleClick.toggle === toggle && (now - _lastMobileToggleClick.time) < _mobileToggleDebounceMs;
+                    if (suppressTouch) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    if (suppressClick) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    _lastMobileToggleClick.toggle = toggle;
+                    _lastMobileToggleClick.time = now;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    runMobileNavGroupToggle(toggle);
+                }
+                function runMobileNavGroupToggle(toggle) {
+                    if (!toggle || !document.getElementById('mobile-sidebar').contains(toggle)) return;
+                    var expanded = toggle.getAttribute('aria-expanded') === 'true';
+                    var panelId = toggle.getAttribute('aria-controls');
+                    var panel = panelId ? document.getElementById(panelId) : null;
+                    if (panel) {
+                        toggle.setAttribute('aria-expanded', !expanded);
+                        if (expanded) {
+                            panel.classList.remove('mobile-nav-group-panel-open');
+                            panel.setAttribute('aria-hidden', 'true');
+                        } else {
+                            panel.classList.add('mobile-nav-group-panel-open');
+                            panel.setAttribute('aria-hidden', 'false');
+                        }
+                        toggle.classList.toggle('mobile-nav-group-toggle-open', !expanded);
+                        document.querySelectorAll('.mobile-nav-group-panel').forEach(function(p) {
+                            if (p !== panel) {
+                                p.classList.remove('mobile-nav-group-panel-open');
+                                p.setAttribute('aria-hidden', 'true');
+                                var t = document.querySelector('[aria-controls="' + p.id + '"]');
+                                if (t) {
+                                    t.setAttribute('aria-expanded', 'false');
+                                    t.classList.remove('mobile-nav-group-toggle-open');
+                                }
+                            }
+                        });
+                    }
+                }
+                function handleToggleByPointerOrTouch(e) {
+                    if (window._mobileNavToggleHandling) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    window._mobileNavToggleHandling = true;
+                    var toggle = e.target.closest('.mobile-nav-group-toggle');
+                    if (!toggle || !document.getElementById('mobile-sidebar').contains(toggle)) {
+                        window._mobileNavToggleHandling = false;
+                        return;
+                    }
+                    var now = Date.now();
+                    var toggleId = toggle.id || '';
+                    if (_lastMobileToggleRun.id === toggleId && (now - _lastMobileToggleRun.time) < _mobileToggleRunGuardMs) {
+                        window._mobileNavToggleHandling = false;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    _lastMobileToggleRun = { id: toggleId, time: now };
+                    var skip = _lastMobileToggleTouchend.toggle === toggle && (now - _lastMobileToggleTouchend.time) < _mobileToggleDebounceMs;
+                    if (skip) { window._mobileNavToggleHandling = false; return; }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    _lastMobileToggleTouchend.toggle = toggle;
+                    _lastMobileToggleTouchend.time = now;
+                    var toggleToRun = toggle;
+                    requestAnimationFrame(function() {
+                        window._mobileNavToggleHandling = false;
+                        if (toggleToRun && document.getElementById('mobile-sidebar') && document.getElementById('mobile-sidebar').contains(toggleToRun)) {
+                            runMobileNavGroupToggle(toggleToRun);
                         }
                     });
-                });
+                }
+                document.addEventListener('touchend', handleToggleByPointerOrTouch, { passive: false, capture: true });
+                document.addEventListener('pointerup', handleToggleByPointerOrTouch, { passive: false, capture: true });
+                document.addEventListener('click', handleMobileNavGroupToggle, true);
+                if (mobileSidebarNav) {
+                    mobileSidebarNav.addEventListener('click', function(e) {
+                        if (e.target.closest('.mobile-nav-group-toggle')) return;
+                        handleMobileNavLinkClick(e);
+                    });
+                }
                 
                 
                 // Sync language switcher
@@ -387,7 +474,6 @@
                 // DOM already loaded
                 initMobileSidebar();
             }
-            
             // Also use jQuery ready as fallback
             $(document).ready(function() {
                 // Re-initialize if elements weren't found the first time
@@ -521,14 +607,28 @@
                     <span class="mobile-nav-icon">✉️</span>
                     <span class="mobile-nav-label">Contact</span>
                 </a>
-                <a href="#tutorials" class="mobile-nav-item" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">
-                    <span class="mobile-nav-icon">📚</span>
-                    <span class="mobile-nav-label">Tutorials</span>
-                </a>
-                <a href="#" class="mobile-nav-item" data-url="html/pages/docs.html" data-translate="nav.docs">
-                    <span class="mobile-nav-icon">📝</span>
-                    <span class="mobile-nav-label">Docs</span>
-                </a>
+                <div class="mobile-nav-group">
+                    <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-docs" id="mobile-nav-toggle-docs">
+                        <span class="mobile-nav-icon">📝</span>
+                        <span class="mobile-nav-label" data-translate="nav.docs">Docs</span>
+                        <span class="mobile-nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="mobile-nav-group-panel" id="mobile-nav-panel-docs" aria-hidden="true">
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
+                    </div>
+                </div>
+                <div class="mobile-nav-group">
+                    <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-blog" id="mobile-nav-toggle-blog">
+                        <span class="mobile-nav-icon">📋</span>
+                        <span class="mobile-nav-label" data-translate="nav.blog">Blog</span>
+                        <span class="mobile-nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="mobile-nav-group-panel" id="mobile-nav-panel-blog" aria-hidden="true">
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/engineering.html" data-translate="nav.engineering">Engineering</a>
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/lifestyle.html" data-translate="nav.personal">Personal</a>
+                    </div>
+                </div>
             </nav>
             <div class="mobile-sidebar-footer">
                 <div class="mobile-sidebar-divider"></div>
@@ -584,16 +684,16 @@
                             </div>
                         </li>
                         <li class="nav-item dropdown" id="navbarDropdownBlog">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.blog">Blog</a>
                             <div class="dropdown-menu dropdown-menu-blog" aria-labelledby="navbarDropdownBlogLink">
-                                <div class="dropdown-header-articles">Articles</div>
+                                <div class="dropdown-header-articles" data-translate="nav.articles">Articles</div>
                                 <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/engineering.html">
                                     <span class="material-symbols-outlined dropdown-item-icon">engineering</span>
-                                    Engineering
+                                    <span data-translate="nav.engineering">Engineering</span>
                                 </a>
                                 <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/lifestyle.html">
                                     <span class="material-symbols-outlined dropdown-item-icon">person</span>
-                                    Personal
+                                    <span data-translate="nav.personal">Personal</span>
                                 </a>
                             </div>
                         </li>
@@ -650,16 +750,16 @@
                                 </div>
                             </li>
                             <li class="nav-item dropdown" id="navbarDropdownBlogMedium">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlogLinkMedium" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-translate="nav.blog">Blog</a>
                                 <div class="dropdown-menu dropdown-menu-blog" aria-labelledby="navbarDropdownBlogLinkMedium">
-                                    <div class="dropdown-header-articles">Articles</div>
+                                    <div class="dropdown-header-articles" data-translate="nav.articles">Articles</div>
                                     <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/engineering.html">
                                         <span class="material-symbols-outlined dropdown-item-icon">engineering</span>
-                                        Engineering
+                                        <span data-translate="nav.engineering">Engineering</span>
                                     </a>
                                     <a class="dropdown-item dropdown-item-with-icon" href="#" data-url="html/pages/lifestyle.html">
                                         <span class="material-symbols-outlined dropdown-item-icon">person</span>
-                                        Personal
+                                        <span data-translate="nav.personal">Personal</span>
                                     </a>
                                 </div>
                             </li>

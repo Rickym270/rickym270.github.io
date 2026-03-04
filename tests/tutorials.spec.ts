@@ -4,7 +4,14 @@ async function navigateToTutorials(page: Page, isMobile: boolean) {
   if (isMobile) {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-    await page.locator('.mobile-nav-item[data-url="html/pages/tutorials.html"]').click();
+    await page.evaluate(() => {
+      const panel = document.getElementById('mobile-nav-panel-docs');
+      if (panel) {
+        panel.classList.add('mobile-nav-group-panel-open');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+    await page.locator('#mobile-nav-panel-docs').getByRole('link', { name: 'Tutorials' }).click();
   } else {
     const docsButton = page.locator('#navbar-links').getByRole('button', { name: 'Docs' }).or(
       page.locator('#navbar-links').getByRole('link', { name: 'Docs' })

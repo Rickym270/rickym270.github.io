@@ -56,12 +56,36 @@ test.describe('Navbar', () => {
       // Mobile: check for hamburger menu and RM brand
       const hamburger = page.locator('#mobile-menu-toggle');
       await expect(hamburger).toBeVisible();
-      
+
       // Check for RM brand (mobile shows RM instead of full name)
       const brandName = page.locator('.navbar-brand-name');
       await expect(brandName).toBeVisible();
       const brandText = await brandName.textContent();
       expect(brandText).toContain('RM');
+
+      // Open mobile sidebar, expand Blog, then verify Engineering and Personal are visible
+      await hamburger.click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      const sidebar = page.locator('#mobile-sidebar');
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await expect(sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' })).toBeVisible();
+      await expect(sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Personal' })).toBeVisible();
+
+      // Click Engineering and verify content loads and sidebar closes
+      await sidebar.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+      await page.waitForFunction(() => {
+        const c = document.querySelector('#content');
+        return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('h1');
+      }, { timeout: 15000 });
+      const heading = page.locator('#content h1').filter({ hasText: /Engineering/i });
+      await expect(heading).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('#mobile-sidebar.active')).toHaveCount(0);
     }
   });
 

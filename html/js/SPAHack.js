@@ -52,7 +52,7 @@ $(document).ready(function(){
     window.updateActiveNavItem = function updateActiveNavItem(url) {
         // Remove active class from all nav items (desktop and mobile)
         jQuery("li.nav-item").removeClass("active");
-        jQuery(".mobile-nav-item").removeClass("active");
+        jQuery(".mobile-nav-item, .mobile-nav-subitem").removeClass("active");
         
         // Map URLs to nav items
         var navMapping = {
@@ -268,6 +268,17 @@ $(document).ready(function(){
                             // Add a small delay to ensure DOM is fully updated
                             setTimeout(() => {
                                 window.TranslationManager.applyTranslations();
+                                // When post-1 is loaded via SPA, inline script does not run; compute reading time and set number
+                                if (sectionUrl.includes('post-1.html')) {
+                                    var postBody = document.getElementById('post-body');
+                                    var readingTimeNum = document.getElementById('reading-time-num');
+                                    if (postBody && readingTimeNum) {
+                                        var text = postBody.innerText || postBody.textContent || '';
+                                        var words = text.trim().split(/\s+/).filter(Boolean).length;
+                                        var mins = Math.max(1, Math.ceil(words / 200));
+                                        readingTimeNum.textContent = mins;
+                                    }
+                                }
                             }, 50);
                         }
                         // Update active nav item
