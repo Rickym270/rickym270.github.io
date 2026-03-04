@@ -544,7 +544,7 @@ test.describe('Translation feature', () => {
           panel.setAttribute('aria-hidden', 'false');
         }
       });
-      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+      await page.locator('#mobile-nav-panel-blog a[data-url="html/pages/engineering.html"]').click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
@@ -594,7 +594,7 @@ test.describe('Translation feature', () => {
           panel.setAttribute('aria-hidden', 'false');
         }
       });
-      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+      await page.locator('#mobile-nav-panel-blog a[data-url="html/pages/engineering.html"]').click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
@@ -652,7 +652,7 @@ test.describe('Translation feature', () => {
           panel.setAttribute('aria-hidden', 'false');
         }
       });
-      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+      await page.locator('#mobile-nav-panel-blog a[data-url="html/pages/engineering.html"]').click();
     } else {
       const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
         page.locator('#navbar-links').getByRole('link', { name: 'Blog' })

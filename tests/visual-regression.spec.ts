@@ -121,11 +121,10 @@ test.describe('Visual Regression Tests', () => {
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
-    // Wait for navbar to be visible
-    await page.waitForSelector('nav, #navbar, .navbar', { timeout: 10000 });
+    // Target only the top navbar (exclude #mobile-sidebar which is also a nav)
+    await page.waitForSelector('nav.navbar.fixed-top', { timeout: 10000 });
 
-    // Screenshot of navbar
-    const navbar = page.locator('nav, #navbar, .navbar').first();
+    const navbar = page.locator('nav.navbar.fixed-top');
     await expect(navbar).toHaveScreenshot('navbar.png', {
       maxDiffPixels: 50,
     });
