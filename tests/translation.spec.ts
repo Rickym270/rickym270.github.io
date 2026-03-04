@@ -486,26 +486,11 @@ test.describe('Translation feature', () => {
       }, { timeout: headingTimeout });
     }
     
-    // Wait for translation to be applied - check that it's actually in Spanish (mobile/CI need longer for applyTranslations)
+    // Wait for translation to be applied: same element must show Spanish (mobile/CI need longer for applyTranslations)
     const translationTimeout = isMobile ? 35000 : 10000;
-    // Use locator-based wait (more reliable than waitForFunction on mobile/CI)
-    await page.locator('#content h1, #content h3').filter({ hasText: 'Habilidades' }).first().waitFor({ state: 'visible', timeout: translationTimeout });
+    const skillsTitle = page.locator('#content h1[data-translate="skills.title"]');
+    await expect(skillsTitle).toContainText('Habilidades', { timeout: translationTimeout });
     await page.waitForTimeout(500);
-    
-    // Check translations - page title doesn't update in SPA navigation, so check content instead
-    const title = page.locator('#content h1[data-translate="skills.title"], #content h1, #content h3').filter({ hasText: /Habilidades|Skills/i });
-    const titleCount = await title.count();
-    if (titleCount > 0) {
-      await expect(title.first()).toBeVisible({ timeout: 10000 });
-      await expect(title.first()).toContainText('Habilidades', { timeout: 5000 });
-    } else {
-      // Final fallback - check for any heading
-      const anyHeading = page.locator('#content h1, #content h3');
-      const anyHeadingCount = await anyHeading.count();
-      if (anyHeadingCount > 0) {
-        await expect(anyHeading.first()).toBeVisible({ timeout: 5000 });
-      }
-    }
     
     const programmingLang = page.locator('#content h3[data-translate="skills.programmingLanguages"]');
     await expect(programmingLang).toHaveText('Lenguajes de Programación');
