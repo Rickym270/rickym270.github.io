@@ -197,6 +197,11 @@
     outline: none;
 }
 
+.blog-search-wrap:focus-within:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
 .blog-search-wrap .material-symbols-outlined,
 .blog-search-wrap [class*="icon"] {
     font-size: 1.25rem;
@@ -218,6 +223,11 @@
 
 .blog-search-input:focus {
     outline: none;
+}
+
+.blog-search-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
 
 .blog-filter-btn {

@@ -224,6 +224,11 @@
     outline: none;
 }
 
+.btn-back-circle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
 .btn-back-circle:active {
     background: var(--color-bg-secondary);
     border-color: var(--color-accent);

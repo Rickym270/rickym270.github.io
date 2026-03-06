@@ -14,7 +14,7 @@ if (typeof API_BASE_URL_FALLBACK === 'undefined') {
     }
     var API_BASE_URL_FALLBACK = isLocalHost
         ? 'http://localhost:8080'
-        : 'https://ricky-api-745807383723.us-east1.run.app';
+        : (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RAILWAY_APP.up.railway.app';
 }
 
 // Cache for project classification
@@ -79,7 +79,11 @@ async function fetchProjectsFromAPI() {
     } else {
         // Fallback standalone fetch
         try {
-        const response = await fetch(`${API_BASE_URL_FALLBACK}/api/projects`);
+        // #region agent log
+        var _apiUrl = API_BASE_URL_FALLBACK + '/api/projects';
+        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'projects.js:fetch',message:'projects fetch attempt',data:{origin:typeof window!=='undefined'?window.location.origin:null,apiUrl:_apiUrl,hostname:typeof window!=='undefined'?window.location.hostname:null},hypothesisId:'H1',timestamp:Date.now()})}).catch(function(){});
+        // #endregion
+        const response = await fetch(_apiUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -436,33 +440,44 @@ async function initProjects() {
         }
     } catch (error) {
         console.error('Error loading projects:', error);
-        // Show detailed error message
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'alert alert-warning';
-        
-        // Provide more helpful error information
-        let errorText = 'Unable to load projects from API. Showing static content instead.';
-        
         // Detect CORS/network errors
-        const isCorsError = error.name === 'TypeError' || 
-                           error.message.includes('Failed to fetch') || 
+        const isCorsError = error.name === 'TypeError' ||
+                           error.message.includes('Failed to fetch') ||
                            error.message.includes('Load failed') ||
                            error.message.includes('Network error');
-        
+
         if (isCorsError) {
             const currentOrigin = window.location.origin;
-            errorText += `<br><small><strong>CORS/Network Error:</strong> ${error.message || 'Failed to fetch'}</small>`;
-            errorText += `<br><small>Current origin: ${currentOrigin}</small>`;
-            errorText += `<br><small>API URL: ${typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : API_BASE_URL_FALLBACK}/api/projects</small>`;
-            errorText += `<br><small><em>Note: The API needs to be redeployed with updated CORS configuration to allow requests from local IP addresses.</em></small>`;
-        } else if (error.message) {
-            errorText += `<br><small>Error: ${error.message}</small>`;
+            const apiBase = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : API_BASE_URL_FALLBACK;
+            const apiUrl = apiBase + '/api/projects';
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'projects.js:corsError',message:'CORS/network error detected',data:{origin:currentOrigin,apiBase:apiBase,apiUrl:apiUrl,errorName:error.name,errorMessage:error.message||''},hypothesisId:'H2',timestamp:Date.now()})}).catch(function(){});
+            // #endregion
+            console.warn(
+                'Projects API request failed (CORS/network or server error):',
+                error.message || 'Failed to fetch',
+                '\nOrigin:', currentOrigin,
+                '\nAPI:', apiUrl,
+                '\nIf the browser also reported 503 (Service Unavailable), the API is down or overloaded — check Cloud Run service status and logs.',
+                '\nIf only CORS is reported, redeploy the API so CorsConfig allows this origin.'
+            );
+        } else {
+            // Non-CORS: log and show inline message below
         }
-        
-        errorMsg.innerHTML = `<p>${errorText}</p>`;
-        const container = document.querySelector('.container');
-        if (container) {
-            container.insertBefore(errorMsg, container.querySelector('#ProjInProgress'));
+
+        // Replace "Loading..." with a single error message so the page doesn't stay stuck (no alert box)
+        const loadErrorText = (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.t)
+            ? window.TranslationManager.t('projects.loadError')
+            : 'Unable to load projects. Please try again later.';
+        const inProgressRow = document.querySelector('#ProjInProgress .row');
+        const completeRow = document.querySelector('#ProjComplete .row');
+        const ideasRow = document.querySelector('#ProjComingSoon .row');
+        const errorContent = `<div class="col-12 text-center"><p class="text-muted" data-translate="projects.loadError">${loadErrorText}</p></div>`;
+        if (inProgressRow) inProgressRow.innerHTML = errorContent;
+        if (completeRow) completeRow.innerHTML = '';
+        if (ideasRow) ideasRow.innerHTML = '';
+        if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.applyTranslations) {
+            window.TranslationManager.applyTranslations();
         }
     }
 }

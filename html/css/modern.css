@@ -55,6 +55,28 @@
     --nav-height: 72px;
 }
 
+/* Skip link - visible on focus for keyboard/screen reader users */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: var(--spacing-md);
+    z-index: 10000;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: top var(--transition-fast);
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: var(--spacing-md);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
 /* Dark Mode - Consolidated to avoid duplication */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -175,6 +197,16 @@ a:hover {
 #homeBanner a:hover {
     color: var(--color-accent) !important;
     opacity: 0.8;
+}
+
+/* Hero primary button: always white text (overrides #homeBanner a in light mode); hover = slightly lighter for feedback */
+#homeBanner .btn-hero-primary,
+#homeBanner .btn-hero-primary:visited {
+    color: #ffffff !important;
+}
+#homeBanner .btn-hero-primary:hover {
+    color: #f0f4ff !important;
+    opacity: 1;
 }
 
 /* Ensure all links use proper colors by default */
@@ -4115,6 +4147,11 @@ pre code {
     outline: none;
     border-color: var(--color-accent);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.contact-form .form-control:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
 
 .contact-form textarea.form-control {

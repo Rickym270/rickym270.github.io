@@ -162,7 +162,7 @@ This site hosts notes, tutorials, and projects. It started as a Python teaching 
 - **[API Testing Guide](docs/TESTING.md)** - Complete API testing documentation
 - **[UI Testing Guide](docs/UI_TESTING.md)** - Playwright E2E testing guide
 - **[Repository Analysis](docs/REPO_ANALYSIS.md)** - Repository structure and test coverage
-- **[API Deployment](api/DEPLOY.md)** - Deploying to Google Cloud Run
+- **[API Deployment](api/DEPLOY.md)** - Deploy to Railway (free) or Google Cloud Run; see [DEPLOY_RAILWAY.md](api/DEPLOY_RAILWAY.md) for Railway steps
 - **[GitHub Secrets](docs/GITHUB_SECRETS.md)** - Setting up CI/CD secrets
 
 ## 🧪 Testing

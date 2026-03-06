@@ -1,3 +1,11 @@
+# API Deployment
+
+**Deploy to Railway (free tier):** See **[DEPLOY_RAILWAY.md](DEPLOY_RAILWAY.md)** for step-by-step Railway deployment.
+
+**Other options:** [DEPLOY_RENDER.md](DEPLOY_RENDER.md) (Render, Docker) or Cloud Run below.
+
+---
+
 # Cloud Run Deployment Guide
 
 This guide walks you through deploying the Spring Boot API to Google Cloud Run.
