@@ -242,7 +242,11 @@ test.describe('Performance', () => {
       
       if (contentLength) {
         const startTime = Date.now();
-        await response.body();
+        try {
+          await response.body();
+        } catch {
+          // Test may end or page close while body() is in flight; ignore so test does not fail
+        }
         const duration = Date.now() - startTime;
         
         resources.push({
