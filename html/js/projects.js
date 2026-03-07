@@ -434,13 +434,18 @@ async function initProjects() {
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
             if (typeof window !== 'undefined' && window.projectsFallbackUsed) {
-                var containerEl = document.querySelector('.container');
+                var containerEl = document.querySelector('#content .container');
+                if (!containerEl) containerEl = document.querySelector('.container');
                 var fallbackNote = document.createElement('p');
                 fallbackNote.className = 'text-muted small mb-2';
                 fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
                 fallbackNote.textContent = 'Showing cached projects; some data may be outdated.';
-                if (containerEl && containerEl.firstChild) {
-                    containerEl.insertBefore(fallbackNote, containerEl.firstChild);
+                if (containerEl) {
+                    if (containerEl.firstChild) {
+                        containerEl.insertBefore(fallbackNote, containerEl.firstChild);
+                    } else {
+                        containerEl.appendChild(fallbackNote);
+                    }
                 }
             }
             // Re-apply translations after projects are rendered
@@ -451,7 +456,8 @@ async function initProjects() {
             }
         } else {
             // Show message if no projects
-            const containerEl = document.querySelector('.container');
+            let containerEl = document.querySelector('#content .container');
+            if (!containerEl) containerEl = document.querySelector('.container');
             if (containerEl) {
                 const noProjects = document.createElement('div');
                 noProjects.className = 'alert alert-info';
