@@ -254,8 +254,9 @@ test.describe('Performance', () => {
     });
 
     const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
-    await page.goto('/', { waitUntil: 'networkidle', timeout: gotoTimeout });
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
     
     // Wait for content
     await page.waitForFunction(() => {
