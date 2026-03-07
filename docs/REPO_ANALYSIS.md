@@ -4,7 +4,7 @@
 
 This repository is a well-structured portfolio website with:
 - **Frontend**: HTML/CSS/JavaScript SPA with Bootstrap
-- **Backend**: Spring Boot API deployed on Google Cloud Run
+- **Backend**: Spring Boot API deployed on Render
 - **Testing**: Comprehensive Playwright test suite (27+ test files, 200+ tests)
 - **CI/CD**: 5 GitHub Actions workflows
 - **Features**: Multi-language (EN/ES), dark mode, responsive design, SPA navigation
@@ -50,11 +50,10 @@ rickym270.github.io/
 
 ### Current Workflows
 1. **playwright.yml**: Main test workflow - runs on PRs, pushes, and schedule (✅ Well optimized)
-2. **deploy.yml**: API & site deployment (✅ Good)
-3. **locator-maintenance.yml**: Test maintenance - runs on schedule (daily 10:00 UTC) and manual dispatch only (✅ Good)
+2. **locator-maintenance.yml**: Test maintenance - runs on schedule (daily 10:00 UTC) and manual dispatch only (✅ Good)
    - Removed pull_request trigger to avoid duplicate test runs with playwright.yml
-4. **update-content.yml**: Content updates (✅ Good)
-5. **locator-normalize.yml**: Locator normalization (⚠️ Check if needed)
+3. **update-content.yml**: Content updates (✅ Good)
+4. **locator-normalize.yml**: Locator normalization (⚠️ Check if needed)
 
 ### Workflow Efficiency Issues
 - ✅ Good: Parallel test execution (2 workers in CI, reduced from 4 to improve stability)

@@ -1,5 +1,5 @@
 /**
- * API Client for Spring Boot API (Railway).
+ * API Client for Spring Boot API (Render).
  * Production URL is set in api-config.js; fallback used if config not loaded.
  */
 
@@ -15,14 +15,14 @@
             } catch (e) {
                 isLocalHost = false;
             }
-            var productionUrl = (typeof g.API_BASE_URL !== 'undefined' ? g.API_BASE_URL : null) || (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RAILWAY_APP.up.railway.app';
+            var productionUrl = (typeof g.API_BASE_URL !== 'undefined' ? g.API_BASE_URL : null) || (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RENDER_APP.onrender.com';
             g.API_BASE_URL = isLocalHost ? 'http://localhost:8080' : productionUrl;
         }
     } catch (e) {
         // Fallback for unusual environments
         if (typeof API_BASE_URL === 'undefined') {
             // eslint-disable-next-line no-implicit-globals
-            API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RAILWAY_APP.up.railway.app';
+            API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RENDER_APP.onrender.com';
         }
     }
 })();
@@ -64,21 +64,63 @@ async function fetchFromAPI(endpoint) {
 // Global cache for projects data
 window.projectsCache = null;
 window.projectsCachePromise = null;
+/** Set to true when projects were loaded from static fallback or localStorage (for optional UI note) */
+window.projectsFallbackUsed = false;
+
+var PROJECTS_STATIC_FALLBACK_URL = '/data/web_data/projects.json';
+var PROJECTS_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
+
+/**
+ * Fetch projects: try API, then localStorage (if not expired), then static JSON fallback.
+ * @returns {Promise<Array>} - Array of project objects
+ */
+async function fetchProjectsWithFallback() {
+    try {
+        var projects = await fetchFromAPI('/api/projects');
+        window.projectsFallbackUsed = false;
+        try {
+            localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: projects, at: Date.now() }));
+        } catch (e) { /* ignore */ }
+        return projects;
+    } catch (apiErr) {
+        try {
+            var raw = localStorage.getItem(PROJECTS_CACHE_KEY);
+            if (raw) {
+                var parsed = JSON.parse(raw);
+                if (parsed && Array.isArray(parsed.data) && (Date.now() - (parsed.at || 0)) < PROJECTS_CACHE_TTL_MS) {
+                    window.projectsFallbackUsed = true;
+                    return parsed.data;
+                }
+            }
+        } catch (e) { /* ignore */ }
+        try {
+            var r = await fetch(PROJECTS_STATIC_FALLBACK_URL);
+            if (r.ok) {
+                var data = await r.json();
+                if (data && Array.isArray(data)) {
+                    window.projectsFallbackUsed = true;
+                    return data;
+                }
+            }
+        } catch (e) { /* ignore */ }
+        throw apiErr;
+    }
+}
 
 /**
  * Prefetch projects data on page load
  * This ensures projects are ready when user navigates to projects page
  */
 function prefetchProjects() {
-    // Only prefetch if not already cached or in progress
     if (!window.projectsCache && !window.projectsCachePromise) {
-        window.projectsCachePromise = fetchFromAPI('/api/projects')
-            .then(projects => {
+        window.projectsCachePromise = fetchProjectsWithFallback()
+            .then(function(projects) {
                 window.projectsCache = projects;
                 window.projectsCachePromise = null;
                 return projects;
             })
-            .catch(error => {
+            .catch(function(error) {
                 console.log('Projects prefetch failed (will fetch on demand):', error);
                 window.projectsCachePromise = null;
                 return null;
@@ -89,24 +131,24 @@ function prefetchProjects() {
 
 /**
  * Fetch projects from API
- * Uses cached data if available, otherwise fetches fresh data
+ * Uses in-memory cache, then API, then localStorage (TTL), then static fallback.
  * @returns {Promise<Array>} - Array of project objects
  */
 async function fetchProjects() {
-    // Return cached data if available
     if (window.projectsCache) {
         return Promise.resolve(window.projectsCache);
     }
-    
-    // If prefetch is in progress, wait for it
     if (window.projectsCachePromise) {
         return window.projectsCachePromise;
     }
-    
-    // Otherwise fetch fresh data
-    const projects = await fetchFromAPI('/api/projects');
-    window.projectsCache = projects;
-    return projects;
+    window.projectsCachePromise = fetchProjectsWithFallback();
+    try {
+        var result = await window.projectsCachePromise;
+        window.projectsCache = result;
+        return result;
+    } finally {
+        window.projectsCachePromise = null;
+    }
 }
 
 /**

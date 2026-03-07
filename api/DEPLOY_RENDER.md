@@ -1,6 +1,6 @@
 # Deploy API to Render
 
-This guide walks through deploying the Spring Boot API to [Render](https://render.com) (free tier) using Docker. For Google Cloud Run or Railway, see [DEPLOY.md](DEPLOY.md) or [DEPLOY_RAILWAY.md](DEPLOY_RAILWAY.md).
+This guide walks through deploying the Spring Boot API to [Render](https://render.com) (free tier) using Docker.
 
 ## Prerequisites
 
@@ -32,8 +32,6 @@ In the Render service, go to **Environment** and add the same variables you woul
 | **SMTP_HOST**, **SMTP_PORT**, **SMTP_USERNAME**, **SMTP_PASSWORD** | If using contact form email | Same as in DEPLOY.md / ENV_FILE.md                                          |
 | **CONTACT_EMAIL**, **SMTP_FROM_EMAIL**                             | If using contact form       | Where to receive/send mail                                                  |
 
-
-No GCP- or Railway-specific variables are needed.
 
 ## Step 4: Deploy and get the public URL
 

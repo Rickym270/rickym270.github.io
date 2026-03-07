@@ -14,7 +14,7 @@ if (typeof API_BASE_URL_FALLBACK === 'undefined') {
     }
     var API_BASE_URL_FALLBACK = isLocalHost
         ? 'http://localhost:8080'
-        : (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RAILWAY_APP.up.railway.app';
+        : (typeof window !== 'undefined' && window.API_BASE_URL) || 'https://YOUR_RENDER_APP.onrender.com';
 }
 
 // Cache for project classification
@@ -71,33 +71,44 @@ function matchesClassification(projectName, classificationArray) {
     );
 }
 
+// Static fallback URL when API is unavailable (same as api.js)
+var PROJECTS_STATIC_FALLBACK_URL = '/data/web_data/projects.json';
+
 // Fetch projects function - works standalone or with api.js
 async function fetchProjectsFromAPI() {
     if (typeof fetchProjects !== 'undefined') {
-        // Use api.js function if available
+        // Use api.js function if available (includes API, localStorage, static fallback)
         return await fetchProjects();
-    } else {
-        // Fallback standalone fetch
-        try {
+    }
+    // Standalone fetch: try API, then static fallback
+    var _apiUrl = API_BASE_URL_FALLBACK + '/api/projects';
+    try {
         // #region agent log
-        var _apiUrl = API_BASE_URL_FALLBACK + '/api/projects';
-        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'projects.js:fetch',message:'projects fetch attempt',data:{origin:typeof window!=='undefined'?window.location.origin:null,apiUrl:_apiUrl,hostname:typeof window!=='undefined'?window.location.hostname:null},hypothesisId:'H1',timestamp:Date.now()})}).catch(function(){});
+        if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'projects.js:fetch',message:'projects fetch attempt',data:{origin:typeof window!=='undefined'?window.location.origin:null,apiUrl:_apiUrl,hostname:typeof window!=='undefined'?window.location.hostname:null},hypothesisId:'H1',timestamp:Date.now()})}).catch(function(){});
         // #endregion
-        const response = await fetch(_apiUrl);
+        var response = await fetch(_apiUrl);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('HTTP error! status: ' + response.status);
         }
         return await response.json();
-        } catch (error) {
-            // Enhance error message for CORS/network issues
-            if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {
-                const enhancedError = new Error(`Network error: ${error.message}. This may be a CORS issue if accessing from a local IP address.`);
-                enhancedError.name = error.name;
-                enhancedError.originalError = error;
-                throw enhancedError;
+    } catch (error) {
+        try {
+            var fallbackResponse = await fetch(PROJECTS_STATIC_FALLBACK_URL);
+            if (fallbackResponse.ok) {
+                var data = await fallbackResponse.json();
+                if (data && Array.isArray(data)) {
+                    if (typeof window !== 'undefined') window.projectsFallbackUsed = true;
+                    return data;
+                }
             }
-            throw error;
+        } catch (e) { /* ignore */ }
+        if (error.name === 'TypeError' || error.message.indexOf('Failed to fetch') !== -1 || error.message.indexOf('Load failed') !== -1) {
+            var enhancedError = new Error('Network error: ' + error.message + '. This may be a CORS issue if accessing from a local IP address.');
+            enhancedError.name = error.name;
+            enhancedError.originalError = error;
+            throw enhancedError;
         }
+        throw error;
     }
 }
 
@@ -422,9 +433,19 @@ async function initProjects() {
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
+            if (typeof window !== 'undefined' && window.projectsFallbackUsed) {
+                var containerEl = document.querySelector('.container');
+                var fallbackNote = document.createElement('p');
+                fallbackNote.className = 'text-muted small mb-2';
+                fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
+                fallbackNote.textContent = 'Showing cached projects; some data may be outdated.';
+                if (containerEl && containerEl.firstChild) {
+                    containerEl.insertBefore(fallbackNote, containerEl.firstChild);
+                }
+            }
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
-                setTimeout(() => {
+                setTimeout(function() {
                     window.TranslationManager.applyTranslations();
                 }, 100);
             }
@@ -458,7 +479,7 @@ async function initProjects() {
                 error.message || 'Failed to fetch',
                 '\nOrigin:', currentOrigin,
                 '\nAPI:', apiUrl,
-                '\nIf the browser also reported 503 (Service Unavailable), the API is down or overloaded — check Cloud Run service status and logs.',
+                '\nIf the browser also reported 503 (Service Unavailable), the API is down or overloaded — check Render service status and logs.',
                 '\nIf only CORS is reported, redeploy the API so CorsConfig allows this origin.'
             );
         } else {

@@ -3,6 +3,9 @@
 ## Overview
 Returns projects merged from GitHub public repos and curated `data/projects.json`. Falls back to curated only if GitHub fails/rate-limits.
 
+## Frontend fallback (Projects page)
+The Projects page loads data in this order: **API** → **localStorage** (1h TTL) → **static file** `/data/web_data/projects.json`. When the API is unavailable, the frontend tries cached data in localStorage, then fetches the static file (seeded by `.github/workflows/update-content.yml`). If projects are shown from cache or static fallback, a note is displayed: *"Showing cached projects; some data may be outdated."* (translation key `projects.fallbackNote`). E2E tests should allow either an error message or project cards (with optional fallback note) when the API fails.
+
 ## Positive tests
 ```bash
 curl -s http://localhost:8080/api/projects

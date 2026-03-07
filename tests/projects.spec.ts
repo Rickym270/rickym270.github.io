@@ -186,6 +186,56 @@ test.describe('Projects Page', () => {
     expect(errorVisible).toBeFalsy();
   });
 
+  test('shows project cards and fallback note when API fails but static fallback succeeds', async ({ page }) => {
+    const mockFallbackProjects = [
+      { name: 'Fallback Project', summary: 'From static file.', status: 'complete', tech: ['JS'], slug: 'fallback-project', repo: 'https://github.com/example/fallback' },
+    ];
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Server Error' }) });
+    });
+    await page.route('**/data/web_data/projects.json', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockFallbackProjects),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForSelector('#content', { state: 'attached', timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner') || !!c?.querySelector('.hero-content');
+    }, { timeout: 20000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      const hasCards = !!c?.querySelector('.project-card');
+      const hasNote = !!c?.querySelector('[data-translate="projects.fallbackNote"]');
+      return c?.getAttribute('data-content-loaded') === 'true' && (hasCards || hasNote);
+    }, { timeout: 20000 });
+    await page.waitForTimeout(500);
+
+    const cards = page.locator('#content .project-card');
+    await expect(cards).toHaveCount(1);
+    await expect(page.locator('#content .card-title', { hasText: 'Fallback Project' })).toBeVisible();
+
+    const fallbackNote = page.locator('#content p[data-translate="projects.fallbackNote"], #content p').filter({ hasText: /cached|outdated/i });
+    await expect(fallbackNote.first()).toBeVisible();
+  });
+
   test('uses local API base when running on localhost', async ({ page }) => {
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';

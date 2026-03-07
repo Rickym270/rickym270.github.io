@@ -58,14 +58,7 @@ Set the `TURNSTILE_SECRET_KEY` environment variable:
 export TURNSTILE_SECRET_KEY=your-secret-key-here
 ```
 
-**For Cloud Run deployment:**
-```bash
-# Add to your deployment command
-gcloud run deploy ricky-api \
-  --set-env-vars "TURNSTILE_SECRET_KEY=your-secret-key-here,GH_TOKEN=...,ADMIN_API_KEY=..."
-```
-
-Or update your `Makefile`/`deploy.sh` to include it.
+**For Render deployment:** Add `TURNSTILE_SECRET_KEY` in the Render dashboard under your service → **Environment**. No other change needed.
 
 ### 7. Test
 
@@ -103,9 +96,9 @@ The contact form now has **three layers** of spam protection:
 - Ensure your domain is added to the Turnstile site configuration
 
 ### Works locally but fails in production
-- Ensure `TURNSTILE_SECRET_KEY` is set in Cloud Run environment variables
+- Ensure `TURNSTILE_SECRET_KEY` is set in the Render dashboard (Environment)
 - Verify CORS settings allow requests from your domain
-- Check Cloud Run logs for Turnstile verification errors
+- Check API logs in the Render dashboard for Turnstile verification errors
 
 ## Cost
 

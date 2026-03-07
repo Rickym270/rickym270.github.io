@@ -24,9 +24,7 @@ public class CorsConfig {
         // This allows us to use patterns while still enabling credentials
         // Allow production domain
         config.addAllowedOriginPattern("https://rickym270.github.io");
-        // Allow Railway app and preview URLs
-        config.addAllowedOriginPattern("https://*.up.railway.app");
-        // Allow Render app URLs
+        // Allow Render service URLs
         config.addAllowedOriginPattern("https://*.onrender.com");
         // Allow localhost variants (exact matches via patterns)
         config.addAllowedOriginPattern("http://localhost:*");

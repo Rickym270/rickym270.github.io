@@ -20,7 +20,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **[Turnstile Setup](TURNSTILE_SETUP.md)** - Cloudflare Turnstile CAPTCHA configuration
 
 ### Deployment
-- **[API Deployment](../api/DEPLOY.md)** - Deploying the Spring Boot API to Railway (free) or Google Cloud Run; see [DEPLOY_RAILWAY.md](../api/DEPLOY_RAILWAY.md) for Railway steps
+- **[API Deployment](../api/DEPLOY.md)** - Deploy the Spring Boot API to Render (free); see [DEPLOY_RENDER.md](../api/DEPLOY_RENDER.md)
 
 ## Testing Documentation
 
