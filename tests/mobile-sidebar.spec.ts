@@ -38,6 +38,70 @@ test.describe('Mobile sidebar', () => {
     await expect(footer.locator('#mobile-theme-toggle')).toBeVisible();
   });
 
+  test('mobile sidebar shows all four accessibility controls', async ({ page }) => {
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+
+    const settings = page.locator('.mobile-sidebar-settings');
+    await expect(settings.locator('#mobile-language-switcher')).toBeVisible();
+    await expect(settings.locator('#mobile-theme-toggle')).toBeVisible();
+    await expect(settings.locator('#mobile-reduced-motion-toggle')).toBeVisible();
+    await expect(settings.locator('#mobile-reset-preferences')).toBeVisible();
+  });
+
+  test('reduce motion toggle updates state', async ({ page }) => {
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+
+    const toggle = page.locator('#mobile-reduced-motion-toggle');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'false');
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'true');
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'false');
+  });
+
+  test('reset preferences restores defaults', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio-theme', 'dark');
+      localStorage.setItem('siteLanguage', 'es');
+      localStorage.setItem('portfolio-reduced-motion', 'true');
+    });
+    await page.setViewportSize(mobileViewport);
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+    await page.locator('#mobile-reset-preferences').click();
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'false');
+    const lang = await page.evaluate(() => localStorage.getItem('siteLanguage'));
+    expect(lang).toBe('en');
+  });
+
+  test('reduced motion preference persists after sidebar close and reopen', async ({ page }) => {
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+    await page.locator('#mobile-reduced-motion-toggle').click();
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'true');
+
+    await page.locator('#mobile-sidebar-close').click();
+    await expect(page.locator('#mobile-sidebar.active')).toHaveCount(0);
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'true');
+    await expect(page.locator('#mobile-reduced-motion-toggle')).toHaveAttribute('aria-pressed', 'true');
+  });
+
   test('menu items have flat UI (no heavy box-shadow)', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });

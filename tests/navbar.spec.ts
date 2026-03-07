@@ -431,18 +431,18 @@ test.describe('Navbar', () => {
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings).toBeVisible();
 
-    // Check that setting groups exist
+    // Check that setting groups exist (Language, Theme, Reduce motion, Reset preferences)
     const settingGroups = page.locator('.mobile-setting-group');
-    await expect(settingGroups).toHaveCount(2);
+    await expect(settingGroups).toHaveCount(4);
     
-    // Check language setting group
-    const languageGroup = settingGroups.first();
+    // Check language setting group (by stable selector)
+    const languageGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-language-switcher') });
     await expect(languageGroup.locator('.mobile-setting-label')).toHaveText('Language');
     await expect(languageGroup.locator('#mobile-language-switcher')).toBeVisible();
     await expect(languageGroup.locator('.mobile-lang-btn')).toHaveCount(2);
     
-    // Check theme setting group
-    const themeGroup = settingGroups.last();
+    // Check theme setting group (by stable selector)
+    const themeGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-theme-toggle') });
     await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Theme');
     await expect(themeGroup.locator('#mobile-theme-toggle')).toBeVisible();
     

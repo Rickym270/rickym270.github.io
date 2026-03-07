@@ -574,6 +574,14 @@
                         });
                     }
                 });
+                // Footer language switcher
+                $(document).on('click', '#language-switcher-footer button[data-lang]', function(e) {
+                    e.preventDefault();
+                    const lang = $(this).attr('data-lang');
+                    if (typeof window.TranslationManager !== 'undefined') {
+                        window.TranslationManager.switchLanguage(lang).then(() => {});
+                    }
+                });
             });
         </script>
 
@@ -647,6 +655,13 @@
                         <button class="mobile-theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
                             <span class="mobile-theme-icon" id="mobile-theme-icon">🌙</span>
                         </button>
+                    </div>
+                    <div class="mobile-setting-group">
+                        <span class="mobile-setting-label" data-translate="settings.reduceMotion">Reduce motion</span>
+                        <button type="button" class="mobile-reduced-motion-toggle" id="mobile-reduced-motion-toggle" aria-pressed="false" aria-label="Toggle reduced motion">Reduce motion</button>
+                    </div>
+                    <div class="mobile-setting-group">
+                        <button type="button" class="mobile-reset-preferences" id="mobile-reset-preferences" data-translate="settings.resetPreferences" aria-label="Reset preferences to defaults">Reset preferences</button>
                     </div>
                 </div>
             </div>
@@ -786,12 +801,46 @@
         </main>
         <div class="push8"></div>
 
-<!--
-        <footer id="sticky-footer" class="py-4 ">
-            <div class="container text-xenter">
-                <small>Copyright Copy Copy</small>
+        <footer id="site-footer" class="site-footer" role="contentinfo">
+            <div class="container site-footer__container">
+                <div class="site-footer__row">
+                    <div class="site-footer__col site-footer__identity">
+                        <h2 class="site-footer__heading">Ricky Martinez</h2>
+                        <p class="site-footer__role">Senior Automation Engineer</p>
+                        <p class="site-footer__tagline">Built for automation, reliability, and accessibility.</p>
+                    </div>
+                    <div class="site-footer__col site-footer__controls">
+                        <h2 class="site-footer__heading site-footer__heading--visually-hidden">Preferences</h2>
+                        <div class="site-footer__control-group">
+                            <button type="button" id="theme-toggle-footer" class="theme-toggle footer-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+                                <span class="material-symbols-outlined theme-icon-sun" id="theme-icon-sun-footer">light_mode</span>
+                                <span class="material-symbols-outlined theme-icon-sunny hidden" id="theme-icon-sunny-footer">wb_sunny</span>
+                            </button>
+                            <div id="language-switcher-footer" class="footer-lang-pill" role="group" aria-label="Language selector">
+                                <button type="button" class="nav-lang-btn" data-lang="en" aria-pressed="true" title="English">EN</button>
+                                <span class="nav-lang-sep">|</span>
+                                <button type="button" class="nav-lang-btn" data-lang="es" aria-pressed="false" title="Español">ES</button>
+                            </div>
+                            <button type="button" id="reduced-motion-toggle" class="footer-btn" aria-pressed="false" aria-label="Toggle reduced motion">Reduce motion</button>
+                            <button type="button" id="reset-preferences" class="footer-btn" aria-label="Reset preferences to defaults">Reset preferences</button>
+                        </div>
+                    </div>
+                    <div class="site-footer__col site-footer__links">
+                        <h2 class="site-footer__heading">Quick links</h2>
+                        <ul class="site-footer__link-list">
+                            <li><a href="https://github.com/rickym270" target="_blank" rel="noopener noreferrer" class="site-footer__link">GitHub</a></li>
+                            <li><a href="https://www.linkedin.com/in/rickym270" target="_blank" rel="noopener noreferrer" class="site-footer__link">LinkedIn</a></li>
+                            <li><a href="#" class="site-footer__link">Resume</a></li>
+                            <li><a href="#" class="site-footer__link inline-load" data-url="html/pages/contact.html">Contact</a></li>
+                            <li><a href="#" class="site-footer__link inline-load" data-url="html/pages/engineering.html">Engineering</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="site-footer__bottom">
+                    <small class="site-footer__copyright">© 2026 Ricky Martinez</small>
+                    <a href="#" id="footer-back-to-top" class="site-footer__back-to-top">Back to top</a>
+                </div>
             </div>
         </footer>
--->
     </body>
 </html>
