@@ -231,6 +231,11 @@
             btn.setAttribute('aria-pressed', value ? 'true' : 'false');
             btn.textContent = value ? 'Motion on' : 'Reduce motion';
         }
+        const mobileBtn = document.getElementById('mobile-reduced-motion-toggle');
+        if (mobileBtn) {
+            mobileBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
+            mobileBtn.textContent = value ? 'Motion on' : 'Reduce motion';
+        }
     }
 
     function initReducedMotion() {
@@ -241,21 +246,33 @@
             btn.setAttribute('aria-pressed', value ? 'true' : 'false');
             btn.textContent = value ? 'Motion on' : 'Reduce motion';
         }
+        const mobileBtn = document.getElementById('mobile-reduced-motion-toggle');
+        if (mobileBtn) {
+            mobileBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
+            mobileBtn.textContent = value ? 'Motion on' : 'Reduce motion';
+        }
+    }
+
+    function runResetPreferences() {
+        localStorage.removeItem(THEME_KEY);
+        localStorage.removeItem('siteLanguage');
+        localStorage.removeItem(REDUCED_MOTION_KEY);
+        setTheme('light');
+        setReducedMotion(false);
+        if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.switchLanguage) {
+            window.TranslationManager.switchLanguage('en');
+        }
     }
 
     function initResetPreferences() {
         const btn = document.getElementById('reset-preferences');
-        if (!btn) return;
-        btn.addEventListener('click', function() {
-            localStorage.removeItem(THEME_KEY);
-            localStorage.removeItem('siteLanguage');
-            localStorage.removeItem(REDUCED_MOTION_KEY);
-            setTheme('light');
-            setReducedMotion(false);
-            if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.switchLanguage) {
-                window.TranslationManager.switchLanguage('en');
-            }
-        });
+        if (btn) {
+            btn.addEventListener('click', runResetPreferences);
+        }
+        const mobileBtn = document.getElementById('mobile-reset-preferences');
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', runResetPreferences);
+        }
     }
 
     function initBackToTop() {
@@ -268,7 +285,8 @@
     }
 
     document.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'reduced-motion-toggle') {
+        const target = e.target.closest ? e.target.closest('#reduced-motion-toggle, #mobile-reduced-motion-toggle') : (e.target.id === 'reduced-motion-toggle' || e.target.id === 'mobile-reduced-motion-toggle' ? e.target : null);
+        if (target) {
             e.preventDefault();
             const current = html.getAttribute('data-reduced-motion') === 'true';
             setReducedMotion(!current);

@@ -14,7 +14,10 @@
   },
   "settings": {
     "language": "Idioma",
-    "theme": "Tema"
+    "theme": "Tema",
+    "reduceMotion": "Reducir movimiento",
+    "motionOn": "Movimiento activado",
+    "resetPreferences": "Restablecer preferencias"
   },
   "home": {
     "title": "Ricky Martinez - Inicio",
