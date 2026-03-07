@@ -259,8 +259,7 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('contact form matches visual baseline', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = 'domcontentloaded'; // networkidle often never fires in CI (Firefox)
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for initial content
