@@ -24,12 +24,14 @@ The Dockerfile builds the JAR with Maven and runs it with a JRE. The app reads `
 
 In the Render service, go to **Environment** and add the same variables you would use for production (see [DEPLOY.md](DEPLOY.md) for details):
 
-| Variable | Required | Notes |
-|----------|----------|--------|
-| **GH_TOKEN** | Recommended | GitHub Personal Access Token (e.g. `public_repo`) to avoid rate limits |
-| **ADMIN_API_KEY** | Optional | For admin endpoints (e.g. GET `/api/contact`) — e.g. `openssl rand -hex 32` |
-| **SMTP_HOST**, **SMTP_PORT**, **SMTP_USERNAME**, **SMTP_PASSWORD** | If using contact form email | Same as in DEPLOY.md / ENV_FILE.md |
-| **CONTACT_EMAIL**, **SMTP_FROM_EMAIL** | If using contact form | Where to receive/send mail |
+
+| Variable                                                           | Required                    | Notes                                                                       |
+| ------------------------------------------------------------------ | --------------------------- | --------------------------------------------------------------------------- |
+| **GH_TOKEN**                                                       | Recommended                 | GitHub Personal Access Token (e.g. `public_repo`) to avoid rate limits      |
+| **ADMIN_API_KEY**                                                  | Optional                    | For admin endpoints (e.g. GET `/api/contact`) — e.g. `openssl rand -hex 32` |
+| **SMTP_HOST**, **SMTP_PORT**, **SMTP_USERNAME**, **SMTP_PASSWORD** | If using contact form email | Same as in DEPLOY.md / ENV_FILE.md                                          |
+| **CONTACT_EMAIL**, **SMTP_FROM_EMAIL**                             | If using contact form       | Where to receive/send mail                                                  |
+
 
 No GCP- or Railway-specific variables are needed.
 
@@ -38,7 +40,7 @@ No GCP- or Railway-specific variables are needed.
 1. Click **Create Web Service** (or **Save** if editing). Render will build the Docker image and deploy.
 2. After the first deploy, open the service and copy the public URL (e.g. `https://your-app-name.onrender.com`).
 3. In this repo, set that URL in **one** place:
-   - **`html/js/api-config.js`**: set `window.API_BASE_URL = 'https://your-actual-app.onrender.com';`
+  - `**html/js/api-config.js`**: set `window.API_BASE_URL = 'https://your-actual-app.onrender.com';`
 4. Push the frontend so GitHub Pages (or your host) serves the updated `api-config.js`.
 
 ## Free tier notes
@@ -52,3 +54,4 @@ No GCP- or Railway-specific variables are needed.
 - **Build fails**: Run locally from `api/`: `docker build -t api-local .` and fix any Docker or Maven errors. Ensure `./mvnw -DskipTests package` succeeds in `api/`.
 - **CORS errors**: The API allows `https://*.onrender.com`, `https://rickym270.github.io`, and local origins. Ensure the frontend is using the Render URL from `api-config.js`.
 - **Port**: The app uses `PORT` from Render; do not set `server.port` in env unless you need to override.
+
