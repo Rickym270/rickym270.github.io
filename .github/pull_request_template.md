@@ -38,5 +38,5 @@ Examples:
 - [ ] Unit/e2e tests updated (if applicable)
 - [ ] Docs updated (README/docs/DEPLOY.md)
 - [ ] CI checks pass (Playwright, build)
-- [ ] Cloud Run redeployed (if API changed)
+- [ ] API redeployed on Render (if API changed)
 

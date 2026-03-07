@@ -45,6 +45,8 @@
     "ideas": "Ideas",
     "pleaseWait": "Please Wait...",
     "loading": "Loading...",
+    "loadError": "Unable to load projects. Please try again later.",
+    "fallbackNote": "Showing cached projects; some data may be outdated.",
     "viewGitHub": "View on GitHub →",
     "privateRepo": "Private Repository",
     "privateTooltip": "This repository is private and not publicly accessible",

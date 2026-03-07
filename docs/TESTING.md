@@ -101,6 +101,8 @@ curl -s http://localhost:8080/api/home
 - Sorts featured first, then by name.
 - On any GitHub error/rate limit, falls back to curated JSON only.
 
+**Frontend fallback:** The Projects page uses API → localStorage (1h TTL) → static file `data/web_data/projects.json`. When the API fails, the UI may still show projects from cache or the static file and display a "Showing cached projects" note. See `docs/testing/projects.md` for details.
+
 Optional: to raise GitHub API limits
 ```bash
 export GH_TOKEN=ghp_yourToken

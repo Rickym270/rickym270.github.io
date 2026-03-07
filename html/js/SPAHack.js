@@ -225,6 +225,11 @@ $(document).ready(function(){
                             console.log("Loaded " + sectionUrl);
                             // Mark content as loaded for testing
                             jQuery("#content").attr("data-content-loaded", "true");
+                            // Move focus to main content for keyboard/screen reader users
+                            var mainEl = document.getElementById('content');
+                            if (mainEl && mainEl.getAttribute('tabindex') === '-1') {
+                                mainEl.focus({ preventScroll: false });
+                            }
                             // Reinitialize theme after content loads
                             if (typeof window.reinitTheme === 'function') {
                                 window.reinitTheme();
@@ -255,6 +260,11 @@ $(document).ready(function(){
                     console.log("Loaded " + sectionUrl);
                     // Mark content as loaded for testing
                     jQuery("#content").attr("data-content-loaded", "true");
+                    // Move focus to main content for keyboard/screen reader users
+                    var mainEl = document.getElementById('content');
+                    if (mainEl && mainEl.getAttribute('tabindex') === '-1') {
+                        mainEl.focus({ preventScroll: false });
+                    }
                         // Reinitialize theme after content loads
                         if (typeof window.reinitTheme === 'function') {
                             window.reinitTheme();

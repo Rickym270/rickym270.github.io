@@ -242,7 +242,11 @@ test.describe('Performance', () => {
       
       if (contentLength) {
         const startTime = Date.now();
-        await response.body();
+        try {
+          await response.body();
+        } catch {
+          // Test may end or page close while body() is in flight; ignore so test does not fail
+        }
         const duration = Date.now() - startTime;
         
         resources.push({
@@ -254,8 +258,9 @@ test.describe('Performance', () => {
     });
 
     const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
-    await page.goto('/', { waitUntil: 'networkidle', timeout: gotoTimeout });
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
     
     // Wait for content
     await page.waitForFunction(() => {

@@ -41,35 +41,35 @@ jobs:
       - name: Fetch latest projects from API
         id: fetch-projects
         run: |
-          # Fetch projects from production API
-          API_URL="https://ricky-api-745807383723.us-east1.run.app/api/projects"
-          
-          echo "Fetching projects from API..."
-          curl -s -f "$API_URL" > /tmp/projects.json || {
-            echo "Error: Failed to fetch projects from API"
-            exit 1
-          }
-          
-          # Validate JSON
-          if ! jq empty /tmp/projects.json 2>/dev/null; then
-            echo "Error: Invalid JSON response from API"
-            exit 1
-          fi
-          
-          # Count projects
-          PROJECT_COUNT=$(jq '. | length' /tmp/projects.json)
-          echo "Fetched $PROJECT_COUNT projects"
-          
-          # Create output directory if it doesn't exist
+          # Fetch projects from production API (Render)
+          API_URL="https://rickym270-github-io.onrender.com/api/projects"
           mkdir -p data/web_data
           
-          # Copy to web_data directory (for static fallback)
-          cp /tmp/projects.json data/web_data/projects.json
-          
-          # Also update the API resources if needed (optional)
-          # This would require the API to be built, so we'll skip for now
-          
-          echo "projects_count=$PROJECT_COUNT" >> $GITHUB_OUTPUT
+          echo "Fetching projects from API..."
+          if curl -s -f --max-time 120 "$API_URL" > /tmp/projects.json 2>/dev/null; then
+            if jq empty /tmp/projects.json 2>/dev/null; then
+              PROJECT_COUNT=$(jq '. | length' /tmp/projects.json)
+              echo "Fetched $PROJECT_COUNT projects from API"
+              cp /tmp/projects.json data/web_data/projects.json
+              echo "projects_count=$PROJECT_COUNT" >> $GITHUB_OUTPUT
+              echo "updated=true" >> $GITHUB_OUTPUT
+            else
+              echo "Invalid JSON from API, keeping existing fallback"
+              echo "updated=false" >> $GITHUB_OUTPUT
+              if [ ! -f data/web_data/projects.json ]; then
+                cp api/src/main/resources/data/projects.json data/web_data/projects.json
+                echo "projects_count=$(jq '. | length' data/web_data/projects.json)" >> $GITHUB_OUTPUT
+              fi
+            fi
+          else
+            echo "API unreachable (e.g. cold start); keeping existing fallback"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            if [ ! -f data/web_data/projects.json ]; then
+              cp api/src/main/resources/data/projects.json data/web_data/projects.json
+              echo "Seeded from curated projects.json"
+            fi
+            echo "projects_count=$(jq '. | length' data/web_data/projects.json)" >> $GITHUB_OUTPUT
+          fi
 
       - name: Check for changes
         id: check-changes

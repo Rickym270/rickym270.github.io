@@ -57,7 +57,7 @@ test.describe('Error Handling', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress, .alert');
     }, { timeout: 15000 });
 
-    // Should show error message or fallback content
+    // Should show error message or fallback content (API → localStorage → static /data/web_data/projects.json)
     const errorMessage = page.locator('.alert, .alert-warning, .alert-danger');
     const errorCount = await errorMessage.count();
 

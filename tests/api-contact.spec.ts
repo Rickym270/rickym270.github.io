@@ -55,7 +55,7 @@ test.describe('API Contact Endpoint - POST', () => {
     // Use unique email to avoid rate limiting
     const uniqueEmail = `test-xff-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
     
-    // Test with X-Forwarded-For header (simulates Cloud Run/proxy scenario)
+    // Test with X-Forwarded-For header (simulates Render/reverse-proxy scenario)
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: 'Test User',

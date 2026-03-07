@@ -99,6 +99,11 @@ Thank you for your interest in contributing! This document provides guidelines a
 - Keep tests independent and isolated
 - See [UI Testing Guide](docs/UI_TESTING.md) and [API Testing Guide](docs/TESTING.md)
 
+### Accessibility
+
+- Preserve focus visibility and semantic landmarks (see [Accessibility](docs/ACCESSIBILITY.md))
+- Run `npx playwright test tests/accessibility.spec.ts` when changing UI
+
 ## Development Setup
 
 ### Prerequisites

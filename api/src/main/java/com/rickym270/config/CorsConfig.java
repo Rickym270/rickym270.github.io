@@ -24,12 +24,16 @@ public class CorsConfig {
         // This allows us to use patterns while still enabling credentials
         // Allow production domain
         config.addAllowedOriginPattern("https://rickym270.github.io");
+        // Allow Render service URLs
+        config.addAllowedOriginPattern("https://*.onrender.com");
         // Allow localhost variants (exact matches via patterns)
         config.addAllowedOriginPattern("http://localhost:*");
         config.addAllowedOriginPattern("http://127.0.0.1:*");
         // Allow local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
-        // This regex pattern matches common private IP ranges
+        // Ant-style: * matches any chars; use single * for host+port segment so 192.168.1.21:4321 matches
+        config.addAllowedOriginPattern("http://192.168.*:*");
         config.addAllowedOriginPattern("http://192.168.*.*:*");
+        config.addAllowedOriginPattern("http://10.*:*");
         config.addAllowedOriginPattern("http://10.*.*.*:*");
         config.addAllowedOriginPattern("http://172.1[6-9].*.*:*");
         config.addAllowedOriginPattern("http://172.2[0-9].*.*:*");

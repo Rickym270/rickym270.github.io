@@ -20,7 +20,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **[Turnstile Setup](TURNSTILE_SETUP.md)** - Cloudflare Turnstile CAPTCHA configuration
 
 ### Deployment
-- **[API Deployment](../api/DEPLOY.md)** - Deploying the Spring Boot API to Google Cloud Run
+- **[API Deployment](../api/DEPLOY.md)** - Deploy the Spring Boot API to Render (free); see [DEPLOY_RENDER.md](../api/DEPLOY_RENDER.md)
 
 ## Testing Documentation
 
@@ -54,6 +54,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 ## Project Information
 
 - **[Repository Analysis](REPO_ANALYSIS.md)** - Comprehensive analysis of repository structure, test coverage, and workflows
+- **[Accessibility](ACCESSIBILITY.md)** - Skip link, main landmark, focus visibility, and a11y test coverage
 
 ## Contributing
 

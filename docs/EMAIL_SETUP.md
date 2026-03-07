@@ -78,16 +78,9 @@ export SMTP_FROM_EMAIL=your-email@gmail.com
 
 Then restart your terminal or run `source ~/.zshrc`.
 
-### Cloud Run Deployment
+### Render Deployment
 
-Add environment variables when deploying:
-
-```bash
-gcloud run deploy ricky-api \
-  --set-env-vars "SMTP_HOST=smtp.sendgrid.net,SMTP_PORT=587,SMTP_USERNAME=apikey,SMTP_PASSWORD=your-key,CONTACT_EMAIL=your@email.com,SMTP_FROM_EMAIL=noreply@yourdomain.com"
-```
-
-Or update your `Makefile`/`deploy.sh` to include these variables.
+In the Render dashboard, open your service → **Environment** and add the SMTP and contact variables (e.g. `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `CONTACT_EMAIL`, `SMTP_FROM_EMAIL`). Save and let the service redeploy.
 
 ## Testing
 
@@ -128,7 +121,7 @@ Or update your `Makefile`/`deploy.sh` to include these variables.
 
 - **Never commit credentials** to git
 - Use environment variables or secrets management
-- For Cloud Run, use Secret Manager for sensitive values
+- For Render, use the Environment tab in the dashboard for sensitive values (never commit them)
 - Rotate passwords/API keys regularly
 
 ## Fallback Behavior

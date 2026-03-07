@@ -28,7 +28,7 @@ public class ContactController {
             @RequestHeader(value = "X-Real-IP", required = false) String realIp) {
         
         // Get client IP for rate limiting
-        // Cloud Run sets X-Forwarded-For, but handle edge cases properly
+        // Render (and other reverse proxies) set X-Forwarded-For; handle edge cases properly
         String clientIp = "unknown";
         
         if (forwardedFor != null && !forwardedFor.trim().isEmpty()) {
@@ -39,8 +39,8 @@ public class ContactController {
         } else if (realIp != null && !realIp.trim().isEmpty()) {
             clientIp = realIp.trim();
         }
-        // Note: We don't use HttpServletRequest.getRemoteAddr() on Cloud Run because
-        // it would return the load balancer's IP, not the client's IP.
+        // Note: We don't use HttpServletRequest.getRemoteAddr() behind a reverse proxy
+        // because it would return the proxy's IP, not the client's IP.
         // This would cause all users to share the same rate limit.
         
         // Log for debugging if IP detection fails (helps diagnose rate limiting issues)
