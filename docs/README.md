@@ -40,6 +40,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **SEO Tests** (`tests/seo.spec.ts`) - Meta tags and SEO validation
 - **User Journey Tests** (`tests/user-journey.spec.ts`) - End-to-end user workflows
 - **Visual Regression Tests** (`tests/visual-regression.spec.ts`) - Screenshot comparison
+- **Footer Tests** (`tests/footer.spec.ts`) - Footer visibility, identity, theme/language/reduced-motion/reset, quick links, Back to top
 
 ### Individual Test Documentation
 - **[Contact API Tests](testing/contact.md)** - Testing the contact form API endpoint

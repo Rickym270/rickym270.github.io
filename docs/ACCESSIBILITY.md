@@ -8,10 +8,11 @@ This document describes the accessibility features and practices used on the sit
 - **Main landmark**: The primary content container has `role="main"` (via the `<main id="content">` element) and `tabindex="-1"` so it can receive focus when the skip link is activated or after SPA navigation.
 - **Focus visibility**: Interactive controls (forms, buttons, links) have visible focus indicators. Where `outline` is removed for design, `:focus-visible` is used to show a clear focus ring for keyboard users.
 - **SPA focus management**: When navigating between pages via the SPA, focus is moved to the main content area so screen reader and keyboard users are not left in the navigation.
+- **Footer**: A desktop-first footer (`role="contentinfo"`) provides identity, quick links, and utility controls (theme, language, reduced motion, reset preferences) and a Back to top link. The footer may be hidden or simplified on small screens.
 
 ## Testing
 
-Accessibility is covered by automated tests in **`tests/accessibility.spec.ts`**, including:
+Accessibility is covered by automated tests in **`tests/accessibility.spec.ts`** (landmarks, focus, skip link, etc.) and **`tests/footer.spec.ts`** (footer visibility, identity, theme/language/reduced-motion/reset controls, quick links, Back to top). The accessibility suite includes:
 
 - Heading hierarchy
 - Images with alt text

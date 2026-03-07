@@ -106,6 +106,7 @@ Tests are located in the `tests/` directory:
 - `tutorials.spec.ts` - Tutorials page and cards
 - `translation.spec.ts` - Language switching (EN/ES)
 - `theme.spec.ts` - Dark/light theme switching
+- `footer.spec.ts` - Footer visibility, identity, theme/language/reduced-motion/reset controls, quick links, Back to top
 - `responsive.spec.ts` - Responsive design across screen sizes
 - `spa-navigation.spec.ts` - Single Page Application navigation
 
@@ -200,6 +201,21 @@ Tests dark/light theme:
 **Example:**
 ```bash
 npx playwright test tests/theme.spec.ts
+```
+
+### Footer Tests (`footer.spec.ts`)
+
+Tests the desktop-first site footer:
+- Footer visibility on desktop and hidden on mobile
+- Identity section (name, role, tagline)
+- Theme and language toggles in sync with nav
+- Reduced motion toggle and persistence
+- Reset preferences button
+- Quick links (GitHub, LinkedIn, Contact, Engineering) and Back to top
+
+**Example:**
+```bash
+npx playwright test tests/footer.spec.ts
 ```
 
 ### Responsive Tests (`responsive.spec.ts`)
