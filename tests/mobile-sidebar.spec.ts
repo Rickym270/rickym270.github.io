@@ -23,12 +23,19 @@ test.describe('Mobile sidebar', () => {
     await expect(sidebar.getByRole('link', { name: 'Home' })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Projects' })).toBeVisible();
     await expect(sidebar.getByRole('link', { name: 'Skills' })).toBeVisible();
-    await expect(sidebar.getByRole('link', { name: 'Contact' })).toBeVisible();
+    await expect(sidebar.locator('.mobile-nav-item[data-url="html/pages/contact.html"]')).toBeVisible();
     await expect(sidebar.getByRole('button', { name: 'Docs' })).toBeVisible();
     await expect(sidebar.getByRole('button', { name: 'Blog' })).toBeVisible();
   });
 
-  test('language and theme remain in footer', async ({ page }) => {
+  test('sidebar header shows Portfolio and close button', async ({ page }) => {
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+    await expect(page.locator('.mobile-sidebar').getByText('Portfolio')).toBeVisible();
+    await expect(page.locator('#mobile-sidebar-close')).toBeVisible();
+  });
+
+  test('language and Dark Mode toggle remain in footer', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
 
@@ -36,6 +43,38 @@ test.describe('Mobile sidebar', () => {
     await expect(footer).toBeVisible();
     await expect(footer.locator('#mobile-language-switcher')).toBeVisible();
     await expect(footer.locator('#mobile-theme-toggle')).toBeVisible();
+  });
+
+  test('mobile sidebar shows PREFERENCES with Language and Dark Mode controls', async ({ page }) => {
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+
+    const settings = page.locator('.mobile-sidebar-settings');
+    await expect(settings.locator('.mobile-preferences-heading')).toHaveText('PREFERENCES');
+    await expect(settings.locator('#mobile-language-switcher')).toBeVisible();
+    await expect(settings.locator('#mobile-theme-toggle[role="switch"]')).toBeVisible();
+    await expect(page.locator('.mobile-sidebar-footer-icons').locator('#mobile-reset-preferences')).toBeVisible();
+  });
+
+  test('reset preferences restores defaults', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio-theme', 'dark');
+      localStorage.setItem('siteLanguage', 'es');
+      localStorage.setItem('portfolio-reduced-motion', 'true');
+    });
+    await page.setViewportSize(mobileViewport);
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.locator('#mobile-menu-toggle').click();
+    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+    await page.locator('#mobile-reset-preferences').click();
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'false');
+    const lang = await page.evaluate(() => localStorage.getItem('siteLanguage'));
+    expect(lang).toBe('en');
   });
 
   test('menu items have flat UI (no heavy box-shadow)', async ({ page }) => {

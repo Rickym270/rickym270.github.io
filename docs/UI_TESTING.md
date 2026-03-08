@@ -106,6 +106,8 @@ Tests are located in the `tests/` directory:
 - `tutorials.spec.ts` - Tutorials page and cards
 - `translation.spec.ts` - Language switching (EN/ES)
 - `theme.spec.ts` - Dark/light theme switching
+- `footer.spec.ts` - Footer visibility, identity, theme/language/reduced-motion/reset controls, quick links, Back to top
+- `mobile-sidebar.spec.ts` - Mobile sidebar open/close, Portfolio header, nav order (Home, Projects, Blog, Docs, Skills, Contact), Docs/Blog panels, PREFERENCES (Language + Dark Mode), footer icons (contact, reset)
 - `responsive.spec.ts` - Responsive design across screen sizes
 - `spa-navigation.spec.ts` - Single Page Application navigation
 
@@ -200,6 +202,34 @@ Tests dark/light theme:
 **Example:**
 ```bash
 npx playwright test tests/theme.spec.ts
+```
+
+### Footer Tests (`footer.spec.ts`)
+
+Tests the desktop-first site footer:
+- Footer visibility on desktop and hidden on mobile
+- Identity section (name, role, tagline)
+- Theme and language toggles in sync with nav
+- Reduced motion toggle and persistence
+- Reset preferences button
+- Quick links (GitHub, LinkedIn, Contact, Engineering) and Back to top
+
+**Example:**
+```bash
+npx playwright test tests/footer.spec.ts
+```
+
+### Mobile Sidebar Tests (`mobile-sidebar.spec.ts`)
+
+Tests the mobile hamburger menu and sidebar (Portfolio header, PREFERENCES section, footer icons):
+- Sidebar opens and shows main nav items (Home, Projects, Blog, Docs, Skills, Contact) and Portfolio header
+- PREFERENCES section with two controls: Language (icon + EN/ES pills) and Dark Mode (icon + toggle)
+- Footer icons: contact (@) and reset preferences (circular arrow)
+- Reset preferences (footer icon) restores theme, language, and reduced motion to defaults
+
+**Example:**
+```bash
+npx playwright test tests/mobile-sidebar.spec.ts
 ```
 
 ### Responsive Tests (`responsive.spec.ts`)
