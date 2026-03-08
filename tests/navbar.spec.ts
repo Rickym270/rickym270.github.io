@@ -296,8 +296,8 @@ test.describe('Navbar', () => {
     await expect(sidebar).toHaveClass(/active/, { timeout: 2000 });
     await expect(page.locator('#mobile-nav-overlay')).toHaveClass(/active/);
     
-    // Check sidebar content
-    await expect(sidebar.getByText('Ricky Martinez')).toBeVisible();
+    // Check sidebar content (header shows Portfolio per redesign)
+    await expect(sidebar.getByText('Portfolio')).toBeVisible();
     await expect(sidebar.getByText('Home')).toBeVisible();
     await expect(sidebar.getByText('Projects')).toBeVisible();
     
@@ -431,9 +431,10 @@ test.describe('Navbar', () => {
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings).toBeVisible();
 
-    // Check that setting groups exist (Language, Theme, Reduce motion, Reset preferences)
+    // PREFERENCES section and setting groups (Language, Dark Mode, Reduce motion)
+    await expect(settings.locator('.mobile-preferences-heading')).toHaveText('PREFERENCES');
     const settingGroups = page.locator('.mobile-setting-group');
-    await expect(settingGroups).toHaveCount(4);
+    await expect(settingGroups).toHaveCount(3);
     
     // Check language setting group (by stable selector)
     const languageGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-language-switcher') });
@@ -441,10 +442,16 @@ test.describe('Navbar', () => {
     await expect(languageGroup.locator('#mobile-language-switcher')).toBeVisible();
     await expect(languageGroup.locator('.mobile-lang-btn')).toHaveCount(2);
     
-    // Check theme setting group (by stable selector)
+    // Check Dark Mode setting group (toggle switch)
     const themeGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-theme-toggle') });
-    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Theme');
-    await expect(themeGroup.locator('#mobile-theme-toggle')).toBeVisible();
+    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Dark Mode');
+    await expect(page.locator('#mobile-theme-toggle')).toHaveAttribute('role', 'switch');
+    
+    // Footer icons (contact + reset preferences)
+    const footerIcons = page.locator('.mobile-sidebar-footer-icons');
+    await expect(footerIcons).toBeVisible();
+    await expect(footerIcons.locator('a[aria-label="Contact"]')).toBeVisible();
+    await expect(footerIcons.locator('#mobile-reset-preferences')).toBeVisible();
     
     // Verify controls are functional
     const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
@@ -453,9 +460,9 @@ test.describe('Navbar', () => {
     
     // Language label should be translated
     await expect(languageGroup.locator('.mobile-setting-label')).toHaveText('Idioma');
-    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Tema');
+    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Modo oscuro');
     
-    // Theme toggle should work
+    // Theme toggle (switch) should work
     const themeToggle = page.locator('#mobile-theme-toggle');
     await themeToggle.click();
     await page.waitForTimeout(300);

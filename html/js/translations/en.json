@@ -12,9 +12,14 @@
     "personal": "Personal",
     "articles": "Articles"
   },
+  "sidebar": {
+    "portfolio": "Portfolio"
+  },
   "settings": {
     "language": "Language",
     "theme": "Theme",
+    "preferences": "PREFERENCES",
+    "darkMode": "Dark Mode",
     "reduceMotion": "Reduce motion",
     "motionOn": "Motion on",
     "resetPreferences": "Reset preferences"

@@ -107,7 +107,7 @@ Tests are located in the `tests/` directory:
 - `translation.spec.ts` - Language switching (EN/ES)
 - `theme.spec.ts` - Dark/light theme switching
 - `footer.spec.ts` - Footer visibility, identity, theme/language/reduced-motion/reset controls, quick links, Back to top
-- `mobile-sidebar.spec.ts` - Mobile sidebar open/close, nav items, Docs/Blog panels, and accessibility controls (theme, language, reduce motion, reset preferences)
+- `mobile-sidebar.spec.ts` - Mobile sidebar open/close, Portfolio header, nav order (Home, Projects, Blog, Docs, Skills, Contact), Docs/Blog panels, PREFERENCES (Dark Mode and Reduce Motion toggles), language, footer icons (contact, reset)
 - `responsive.spec.ts` - Responsive design across screen sizes
 - `spa-navigation.spec.ts` - Single Page Application navigation
 
@@ -221,12 +221,12 @@ npx playwright test tests/footer.spec.ts
 
 ### Mobile Sidebar Tests (`mobile-sidebar.spec.ts`)
 
-Tests the mobile hamburger menu and sidebar:
-- Sidebar opens and shows main nav items (Home, Projects, Skills, Contact, Docs, Blog)
-- Language and theme controls in the sidebar footer
-- All four accessibility controls visible: theme, language, reduce motion, reset preferences
-- Reduce motion toggle updates `data-reduced-motion` and button state
-- Reset preferences restores theme, language, and reduced motion to defaults
+Tests the mobile hamburger menu and sidebar (redesigned to match reference: Portfolio header, PREFERENCES section, toggle switches, footer icons):
+- Sidebar opens and shows main nav items (Home, Projects, Blog, Docs, Skills, Contact) and Portfolio header
+- PREFERENCES section with Dark Mode and Reduce Motion toggle switches; language (EN/ES) pills
+- Footer icons: contact (@) and reset preferences (circular arrow)
+- Reduce motion toggle updates `data-reduced-motion` and switch state
+- Reset preferences (footer icon) restores theme, language, and reduced motion to defaults
 - Reduced motion preference persists after closing and reopening the sidebar
 
 **Example:**

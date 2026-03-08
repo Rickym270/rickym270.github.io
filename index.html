@@ -593,8 +593,10 @@
         <nav class="mobile-sidebar" id="mobile-sidebar">
             <div class="mobile-sidebar-header">
                 <div class="mobile-sidebar-logo">
-                    <div class="mobile-logo-circle">RM</div>
-                    <span class="mobile-logo-text">Ricky Martinez</span>
+                    <div class="mobile-logo-icon-wrap" aria-hidden="true">
+                        <svg class="mobile-logo-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M6 12h6M10 16h4"/></svg>
+                    </div>
+                    <span class="mobile-logo-text" data-translate="sidebar.portfolio">Portfolio</span>
                 </div>
                 <button class="mobile-sidebar-close" id="mobile-sidebar-close" aria-label="Close menu">
                     <span>×</span>
@@ -609,25 +611,6 @@
                     <span class="mobile-nav-icon">📁</span>
                     <span class="mobile-nav-label">Projects</span>
                 </a>
-                <a href="#Skills" class="mobile-nav-item" data-url="html/pages/skills.html" data-translate="nav.skills">
-                    <span class="mobile-nav-icon">⚡</span>
-                    <span class="mobile-nav-label">Skills</span>
-                </a>
-                <a href="#Contact" class="mobile-nav-item" data-url="html/pages/contact.html" data-translate="nav.contact">
-                    <span class="mobile-nav-icon">✉️</span>
-                    <span class="mobile-nav-label">Contact</span>
-                </a>
-                <div class="mobile-nav-group">
-                    <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-docs" id="mobile-nav-toggle-docs">
-                        <span class="mobile-nav-icon">📝</span>
-                        <span class="mobile-nav-label" data-translate="nav.docs">Docs</span>
-                        <span class="mobile-nav-chevron" aria-hidden="true"></span>
-                    </button>
-                    <div class="mobile-nav-group-panel" id="mobile-nav-panel-docs" aria-hidden="true">
-                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
-                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
-                    </div>
-                </div>
                 <div class="mobile-nav-group">
                     <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-blog" id="mobile-nav-toggle-blog">
                         <span class="mobile-nav-icon">📋</span>
@@ -639,6 +622,25 @@
                         <a href="#" class="mobile-nav-subitem" data-url="html/pages/lifestyle.html" data-translate="nav.personal">Personal</a>
                     </div>
                 </div>
+                <div class="mobile-nav-group">
+                    <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-docs" id="mobile-nav-toggle-docs">
+                        <span class="mobile-nav-icon">📝</span>
+                        <span class="mobile-nav-label" data-translate="nav.docs">Docs</span>
+                        <span class="mobile-nav-chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="mobile-nav-group-panel" id="mobile-nav-panel-docs" aria-hidden="true">
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/docs.html" data-translate="nav.notes">Notes</a>
+                        <a href="#" class="mobile-nav-subitem" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
+                    </div>
+                </div>
+                <a href="#Skills" class="mobile-nav-item" data-url="html/pages/skills.html" data-translate="nav.skills">
+                    <span class="mobile-nav-icon">⚡</span>
+                    <span class="mobile-nav-label">Skills</span>
+                </a>
+                <a href="#Contact" class="mobile-nav-item" data-url="html/pages/contact.html" data-translate="nav.contact">
+                    <span class="mobile-nav-icon">✉️</span>
+                    <span class="mobile-nav-label">Contact</span>
+                </a>
             </nav>
             <div class="mobile-sidebar-footer">
                 <div class="mobile-sidebar-divider"></div>
@@ -650,19 +652,32 @@
                             <button type="button" class="mobile-lang-btn" data-lang="es" aria-pressed="false">ES</button>
                         </div>
                     </div>
+                    <div class="mobile-sidebar-divider"></div>
+                    <h3 class="mobile-preferences-heading" data-translate="settings.preferences">PREFERENCES</h3>
                     <div class="mobile-setting-group">
-                        <span class="mobile-setting-label" data-translate="settings.theme">Theme</span>
-                        <button class="mobile-theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
-                            <span class="mobile-theme-icon" id="mobile-theme-icon">🌙</span>
+                        <span class="mobile-pref-icon mobile-pref-icon-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        </span>
+                        <span class="mobile-setting-label" data-translate="settings.darkMode">Dark Mode</span>
+                        <button type="button" class="mobile-toggle" id="mobile-theme-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode">
+                            <span class="mobile-toggle-track"><span class="mobile-toggle-knob"></span></span>
                         </button>
                     </div>
                     <div class="mobile-setting-group">
+                        <span class="mobile-pref-icon mobile-pref-icon-motion" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+                        </span>
                         <span class="mobile-setting-label" data-translate="settings.reduceMotion">Reduce motion</span>
-                        <button type="button" class="mobile-reduced-motion-toggle" id="mobile-reduced-motion-toggle" aria-pressed="false" aria-label="Toggle reduced motion">Reduce motion</button>
+                        <button type="button" class="mobile-toggle" id="mobile-reduced-motion-toggle" role="switch" aria-pressed="false" aria-label="Toggle reduced motion">
+                            <span class="mobile-toggle-track"><span class="mobile-toggle-knob"></span></span>
+                        </button>
                     </div>
-                    <div class="mobile-setting-group">
-                        <button type="button" class="mobile-reset-preferences" id="mobile-reset-preferences" data-translate="settings.resetPreferences" aria-label="Reset preferences to defaults">Reset preferences</button>
-                    </div>
+                </div>
+                <div class="mobile-sidebar-footer-icons">
+                    <a href="#" class="mobile-footer-icon inline-load" data-url="html/pages/contact.html" aria-label="Contact" title="Contact">@</a>
+                    <button type="button" class="mobile-footer-icon mobile-footer-icon-reset" id="mobile-reset-preferences" aria-label="Reset preferences to defaults" title="Reset preferences">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
                 </div>
             </div>
         </nav>

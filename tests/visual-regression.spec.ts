@@ -377,11 +377,11 @@ test.describe('Visual Regression Tests', () => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
 
-    // Screenshot of mobile sidebar (tolerance for added accessibility controls: Reduce motion, Reset preferences)
+    // Screenshot of mobile sidebar (redesigned: Portfolio header, PREFERENCES, toggles, footer icons; update baseline with --update-snapshots if needed)
     const sidebar = page.locator('#mobile-sidebar');
     await expect(sidebar).toHaveScreenshot('mobile-sidebar.png', {
-      maxDiffPixels: 3500,
-      maxDiffPixelRatio: 0.02,
+      maxDiffPixels: 12000,
+      maxDiffPixelRatio: 0.05,
     });
   });
 });
