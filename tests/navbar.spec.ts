@@ -431,10 +431,10 @@ test.describe('Navbar', () => {
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings).toBeVisible();
 
-    // PREFERENCES section and setting groups (Language, Dark Mode, Reduce motion)
+    // PREFERENCES section and setting groups (Language, Dark Mode)
     await expect(settings.locator('.mobile-preferences-heading')).toHaveText('PREFERENCES');
     const settingGroups = page.locator('.mobile-setting-group');
-    await expect(settingGroups).toHaveCount(3);
+    await expect(settingGroups).toHaveCount(2);
     
     // Check language setting group (by stable selector)
     const languageGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-language-switcher') });

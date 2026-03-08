@@ -228,10 +228,6 @@
             btn.setAttribute('aria-pressed', value ? 'true' : 'false');
             btn.textContent = value ? 'Motion on' : 'Reduce motion';
         }
-        const mobileBtn = document.getElementById('mobile-reduced-motion-toggle');
-        if (mobileBtn) {
-            mobileBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
-        }
     }
 
     function initReducedMotion() {
@@ -241,10 +237,6 @@
         if (btn) {
             btn.setAttribute('aria-pressed', value ? 'true' : 'false');
             btn.textContent = value ? 'Motion on' : 'Reduce motion';
-        }
-        const mobileBtn = document.getElementById('mobile-reduced-motion-toggle');
-        if (mobileBtn) {
-            mobileBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
         }
     }
 
@@ -280,7 +272,7 @@
     }
 
     document.addEventListener('click', function(e) {
-        const target = e.target.closest ? e.target.closest('#reduced-motion-toggle, #mobile-reduced-motion-toggle') : (e.target.id === 'reduced-motion-toggle' || e.target.id === 'mobile-reduced-motion-toggle' ? e.target : null);
+        const target = e.target.closest ? e.target.closest('#reduced-motion-toggle') : (e.target.id === 'reduced-motion-toggle' ? e.target : null);
         if (target) {
             e.preventDefault();
             const current = html.getAttribute('data-reduced-motion') === 'true';

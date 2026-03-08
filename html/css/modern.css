@@ -3592,6 +3592,7 @@ pre code {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+    margin-right: var(--spacing-md);
     color: var(--color-text-secondary);
 }
 
