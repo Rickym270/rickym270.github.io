@@ -47,6 +47,8 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 - Post detail structure: banner, hero (meta + title), article body, and at least one blockquote visible when post is loaded in SPA.
 - Dark mode: "Read Article" button has visible text when theme is dark.
 
+**Stability (chromium-iphone / CI):** Blog tests that navigate to Engineering or load a post use a **wait-for-response-then-DOM** pattern: they wait for the SPA request (e.g. `engineering.html`, `post-1.html`) to complete before waiting for DOM content. This reduces flakiness on the chromium-iphone project in CI. See [Post-Mortem: CI Chromium-iPhone SPA Flakiness](../Post-Mortem/ci-chromium-iphone-spa-flakiness.md).
+
 **Other specs that touch blog:**
 
 - **`tests/translation.spec.ts`**: Navigates to Engineering, clicks post link, and asserts translated post title and body in Spanish.
