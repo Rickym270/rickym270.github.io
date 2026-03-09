@@ -3,9 +3,11 @@ import { test, expect } from '@playwright/test';
 test.describe('Site footer', () => {
   test.describe.configure({ timeout: 60000 });
 
-  test.beforeEach(async ({ page }, testInfo) => {
+  test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
-    await page.goto('/', { waitUntil: 'load', timeout: 60000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
   });
 
   test('footer is present and visible on desktop', async ({ page }, testInfo) => {
@@ -26,7 +28,9 @@ test.describe('Site footer', () => {
     await page.addInitScript(() => {
       localStorage.setItem('portfolio-theme', 'dark');
     });
-    await page.goto('/', { waitUntil: 'load', timeout: 60000 });
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     const footerTheme = page.locator('#theme-toggle-footer');
     await expect(footerTheme).toBeVisible();
     await footerTheme.scrollIntoViewIfNeeded();
