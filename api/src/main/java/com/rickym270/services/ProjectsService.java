@@ -218,7 +218,9 @@ public class ProjectsService {
         Instant now = Instant.now();
         // Check token status every 5 minutes
         if (lastTokenCheck == null || now.isAfter(lastTokenCheck.plus(5, ChronoUnit.MINUTES))) {
+            // Prefer env; fall back to system property (DotEnvConfig loads .env into properties only)
             String token = System.getenv("GH_TOKEN");
+            if (token == null || token.trim().isEmpty()) token = System.getProperty("GH_TOKEN");
             boolean tokenAvailable = token != null && !token.trim().isEmpty();
             
             if (hasToken == null || !hasToken.equals(tokenAvailable)) {
@@ -570,6 +572,7 @@ public class ProjectsService {
         headers.set("X-GitHub-Api-Version", "2022-11-28");
         
         String token = System.getenv("GH_TOKEN");
+        if (token == null || token.trim().isEmpty()) token = System.getProperty("GH_TOKEN");
         if (token != null && !token.trim().isEmpty()) {
             headers.set("Authorization", "Bearer " + token.trim());
         }

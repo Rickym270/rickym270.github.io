@@ -92,6 +92,7 @@ public class GitHubClient {
 		headers.set("X-GitHub-Api-Version", "2022-11-28");
 		
 		String token = System.getenv("GH_TOKEN");
+		if (token == null || token.trim().isEmpty()) token = System.getProperty("GH_TOKEN");
 		if (token != null && !token.trim().isEmpty()) {
 			headers.set("Authorization", "Bearer " + token.trim());
 		}
