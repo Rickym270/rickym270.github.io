@@ -14,7 +14,10 @@
   },
   "settings": {
     "language": "Language",
-    "theme": "Theme"
+    "theme": "Theme",
+    "reduceMotion": "Reduce motion",
+    "motionOn": "Motion on",
+    "resetPreferences": "Reset preferences"
   },
   "home": {
     "title": "Ricky Martinez - Home",

@@ -271,6 +271,22 @@
                     }
                 });
             }
+
+            // Update footer language switcher
+            const footerSwitcher = document.getElementById('language-switcher-footer');
+            if (footerSwitcher) {
+                const footerButtons = footerSwitcher.querySelectorAll('button[data-lang]');
+                footerButtons.forEach(btn => {
+                    const btnLang = btn.getAttribute('data-lang');
+                    if (btnLang === this.currentLanguage) {
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-pressed', 'true');
+                    } else {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-pressed', 'false');
+                    }
+                });
+            }
         }
     };
 

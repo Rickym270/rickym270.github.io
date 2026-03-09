@@ -178,6 +178,17 @@
             e.stopPropagation();
             toggleTheme(e);
         }
+        // Check if click is on the footer theme button or its children
+        if (target && (
+            target.id === 'theme-toggle-footer' ||
+            target.id === 'theme-icon-sun-footer' ||
+            target.id === 'theme-icon-sunny-footer' ||
+            (target.parentElement && target.parentElement.id === 'theme-toggle-footer')
+        )) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleTheme(e);
+        }
     });
     
     // Re-setup toggle button when content is dynamically loaded (for SPA)

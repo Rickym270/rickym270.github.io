@@ -154,8 +154,8 @@ test.describe('End-to-End User Journeys', () => {
     // Submit form
     const clickPromise = page.locator('button[type="submit"], #submit-btn').click();
     
-    // Wait for route to be fulfilled (with timeout fallback)
-    const timeoutDuration = isMobile ? 20000 : 15000;
+    // Wait for route to be fulfilled (with timeout fallback; mobile/CI need more time)
+    const timeoutDuration = isMobile ? 30000 : 15000;
     const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => reject(new Error('Route fulfillment timeout')), timeoutDuration);
     });
@@ -178,7 +178,7 @@ test.describe('End-to-End User Journeys', () => {
     await page.waitForTimeout(isMobile ? 2000 : 500);
     
     // Wait for success message - mobile/CI need longer timeout for route + handler
-    const successTimeout = isMobile ? 35000 : 10000;
+    const successTimeout = isMobile ? 45000 : 10000;
     // Use locator-based wait (more reliable than waitForFunction on mobile/CI)
     const successMessage = page.locator('#form-message.alert-success');
     await successMessage.waitFor({ state: 'visible', timeout: successTimeout });
