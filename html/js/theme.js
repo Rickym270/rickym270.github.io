@@ -168,23 +168,8 @@
             toggleTheme(e);
         }
         // Check if click is on the footer theme button or its children
-        if (target && (
-            target.id === 'theme-toggle-footer' ||
-            target.id === 'theme-icon-sun-footer' ||
-            target.id === 'theme-icon-sunny-footer' ||
-            (target.parentElement && target.parentElement.id === 'theme-toggle-footer')
-        )) {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleTheme(e);
-        }
-        // Check if click is on the footer theme button or its children
-        if (target && (
-            target.id === 'theme-toggle-footer' ||
-            target.id === 'theme-icon-sun-footer' ||
-            target.id === 'theme-icon-sunny-footer' ||
-            (target.parentElement && target.parentElement.id === 'theme-toggle-footer')
-        )) {
+        const footerThemeEl = target && target.closest ? target.closest('#theme-toggle-footer') : null;
+        if (footerThemeEl) {
             e.preventDefault();
             e.stopPropagation();
             toggleTheme(e);
@@ -270,6 +255,10 @@
         const mobileBtn = document.getElementById('mobile-reset-preferences');
         if (mobileBtn) {
             mobileBtn.addEventListener('click', runResetPreferences);
+        }
+        const mobileFooterResetIcon = document.getElementById('mobile-footer-reset-icon');
+        if (mobileFooterResetIcon) {
+            mobileFooterResetIcon.addEventListener('click', runResetPreferences);
         }
     }
 

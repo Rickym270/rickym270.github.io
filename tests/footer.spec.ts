@@ -23,14 +23,21 @@ test.describe('Site footer', () => {
 
   test('footer theme toggle changes theme and stays in sync', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name === 'chromium-iphone', 'Footer is desktop-only');
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio-theme', 'dark');
+    });
+    await page.goto('/', { waitUntil: 'load', timeout: 60000 });
     const footerTheme = page.locator('#theme-toggle-footer');
     await expect(footerTheme).toBeVisible();
+    await footerTheme.scrollIntoViewIfNeeded();
     const before = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+    expect(before).toBe('dark');
     await footerTheme.click();
     await page.waitForTimeout(300);
     const after = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
     expect(after).toBeTruthy();
     expect(after).not.toBe(before);
+    expect(after).toBe('light');
   });
 
   test('footer language toggle switches language', async ({ page }, testInfo) => {

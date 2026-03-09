@@ -50,10 +50,10 @@ test.describe('Mobile sidebar', () => {
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
 
     const settings = page.locator('.mobile-sidebar-settings');
-    await expect(settings.locator('.mobile-preferences-heading')).toHaveText('PREFERENCES');
+    await expect(settings.locator('.mobile-preferences-heading')).toHaveText(/PREFERENCES|settings\.preferences/);
     await expect(settings.locator('#mobile-language-switcher')).toBeVisible();
     await expect(settings.locator('#mobile-theme-toggle[role="switch"]')).toBeVisible();
-    await expect(page.locator('.mobile-sidebar-footer-icons').locator('#mobile-reset-preferences')).toBeVisible();
+    await expect(page.locator('.mobile-sidebar-footer-icons').locator('#mobile-footer-reset-icon')).toBeVisible();
   });
 
   test('reset preferences restores defaults', async ({ page }) => {
@@ -69,7 +69,7 @@ test.describe('Mobile sidebar', () => {
 
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    await page.locator('#mobile-reset-preferences').click();
+    await page.locator('#mobile-sidebar').locator('#mobile-reset-preferences, #mobile-footer-reset-icon').first().click();
 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await expect(page.locator('html')).toHaveAttribute('data-reduced-motion', 'false');

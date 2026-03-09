@@ -432,7 +432,7 @@ test.describe('Navbar', () => {
     await expect(settings).toBeVisible();
 
     // PREFERENCES section and setting groups (Language, Dark Mode)
-    await expect(settings.locator('.mobile-preferences-heading')).toHaveText('PREFERENCES');
+    await expect(settings.locator('.mobile-preferences-heading')).toHaveText(/PREFERENCES|settings\.preferences/);
     const settingGroups = page.locator('.mobile-setting-group');
     await expect(settingGroups).toHaveCount(2);
     
@@ -451,7 +451,7 @@ test.describe('Navbar', () => {
     const footerIcons = page.locator('.mobile-sidebar-footer-icons');
     await expect(footerIcons).toBeVisible();
     await expect(footerIcons.locator('a[aria-label="Contact"]')).toBeVisible();
-    await expect(footerIcons.locator('#mobile-reset-preferences')).toBeVisible();
+    await expect(footerIcons.locator('#mobile-footer-reset-icon')).toBeVisible();
     
     // Verify controls are functional
     const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');

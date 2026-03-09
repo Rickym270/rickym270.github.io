@@ -74,14 +74,14 @@ test.describe('Translation feature', () => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
     
-    // Check that setting labels are visible in English (default)
+    // Check that setting labels are visible in English (default) — mobile sidebar uses Language + Dark Mode
     const languageLabel = page.locator('.mobile-setting-label[data-translate="settings.language"]');
-    const themeLabel = page.locator('.mobile-setting-label[data-translate="settings.theme"]');
+    const darkModeLabel = page.locator('.mobile-setting-label[data-translate="settings.darkMode"]');
     
     await expect(languageLabel).toBeVisible();
-    await expect(themeLabel).toBeVisible();
+    await expect(darkModeLabel).toBeVisible();
     await expect(languageLabel).toHaveText('Language');
-    await expect(themeLabel).toHaveText('Theme');
+    await expect(darkModeLabel).toHaveText('Dark Mode');
     
     // Switch to Spanish
     const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
@@ -90,7 +90,7 @@ test.describe('Translation feature', () => {
     
     // Check that labels are translated to Spanish
     await expect(languageLabel).toHaveText('Idioma');
-    await expect(themeLabel).toHaveText('Tema');
+    await expect(darkModeLabel).toHaveText('Modo oscuro');
     
     // Switch back to English
     const enButton = page.locator('#mobile-language-switcher button[data-lang="en"]');
@@ -99,7 +99,7 @@ test.describe('Translation feature', () => {
     
     // Check that labels are back to English
     await expect(languageLabel).toHaveText('Language');
-    await expect(themeLabel).toHaveText('Theme');
+    await expect(darkModeLabel).toHaveText('Dark Mode');
   });
 
   test('default language is English', async ({ page }) => {

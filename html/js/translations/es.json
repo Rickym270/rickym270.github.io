@@ -15,6 +15,8 @@
   "settings": {
     "language": "Idioma",
     "theme": "Tema",
+    "darkMode": "Modo oscuro",
+    "preferences": "PREFERENCIAS",
     "reduceMotion": "Reducir movimiento",
     "motionOn": "Movimiento activado",
     "resetPreferences": "Restablecer preferencias"
