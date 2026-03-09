@@ -2,12 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { test, expect, type Page, type TestInfo } from '@playwright/test';
 
-const DEBUG_LOG = path.join(process.cwd(), '.cursor', 'debug-7ea7bf.log');
-function debugLog(payload: { message: string; data?: Record<string, unknown>; hypothesisId?: string }) {
-  const line = JSON.stringify({ sessionId: '7ea7bf', timestamp: Date.now(), ...payload }) + '\n';
-  try { fs.appendFileSync(DEBUG_LOG, line); } catch { /* no-op */ }
-}
-
 function readPngDimensions(filePath: string) {
   try {
     if (!fs.existsSync(filePath)) return null;
@@ -196,13 +190,6 @@ test.describe('Visual Regression Tests', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress, #ProjComplete');
     }, { timeout: 15000 });
-    // #region agent log
-    debugLog({
-      message: 'before poll for project cards',
-      hypothesisId: 'H4',
-      data: { project: testInfo.project.name },
-    });
-    // #endregion
     await expect.poll(async () => {
       return await page.locator('#ProjInProgress .project-card, #ProjComplete .project-card').count();
     }, { timeout: 15000 }).toBeGreaterThan(0);

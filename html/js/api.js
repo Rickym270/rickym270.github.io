@@ -34,10 +34,7 @@
  */
 async function fetchFromAPI(endpoint) {
     try {
-        // #region agent log
         var _url = API_BASE_URL + endpoint;
-        if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'api.js:fetchFromAPI',message:'api fetch attempt',data:{origin:typeof window!=='undefined'?window.location.origin:null,apiUrl:_url,hostname:typeof window!=='undefined'?window.location.hostname:null},hypothesisId:'H1',timestamp:Date.now()})}).catch(function(){});
-        // #endregion
         const response = await fetch(_url);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -48,9 +45,6 @@ async function fetchFromAPI(endpoint) {
         
         // Enhance error message for CORS/network issues
         if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('Load failed')) {
-            // #region agent log
-            if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'api.js:corsError',message:'CORS/network error in api.js',data:{origin:typeof window!=='undefined'?window.location.origin:null,apiUrl:API_BASE_URL+endpoint,errorName:error.name,errorMessage:(error.message||'')},hypothesisId:'H2',timestamp:Date.now()})}).catch(function(){});
-            // #endregion
             const enhancedError = new Error(`Network error: ${error.message}. This may be a CORS issue if accessing from a local IP address.`);
             enhancedError.name = error.name;
             enhancedError.originalError = error;

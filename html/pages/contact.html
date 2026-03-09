@@ -75,7 +75,8 @@
     <script>
         // Turnstile site key - replace with your actual site key, or leave as placeholder to disable
         // To disable Turnstile, set to 'YOUR_SITE_KEY_HERE' or empty string
-        const TURNSTILE_SITE_KEY = 'YOUR_SITE_KEY_HERE';
+        // Use var so SPA re-load of this page does not throw "already been declared"
+        var TURNSTILE_SITE_KEY = 'YOUR_SITE_KEY_HERE';
         
         // Helper function to check if Turnstile is properly configured
         function isTurnstileConfigured() {
@@ -254,10 +255,15 @@
 
                     // Wrap fetch in Promise to handle all errors
                     let response;
+                    var clientTimeoutFired = false;
                     try {
-                        // Add timeout to prevent hanging
+                        // Add timeout to prevent hanging (allow 60s for Render cold start)
                         const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                        const TIMEOUT_MS = 60000;
+                        const timeoutId = setTimeout(function() {
+                            clientTimeoutFired = true;
+                            controller.abort();
+                        }, TIMEOUT_MS);
                         
                         response = await fetch(`${API_BASE_URL}/api/contact`, {
                             method: 'POST',
@@ -279,7 +285,6 @@
                     } catch (fetchError) {
                         // Handle network errors, CORS, timeouts, etc.
                         console.error('Fetch error:', fetchError);
-                        
                         if (fetchError.name === 'AbortError') {
                             throw new Error('Request timed out. Please check your connection and try again.');
                         } else if (fetchError.message && fetchError.message.includes('message channel')) {
@@ -352,7 +357,7 @@
                     
                     // Handle specific error types
                     if (errorText.includes('wait') || errorText.includes('Please wait') || errorText.includes('rate limit')) {
-                        errorMessage = 'Please wait a few minutes before sending another message.';
+                        errorMessage = 'Please wait 5 minutes before sending another message.';
                     } else if (errorText.includes('Spam') || errorText.includes('spam') || errorText.includes('honeypot')) {
                         errorMessage = 'Spam detected. Please refresh the page and try again.';
                         if (typeof turnstile !== 'undefined' && isTurnstileConfigured()) {

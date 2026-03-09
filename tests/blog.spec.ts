@@ -1,12 +1,4 @@
-import fs from 'fs';
-import path from 'path';
 import { test, expect } from '@playwright/test';
-
-const DEBUG_LOG = path.join(process.cwd(), '.cursor', 'debug-7ea7bf.log');
-function debugLog(payload: { message: string; data?: Record<string, unknown>; hypothesisId?: string }) {
-  const line = JSON.stringify({ sessionId: '7ea7bf', timestamp: Date.now(), ...payload }) + '\n';
-  try { fs.appendFileSync(DEBUG_LOG, line); } catch { /* no-op */ }
-}
 
 test.describe('Blog Pages', () => {
   test.describe.configure({ timeout: 120000 });
@@ -349,13 +341,6 @@ test.describe('Blog Pages', () => {
     }
     await responsePromise.catch(() => { /* no response (e.g. cache); rely on DOM wait below */ });
 
-    // #region agent log
-    debugLog({
-      message: 'before wait for engineering content',
-      hypothesisId: 'H1',
-      data: { project: testInfo.project.name, isMobile },
-    });
-    // #endregion
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
