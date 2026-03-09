@@ -2968,8 +2968,7 @@ pre code {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-[data-theme="dark"] .mobile-lang-btn.active,
-[data-theme="dark"] .mobile-theme-toggle.active {
+[data-theme="dark"] .mobile-lang-btn.active {
     background-color: #2563eb !important;
     color: #ffffff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -3343,6 +3342,23 @@ pre code {
     font-size: 1rem;
 }
 
+.mobile-logo-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: var(--color-accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mobile-logo-terminal {
+    width: 22px;
+    height: 22px;
+}
+
 .mobile-logo-text {
     font-weight: 600;
     font-size: 1.1rem;
@@ -3559,10 +3575,36 @@ pre code {
     margin-bottom: var(--spacing-md);
 }
 
+.mobile-preferences-heading {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    margin: 0 0 var(--spacing-sm) 0;
+    padding: 0;
+}
+
+.mobile-pref-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-right: var(--spacing-md);
+    color: var(--color-text-secondary);
+}
+
+.mobile-pref-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
 .mobile-sidebar-settings {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     visibility: visible;
 }
 
@@ -3607,27 +3649,96 @@ pre code {
     color: white;
 }
 
-.mobile-theme-toggle {
-    width: 40px;
-    height: 40px;
+/* Mobile sidebar toggle switches (Dark Mode, Reduce Motion) */
+.mobile-toggle {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: opacity var(--transition-fast);
+}
+
+.mobile-toggle:hover {
+    opacity: 0.9;
+}
+
+.mobile-toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 999px;
+}
+
+.mobile-toggle-track {
+    display: inline-flex;
+    align-items: center;
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    background-color: var(--color-bg-tertiary);
     border: 1px solid var(--color-border);
-    background-color: var(--color-bg-primary);
-    border-radius: var(--radius-md);
+    padding: 2px;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.mobile-toggle[aria-checked="true"] .mobile-toggle-track,
+.mobile-toggle[aria-pressed="true"] .mobile-toggle-track {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.mobile-toggle-knob {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform var(--transition-fast);
+}
+
+.mobile-toggle[aria-checked="true"] .mobile-toggle-knob,
+.mobile-toggle[aria-pressed="true"] .mobile-toggle-knob {
+    transform: translateX(20px);
+}
+
+.mobile-sidebar-footer-icons {
     display: flex;
     align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-sm);
+}
+
+.mobile-footer-icon {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-fast);
+    width: 32px;
+    height: 32px;
+    color: var(--color-text-secondary);
     font-size: 1.1rem;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: color var(--transition-fast);
 }
 
-.mobile-theme-toggle:hover {
-    background-color: var(--color-bg-tertiary);
+.mobile-footer-icon:hover {
+    color: var(--color-text-primary);
 }
 
-.mobile-theme-toggle.active {
-    background-color: var(--color-accent);
-    color: white;
+.mobile-footer-icon:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.mobile-footer-icon-reset svg {
+    width: 18px;
+    height: 18px;
 }
 
 .mobile-reduced-motion-toggle {

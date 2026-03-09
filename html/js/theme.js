@@ -61,10 +61,10 @@
             themeIconSunnyMedium.classList.toggle('hidden', !showSunny);
         }
         
-        // Update mobile theme icon (keeps emoji)
-        const mobileThemeIcon = document.getElementById('mobile-theme-icon');
-        if (mobileThemeIcon) {
-            mobileThemeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        // Update mobile theme toggle switch (aria-checked: dark = on)
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        if (mobileThemeToggle) {
+            mobileThemeToggle.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
         }
         // Update footer theme icons
         const themeIconSunFooter = document.getElementById('theme-icon-sun-footer');
@@ -160,23 +160,16 @@
             e.stopPropagation();
             toggleTheme(e);
         }
-        // Check if click is on the mobile button or its children
-        if (target && (
-            target.id === 'mobile-theme-toggle' || 
-            target.id === 'mobile-theme-icon' ||
-            (target.parentElement && target.parentElement.id === 'mobile-theme-toggle')
-        )) {
+        // Check if click is on the mobile theme switch or its children (track/knob)
+        const mobileThemeEl = target && target.closest ? target.closest('#mobile-theme-toggle') : null;
+        if (mobileThemeEl) {
             e.preventDefault();
             e.stopPropagation();
             toggleTheme(e);
         }
         // Check if click is on the footer theme button or its children
-        if (target && (
-            target.id === 'theme-toggle-footer' ||
-            target.id === 'theme-icon-sun-footer' ||
-            target.id === 'theme-icon-sunny-footer' ||
-            (target.parentElement && target.parentElement.id === 'theme-toggle-footer')
-        )) {
+        const footerThemeEl = target && target.closest ? target.closest('#theme-toggle-footer') : null;
+        if (footerThemeEl) {
             e.preventDefault();
             e.stopPropagation();
             toggleTheme(e);
@@ -231,11 +224,6 @@
             btn.setAttribute('aria-pressed', value ? 'true' : 'false');
             btn.textContent = value ? 'Motion on' : 'Reduce motion';
         }
-        const mobileBtn = document.getElementById('mobile-reduced-motion-toggle');
-        if (mobileBtn) {
-            mobileBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
-            mobileBtn.textContent = value ? 'Motion on' : 'Reduce motion';
-        }
     }
 
     function initReducedMotion() {
@@ -245,11 +233,6 @@
         if (btn) {
             btn.setAttribute('aria-pressed', value ? 'true' : 'false');
             btn.textContent = value ? 'Motion on' : 'Reduce motion';
-        }
-        const mobileBtn = document.getElementById('mobile-reduced-motion-toggle');
-        if (mobileBtn) {
-            mobileBtn.setAttribute('aria-pressed', value ? 'true' : 'false');
-            mobileBtn.textContent = value ? 'Motion on' : 'Reduce motion';
         }
     }
 
@@ -273,6 +256,10 @@
         if (mobileBtn) {
             mobileBtn.addEventListener('click', runResetPreferences);
         }
+        const mobileFooterResetIcon = document.getElementById('mobile-footer-reset-icon');
+        if (mobileFooterResetIcon) {
+            mobileFooterResetIcon.addEventListener('click', runResetPreferences);
+        }
     }
 
     function initBackToTop() {
@@ -285,7 +272,7 @@
     }
 
     document.addEventListener('click', function(e) {
-        const target = e.target.closest ? e.target.closest('#reduced-motion-toggle, #mobile-reduced-motion-toggle') : (e.target.id === 'reduced-motion-toggle' || e.target.id === 'mobile-reduced-motion-toggle' ? e.target : null);
+        const target = e.target.closest ? e.target.closest('#reduced-motion-toggle') : (e.target.id === 'reduced-motion-toggle' ? e.target : null);
         if (target) {
             e.preventDefault();
             const current = html.getAttribute('data-reduced-motion') === 'true';
