@@ -272,6 +272,17 @@ await page.waitForFunction(() => {
 }, { timeout: 15000 });
 ```
 
+### SPA navigation: wait for response then DOM (CI / chromium-iphone)
+
+For SPA navigations that load a specific URL (e.g. blog post, engineering page, projects page), tests are more reliable in CI—especially on the **chromium-iphone** project—when they wait for the **network response** before waiting for DOM. This avoids timeouts when the request or DOM update is slow.
+
+1. Start `page.waitForResponse(predicate, { timeout })` **before** the click.
+2. Click the link that triggers the SPA load.
+3. Await the response (or catch and ignore timeout when the resource is served from cache).
+4. Then run `page.waitForFunction(...)` or other DOM assertions.
+
+Accept both 200 and 304 in the response predicate when the resource may be cached. See [Post-Mortem: CI Chromium-iPhone SPA Flakiness](Post-Mortem/ci-chromium-iphone-spa-flakiness.md) for details.
+
 ### Mobile vs Desktop Detection
 
 ```typescript
@@ -360,6 +371,7 @@ Failed tests automatically capture:
 - Mobile tests have longer timeouts (90 seconds)
 - Some interactions may need more time on mobile
 - Check `playwright.config.ts` for mobile-specific timeouts
+- For SPA navigation timeouts on **chromium-iphone**, use the wait-for-response-then-DOM pattern; see [Post-Mortem: CI Chromium-iPhone SPA Flakiness](Post-Mortem/ci-chromium-iphone-spa-flakiness.md)
 
 ### Translation Tests Fail
 

@@ -34,6 +34,7 @@ This directory contains detailed documentation for testing individual API endpoi
 - **[Blog Tests](blog.md)** - Blog listing pages (Engineering, Personal), post detail structure (banner, hero, body)
   - Featured Post, Latest Insights, category pills, cards
   - SPA navigation to post, dark mode CTA visibility
+  - CI stability: wait-for-response-then-DOM pattern for chromium-iphone (see [Post-Mortem: CI Chromium-iPhone SPA Flakiness](../Post-Mortem/ci-chromium-iphone-spa-flakiness.md))
 
 - **[Tutorials Tests](tutorials.md)** - Testing the tutorials page
   - Tutorial card display
