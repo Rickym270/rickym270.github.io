@@ -1,4 +1,12 @@
+import fs from 'fs';
+import path from 'path';
 import { test, expect } from '@playwright/test';
+
+const DEBUG_LOG = path.join(process.cwd(), '.cursor', 'debug-7ea7bf.log');
+function debugLog(payload: { message: string; data?: Record<string, unknown>; hypothesisId?: string }) {
+  const line = JSON.stringify({ sessionId: '7ea7bf', timestamp: Date.now(), ...payload }) + '\n';
+  try { fs.appendFileSync(DEBUG_LOG, line); } catch { /* no-op */ }
+}
 
 test.describe('Blog Pages', () => {
   test.describe.configure({ timeout: 120000 });
@@ -192,8 +200,7 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.blog-card').filter({ hasText: 'Coming Soon' }).first()).toBeVisible();
   });
 
-  test('Read Article from Engineering loads post in SPA', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name === 'chromium-iphone', 'Post content load wait flaky on chromium-iphone in CI');
+  test('Read Article from Engineering loads post in SPA', async ({ page }) => {
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
@@ -230,12 +237,17 @@ test.describe('Blog Pages', () => {
     const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      { timeout: 15000 }
+    );
     await readArticleLink.click();
+    await responsePromise;
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-content .post-title');
-    }, { timeout: 20000 });
+    }, { timeout: 10000 });
 
     await expect(page.locator('#content #post-body')).toBeVisible();
     await expect(page.locator('#content')).toContainText('How Living With MS Changed');
@@ -278,12 +290,17 @@ test.describe('Blog Pages', () => {
     const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      { timeout: 15000 }
+    );
     await readArticleLink.click();
+    await responsePromise;
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-content .post-title');
-    }, { timeout: 20000 });
+    }, { timeout: 10000 });
 
     const content = page.locator('#content');
 
@@ -296,7 +313,7 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('#post-body blockquote').first()).toBeVisible();
   });
 
-  test('Read Article button has visible text in dark mode', async ({ page }) => {
+  test('Read Article button has visible text in dark mode', async ({ page }, testInfo) => {
     await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -308,6 +325,10 @@ test.describe('Blog Pages', () => {
     });
 
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('engineering.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 8000 }
+    );
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
@@ -326,7 +347,15 @@ test.describe('Blog Pages', () => {
       await blogButton.hover();
       await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
     }
+    await responsePromise.catch(() => { /* no response (e.g. cache); rely on DOM wait below */ });
 
+    // #region agent log
+    debugLog({
+      message: 'before wait for engineering content',
+      hypothesisId: 'H1',
+      data: { project: testInfo.project.name, isMobile },
+    });
+    // #endregion
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');

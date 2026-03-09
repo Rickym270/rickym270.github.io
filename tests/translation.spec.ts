@@ -499,8 +499,7 @@ test.describe('Translation feature', () => {
     await expect(frameworks).toHaveText('Frameworks y Bibliotecas');
   });
 
-  test('Engineering post content is translated when language is Spanish', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name === 'chromium-iphone', 'Post content load wait flaky on chromium-iphone in CI');
+  test('Engineering post content is translated when language is Spanish', async ({ page }) => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
 
     // Switch to Spanish first
@@ -542,12 +541,17 @@ test.describe('Translation feature', () => {
     // Click the Featured "Read Article" link (single element; card link would also work)
     const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
     await expect(postLink).toBeVisible({ timeout: 5000 });
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      { timeout: 15000 }
+    );
     await postLink.click();
+    await responsePromise;
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-title');
-    }, { timeout: 15000 });
+    }, { timeout: 10000 });
     await page.waitForTimeout(500);
 
     // Assert post title is Spanish
@@ -561,8 +565,7 @@ test.describe('Translation feature', () => {
     await expect(firstParagraph).toContainText('esclerosis múltiple');
   });
 
-  test('Engineering post updates when language is switched after loading post', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name === 'chromium-iphone', 'Engineering list/post load wait flaky on chromium-iphone in CI');
+  test('Engineering post updates when language is switched after loading post', async ({ page }) => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
 
     // Navigate to Engineering then open post (English)
@@ -590,11 +593,16 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
 
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      { timeout: 15000 }
+    );
     await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]').click();
+    await responsePromise;
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return !!c?.querySelector('#post-body');
-    }, { timeout: 15000 });
+    }, { timeout: 10000 });
     await page.waitForTimeout(500);
 
     // Switch to Spanish
