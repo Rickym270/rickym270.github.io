@@ -2,6 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import { test, expect, type Page, type TestInfo } from '@playwright/test';
 
+const DEBUG_LOG = path.join(process.cwd(), '.cursor', 'debug-7ea7bf.log');
+function debugLog(payload: { message: string; data?: Record<string, unknown>; hypothesisId?: string }) {
+  const line = JSON.stringify({ sessionId: '7ea7bf', timestamp: Date.now(), ...payload }) + '\n';
+  try { fs.appendFileSync(DEBUG_LOG, line); } catch { /* no-op */ }
+}
+
 function readPngDimensions(filePath: string) {
   try {
     if (!fs.existsSync(filePath)) return null;
@@ -172,6 +178,10 @@ test.describe('Visual Regression Tests', () => {
 
     // Navigate to projects
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const projectsResponsePromise = page.waitForResponse(
+      (res) => res.url().includes('projects.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 8000 }
+    );
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
@@ -179,12 +189,20 @@ test.describe('Visual Regression Tests', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
+    await projectsResponsePromise.catch(() => { /* no response (e.g. cache); rely on DOM wait below */ });
 
     // Wait for projects to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#ProjInProgress, #ProjComplete');
     }, { timeout: 15000 });
+    // #region agent log
+    debugLog({
+      message: 'before poll for project cards',
+      hypothesisId: 'H4',
+      data: { project: testInfo.project.name },
+    });
+    // #endregion
     await expect.poll(async () => {
       return await page.locator('#ProjInProgress .project-card, #ProjComplete .project-card').count();
     }, { timeout: 15000 }).toBeGreaterThan(0);
