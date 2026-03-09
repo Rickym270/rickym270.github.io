@@ -79,7 +79,7 @@ test.describe('Site footer', () => {
     test.skip(testInfo.project.name === 'chromium-iphone', 'Footer is desktop-only');
     const footer = page.locator('.site-footer__links');
     await expect(footer.getByRole('link', { name: 'GitHub' })).toBeVisible();
-    await expect(footer.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
+    await expect(footer.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible();
     await expect(footer.getByRole('link', { name: 'Contact' })).toBeVisible();
     await expect(footer.getByRole('link', { name: 'Engineering' })).toBeVisible();
   });
