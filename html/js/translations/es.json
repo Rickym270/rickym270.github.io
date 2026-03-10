@@ -1,4 +1,7 @@
 {
+  "sidebar": {
+    "portfolio": "Portafolio"
+  },
   "nav": {
     "home": "Inicio",
     "projects": "Proyectos",
@@ -105,7 +108,7 @@
     "sendMessage": "Enviar Mensaje",
     "success": "✓ ¡Correo enviado con éxito! Gracias por contactarme. Te responderé pronto.",
     "error": "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
-    "errorRateLimit": "Por favor espera antes de enviar otro mensaje.",
+    "errorRateLimit": "Espera 5 minutos antes de enviar otro mensaje.",
     "errorValidation": "Por favor completa todos los campos requeridos.",
     "errorEmail": "Por favor ingresa una dirección de correo electrónico válida.",
     "errorSpam": "Spam detectado. Mensaje no enviado.",

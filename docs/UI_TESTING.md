@@ -187,6 +187,8 @@ Tests language switching:
 - Mobile and desktop language switchers
 - All pages translate correctly
 
+If the mobile sidebar or other UI shows a raw key (e.g. `sidebar.portfolio`) instead of translated text, the translation JSON is missing that key. See [Post-Mortem: Mobile Sidebar Raw Translation Key](Post-Mortem/mobile-sidebar-raw-translation-key.md) for cause and prevention.
+
 **Example:**
 ```bash
 npx playwright test tests/translation.spec.ts

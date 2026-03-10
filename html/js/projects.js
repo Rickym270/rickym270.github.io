@@ -83,9 +83,6 @@ async function fetchProjectsFromAPI() {
     // Standalone fetch: try API, then static fallback
     var _apiUrl = API_BASE_URL_FALLBACK + '/api/projects';
     try {
-        // #region agent log
-        if (typeof fetch !== 'undefined') fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'projects.js:fetch',message:'projects fetch attempt',data:{origin:typeof window!=='undefined'?window.location.origin:null,apiUrl:_apiUrl,hostname:typeof window!=='undefined'?window.location.hostname:null},hypothesisId:'H1',timestamp:Date.now()})}).catch(function(){});
-        // #endregion
         var response = await fetch(_apiUrl);
         if (!response.ok) {
             throw new Error('HTTP error! status: ' + response.status);
@@ -477,9 +474,6 @@ async function initProjects() {
             const currentOrigin = window.location.origin;
             const apiBase = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : API_BASE_URL_FALLBACK;
             const apiUrl = apiBase + '/api/projects';
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5613b1'},body:JSON.stringify({sessionId:'5613b1',location:'projects.js:corsError',message:'CORS/network error detected',data:{origin:currentOrigin,apiBase:apiBase,apiUrl:apiUrl,errorName:error.name,errorMessage:error.message||''},hypothesisId:'H2',timestamp:Date.now()})}).catch(function(){});
-            // #endregion
             console.warn(
                 'Projects API request failed (CORS/network or server error):',
                 error.message || 'Failed to fetch',
