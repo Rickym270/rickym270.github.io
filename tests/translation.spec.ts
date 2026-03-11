@@ -554,15 +554,15 @@ test.describe('Translation feature', () => {
     }, { timeout: 10000 });
     await page.waitForTimeout(500);
 
-    // Assert post title (post-2; es.json has English for post2 for now)
+    // Assert post title is Spanish (post-2)
     const postTitle = page.locator('#content .post-title[data-translate="engineering.post2.title"], #content h1.post-title');
     await expect(postTitle).toBeVisible({ timeout: 5000 });
-    await expect(postTitle).toContainText('Accessibility Is Not Just a Feature');
+    await expect(postTitle).toContainText('La accesibilidad no es solo una función');
 
-    // Assert at least one body segment visible (post-2.p1)
+    // Assert at least one body segment is Spanish (post-2.p1)
     const firstParagraph = page.locator('#content #post-body p[data-translate="engineering.post2.p1"]');
     await expect(firstParagraph).toBeVisible({ timeout: 5000 });
-    await expect(firstParagraph).toContainText('accessibility');
+    await expect(firstParagraph).toContainText('accesibilidad');
   });
 
   test('Engineering post updates when language is switched after loading post', async ({ page }) => {
@@ -605,7 +605,7 @@ test.describe('Translation feature', () => {
     }, { timeout: 10000 });
     await page.waitForTimeout(500);
 
-    // Switch to Spanish (post2 in es.json is English for now)
+    // Switch to Spanish
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
@@ -615,8 +615,8 @@ test.describe('Translation feature', () => {
     }
     await page.waitForTimeout(500);
 
-    await expect(page.locator('#content .post-title')).toContainText('Accessibility Is Not Just a Feature');
-    await expect(page.locator('#content #post-body p[data-translate="engineering.post2.p1"]')).toContainText('accessibility');
+    await expect(page.locator('#content .post-title')).toContainText('La accesibilidad no es solo una función');
+    await expect(page.locator('#content #post-body p[data-translate="engineering.post2.p1"]')).toContainText('accesibilidad');
   });
 
   test('Engineering landing page shows translated post title in Spanish', async ({ page }) => {
@@ -656,10 +656,10 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // First card is featured post (post-2); in Spanish post2 title is still English for now
+    // First card is featured post (post-2); title should be in Spanish
     const cardTitle = page.locator('#content .blog-card:not(.placeholder) .blog-card-title').first();
     await expect(cardTitle).toBeVisible({ timeout: 5000 });
-    await expect(cardTitle).toHaveText('Accessibility Is Not Just a Feature');
+    await expect(cardTitle).toHaveText('La accesibilidad no es solo una función');
   });
 
   test('contact page translates correctly', async ({ page }) => {
