@@ -260,6 +260,12 @@ $(document).ready(function(){
                     console.log("Loaded " + sectionUrl);
                     // Mark content as loaded for testing
                     jQuery("#content").attr("data-content-loaded", "true");
+                    // Build blog pills synchronously so they exist before any test or user interaction (avoids 50ms timer race on slow devices)
+                    if (sectionUrl.includes('engineering.html') || sectionUrl.includes('lifestyle.html')) {
+                        if (typeof window.initBlogCategoryPills === 'function') {
+                            window.initBlogCategoryPills();
+                        }
+                    }
                     // Move focus to main content for keyboard/screen reader users
                     var mainEl = document.getElementById('content');
                     if (mainEl && mainEl.getAttribute('tabindex') === '-1') {
