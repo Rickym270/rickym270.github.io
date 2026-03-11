@@ -279,7 +279,7 @@ $(document).ready(function(){
                             setTimeout(() => {
                                 window.TranslationManager.applyTranslations();
                                 // When post-1 is loaded via SPA, inline script does not run; compute reading time and set number
-                                if (sectionUrl.includes('post-1.html')) {
+                                if (sectionUrl.includes('post-1.html') || sectionUrl.includes('post-2.html')) {
                                     var postBody = document.getElementById('post-body');
                                     var readingTimeNum = document.getElementById('reading-time-num');
                                     if (postBody && readingTimeNum) {

@@ -129,7 +129,7 @@ test.describe('Blog Pages', () => {
 
     // Featured Post
     await expect(content.locator('.blog-featured')).toBeVisible();
-    await expect(content.locator('.blog-featured')).toContainText('How Living With MS Changed');
+    await expect(content.locator('.blog-featured')).toContainText('Accessibility Is Not Just a Feature');
     await expect(content.getByRole('link', { name: 'Read Article' })).toBeVisible();
 
     // Latest Insights
@@ -138,7 +138,7 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
 
     // Cards: at least one real card with post link, at least one placeholder
-    await expect(content.locator('.blog-card:not(.placeholder) a[data-url="html/pages/engineering/post-1.html"]').first()).toBeVisible();
+    await expect(content.locator('.blog-card:not(.placeholder) a[data-url="html/pages/engineering/post-2.html"]').first()).toBeVisible();
     await expect(content.locator('.blog-card.placeholder').filter({ hasText: 'Coming Soon' }).first()).toBeVisible();
 
     // No search bar (removed)
@@ -226,11 +226,11 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
+    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      (res) => res.url().includes('post-2.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await readArticleLink.click();
@@ -242,7 +242,7 @@ test.describe('Blog Pages', () => {
     }, { timeout: 10000 });
 
     await expect(page.locator('#content #post-body')).toBeVisible();
-    await expect(page.locator('#content')).toContainText('How Living With MS Changed');
+    await expect(page.locator('#content')).toContainText('Accessibility Is Not Just a Feature');
   });
 
   test('Post detail page shows banner, hero, and article body', async ({ page }) => {
@@ -279,11 +279,11 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
+    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      (res) => res.url().includes('post-2.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await readArticleLink.click();
@@ -299,7 +299,7 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.post-banner')).toBeVisible();
     await expect(content.locator('.post-banner-img')).toBeVisible();
     await expect(content.locator('.post-hero')).toBeVisible();
-    await expect(content.locator('.post-hero')).toContainText('How Living With MS Changed');
+    await expect(content.locator('.post-hero')).toContainText('Accessibility Is Not Just a Feature');
     await expect(content.locator('.post-meta')).toBeVisible();
     await expect(content.locator('#post-body')).toBeVisible();
     await expect(content.locator('#post-body blockquote').first()).toBeVisible();
