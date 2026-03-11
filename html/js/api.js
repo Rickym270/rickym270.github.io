@@ -162,14 +162,6 @@ async function fetchStats() {
 }
 
 /**
- * Fetch GitHub activity from API
- * @returns {Promise<Array>} - Array of activity objects
- */
-async function fetchGitHubActivity() {
-    return await fetchFromAPI('/api/github/activity');
-}
-
-/**
  * Submit contact form
  * @param {Object} contactData - Contact form data {name, email, message}
  * @returns {Promise<Object>} - Created contact message
@@ -209,7 +201,6 @@ if (typeof module !== 'undefined' && module.exports) {
         prefetchProjects,
         fetchMeta,
         fetchStats,
-        fetchGitHubActivity,
         submitContact,
         checkHealth,
         API_BASE_URL

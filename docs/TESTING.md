@@ -61,11 +61,6 @@ curl -s http://localhost:8080/api/projects
 curl -s http://localhost:8080/api/stats
 ```
 
-- GitHub recent activity
-```bash
-curl -s http://localhost:8080/api/github/activity
-```
-
 - Contact (submit message)
 ```bash
 # Submit a contact message
