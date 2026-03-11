@@ -534,16 +534,17 @@ test.describe('Translation feature', () => {
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('h1');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
     // Click the Featured "Read Article" link (single element; card link would also work) — featured is post-2
     const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
     await expect(postLink).toBeVisible({ timeout: 5000 });
+    await postLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
       (res) => res.url().includes('post-2.html') && res.status() === 200,
-      { timeout: 15000 }
+      { timeout: 20000 }
     );
     await postLink.click();
     await responsePromise;

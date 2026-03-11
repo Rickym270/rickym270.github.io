@@ -293,6 +293,7 @@
                     e.preventDefault();
                     if (typeof jQuery !== 'undefined' && jQuery.fn.load) {
                         jQuery('#content').load(url + '?v=20251110', function() {
+                            jQuery('#content').attr('data-content-loaded', 'true');
                             if (typeof window.updateActiveNavItem === 'function') {
                                 window.updateActiveNavItem(url);
                             } else {
@@ -303,6 +304,9 @@
                             }
                             if (typeof window.reinitTheme === 'function') window.reinitTheme();
                             if (typeof window.TranslationManager !== 'undefined') window.TranslationManager.applyTranslations();
+                            if (url.includes('engineering.html') || url.includes('lifestyle.html')) {
+                                if (typeof window.initBlogCategoryPills === 'function') window.initBlogCategoryPills();
+                            }
                             if (url.includes('projects.html') && typeof window.initProjects === 'function') {
                                 window.resetProjectsInit();
                                 window.initProjects();
