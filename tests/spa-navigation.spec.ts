@@ -259,5 +259,52 @@ test.describe('SPA Navigation', () => {
       expect(count).toBe(1);
     }
   });
+
+  test('SPA navigation resets scroll to top', async ({ page }) => {
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/engineering.html"]').click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
+    }, { timeout: 15000 });
+
+    await page.evaluate(() => window.scrollTo(0, 400));
+    const scrollAfterEngineering = await page.evaluate(() => window.scrollY);
+    expect(scrollAfterEngineering).toBeGreaterThan(0);
+
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/home.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('#homeBanner, .carousel');
+    }, { timeout: 15000 });
+    await page.waitForFunction(() => window.scrollY === 0, { timeout: 2000 });
+
+    const scrollAfterNav = await page.evaluate(() => window.scrollY);
+    expect(scrollAfterNav).toBe(0);
+  });
 });
 
