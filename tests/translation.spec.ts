@@ -538,11 +538,11 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // Click the Featured "Read Article" link (single element; card link would also work)
-    const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]');
+    // Click the Featured "Read Article" link (single element; card link would also work) — featured is post-2
+    const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
     await expect(postLink).toBeVisible({ timeout: 5000 });
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      (res) => res.url().includes('post-2.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await postLink.click();
@@ -554,15 +554,15 @@ test.describe('Translation feature', () => {
     }, { timeout: 10000 });
     await page.waitForTimeout(500);
 
-    // Assert post title is Spanish
-    const postTitle = page.locator('#content .post-title[data-translate="engineering.post1.title"], #content h1.post-title');
+    // Assert post title is Spanish (post-2)
+    const postTitle = page.locator('#content .post-title[data-translate="engineering.post2.title"], #content h1.post-title');
     await expect(postTitle).toBeVisible({ timeout: 5000 });
-    await expect(postTitle).toContainText('Cómo vivir con EM');
+    await expect(postTitle).toContainText('La accesibilidad no es solo una función');
 
-    // Assert at least one body segment is Spanish
-    const firstParagraph = page.locator('#content #post-body p[data-translate="engineering.post1.p1"]');
+    // Assert at least one body segment is Spanish (post-2.p1)
+    const firstParagraph = page.locator('#content #post-body p[data-translate="engineering.post2.p1"]');
     await expect(firstParagraph).toBeVisible({ timeout: 5000 });
-    await expect(firstParagraph).toContainText('esclerosis múltiple');
+    await expect(firstParagraph).toContainText('accesibilidad');
   });
 
   test('Engineering post updates when language is switched after loading post', async ({ page }) => {
@@ -589,15 +589,15 @@ test.describe('Translation feature', () => {
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-1.html"]');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-2.html"]');
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
 
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-1.html') && res.status() === 200,
+      (res) => res.url().includes('post-2.html') && res.status() === 200,
       { timeout: 15000 }
     );
-    await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-1.html"]').click();
+    await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]').click();
     await responsePromise;
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -615,8 +615,8 @@ test.describe('Translation feature', () => {
     }
     await page.waitForTimeout(500);
 
-    await expect(page.locator('#content .post-title')).toContainText('Cómo vivir con EM');
-    await expect(page.locator('#content #post-body p[data-translate="engineering.post1.p1"]')).toContainText('esclerosis múltiple');
+    await expect(page.locator('#content .post-title')).toContainText('La accesibilidad no es solo una función');
+    await expect(page.locator('#content #post-body p[data-translate="engineering.post2.p1"]')).toContainText('accesibilidad');
   });
 
   test('Engineering landing page shows translated post title in Spanish', async ({ page }) => {
@@ -652,14 +652,14 @@ test.describe('Translation feature', () => {
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-1.html"]');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-2.html"]');
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // Card title is inside the card link; use the non-placeholder card so we have one match
-    const cardTitle = page.locator('#content .blog-card:not(.placeholder) .blog-card-title');
+    // First card is featured post (post-2); title should be in Spanish
+    const cardTitle = page.locator('#content .blog-card:not(.placeholder) .blog-card-title').first();
     await expect(cardTitle).toBeVisible({ timeout: 5000 });
-    await expect(cardTitle).toHaveText('Cómo vivir con EM cambió mi forma de ingeniería de software');
+    await expect(cardTitle).toHaveText('La accesibilidad no es solo una función');
   });
 
   test('contact page translates correctly', async ({ page }) => {

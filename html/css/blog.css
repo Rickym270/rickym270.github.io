@@ -9,7 +9,7 @@
 .blog-featured {
     position: relative;
     background: var(--color-bg-secondary);
-    background-image: url("/html/imgs/blog-featured-banner.png");
+    background-image: url("/html/imgs/blog-accessibility-banner.jpg");
     background-size: cover;
     background-position: center;
     border: 1px solid var(--color-border);
