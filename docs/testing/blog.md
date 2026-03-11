@@ -9,13 +9,13 @@ The blog has two listing pages (Engineering and Personal), reached from the Blog
 ### Engineering (`html/pages/engineering.html`)
 
 - **Featured Post**: Hero section with real post title, short description, "Read Article" button, and metadata (date, read time). Links use SPA `inline-load` and `data-url="html/pages/engineering/post-1.html"`.
-- **Latest Insights**: Section heading (h2), subtitle, and category pills (All Posts, Web Dev, Automation, DevOps, Productivity). No search bar in current implementation.
+- **Latest Insights**: Section heading (h2), subtitle, and **auto-generated** category pills. Pills are built from the tags present on the cards in the grid (e.g. All Posts plus one pill per unique tag). Clicking a pill filters the grid to cards that have that tag; "All Posts" shows all cards including placeholders. No search bar in current implementation.
 - **Blog cards grid**: One real card (post-1) with image, category, date, title, description, tags, and "Read more" link; two placeholder cards with "Coming Soon".
 
 ### Personal (`html/pages/lifestyle.html`)
 
 - **Featured Post**: Same hero layout with "Coming Soon" for title and description (no CTA).
-- **Latest Insights**: Same section and category pills (All Posts, Life, Travel, Hobbies).
+- **Latest Insights**: Same section and auto-generated category pills (when all cards are placeholders, only "All Posts" is shown).
 - **Blog cards grid**: Three placeholder cards with "Coming Soon".
 
 ### Post detail page (article view)
@@ -41,7 +41,7 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 
 - Engineering page loads via Blog dropdown (desktop and mobile).
 - Personal page loads via Blog dropdown (desktop and mobile).
-- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, category pills), at least one real card and one placeholder card; no search bar present.
+- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, auto-generated category pills, pill count = 1 + unique tag keys), at least one real card and one placeholder card; no search bar present. Clicking a tag pill filters the grid; clicking "All Posts" shows all cards.
 - Personal page structure: Featured and Latest Insights present; three placeholder cards with "Coming Soon".
 - Navigation: Clicking "Read Article" from Engineering loads the post body in `#content` (SPA).
 - Post detail structure: banner, hero (meta + title), article body, and at least one blockquote visible when post is loaded in SPA.

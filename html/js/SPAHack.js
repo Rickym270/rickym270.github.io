@@ -289,6 +289,11 @@ $(document).ready(function(){
                                         readingTimeNum.textContent = mins;
                                     }
                                 }
+                                if (sectionUrl.includes('engineering.html') || sectionUrl.includes('lifestyle.html')) {
+                                    if (typeof window.initBlogCategoryPills === 'function') {
+                                        window.initBlogCategoryPills();
+                                    }
+                                }
                             }, 50);
                         }
                         // Update active nav item

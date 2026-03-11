@@ -132,10 +132,11 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.blog-featured')).toContainText('Accessibility Is Not Just a Feature');
     await expect(content.getByRole('link', { name: 'Read Article' })).toBeVisible();
 
-    // Latest Insights
+    // Latest Insights: pills auto-generated from card tags (All Posts + 3 unique tags = 4)
     await expect(content.locator('h2').filter({ hasText: 'Latest Insights' })).toBeVisible();
     await expect(content.locator('.blog-category-pills')).toBeVisible();
     await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
+    await expect(content.locator('.blog-category-pill')).toHaveCount(4);
 
     // Cards: at least one real card with post link, at least one placeholder
     await expect(content.locator('.blog-card:not(.placeholder) a[data-url="html/pages/engineering/post-2.html"]').first()).toBeVisible();
@@ -186,10 +187,73 @@ test.describe('Blog Pages', () => {
 
     await expect(content.locator('h2').filter({ hasText: 'Latest Insights' })).toBeVisible();
     await expect(content.locator('.blog-category-pills')).toBeVisible();
+    await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
+    // Personal has only placeholders, so only "All Posts" pill
+    await expect(content.locator('.blog-category-pill')).toHaveCount(1);
 
     const placeholderCards = content.locator('.blog-card.placeholder');
     await expect(placeholderCards).toHaveCount(3);
     await expect(content.locator('.blog-card').filter({ hasText: 'Coming Soon' }).first()).toBeVisible();
+  });
+
+  test('Latest Insights filter pills filter cards by tag', async ({ page }) => {
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(100); // allow initBlogCategoryPills to run
+
+    const content = page.locator('#content');
+    const pills = content.locator('.blog-category-pills');
+    const grid = content.locator('.blog-cards-grid');
+
+    // All Posts: all cards visible (2 real + 1 placeholder)
+    await expect(pills.locator('.blog-category-pill.active')).toContainText('All Posts');
+    await expect(grid.locator('.blog-card:not(.placeholder)')).toHaveCount(2);
+    await expect(grid.locator('.blog-card.placeholder')).toHaveCount(1);
+
+    // Click RESILIENCE (both real cards have it)
+    await pills.locator('.blog-category-pill', { hasText: 'RESILIENCE' }).click();
+    await expect(pills.locator('.blog-category-pill.active')).toContainText('RESILIENCE');
+    await expect(grid.locator('.blog-card:not(.placeholder)')).toHaveCount(2);
+    await expect(grid.locator('.blog-card.placeholder')).toBeHidden();
+
+    // Click ACCESSIBILITY (only first card)
+    await pills.locator('.blog-category-pill', { hasText: 'ACCESSIBILITY' }).click();
+    await expect(grid.locator('.blog-card:not(.placeholder)').filter({ hasText: 'Accessibility Is Not Just a Feature' })).toBeVisible();
+    await expect(grid.locator('.blog-card:not(.placeholder)').filter({ hasText: 'How Living With MS' })).toBeHidden();
+
+    // Click All Posts again
+    await pills.locator('.blog-category-pill', { hasText: 'All Posts' }).click();
+    await expect(grid.locator('.blog-card')).toHaveCount(3);
   });
 
   test('Read Article from Engineering loads post in SPA', async ({ page }) => {
