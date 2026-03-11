@@ -462,7 +462,10 @@
     "security": "Security",
     "life": "Life",
     "travel": "Travel",
-    "hobbies": "Hobbies"
+    "hobbies": "Hobbies",
+    "tagAccessibility": "ACCESSIBILITY",
+    "tagResilience": "RESILIENCE",
+    "tagAutomation": "AUTOMATION"
   },
   "lessons": {
     "pythonTutorial": {
