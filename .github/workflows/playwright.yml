@@ -162,11 +162,11 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
-  # Push / schedule / workflow_dispatch: full suite (regression + integration) with sharding
+  # PR and master: full suite (regression + integration) with sharding. Run on PR so merge requires passing suite; run on push/schedule/dispatch only when ref is master.
   full-suite:
     name: Full suite (shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
     timeout-minutes: 60
     strategy:
       fail-fast: false

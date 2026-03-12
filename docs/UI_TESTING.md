@@ -74,23 +74,20 @@ npx playwright test --project=chromium-iphone
 
 There are two GitHub Actions workflows for testing:
 
-**Playwright Tests** (`playwright.yml`) - Main test workflow for PR validation:
-- Runs on: Pull requests, pushes to master, daily schedule (6:00 UTC), manual dispatch
-- Supports skip keywords: `[skip ui]`, `[skip api]`, etc.
-- Purpose: Validate code changes in PRs
+**Playwright Tests** (`playwright.yml`) - Tiered strategy so master stays source of truth:
+
+- **On pull requests**: Two jobs run in parallel; both must pass before merge.
+  - **Sanity (PR)**: Runs only `[sanity]` tests (6 simple GET 200 API checks). No browser install. ~5–10 min.
+  - **Full suite (sharded)**: Runs `[regression]` and `[integration]` tests in 5 parallel shards. Requires Node, Java, browser install, API + UI servers. ~10–13 min total (slowest shard).
+- **On push to master / schedule / workflow_dispatch**: The full-suite job runs only when the ref is **master** (i.e. push to master, scheduled run on default branch, or manual dispatch from master). Sanity does not run on push (PR-only).
+- Skip keywords: `[skip ci]`, `[skip ui]`, `[skip api]`, etc. (see [Skipping Tests in CI](#skipping-tests-in-ci)).
 
 **Locator Maintenance** (`locator-maintenance.yml`) - Test maintenance workflow:
 - Runs on: Daily schedule (10:00 UTC), manual dispatch only
 - Note: Does NOT run on pull requests to avoid duplicate test runs
 - Purpose: Run all tests and normalize locators if tests fail
 
-The CI workflow:
-1. Checks out code
-2. Sets up Node.js 18
-3. Installs dependencies
-4. Installs Playwright browsers
-5. Runs all tests
-6. Uploads test artifacts (reports, traces, screenshots)
+Per-job steps (simplified): checkout, setup Node/Java, install deps, (sanity: no browsers; full-suite: install Playwright browsers), build/start API (and UI for full-suite), run tests, upload artifacts (reports, traces, screenshots).
 
 ## Test Structure
 
@@ -420,7 +417,7 @@ npx playwright install firefox
 
 ## CI/CD Integration
 
-Tests run automatically in GitHub Actions. The workflow:
+Tests run automatically in GitHub Actions. The Playwright workflow uses a tiered strategy: on PRs, both the sanity job and the full-suite (regression + integration, 5 shards) run and must pass before merge, so master remains the source of truth. On push/schedule/dispatch, the full suite runs only when the ref is master. See [Running Tests in CI](#running-tests-in-ci) for details.
 
 ### Skipping Tests in CI
 
@@ -448,11 +445,9 @@ git commit -m "Update API documentation [skip api]"
 - When specific test types are skipped, only those tests are skipped (other tests still run)
 
 The workflow:
-- Runs on pull requests
-- Runs on pushes to main
-- Runs on a daily schedule
-- Uploads test artifacts (reports, traces, screenshots)
-- Retains artifacts for 7 days
+- On PR: runs sanity and full-suite (both required to pass); merge is blocked until both pass.
+- On push/schedule/dispatch: full-suite runs only when ref is master.
+- Uploads test artifacts (reports, traces, screenshots) per job/shard; retains for 7 days.
 
 View test results in the Actions tab on GitHub.
 

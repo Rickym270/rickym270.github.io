@@ -133,12 +133,18 @@ Tests are tagged in their titles so you can run a subset by class:
 
 ## CI/CD Testing
 
-Tests run automatically in GitHub Actions on:
-- Pull requests
-- Pushes to main
-- Daily schedule (6:00 UTC)
+Playwright tests use a **tiered strategy** so master stays the source of truth (no merge until the full suite passes).
 
-See [UI Testing Guide](../UI_TESTING.md#cicd-integration) for details on CI/CD integration.
+- **Pull requests**  
+  Two jobs run in parallel; **both must pass** before merge:
+  - **Sanity**: Fast gate (~5–10 min). Runs only `[sanity]` tests (6 simple GET 200 API checks, no browser install).
+  - **Full suite**: Regression and integration tests tagged `[regression]` and `[integration]`, run in **5 shards** in parallel. Total PR time is typically ~10–13 min (dominated by the full suite).
+- **Push to master / schedule / workflow_dispatch**  
+  The full-suite job runs only when the ref is **master** (push to master, scheduled run on the default branch, or manual dispatch from master). This keeps post-merge and scheduled runs aligned with the main branch.
+
+Merge is only allowed when sanity and all full-suite shards have passed on the PR, so master is not broken by a merge.
+
+See [UI Testing Guide](../UI_TESTING.md#cicd-integration) for skip keywords and artifact details.
 
 ## Need Help?
 
