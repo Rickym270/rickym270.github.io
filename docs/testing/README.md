@@ -93,6 +93,17 @@ npx playwright test --project=chromium-iphone
 npx playwright test --grep "API"
 ```
 
+### Test classification (sanity, regression, integration)
+
+Tests are tagged in their titles so you can run a subset by class:
+
+- **Sanity** – Simple GET 200 OK only (no body/contract checks). Run:  
+  `npx playwright test --project=api --grep "\[sanity\]"`
+- **Regression** – Negative cases (4xx/5xx) and any test that asserts more than status (body, contract, headers). Run:  
+  `npx playwright test --project=api --grep "\[regression\]"`
+- **Integration** – Multi-endpoint or stateful API tests (e.g. load, POST contact) and full user-flow tests (user-journey, load frontend). Run:  
+  `npx playwright test --grep "\[integration\]"`
+
 ## Test Documentation by Feature
 
 ### Contact Form

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('End-to-End User Journeys', () => {
+test.describe('[integration] End-to-End User Journeys', () => {
   test.describe.configure({ timeout: 180000 }); // 3 minutes for full journeys
 
   test('complete user journey: browse portfolio', async ({ page }) => {

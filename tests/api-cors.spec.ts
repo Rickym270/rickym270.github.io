@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
-test.describe('API CORS Configuration', () => {
+test.describe('[regression] API CORS Configuration', () => {
   test('GET /api/health includes CORS headers for localhost origin', async ({ request }) => {
     const response = await request.get(`${API_BASE_URL}/api/health`, {
       headers: {

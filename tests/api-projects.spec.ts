@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
-test.describe('API Projects Endpoint', () => {
+test.describe('[regression] API Projects Endpoint', () => {
   test('GET /api/projects returns array of projects', async ({ request }) => {
     const response = await request.get(`${API_BASE_URL}/api/projects`);
     expect(response.ok()).toBeTruthy();

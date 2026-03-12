@@ -18,16 +18,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  # PR only: fast gate with sanity tests (API only, no browser install)
+  sanity:
+    name: Sanity (PR)
     runs-on: ubuntu-latest
-    timeout-minutes: 60  # Increased from 35 to accommodate ~400+ tests across 3 browser projects
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 15
     env:
       TZ: America/New_York
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Need full history to check commit messages
+          fetch-depth: 0
 
       - name: Check for skip keywords
         id: skip-check
@@ -35,18 +38,8 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          # Get commit messages to check
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            # For PRs, check PR title, body, and all commit messages
-            # Write PR title and body to temp file, handling special characters safely
-            {
-              echo "$PR_TITLE"
-              echo "$PR_BODY"
-            } > /tmp/pr_text.txt 2>/dev/null || {
-              # Fallback: write title only if body causes issues
-              echo "$PR_TITLE" > /tmp/pr_text.txt
-            }
-            # Get all commit messages in the PR (from base to head)
+            { echo "$PR_TITLE"; echo "$PR_BODY"; } > /tmp/pr_text.txt 2>/dev/null || echo "$PR_TITLE" > /tmp/pr_text.txt
             BASE_SHA="${{ github.event.pull_request.base.sha }}"
             HEAD_SHA="${{ github.event.pull_request.head.sha }}"
             if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ]; then
@@ -54,97 +47,184 @@ jobs:
             else
               git log --format=%B -10 >> /tmp/pr_text.txt
             fi
-            # Read the file content safely
             COMMIT_MESSAGES=$(cat /tmp/pr_text.txt 2>/dev/null || echo "")
-            echo "Debug: PR title: $PR_TITLE"
-            echo "Debug: PR body length: ${#PR_BODY}"
-            echo "Debug: Temp file exists: $([ -f /tmp/pr_text.txt ] && echo 'yes' || echo 'no')"
-            echo "Debug: Temp file first 200 chars: $(head -c 200 /tmp/pr_text.txt 2>/dev/null || echo 'empty')"
           else
-            # For push/schedule/workflow_dispatch, check recent commit messages
             COMMIT_MESSAGES="$(git log --format=%B -10)"
           fi
-          
-          # Convert to lowercase for case-insensitive matching
           COMMIT_MESSAGES_LOWER=$(echo "$COMMIT_MESSAGES" | tr '[:upper:]' '[:lower:]')
-          echo "Debug: COMMIT_MESSAGES_LOWER first 500 chars: $(echo "$COMMIT_MESSAGES_LOWER" | head -c 500)"
-          
-          # Check for skip keywords (only at beginning of line)
+          SKIP_ALL=false
+          SKIP_API=false
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ci\]"; then SKIP_ALL=true; fi
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip api\]"; then SKIP_API=true; fi
+          if [ -n "$ACT" ]; then SKIP_API=true; fi
+          echo "skip_all=$SKIP_ALL" >> $GITHUB_OUTPUT
+          echo "skip_api=$SKIP_API" >> $GITHUB_OUTPUT
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Skip sanity (no API tests)
+        if: steps.skip-check.outputs.skip_all == 'true' || steps.skip-check.outputs.skip_api == 'true'
+        run: |
+          echo "Skipping sanity job (skip_all=${{ steps.skip-check.outputs.skip_all }}, skip_api=${{ steps.skip-check.outputs.skip_api }})"
+          exit 0
+
+      - name: Build Spring Boot API
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
+        working-directory: ./api
+        run: ./mvnw clean package spring-boot:repackage -DskipTests
+
+      - name: Verify JAR exists
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
+        working-directory: ./api
+        run: |
+          if [ ! -f target/api-0.0.1-SNAPSHOT.jar ]; then
+            echo "Error: JAR file not found!"
+            exit 1
+          fi
+
+      - name: Start Spring Boot API server
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
+        working-directory: ./api
+        env:
+          SMTP_HOST: ${{ vars.SMTP_HOST }}
+          SMTP_PORT: ${{ vars.SMTP_PORT }}
+          SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          FEATURE_GITHUB_PROJECT_SYNC: "false"
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+        run: |
+          java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar > api-server.log 2>&1 &
+          echo $! > api-server.pid
+          sleep 5
+          if ! kill -0 $(cat api-server.pid) 2>/dev/null; then
+            echo "ERROR: Server process died immediately!"
+            cat api-server.log || true
+            exit 1
+          fi
+
+      - name: Wait for API server to be ready
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
+        working-directory: ./api
+        run: |
+          npx wait-on http://127.0.0.1:8080/api/health --timeout 120000 --interval 2000 || {
+            echo "ERROR: API server failed to start"
+            cat api-server.log || true
+            exit 1
+          }
+
+      - name: Run sanity tests
+        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
+        timeout-minutes: 10
+        run: npx playwright test --project=api --grep '\[sanity\]' --reporter=list,github
+
+      - name: Stop API server
+        if: always()
+        working-directory: ./api
+        run: |
+          if [ -f api-server.pid ]; then
+            kill $(cat api-server.pid) 2>/dev/null || true
+            rm -f api-server.pid
+          fi
+
+      - name: Upload API server logs
+        if: always() && env.ACT == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-server-logs-sanity
+          path: api/api-server.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload HTML report
+        if: always() && env.ACT == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-sanity
+          path: playwright-report
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # Push / schedule / workflow_dispatch: full suite (regression + integration) with sharding
+  full-suite:
+    name: Full suite (shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
+    env:
+      TZ: America/New_York
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for skip keywords
+        id: skip-check
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            { echo "$PR_TITLE"; echo "$PR_BODY"; } > /tmp/pr_text.txt 2>/dev/null || echo "$PR_TITLE" > /tmp/pr_text.txt
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ]; then
+              git log --format=%B $BASE_SHA..$HEAD_SHA >> /tmp/pr_text.txt 2>/dev/null || git log --format=%B -10 >> /tmp/pr_text.txt
+            else
+              git log --format=%B -10 >> /tmp/pr_text.txt
+            fi
+            COMMIT_MESSAGES=$(cat /tmp/pr_text.txt 2>/dev/null || echo "")
+          else
+            COMMIT_MESSAGES="$(git log --format=%B -10)"
+          fi
+          COMMIT_MESSAGES_LOWER=$(echo "$COMMIT_MESSAGES" | tr '[:upper:]' '[:lower:]')
           SKIP_ALL=false
           SKIP_UI=false
           SKIP_API=false
           SKIP_PERF=false
           SKIP_ADA=false
           SKIP_LOAD=false
-          
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ci\]"; then
-            SKIP_ALL=true
-            echo "⚠️  [skip ci] detected - skipping all tests"
-          fi
-          
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ui\]"; then
-            SKIP_UI=true
-            echo "⚠️  [skip ui] detected - skipping UI tests"
-          fi
-          
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip api\]"; then
-            SKIP_API=true
-            echo "⚠️  [skip api] detected - skipping API tests"
-          fi
-          
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip perf\]"; then
-            SKIP_PERF=true
-            echo "⚠️  [skip perf] detected - skipping performance tests"
-          fi
-          
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ada\]"; then
-            SKIP_ADA=true
-            echo "⚠️  [skip ada] detected - skipping accessibility tests"
-          fi
-          
-          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip load\]"; then
-            SKIP_LOAD=true
-            echo "⚠️  [skip load] detected - skipping load tests"
-          fi
-
-          if [ -n "$ACT" ]; then
-            SKIP_API=true
-            echo "⚠️  ACT detected - skipping API tests"
-          fi
-          
-          # Set outputs
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ci\]"; then SKIP_ALL=true; fi
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ui\]"; then SKIP_UI=true; fi
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip api\]"; then SKIP_API=true; fi
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip perf\]"; then SKIP_PERF=true; fi
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip ada\]"; then SKIP_ADA=true; fi
+          if echo "$COMMIT_MESSAGES_LOWER" | grep -q "^\[skip load\]"; then SKIP_LOAD=true; fi
+          if [ -n "$ACT" ]; then SKIP_API=true; fi
           echo "skip_all=$SKIP_ALL" >> $GITHUB_OUTPUT
           echo "skip_ui=$SKIP_UI" >> $GITHUB_OUTPUT
           echo "skip_api=$SKIP_API" >> $GITHUB_OUTPUT
           echo "skip_perf=$SKIP_PERF" >> $GITHUB_OUTPUT
           echo "skip_ada=$SKIP_ADA" >> $GITHUB_OUTPUT
           echo "skip_load=$SKIP_LOAD" >> $GITHUB_OUTPUT
-          
-          # Debug output
-          echo "Debug: SKIP_ALL=$SKIP_ALL"
-          echo "Debug: SKIP_UI=$SKIP_UI"
-          echo "Debug: SKIP_API=$SKIP_API"
-          echo "Debug: COMMIT_MESSAGES length: ${#COMMIT_MESSAGES}"
-          
-          # Build project list
           PROJECTS=""
-          if [ "$SKIP_ALL" = "true" ]; then
-            echo "✅ All tests skipped"
-          else
-            if [ "$SKIP_UI" != "true" ]; then
-              PROJECTS="$PROJECTS --project=chromium --project=chromium-iphone --project=firefox"
-            fi
-            if [ "$SKIP_API" != "true" ]; then
-              PROJECTS="$PROJECTS --project=api"
-            fi
-            
-            if [ -z "$PROJECTS" ]; then
-              echo "⚠️  All test types skipped - no tests to run"
-            else
-              echo "✅ Will run tests with projects:$PROJECTS"
-            fi
+          if [ "$SKIP_ALL" != "true" ]; then
+            [ "$SKIP_UI" != "true" ] && PROJECTS="$PROJECTS --project=chromium --project=chromium-iphone --project=firefox"
+            [ "$SKIP_API" != "true" ] && PROJECTS="$PROJECTS --project=api"
           fi
-          
           echo "projects=$PROJECTS" >> $GITHUB_OUTPUT
 
       - name: Setup Node
@@ -166,6 +246,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Skip full-suite
+        if: steps.skip-check.outputs.skip_all == 'true'
+        run: |
+          echo "Skipping full-suite (skip_all=true)"
+          exit 0
+
       - name: Build Spring Boot API
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
         working-directory: ./api
@@ -185,30 +271,23 @@ jobs:
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.skip_api != 'true'
         working-directory: ./api
         env:
-          # Email configuration (non-sensitive from vars, sensitive from secrets)
           SMTP_HOST: ${{ vars.SMTP_HOST }}
           SMTP_PORT: ${{ vars.SMTP_PORT }}
           SMTP_USERNAME: ${{ vars.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
           SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL }}
-          # GitHub API (optional, for projects endpoint)
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          # Feature flags - disable GitHub project sync in CI to avoid API calls during tests
           FEATURE_GITHUB_PROJECT_SYNC: "false"
-          # Admin API key (optional)
           ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
-          # Turnstile (optional, for contact form spam protection)
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
           java -Dserver.port=8080 -jar target/api-0.0.1-SNAPSHOT.jar > api-server.log 2>&1 &
-          SERVER_PID=$!
-          echo $SERVER_PID > api-server.pid
-          echo "API server started with PID: $SERVER_PID"
+          echo $! > api-server.pid
+          echo "API server started with PID $(cat api-server.pid)"
           sleep 5
-          if ! kill -0 $SERVER_PID 2>/dev/null; then
+          if ! kill -0 $(cat api-server.pid) 2>/dev/null; then
             echo "ERROR: Server process died immediately!"
-            echo "Server logs:"
             cat api-server.log || true
             exit 1
           fi
@@ -220,19 +299,8 @@ jobs:
           echo "Waiting for API server to start..."
           npx wait-on http://127.0.0.1:8080/api/health --timeout 120000 --interval 2000 || {
             echo "ERROR: API server failed to start within timeout"
-            echo "Checking if server process is still running:"
-            if [ -f api-server.pid ]; then
-              PID=$(cat api-server.pid)
-              if kill -0 $PID 2>/dev/null; then
-                echo "Server process $PID is still running"
-              else
-                echo "Server process $PID is not running"
-              fi
-            fi
-            echo "Server logs:"
+            [ -f api-server.pid ] && kill -0 $(cat api-server.pid) 2>/dev/null && echo "Process still running" || echo "Process not running"
             cat api-server.log || true
-            echo "Checking if port 8080 is in use:"
-            lsof -i :8080 || echo "Port 8080 is not in use"
             exit 1
           }
           echo "API server is ready!"
@@ -241,103 +309,68 @@ jobs:
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         run: |
           echo "UI server start time: $(date -u)" > ui-server.log
-          # Start simple Node.js server on port 4321 in the background
-          # Use simple server instead of http-server because http-server returns 404 for /
-          # Tests use page.goto('/') which fails with http-server but works with simple server
-          node scripts/start-web-server-simple.js > ui-server.log 2>&1 &
-          UI_PID=$!
-          echo $UI_PID > ui-server.pid
-          echo "UI server started with PID: $UI_PID on port 4321"
+          node scripts/start-web-server-simple.js >> ui-server.log 2>&1 &
+          echo $! > ui-server.pid
+          echo "UI server started with PID $(cat ui-server.pid) on port 4321"
           sleep 2
-          if kill -0 $UI_PID 2>/dev/null; then
-            echo "UI server process is running (PID: $UI_PID)"
-          else
-            echo "UI server process is NOT running (PID: $UI_PID)"
-          fi
+          kill -0 $(cat ui-server.pid) 2>/dev/null && echo "UI server process is running" || echo "UI server process is NOT running"
 
       - name: Wait for UI server to be ready
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         run: |
-          echo "Waiting for UI server to start on port 4321..."
-          # Use 127.0.0.1 instead of localhost for CI reliability
-          # Check / (root path) - simple server serves it correctly, unlike http-server
+          echo "Waiting for UI server on port 4321..."
           npx wait-on http://127.0.0.1:4321/ --timeout 60000 --interval 2000 || {
-            echo "ERROR: UI server failed to start within timeout"
-            echo "Checking if server process is still running:"
-            if [ -f ui-server.pid ]; then
-              PID=$(cat ui-server.pid)
-              if kill -0 $PID 2>/dev/null; then
-                echo "Server process $PID is still running"
-              else
-                echo "Server process $PID is not running"
-              fi
-            fi
-            echo "Server logs:"
+            echo "ERROR: UI server failed to start"
+            [ -f ui-server.pid ] && kill -0 $(cat ui-server.pid) 2>/dev/null && echo "Process still running" || echo "Process not running"
             cat ui-server.log || true
-            echo "Checking if port 4321 is in use:"
-            lsof -i :4321 || echo "Port 4321 is not in use"
             exit 1
           }
           echo "UI server is ready!"
 
-      - name: Run Playwright tests
+      - name: Run regression and integration tests (shard)
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
-        # Run tests based on skip keywords in commit messages
-        # Supports: [skip ci], [skip ui], [skip api], [skip perf], [skip ada], [skip load]
-        # UI tests cover: home, skills, projects, contact, docs, tutorials, navbar, theme, translation, responsive, SPA navigation, code blocks
-        # API tests cover: health, stats, meta, home, projects, contact
-        timeout-minutes: 55  # Set timeout for this step (slightly less than job timeout)
+        timeout-minutes: 55
         run: |
           if [ -z "${{ steps.skip-check.outputs.projects }}" ]; then
-            echo "⚠️  No tests to run (all skipped)"
+            echo "No projects to run (all skipped)"
             exit 0
           fi
-          echo "Starting Playwright tests with projects: ${{ steps.skip-check.outputs.projects }}"
-          echo "CI environment: CI=$CI"
-          echo "Workers will be set to 2 in CI (see playwright.config.ts)"
-          npx playwright test ${{ steps.skip-check.outputs.projects }} --reporter=list,github || {
+          echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with projects: ${{ steps.skip-check.outputs.projects }}"
+          npx playwright test ${{ steps.skip-check.outputs.projects }} --grep '\[regression\]|\[integration\]' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=list,github || {
             echo "Tests failed or timed out"
-            echo "Checking if webServer is still running:"
-            curl -s http://127.0.0.1:4321/index.html > /dev/null && echo "webServer is responding" || echo "webServer is NOT responding"
-            curl -s http://127.0.0.1:4321/ > /dev/null && echo "webServer root path is responding" || echo "webServer root path is NOT responding"
+            curl -s http://127.0.0.1:4321/ > /dev/null && echo "UI server responding" || echo "UI server NOT responding"
             exit 1
           }
 
-      - name: Skip tests notification
+      - name: Skip full-suite notification
         if: steps.skip-check.outputs.skip_all == 'true' || (steps.skip-check.outputs.projects == '' && steps.skip-check.outputs.skip_all != 'true')
         run: |
-          if [ "${{ steps.skip-check.outputs.skip_all }}" = "true" ]; then
-            echo "✅ All tests skipped due to [skip ci] in commit message"
-          else
-            echo "✅ All test types skipped - no tests to run"
-          fi
+          [ "${{ steps.skip-check.outputs.skip_all }}" = "true" ] && echo "All tests skipped due to [skip ci]" || echo "All test types skipped - no projects"
 
       - name: Stop API server
         if: always()
         working-directory: ./api
         run: |
           if [ -f api-server.pid ]; then
-            kill $(cat api-server.pid) || true
-            rm api-server.pid || true
+            kill $(cat api-server.pid) 2>/dev/null || true
+            rm -f api-server.pid
           fi
 
       - name: Stop UI server
         if: always()
         run: |
           if [ -f ui-server.pid ]; then
-            echo "Stopping UI server..."
-            kill $(cat ui-server.pid) || true
-            rm ui-server.pid || true
+            kill $(cat ui-server.pid) 2>/dev/null || true
+            rm -f ui-server.pid
           fi
-          # Also try to kill any server process on port 4321 as fallback
           fuser -k 4321/tcp 2>/dev/null || true
-          pkill -f "start-web-server-simple" || true
+          pkill -f "start-web-server-simple" 2>/dev/null || true
 
       - name: Upload API server logs
         if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
-          name: api-server-logs
+          name: api-server-logs-shard-${{ matrix.shardIndex }}
           path: api/api-server.log
           retention-days: 7
           if-no-files-found: ignore
@@ -346,7 +379,7 @@ jobs:
         if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
-          name: ui-server-logs
+          name: ui-server-logs-shard-${{ matrix.shardIndex }}
           path: ui-server.log
           retention-days: 7
           if-no-files-found: ignore
@@ -355,21 +388,20 @@ jobs:
         if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shardIndex }}
           path: playwright-report
           retention-days: 7
           if-no-files-found: ignore
 
-      - name: Upload test results (traces/screenshots)
+      - name: Upload test results
         if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-shard-${{ matrix.shardIndex }}
           path: test-results
           retention-days: 7
           if-no-files-found: ignore
 
       - name: Job summary
         if: always()
-        run: |
-          echo "Playwright report and test-results uploaded as artifacts." >> $GITHUB_STEP_SUMMARY
+        run: echo "Playwright shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} report and test-results uploaded as artifacts." >> $GITHUB_STEP_SUMMARY

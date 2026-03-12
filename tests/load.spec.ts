@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
-test.describe('Load and Stress Tests', () => {
+test.describe('[integration] Load and Stress Tests', () => {
   test.describe.configure({ timeout: 300000 }); // 5 minutes for load tests
 
   test('API handles concurrent requests', async ({ request }) => {
