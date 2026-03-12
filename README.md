@@ -69,7 +69,6 @@ This site hosts notes, tutorials, and projects. It started as a Python teaching 
    - GET /api/meta         → Profile metadata (name, title, location, languages, links)
    - GET /api/projects     → Project list merged from GitHub API + `data/projects.json`
    - GET /api/stats        → Rollup stats (projects count, unique languages, lastUpdated)
-   - GET /api/github/activity → Recent GitHub activity (type, repo, createdAt)
    - GET /api/home         → Simple home text
    - POST /api/contact     → Submit contact form (JSON body: name, email, subject, message)
    - GET /api/contact      → Admin-only, requires `X-API-Key`
@@ -103,7 +102,6 @@ This site hosts notes, tutorials, and projects. It started as a Python teaching 
    - curl -s http://localhost:8080/api/meta
    - curl -s http://localhost:8080/api/projects
    - curl -s http://localhost:8080/api/stats
-   - curl -s http://localhost:8080/api/github/activity
    - curl -s -X POST http://localhost:8080/api/contact -H 'Content-Type: application/json' -d '{"name":"RMTest","email":"rmtest@testing.com","subject":"Test Subject","message":"Test!"}'
    - curl -s -H "X-API-Key: $ADMIN_API_KEY" http://localhost:8080/api/contact
 

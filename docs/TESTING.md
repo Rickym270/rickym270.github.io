@@ -61,11 +61,6 @@ curl -s http://localhost:8080/api/projects
 curl -s http://localhost:8080/api/stats
 ```
 
-- GitHub recent activity
-```bash
-curl -s http://localhost:8080/api/github/activity
-```
-
 - Contact (submit message)
 ```bash
 # Submit a contact message
@@ -190,6 +185,16 @@ Optional CAPTCHA (Cloudflare Turnstile):
 TURNSTILE_SECRET_KEY=your-turnstile-secret
 ```
 If not set, verification is skipped in development.
+
+## Playwright test classification
+
+API and E2E tests are tagged as **sanity**, **regression**, or **integration**. Run a subset with `--grep`:
+
+- Sanity (simple GET 200 only): `npx playwright test --project=api --grep "\[sanity\]"`
+- Regression (negative/contract/body checks): `npx playwright test --project=api --grep "\[regression\]"`
+- Integration (load, contact POST, user journeys): `npx playwright test --grep "\[integration\]"`
+
+See [docs/testing/README.md](testing/README.md#test-classification-sanity-regression-integration) for definitions.
 
 ## Error responses
 - All errors return JSON with keys: `error`, `message`, `time` (ISO‑8601)

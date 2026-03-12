@@ -19,6 +19,10 @@ test.describe('Blog Pages', () => {
     }, { timeout: 15000 });
 
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('engineering.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 20000 }
+    );
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
@@ -39,6 +43,7 @@ test.describe('Blog Pages', () => {
       await blogButton.hover();
       await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
     }
+    await responsePromise.catch(() => {});
 
     // Wait for engineering page content (h1 with "Engineering" or .blog-featured)
     await page.waitForFunction(() => {
@@ -135,6 +140,8 @@ test.describe('Blog Pages', () => {
     // Latest Insights: pills auto-generated from card tags (All Posts + 3 unique tags = 4)
     await expect(content.locator('h2').filter({ hasText: 'Latest Insights' })).toBeVisible();
     await expect(content.locator('.blog-category-pills')).toBeVisible();
+    // Wait for initBlogCategoryPills to run (50ms setTimeout); on slow devices (e.g. chromium-iphone) this can lag
+    await expect(content.locator('.blog-category-pill')).toHaveCount(4, { timeout: 10000 });
     await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
     await expect(content.locator('.blog-category-pill')).toHaveCount(4);
 
@@ -206,6 +213,10 @@ test.describe('Blog Pages', () => {
     }, { timeout: 15000 });
 
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('engineering.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 20000 }
+    );
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
@@ -224,12 +235,14 @@ test.describe('Blog Pages', () => {
       await blogButton.hover();
       await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
     }
+    await responsePromise.catch(() => {});
 
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
     }, { timeout: 15000 });
-    await page.waitForTimeout(100); // allow initBlogCategoryPills to run
+    // Wait for initBlogCategoryPills (sync in SPAHack / mobile callback); on slow devices allow time for 4 pills
+    await expect(page.locator('#content .blog-category-pill')).toHaveCount(4, { timeout: 10000 });
 
     const content = page.locator('#content');
     const pills = content.locator('.blog-category-pills');

@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 // The 'api' project sets baseURL to http://localhost:8080
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
-test.describe('API Contract Tests', () => {
+test.describe('[regression] API Contract Tests', () => {
   test.describe.configure({ timeout: 120000 });
 
   test('GET /api returns health response matching contract', async ({ request }) => {
@@ -272,34 +272,6 @@ test.describe('API Contract Tests', () => {
     expect(body.error).toBe('method_not_allowed');
   });
 
-  test('GET /api/github/activity returns activity array matching contract', async ({ request }) => {
-    const response = await request.get(`${API_BASE_URL}/api/github/activity`);
-    
-    expect(response.ok()).toBeTruthy();
-    expect(response.status()).toBe(200);
-    
-    const body = await response.json();
-    
-    // Contract: Should return an array
-    expect(Array.isArray(body)).toBe(true);
-    
-    if (body.length > 0) {
-      const activity = body[0];
-      
-      // Contract: Each activity should have type, repo, createdAt
-      expect(activity).toHaveProperty('type');
-      expect(activity).toHaveProperty('repo');
-      expect(activity).toHaveProperty('createdAt');
-      
-      // Contract: type and repo should be strings
-      expect(typeof activity.type).toBe('string');
-      expect(typeof activity.repo).toBe('string');
-      
-      // Contract: createdAt should be ISO-8601 format
-      expect(activity.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
-    }
-  });
-
   test('GET /api/home returns home text matching contract', async ({ request }) => {
     const response = await request.get(`${API_BASE_URL}/api/home`);
     
@@ -323,8 +295,7 @@ test.describe('API Contract Tests', () => {
       '/api/health',
       '/api/meta',
       '/api/projects',
-      '/api/stats',
-      '/api/github/activity'
+      '/api/stats'
     ];
     
     // Test JSON endpoints
