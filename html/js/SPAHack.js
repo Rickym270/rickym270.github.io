@@ -42,6 +42,7 @@ $(document).ready(function(){
             }
             // Set active nav item
             updateActiveNavItem('html/pages/home.html');
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
         });
     } else {
         console.log("SPA: Skipping home.html load, isIndexPage:", isIndexPage, "content exists:", !isEmpty);
@@ -244,6 +245,7 @@ $(document).ready(function(){
                             }
                             // Re-setup click handlers for newly loaded content
                             setupClickHandlers();
+                            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
                         } else {
                             console.error("Failed to load content from " + sectionUrl);
                         }
@@ -295,6 +297,11 @@ $(document).ready(function(){
                                         readingTimeNum.textContent = mins;
                                     }
                                 }
+                                if (sectionUrl.includes('engineering.html') || sectionUrl.includes('lifestyle.html')) {
+                                    if (typeof window.initBlogCategoryPills === 'function') {
+                                        window.initBlogCategoryPills();
+                                    }
+                                }
                             }, 50);
                         }
                         // Update active nav item
@@ -320,6 +327,8 @@ $(document).ready(function(){
                                 }
                             }, 200);
                         }
+                        // Reset scroll to top after load (run after focus/layout so we win)
+                        setTimeout(function() { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, 0);
                 });
                 }
             }

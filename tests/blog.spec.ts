@@ -143,6 +143,7 @@ test.describe('Blog Pages', () => {
     // Wait for initBlogCategoryPills to run (50ms setTimeout); on slow devices (e.g. chromium-iphone) this can lag
     await expect(content.locator('.blog-category-pill')).toHaveCount(4, { timeout: 10000 });
     await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
+    await expect(content.locator('.blog-category-pill')).toHaveCount(4);
 
     // Cards: at least one real card with post link, at least one placeholder
     await expect(content.locator('.blog-card:not(.placeholder) a[data-url="html/pages/engineering/post-2.html"]').first()).toBeVisible();

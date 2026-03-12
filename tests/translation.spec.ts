@@ -606,7 +606,7 @@ test.describe('Translation feature', () => {
     }, { timeout: 10000 });
     await page.waitForTimeout(500);
 
-    // Switch to Spanish
+    // Switch to Spanish (post2 in es.json is English for now)
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
