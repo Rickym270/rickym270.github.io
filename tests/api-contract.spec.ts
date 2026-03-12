@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 // The 'api' project sets baseURL to http://localhost:8080
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
-test.describe('API Contract Tests', () => {
+test.describe('[regression] API Contract Tests', () => {
   test.describe.configure({ timeout: 120000 });
 
   test('GET /api returns health response matching contract', async ({ request }) => {

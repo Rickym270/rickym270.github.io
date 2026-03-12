@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'test-admin-key';
 
 test.describe('API Contact Endpoint - POST', () => {
-  test('POST /api/contact creates a new message', async ({ request }) => {
+  test('[integration] POST /api/contact creates a new message', async ({ request }) => {
     // Wait for API server to be ready
     await request.get(`${API_BASE_URL}/api/health`, { timeout: 30000 }).catch(() => {
       // Server might not be ready yet, continue anyway
@@ -46,7 +46,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body.receivedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
   });
 
-  test('POST /api/contact handles X-Forwarded-For header for IP detection', async ({ request }) => {
+  test('[integration] POST /api/contact handles X-Forwarded-For header for IP detection', async ({ request }) => {
     // Wait for API server to be ready
     await request.get(`${API_BASE_URL}/api/health`, { timeout: 30000 }).catch(() => {
       // Server might not be ready yet, continue anyway
@@ -77,7 +77,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body).toHaveProperty('email', uniqueEmail);
   });
 
-  test('POST /api/contact returns 422 for invalid data', async ({ request }) => {
+  test('[regression] POST /api/contact returns 422 for invalid data', async ({ request }) => {
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: {
         name: '',
@@ -101,7 +101,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body.message).toContain('message');
   });
 
-  test('POST /api/contact returns 400 for malformed JSON', async ({ request }) => {
+  test('[regression] POST /api/contact returns 400 for malformed JSON', async ({ request }) => {
     const response = await request.post(`${API_BASE_URL}/api/contact`, {
       data: '{ invalid json',
       headers: {
@@ -128,7 +128,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body).toHaveProperty('error', 'unsupported_media_type');
   });
 
-  test('POST /api/contact validates name length (max 100)', async ({ request }) => {
+  test('[regression] POST /api/contact validates name length (max 100)', async ({ request }) => {
     // Use unique email to avoid rate limiting
     const uniqueEmail = `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
     const longName = 'a'.repeat(101);
@@ -149,7 +149,7 @@ test.describe('API Contact Endpoint - POST', () => {
     expect(body.error).toBe('validation_error');
   });
 
-  test('POST /api/contact validates subject length (max 200)', async ({ request }) => {
+  test('[regression] POST /api/contact validates subject length (max 200)', async ({ request }) => {
     // Use unique email to avoid rate limiting
     const uniqueEmail = `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
     const longSubject = 'a'.repeat(201);
@@ -171,7 +171,7 @@ test.describe('API Contact Endpoint - POST', () => {
   });
 });
 
-test.describe('API Contact Endpoint - GET', () => {
+test.describe('[regression] API Contact Endpoint - GET', () => {
   test('GET /api/contact returns 401 without API key', async ({ request }) => {
     const response = await request.get(`${API_BASE_URL}/api/contact`);
     expect(response.status()).toBe(401);
