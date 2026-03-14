@@ -276,6 +276,13 @@
     color: #fff;
 }
 
+.blog-search-no-results {
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+}
+
 /* ============================================
    Blog Post Cards Grid
    ============================================ */

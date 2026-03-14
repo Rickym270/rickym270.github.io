@@ -31,6 +31,7 @@ In the Render service, go to **Environment** and add the same variables you woul
 | **ADMIN_API_KEY**                                                  | Optional                    | For admin endpoints (e.g. GET `/api/contact`) — e.g. `openssl rand -hex 32` |
 | **SMTP_HOST**, **SMTP_PORT**, **SMTP_USERNAME**, **SMTP_PASSWORD** | If using contact form email | Same as in DEPLOY.md / ENV_FILE.md                                          |
 | **CONTACT_EMAIL**, **SMTP_FROM_EMAIL**                             | If using contact form       | Where to receive/send mail                                                  |
+| **OPENAI_API_KEY**                                                 | Optional                     | When set, blog search uses semantic embeddings; when unset, keyword search only |
 
 
 ## Step 4: Deploy and get the public URL
@@ -52,4 +53,5 @@ In the Render service, go to **Environment** and add the same variables you woul
 - **Build fails**: Run locally from `api/`: `docker build -t api-local .` and fix any Docker or Maven errors. Ensure `./mvnw -DskipTests package` succeeds in `api/`.
 - **CORS errors**: The API allows `https://*.onrender.com`, `https://rickym270.github.io`, and local origins. Ensure the frontend is using the Render URL from `api-config.js`.
 - **Port**: The app uses `PORT` from Render; do not set `server.port` in env unless you need to override.
+- **Blog search returns 404**: The site calls `GET /api/search?q=...` on the Render API. If you see 404, the service is running an old image that doesn’t include the search endpoint. **Redeploy** the API on Render (Dashboard → your API service → **Manual Deploy** → **Deploy latest commit**, or push a new commit to the connected branch) so the new build with `SearchController` and `SearchService` is deployed.
 

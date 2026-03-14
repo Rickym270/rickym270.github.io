@@ -1,6 +1,7 @@
 {
   "sidebar": {
-    "portfolio": "Portafolio"
+    "portfolio": "Ricky Martinez",
+    "role": "Ingeniero Senior en Automatización de Software"
   },
   "nav": {
     "home": "Inicio",
@@ -22,7 +23,8 @@
     "preferences": "PREFERENCIAS",
     "reduceMotion": "Reducir movimiento",
     "motionOn": "Movimiento activado",
-    "resetPreferences": "Restablecer preferencias"
+    "resetPreferences": "Restablecer preferencias",
+    "systemReset": "Restablecer sistema"
   },
   "home": {
     "title": "Ricky Martinez - Inicio",
@@ -114,7 +116,8 @@
     "errorSpam": "Spam detectado. Mensaje no enviado.",
     "errorCaptcha": "Verificación CAPTCHA falló. Por favor, inténtalo de nuevo.",
     "errorTimeout": "Tiempo de espera agotado. Por favor verifica tu conexión e inténtalo de nuevo.",
-    "errorServer": "Error del servidor. Por favor, inténtalo más tarde."
+    "errorServer": "Error del servidor. Por favor, inténtalo más tarde.",
+    "downloadResume": "Descargar currículum"
   },
   "docs": {
     "title": "Ricky Martinez - Documentos",
@@ -450,7 +453,8 @@
   "blog": {
     "featuredPost": "Artículo Destacado",
     "latestInsights": "Últimas Reflexiones",
-    "searchPlaceholder": "Buscar artículos...",
+    "searchPlaceholder": "Buscar artículos…",
+    "noResults": "Ningún artículo coincide.",
     "readArticle": "Leer Artículo",
     "readMore": "Leer más",
     "comingSoon": "Próximamente",

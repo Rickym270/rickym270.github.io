@@ -18,9 +18,12 @@ SMTP_FROM_EMAIL=your-email@gmail.com
 GH_TOKEN=your-github-token
 ADMIN_API_KEY=your-admin-key
 TURNSTILE_SECRET_KEY=your-turnstile-secret
+OPENAI_API_KEY=your-openai-api-key
 PROJECTS_GITHUB_TTL_MINUTES=720
 PROJECTS_COMMIT_STATUS_TTL_MINUTES=60
 ```
+
+**OPENAI_API_KEY** (optional): When set, blog search (`GET /api/search`) uses OpenAI embeddings for semantic ranking. When unset, search uses keyword-based ranking and works without external API calls (suitable for CI and local development).
 
 ## How It Works
 

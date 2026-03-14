@@ -1,6 +1,7 @@
 {
   "sidebar": {
-    "portfolio": "Portfolio"
+    "portfolio": "Ricky Martinez",
+    "role": "Senior Software Automation Engineer"
   },
   "nav": {
     "home": "Home",
@@ -22,7 +23,8 @@
     "preferences": "PREFERENCES",
     "reduceMotion": "Reduce motion",
     "motionOn": "Motion on",
-    "resetPreferences": "Reset preferences"
+    "resetPreferences": "Reset preferences",
+    "systemReset": "System Reset"
   },
   "home": {
     "title": "Ricky Martinez - Home",
@@ -114,7 +116,8 @@
     "errorSpam": "Spam detected. Message not sent.",
     "errorCaptcha": "CAPTCHA verification failed. Please try again.",
     "errorTimeout": "Request timed out. Please check your connection and try again.",
-    "errorServer": "Server error occurred. Please try again later."
+    "errorServer": "Server error occurred. Please try again later.",
+    "downloadResume": "Download resume"
   },
   "docs": {
     "title": "Ricky Martinez - Docs",
@@ -450,7 +453,8 @@
   "blog": {
     "featuredPost": "Featured Post",
     "latestInsights": "Latest Insights",
-    "searchPlaceholder": "Search articles...",
+    "searchPlaceholder": "Search articles…",
+    "noResults": "No matching articles.",
     "readArticle": "Read Article",
     "readMore": "Read more",
     "comingSoon": "Coming Soon",

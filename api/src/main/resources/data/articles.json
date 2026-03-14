@@ -1,0 +1,16 @@
+[
+  {
+    "id": "post-2",
+    "title": "Accessibility Is Not Just a Feature",
+    "description": "Why treating accessibility as infrastructure, not an afterthought, leads to more resilient systems—and better engineering for everyone.",
+    "url": "html/pages/engineering/post-2.html",
+    "tags": ["accessibility", "automation"]
+  },
+  {
+    "id": "post-1",
+    "title": "How Living With MS Changed the Way I Engineer Software",
+    "description": "Exploring the nuances of building under constraints—from determinism and recovery to automation and accessibility.",
+    "url": "html/pages/engineering/post-1.html",
+    "tags": ["automation", "accessibility"]
+  }
+]

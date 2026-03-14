@@ -183,8 +183,9 @@ test.describe('[integration] Load and Stress Tests', () => {
           await page.locator('#mobile-menu-toggle').click();
           await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
         }
-        
-        await page.locator('#mobile-theme-toggle, [data-theme-toggle]').click();
+        // Mobile uses theme pills (#mobile-theme-light / #mobile-theme-dark), not #mobile-theme-toggle
+        const currentTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme') || 'light');
+        await page.locator(currentTheme === 'dark' ? '#mobile-theme-light' : '#mobile-theme-dark').click();
         await page.waitForTimeout(200);
         
         // Close sidebar after toggle to prevent interference

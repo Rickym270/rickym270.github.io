@@ -238,6 +238,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/search:
+    get:
+      summary: Search blog articles
+      description: |
+        Returns blog articles ranked by relevance to the query.
+        When OPENAI_API_KEY is set, uses semantic (embedding) similarity; otherwise uses keyword overlap.
+        Empty or missing `q` returns all articles in deterministic order.
+      operationId: searchArticles
+      tags:
+        - Blog
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ""
+          description: Search query (free text)
+      responses:
+        '200':
+          description: List of articles sorted by relevance (score descending)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArticleSearchResult'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/home:
     get:
       summary: Get home text
@@ -526,6 +566,35 @@ components:
           description: Whether the project is featured
           default: false
           example: true
+
+    ArticleSearchResult:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - url
+        - score
+      properties:
+        id:
+          type: string
+          description: Article identifier (e.g. post-1, post-2)
+          example: "post-1"
+        title:
+          type: string
+          description: Article title
+          example: "How Living With MS Changed the Way I Engineer Software"
+        description:
+          type: string
+          description: Short description or excerpt
+        url:
+          type: string
+          description: Path to article (SPA URL)
+          example: "html/pages/engineering/post-1.html"
+        score:
+          type: number
+          format: double
+          description: Relevance score (higher is more relevant)
 
     StatsResponse:
       type: object

@@ -33,9 +33,12 @@
                     <p class="blog-insights-subtitle" data-translate="lifestyle.latestInsightsSubtitle">Thoughts on life, interests, and beyond the code.</p>
                 </div>
 
-                <div class="blog-category-pills" role="group" aria-label="Category filter">
-                    <span class="blog-category-pill active" data-filter-key="all" data-translate="blog.allPosts">All Posts</span>
+                <div class="blog-category-pills" role="group" aria-label="Search articles">
+                    <div class="blog-search-wrap">
+                        <input type="search" class="blog-search-input" id="blog-search-input" placeholder="Search articles…" aria-label="Search articles" autocomplete="off" data-translate="blog.searchPlaceholder">
+                    </div>
                 </div>
+                <p class="blog-search-no-results" id="blog-search-no-results" style="display: none;" data-translate="blog.noResults">No matching articles.</p>
 
                 <div class="blog-cards-grid">
                     <!-- Placeholder card 1 -->
