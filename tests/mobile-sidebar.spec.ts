@@ -28,32 +28,32 @@ test.describe('Mobile sidebar', () => {
     await expect(sidebar.getByRole('button', { name: 'Blog' })).toBeVisible();
   });
 
-  test('sidebar header shows Portfolio and close button', async ({ page }) => {
+  test('sidebar header shows Ricky Martinez and close button', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    await expect(page.locator('.mobile-sidebar').getByText('Portfolio')).toBeVisible();
+    await expect(page.locator('.mobile-sidebar').getByText('Ricky Martinez')).toBeVisible();
     await expect(page.locator('#mobile-sidebar-close')).toBeVisible();
   });
 
-  test('language and Dark Mode toggle remain in footer', async ({ page }) => {
+  test('language and Theme toggle remain in footer', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
 
     const footer = page.locator('.mobile-sidebar-footer');
     await expect(footer).toBeVisible();
     await expect(footer.locator('#mobile-language-switcher')).toBeVisible();
-    await expect(footer.locator('#mobile-theme-toggle')).toBeVisible();
+    await expect(footer.locator('#mobile-theme-switcher')).toBeVisible();
   });
 
-  test('mobile sidebar shows PREFERENCES with Language and Dark Mode controls', async ({ page }) => {
+  test('mobile sidebar shows PREFERENCES with Language, Theme, and System Reset controls', async ({ page }) => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
 
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings.locator('.mobile-preferences-heading')).toHaveText(/PREFERENCES|settings\.preferences/);
     await expect(settings.locator('#mobile-language-switcher')).toBeVisible();
-    await expect(settings.locator('#mobile-theme-toggle[role="switch"]')).toBeVisible();
-    await expect(page.locator('.mobile-sidebar-footer-icons').locator('#mobile-footer-reset-icon')).toBeVisible();
+    await expect(settings.locator('#mobile-theme-switcher')).toBeVisible();
+    await expect(settings.locator('#mobile-footer-reset-icon')).toBeVisible();
   });
 
   test('reset preferences restores defaults', async ({ page }) => {

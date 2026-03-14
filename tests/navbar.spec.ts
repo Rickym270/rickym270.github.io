@@ -296,8 +296,8 @@ test.describe('Navbar', () => {
     await expect(sidebar).toHaveClass(/active/, { timeout: 2000 });
     await expect(page.locator('#mobile-nav-overlay')).toHaveClass(/active/);
     
-    // Check sidebar content (header shows Portfolio per redesign)
-    await expect(sidebar.getByText('Portfolio')).toBeVisible();
+    // Check sidebar content (header shows Ricky Martinez)
+    await expect(sidebar.getByText('Ricky Martinez')).toBeVisible();
     await expect(sidebar.getByText('Home')).toBeVisible();
     await expect(sidebar.getByText('Projects')).toBeVisible();
     
@@ -431,10 +431,10 @@ test.describe('Navbar', () => {
     const settings = page.locator('.mobile-sidebar-settings');
     await expect(settings).toBeVisible();
 
-    // PREFERENCES section and setting groups (Language, Dark Mode)
+    // PREFERENCES section and setting groups (Language, Theme, System Reset)
     await expect(settings.locator('.mobile-preferences-heading')).toHaveText(/PREFERENCES|settings\.preferences/);
-    const settingGroups = page.locator('.mobile-setting-group');
-    await expect(settingGroups).toHaveCount(2);
+    const settingGroups = page.locator('.mobile-sidebar-settings .mobile-setting-group');
+    await expect(settingGroups).toHaveCount(3);
     
     // Check language setting group (by stable selector)
     const languageGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-language-switcher') });
@@ -442,16 +442,17 @@ test.describe('Navbar', () => {
     await expect(languageGroup.locator('#mobile-language-switcher')).toBeVisible();
     await expect(languageGroup.locator('.mobile-lang-btn')).toHaveCount(2);
     
-    // Check Dark Mode setting group (toggle switch)
-    const themeGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-theme-toggle') });
-    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Dark Mode');
-    await expect(page.locator('#mobile-theme-toggle')).toHaveAttribute('role', 'switch');
+    // Check Theme setting group (pill buttons)
+    const themeGroup = settings.locator('.mobile-setting-group').filter({ has: page.locator('#mobile-theme-switcher') });
+    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Theme');
+    await expect(settings.locator('#mobile-theme-switcher')).toBeVisible();
+    await expect(settings.locator('.mobile-theme-pill')).toHaveCount(2);
     
-    // Footer icons (contact + reset preferences)
+    // Reset is inside PREFERENCES; footer icons have Contact only
+    await expect(settings.locator('#mobile-footer-reset-icon')).toBeVisible();
     const footerIcons = page.locator('.mobile-sidebar-footer-icons');
     await expect(footerIcons).toBeVisible();
     await expect(footerIcons.locator('a[aria-label="Contact"]')).toBeVisible();
-    await expect(footerIcons.locator('#mobile-footer-reset-icon')).toBeVisible();
     
     // Verify controls are functional
     const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
@@ -460,11 +461,11 @@ test.describe('Navbar', () => {
     
     // Language label should be translated
     await expect(languageGroup.locator('.mobile-setting-label')).toHaveText('Idioma');
-    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Modo oscuro');
+    await expect(themeGroup.locator('.mobile-setting-label')).toHaveText('Tema');
     
-    // Theme toggle (switch) should work
-    const themeToggle = page.locator('#mobile-theme-toggle');
-    await themeToggle.click();
+    // Theme pill (Dark) should work
+    const themeDarkPill = page.locator('#mobile-theme-dark');
+    await themeDarkPill.click();
     await page.waitForTimeout(300);
     
     // Verify theme changed (check data-theme attribute)

@@ -431,6 +431,8 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
     text-decoration: none;
     flex-shrink: 0;
     display: none; /* Hidden on desktop */
+    align-items: center;
+    gap: var(--spacing-sm);
 }
 
 .navbar-brand-name:hover {
@@ -441,6 +443,16 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
 .navbar-brand-name span {
     margin: 0;
     line-height: 1.2;
+}
+
+/* Profile image only in mobile sidebar; hidden in top navbar on all viewports */
+.navbar-brand-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: none;
+    flex-shrink: 0;
 }
 
 /* Medium screen two-row brand names (hidden on desktop and mobile) */
@@ -455,6 +467,8 @@ body > nav.navbar.fixed-top.navbar-expand.navbar-light > div,
     z-index: 1;
     position: relative;
     display: none; /* Hidden by default, shown on medium screens */
+    align-items: center;
+    gap: var(--spacing-sm);
 }
 
 .navbar-brand-first:hover,
@@ -2974,6 +2988,13 @@ pre code {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
+[data-theme="dark"] .mobile-theme-pill.active,
+[data-theme="dark"] .mobile-theme-pill[aria-pressed="true"] {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
 [data-theme="dark"] #language-switcher button.active,
 [data-theme="dark"] #language-switcher button[aria-pressed="true"],
 [data-theme="dark"] #language-switcher-medium button.active,
@@ -3329,6 +3350,49 @@ pre code {
     cursor: default;
 }
 
+.mobile-logo-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.mobile-logo-avatar img,
+.mobile-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.mobile-logo-person {
+    width: 26px;
+    height: 26px;
+}
+
+.mobile-logo-text-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.mobile-logo-text {
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+    color: var(--color-text-primary);
+}
+
+.mobile-logo-subtitle {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    line-height: 1.3;
+}
+
 .mobile-logo-circle {
     width: 40px;
     height: 40px;
@@ -3359,12 +3423,6 @@ pre code {
     height: 22px;
 }
 
-.mobile-logo-text {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--color-text-primary);
-}
-
 .mobile-sidebar-close {
     width: 32px;
     height: 32px;
@@ -3387,6 +3445,7 @@ pre code {
 .mobile-sidebar-nav {
     flex: 1;
     padding: var(--spacing-md) 0;
+    margin-bottom: var(--spacing-md);
     overflow-y: auto;
     min-height: 0; /* Allow flex item to shrink below content size */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
@@ -3397,20 +3456,22 @@ pre code {
 .mobile-nav-item {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     padding: var(--spacing-md) var(--spacing-lg);
+    margin: 0 var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+    border-radius: var(--radius-md);
     color: var(--color-text-secondary);
     text-decoration: none;
     transition: all var(--transition-fast);
     position: relative;
-    /* Flat UI: solid backgrounds only, no shadow */
     box-shadow: none;
     background-color: transparent;
-    border-bottom: 1px solid var(--color-border);
+    border: none;
 }
 
 .mobile-nav-item:last-of-type {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .mobile-nav-item:hover {
@@ -3459,11 +3520,13 @@ pre code {
 
 /* Flat UI: expandable groups (Docs, Blog) */
 .mobile-nav-group {
-    border-bottom: 1px solid var(--color-border);
+    margin: 0 var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+    border: none;
 }
 
 .mobile-nav-group:last-of-type {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .mobile-nav-group-toggle {
@@ -3473,6 +3536,7 @@ pre code {
     width: 100%;
     padding: var(--spacing-md) var(--spacing-lg);
     border: none;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--color-text-secondary);
     font: inherit;
@@ -3507,10 +3571,13 @@ pre code {
 
 .mobile-nav-group-panel {
     display: none;
-    background-color: var(--color-bg-secondary);
-    border-top: 1px solid var(--color-border);
+    background-color: transparent;
+    border-top: none;
     box-shadow: none;
     padding: 0;
+    margin-left: var(--spacing-md);
+    border-left: 2px solid var(--color-border);
+    padding-left: var(--spacing-sm);
 }
 
 .mobile-nav-group-panel.mobile-nav-group-panel-open {
@@ -3522,19 +3589,21 @@ pre code {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) calc(var(--spacing-lg) + 24px + var(--spacing-md));
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+    border-radius: var(--radius-sm);
     color: var(--color-text-secondary);
     text-decoration: none;
     font-weight: 500;
     font-size: 1rem;
     transition: background-color var(--transition-fast);
-    border-bottom: 1px solid var(--color-border);
+    border: none;
     box-shadow: none;
     background: transparent;
 }
 
 .mobile-nav-subitem:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .mobile-nav-subitem:hover {
@@ -3548,18 +3617,17 @@ pre code {
 }
 
 .mobile-sidebar-footer {
-    margin-top: auto; /* Push to bottom */
-    padding: var(--spacing-md) var(--spacing-lg);
-    /* Removed border-top - we use .mobile-sidebar-divider element instead */
-    /* Add minimal padding for iOS safe area - ensure it's above the home indicator */
-    /* Reduced padding to bring settings closer to bottom when address bar is hidden */
+    margin-top: auto;
+    padding: var(--spacing-lg);
+    padding-top: var(--spacing-md);
     padding-bottom: calc(var(--spacing-xs) + 5px);
-    background-color: var(--color-bg-primary); /* Match the main sidebar background */
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg-primary);
     display: block;
     visibility: visible;
     flex-shrink: 0;
-    position: relative; /* Ensure it's in the normal flow */
-    z-index: 1; /* Keep footer above nav content when scrolling */
+    position: relative;
+    z-index: 1;
 }
 
 /* Add safe area inset for newer iOS devices with home indicator */
@@ -3571,8 +3639,9 @@ pre code {
 
 .mobile-sidebar-divider {
     height: 1px;
-    background-color: var(--color-border);
-    margin-bottom: var(--spacing-md);
+    border: 0;
+    margin: var(--spacing-md) 0;
+    background-color: color-mix(in srgb, var(--color-border) 30%, transparent);
 }
 
 .mobile-preferences-heading {
@@ -3645,6 +3714,45 @@ pre code {
 }
 
 .mobile-lang-btn.active {
+    background-color: var(--color-accent);
+    color: white;
+}
+
+.mobile-theme-switcher {
+    display: flex;
+    gap: var(--spacing-xs);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 2px;
+}
+
+.mobile-theme-pill {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-theme-pill svg {
+    width: 18px;
+    height: 18px;
+}
+
+.mobile-theme-pill:hover {
+    color: var(--color-text-primary);
+}
+
+.mobile-theme-pill.active,
+.mobile-theme-pill[aria-pressed="true"] {
     background-color: var(--color-accent);
     color: white;
 }

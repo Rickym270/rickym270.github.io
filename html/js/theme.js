@@ -61,10 +61,16 @@
             themeIconSunnyMedium.classList.toggle('hidden', !showSunny);
         }
         
-        // Update mobile theme toggle switch (aria-checked: dark = on)
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        if (mobileThemeToggle) {
-            mobileThemeToggle.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
+        // Update mobile theme pills (Light / Dark)
+        const mobileThemeLight = document.getElementById('mobile-theme-light');
+        const mobileThemeDark = document.getElementById('mobile-theme-dark');
+        if (mobileThemeLight) {
+            mobileThemeLight.classList.toggle('active', theme === 'light');
+            mobileThemeLight.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+        }
+        if (mobileThemeDark) {
+            mobileThemeDark.classList.toggle('active', theme === 'dark');
+            mobileThemeDark.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
         }
         // Update footer theme icons
         const themeIconSunFooter = document.getElementById('theme-icon-sun-footer');
@@ -160,12 +166,18 @@
             e.stopPropagation();
             toggleTheme(e);
         }
-        // Check if click is on the mobile theme switch or its children (track/knob)
-        const mobileThemeEl = target && target.closest ? target.closest('#mobile-theme-toggle') : null;
-        if (mobileThemeEl) {
+        // Check if click is on the mobile theme pills (Light / Dark)
+        const mobileThemeLightEl = target && target.closest ? target.closest('#mobile-theme-light') : null;
+        const mobileThemeDarkEl = target && target.closest ? target.closest('#mobile-theme-dark') : null;
+        if (mobileThemeLightEl) {
             e.preventDefault();
             e.stopPropagation();
-            toggleTheme(e);
+            setTheme('light');
+        }
+        if (mobileThemeDarkEl) {
+            e.preventDefault();
+            e.stopPropagation();
+            setTheme('dark');
         }
         // Check if click is on the footer theme button or its children
         const footerThemeEl = target && target.closest ? target.closest('#theme-toggle-footer') : null;
