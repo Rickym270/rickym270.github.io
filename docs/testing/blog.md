@@ -2,20 +2,20 @@
 
 ## Overview
 
-The blog has two listing pages (Engineering and Personal), reached from the Blog dropdown in the main nav. The Engineering page shows a Featured Post, a "Latest Insights" section with category pills, and a grid of blog post cards (one real article plus placeholders). The Personal page uses the same layout with "Coming Soon" placeholders throughout. Search and filter toolbar were removed and may be re-added later.
+The blog has two listing pages (Engineering and Personal), reached from the Blog dropdown in the main nav. The Engineering page shows a Featured Post, a "Latest Insights" section with a **search bar**, and a grid of blog post cards (two real articles plus placeholders). The Personal page uses the same layout with "Coming Soon" placeholders throughout. Users can type free text in the search bar to see closest-matching articles (semantic or keyword-based via the API).
 
 ## Structure
 
 ### Engineering (`html/pages/engineering.html`)
 
-- **Featured Post**: Hero section with real post title, short description, "Read Article" button, and metadata (date, read time). Links use SPA `inline-load` and `data-url="html/pages/engineering/post-1.html"`.
-- **Latest Insights**: Section heading (h2), subtitle, and **auto-generated** category pills. Pills are built from the tags present on the cards in the grid (e.g. All Posts plus one pill per unique tag). Clicking a pill filters the grid to cards that have that tag; "All Posts" shows all cards including placeholders. No search bar in current implementation.
-- **Blog cards grid**: One real card (post-1) with image, category, date, title, description, tags, and "Read more" link; two placeholder cards with "Coming Soon".
+- **Featured Post**: Hero section with real post title, short description, "Read Article" button, and metadata (date, read time). Links use SPA `inline-load` and `data-url="html/pages/engineering/post-2.html"` (featured) or `post-1.html`.
+- **Latest Insights**: Section heading (h2), subtitle, and a **search bar**. Typing in the search bar (debounced) calls `GET /api/search?q=...` and shows or hides cards by relevance. Empty query shows all cards including placeholders. "No matching articles" is shown when the query returns no results.
+- **Blog cards grid**: Two real cards (post-2, post-1) with image, category, date, title, description, tags, and "Read more" link; one placeholder card with "Coming Soon". Cards have `data-article-id` for search matching.
 
 ### Personal (`html/pages/lifestyle.html`)
 
 - **Featured Post**: Same hero layout with "Coming Soon" for title and description (no CTA).
-- **Latest Insights**: Same section and auto-generated category pills (when all cards are placeholders, only "All Posts" is shown).
+- **Latest Insights**: Same section and search bar (search uses the same API; when all cards are placeholders, a query shows "No matching articles").
 - **Blog cards grid**: Three placeholder cards with "Coming Soon".
 
 ### Post detail page (article view)
@@ -41,8 +41,8 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 
 - Engineering page loads via Blog dropdown (desktop and mobile).
 - Personal page loads via Blog dropdown (desktop and mobile).
-- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, auto-generated category pills, pill count = 1 + unique tag keys), at least one real card and one placeholder card; no search bar present. Clicking a tag pill filters the grid; clicking "All Posts" shows all cards.
-- Personal page structure: Featured and Latest Insights present; three placeholder cards with "Coming Soon".
+- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, search bar visible), at least one real card and one placeholder card. Typing in the search bar filters cards by API results; clearing search shows all cards again.
+- Personal page structure: Featured and Latest Insights with search bar present; three placeholder cards with "Coming Soon".
 - Navigation: Clicking "Read Article" from Engineering loads the post body in `#content` (SPA).
 - Post detail structure: banner, hero (meta + title), article body, and at least one blockquote visible when post is loaded in SPA.
 - Dark mode: "Read Article" button has visible text when theme is dark.

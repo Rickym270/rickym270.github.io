@@ -158,63 +158,35 @@
                 
                 // Update when sidebar opens (address bar might have changed)
                 function openSidebar() {
-                    // Update height BEFORE showing sidebar using full height for initial open
-                    // This ensures settings are visible even when address bar is showing
                     updateSidebarHeight(true, true);
-                    
-                    // Force a reflow to ensure height is applied
                     if (mobileSidebar) {
                         mobileSidebar.offsetHeight; // Trigger reflow
                     }
-                    
                     mobileSidebar.classList.add('active');
                     mobileNavOverlay.classList.add('active');
-                    
-                    // Disable scrolling on body and html to prevent address bar from showing/hiding
-                    document.body.style.overflow = 'hidden';
-                    document.body.style.position = 'fixed';
-                    document.body.style.width = '100%';
-                    document.documentElement.style.overflow = 'hidden';
-                    
-                    // Update multiple times aggressively to catch address bar changes
-                    // First update uses full height for initial open, then switch to dynamic height
                     requestAnimationFrame(function() {
-                        updateSidebarHeight(true, true); // Use full height for initial open
+                        updateSidebarHeight(true, true);
                         setTimeout(function() { updateSidebarHeight(true, false); }, 50);
                         setTimeout(function() { updateSidebarHeight(true, false); }, 150);
                         setTimeout(function() { updateSidebarHeight(true, false); }, 300);
                         setTimeout(function() { updateSidebarHeight(true, false); }, 500);
                     });
-                    
-                    // Continuously check for height changes while sidebar is open
-                    // This handles cases where address bar shows/hides after sidebar opens
-                    // Always use dynamic height (false) for continuous updates
                     if (heightUpdateInterval) {
                         clearInterval(heightUpdateInterval);
                     }
                     heightUpdateInterval = setInterval(function() {
                         if (mobileSidebar && mobileSidebar.classList.contains('active')) {
-                            // Always use current viewport height for continuous updates
-                            // This ensures sidebar resizes when address bar shows/hides
                             updateSidebarHeight(true, false);
                         } else {
                             clearInterval(heightUpdateInterval);
                             heightUpdateInterval = null;
                         }
-                    }, 100); // Check every 100ms for more responsive updates
+                    }, 100);
                 }
                 
                 function closeSidebar() {
                     mobileSidebar.classList.remove('active');
                     mobileNavOverlay.classList.remove('active');
-                    
-                    // Re-enable scrolling
-                    document.body.style.overflow = '';
-                    document.body.style.position = '';
-                    document.body.style.width = '';
-                    document.documentElement.style.overflow = '';
-                    
-                    // Stop checking for height changes when sidebar closes
                     if (heightUpdateInterval) {
                         clearInterval(heightUpdateInterval);
                         heightUpdateInterval = null;
@@ -311,6 +283,7 @@
                                 window.resetProjectsInit();
                                 window.initProjects();
                             }
+                            window.scrollTo(0, 0);
                         });
                     }
                     closeSidebar();
@@ -523,6 +496,7 @@
         <script type="text/javascript" src="/html/js/projects.js?v=20251110"></script>
         <script type="text/javascript" src="html/js/theme.js"></script>
         <script type="text/javascript" src="html/js/translation.js"></script>
+        <script type="text/javascript" src="html/js/blog-search.js"></script>
         <script type="text/javascript" src="html/js/blog-pills.js"></script>
         <script type="text/javascript" src="html/js/code-block.js"></script>
         <script type="text/javascript">
@@ -598,10 +572,13 @@
         <nav class="mobile-sidebar" id="mobile-sidebar">
             <div class="mobile-sidebar-header">
                 <div class="mobile-sidebar-logo">
-                    <div class="mobile-logo-icon-wrap" aria-hidden="true">
-                        <svg class="mobile-logo-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M6 12h6M10 16h4"/></svg>
+                    <div class="mobile-logo-avatar" aria-hidden="true">
+                        <img src="data/web_data/RickyMartinez_ProPic.jpeg" alt="" class="mobile-logo-img">
                     </div>
-                    <span class="mobile-logo-text" data-translate="sidebar.portfolio">Portfolio</span>
+                    <div class="mobile-logo-text-wrap">
+                        <span class="mobile-logo-text" data-translate="sidebar.portfolio">Ricky Martinez</span>
+                        <span class="mobile-logo-subtitle" data-translate="sidebar.role">Senior Software Automation Engineer</span>
+                    </div>
                 </div>
                 <button class="mobile-sidebar-close" id="mobile-sidebar-close" aria-label="Close menu">
                     <span>×</span>
@@ -609,16 +586,16 @@
             </div>
             <nav class="mobile-sidebar-nav">
                 <a href="#" class="mobile-nav-item active" data-url="html/pages/home.html" data-translate="nav.home" id="mobile-home-link">
-                    <span class="mobile-nav-icon">🏠</span>
                     <span class="mobile-nav-label">Home</span>
                 </a>
+                <a href="#Skills" class="mobile-nav-item" data-url="html/pages/skills.html" data-translate="nav.skills">
+                    <span class="mobile-nav-label">Skills</span>
+                </a>
                 <a href="#Projects" class="mobile-nav-item" data-url="html/pages/projects.html" data-translate="nav.projects">
-                    <span class="mobile-nav-icon">📁</span>
                     <span class="mobile-nav-label">Projects</span>
                 </a>
                 <div class="mobile-nav-group">
                     <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-blog" id="mobile-nav-toggle-blog">
-                        <span class="mobile-nav-icon">📋</span>
                         <span class="mobile-nav-label" data-translate="nav.blog">Blog</span>
                         <span class="mobile-nav-chevron" aria-hidden="true"></span>
                     </button>
@@ -629,7 +606,6 @@
                 </div>
                 <div class="mobile-nav-group">
                     <button type="button" class="mobile-nav-group-toggle" aria-expanded="false" aria-controls="mobile-nav-panel-docs" id="mobile-nav-toggle-docs">
-                        <span class="mobile-nav-icon">📝</span>
                         <span class="mobile-nav-label" data-translate="nav.docs">Docs</span>
                         <span class="mobile-nav-chevron" aria-hidden="true"></span>
                     </button>
@@ -638,16 +614,12 @@
                         <a href="#" class="mobile-nav-subitem" data-url="html/pages/tutorials.html" data-translate="nav.tutorials">Tutorials</a>
                     </div>
                 </div>
-                <a href="#Skills" class="mobile-nav-item" data-url="html/pages/skills.html" data-translate="nav.skills">
-                    <span class="mobile-nav-icon">⚡</span>
-                    <span class="mobile-nav-label">Skills</span>
-                </a>
                 <a href="#Contact" class="mobile-nav-item" data-url="html/pages/contact.html" data-translate="nav.contact">
-                    <span class="mobile-nav-icon">✉️</span>
                     <span class="mobile-nav-label">Contact</span>
                 </a>
             </nav>
             <div class="mobile-sidebar-footer">
+                <hr class="mobile-sidebar-divider" aria-hidden="true">
                 <div class="mobile-sidebar-settings">
                     <h3 class="mobile-preferences-heading" data-translate="settings.preferences">PREFERENCES</h3>
                     <div class="mobile-setting-group">
@@ -664,17 +636,25 @@
                         <span class="mobile-pref-icon mobile-pref-icon-moon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                         </span>
-                        <span class="mobile-setting-label" data-translate="settings.darkMode">Dark Mode</span>
-                        <button type="button" class="mobile-toggle" id="mobile-theme-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode">
-                            <span class="mobile-toggle-track"><span class="mobile-toggle-knob"></span></span>
+                        <span class="mobile-setting-label" data-translate="settings.theme">Theme</span>
+                        <div class="mobile-theme-switcher" id="mobile-theme-switcher">
+                            <button type="button" class="mobile-theme-pill" id="mobile-theme-light" data-theme="light" aria-pressed="false" aria-label="Light theme">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                            </button>
+                            <button type="button" class="mobile-theme-pill" id="mobile-theme-dark" data-theme="dark" aria-pressed="false" aria-label="Dark theme">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mobile-setting-group">
+                        <span class="mobile-pref-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        </span>
+                        <span class="mobile-setting-label" data-translate="settings.systemReset">System Reset</span>
+                        <button type="button" class="mobile-footer-icon mobile-footer-icon-reset" id="mobile-footer-reset-icon" aria-label="Reset preferences to defaults" title="Reset preferences">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                         </button>
                     </div>
-                </div>
-                <div class="mobile-sidebar-footer-icons">
-                    <a href="#" class="mobile-footer-icon inline-load" data-url="html/pages/contact.html" aria-label="Contact" title="Contact">@</a>
-                    <button type="button" class="mobile-footer-icon mobile-footer-icon-reset" id="mobile-footer-reset-icon" aria-label="Reset preferences to defaults" title="Reset preferences">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    </button>
                 </div>
             </div>
         </nav>
@@ -688,6 +668,7 @@
                 </button>
                 <!-- Desktop navbar (single row) -->
                 <a class="navbar-brand-name" href="#" data-url="html/pages/home.html">
+                    <img src="data/web_data/RickyMartinez_ProPic.jpeg" alt="" class="navbar-brand-img">
                     <p class="navbar-brand-full" style="margin: 0;">Ricky Martinez</p>
                     <p class="navbar-brand-mobile" style="margin: 0;">RM</p>
                 </a>
@@ -747,6 +728,7 @@
                 <div class="navbar-content">
                     <div class="navbar-row navbar-row-top">
                         <a class="navbar-brand-first" href="#" data-url="html/pages/home.html">
+                            <img src="data/web_data/RickyMartinez_ProPic.jpeg" alt="" class="navbar-brand-img">
                             <span class="navbar-brand-name-first">Ricky</span>
                         </a>
                         <ul class="navbar-nav-main">

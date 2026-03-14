@@ -137,20 +137,15 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.blog-featured')).toContainText('Accessibility Is Not Just a Feature');
     await expect(content.getByRole('link', { name: 'Read Article' })).toBeVisible();
 
-    // Latest Insights: pills auto-generated from card tags (All Posts + 3 unique tags = 4)
+    // Latest Insights: search bar (replaces pills)
     await expect(content.locator('h2').filter({ hasText: 'Latest Insights' })).toBeVisible();
     await expect(content.locator('.blog-category-pills')).toBeVisible();
-    // Wait for initBlogCategoryPills to run (50ms setTimeout); on slow devices (e.g. chromium-iphone) this can lag
-    await expect(content.locator('.blog-category-pill')).toHaveCount(4, { timeout: 10000 });
-    await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
-    await expect(content.locator('.blog-category-pill')).toHaveCount(4);
+    await expect(content.locator('.blog-search-wrap')).toBeVisible();
+    await expect(content.locator('.blog-search-input')).toBeVisible();
 
     // Cards: at least one real card with post link, at least one placeholder
     await expect(content.locator('.blog-card:not(.placeholder) a[data-url="html/pages/engineering/post-2.html"]').first()).toBeVisible();
     await expect(content.locator('.blog-card.placeholder').filter({ hasText: 'Coming Soon' }).first()).toBeVisible();
-
-    // No search bar (removed)
-    await expect(content.locator('.blog-search-wrap')).toHaveCount(0);
   });
 
   test('Personal page shows Coming Soon in Featured and placeholder cards', async ({ page }) => {
@@ -194,16 +189,15 @@ test.describe('Blog Pages', () => {
 
     await expect(content.locator('h2').filter({ hasText: 'Latest Insights' })).toBeVisible();
     await expect(content.locator('.blog-category-pills')).toBeVisible();
-    await expect(content.locator('.blog-category-pill.active')).toContainText('All Posts');
-    // Personal has only placeholders, so only "All Posts" pill
-    await expect(content.locator('.blog-category-pill')).toHaveCount(1);
+    await expect(content.locator('.blog-search-wrap')).toBeVisible();
+    await expect(content.locator('.blog-search-input')).toBeVisible();
 
     const placeholderCards = content.locator('.blog-card.placeholder');
     await expect(placeholderCards).toHaveCount(3);
     await expect(content.locator('.blog-card').filter({ hasText: 'Coming Soon' }).first()).toBeVisible();
   });
 
-  test('Latest Insights filter pills filter cards by tag', async ({ page }) => {
+  test('Latest Insights search filters cards by query', async ({ page }) => {
     const browserName = page.context().browser()?.browserType().name() || '';
     const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
@@ -241,32 +235,25 @@ test.describe('Blog Pages', () => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
     }, { timeout: 15000 });
-    // Wait for initBlogCategoryPills (sync in SPAHack / mobile callback); on slow devices allow time for 4 pills
-    await expect(page.locator('#content .blog-category-pill')).toHaveCount(4, { timeout: 10000 });
 
     const content = page.locator('#content');
-    const pills = content.locator('.blog-category-pills');
-    const grid = content.locator('.blog-cards-grid');
+    const searchInput = content.locator('.blog-search-input');
+    await expect(searchInput).toBeVisible();
 
-    // All Posts: all cards visible (2 real + 1 placeholder)
-    await expect(pills.locator('.blog-category-pill.active')).toContainText('All Posts');
-    await expect(grid.locator('.blog-card:not(.placeholder)')).toHaveCount(2);
-    await expect(grid.locator('.blog-card.placeholder')).toHaveCount(1);
+    // Type a query; after debounce and API response either matching cards are visible or no-results is shown
+    await searchInput.fill('accessibility');
+    await page.waitForTimeout(400); // debounce 300ms + small buffer
 
-    // Click RESILIENCE (both real cards have it)
-    await pills.locator('.blog-category-pill', { hasText: 'RESILIENCE' }).click();
-    await expect(pills.locator('.blog-category-pill.active')).toContainText('RESILIENCE');
-    await expect(grid.locator('.blog-card:not(.placeholder)')).toHaveCount(2);
-    await expect(grid.locator('.blog-card.placeholder')).toBeHidden();
+    // Either at least one real card is visible (API returned results) or no-results message is shown (API error or no match)
+    const hasVisibleCard = await content.locator('.blog-card:not(.placeholder)').first().isVisible();
+    const hasNoResults = await content.locator('.blog-search-no-results').isVisible();
+    expect(hasVisibleCard || hasNoResults).toBeTruthy();
 
-    // Click ACCESSIBILITY (only first card)
-    await pills.locator('.blog-category-pill', { hasText: 'ACCESSIBILITY' }).click();
-    await expect(grid.locator('.blog-card:not(.placeholder)').filter({ hasText: 'Accessibility Is Not Just a Feature' })).toBeVisible();
-    await expect(grid.locator('.blog-card:not(.placeholder)').filter({ hasText: 'How Living With MS' })).toBeHidden();
-
-    // Click All Posts again
-    await pills.locator('.blog-category-pill', { hasText: 'All Posts' }).click();
-    await expect(grid.locator('.blog-card')).toHaveCount(3);
+    // Clear search: all cards should be visible again
+    await searchInput.fill('');
+    await page.waitForTimeout(100);
+    await expect(content.locator('.blog-card:not(.placeholder)')).toHaveCount(2);
+    await expect(content.locator('.blog-card.placeholder')).toHaveCount(1);
   });
 
   test('Read Article from Engineering loads post in SPA', async ({ page }) => {

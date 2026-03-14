@@ -35,13 +35,16 @@
                     <p class="blog-insights-subtitle" data-translate="engineering.latestInsightsSubtitle">Thoughts on engineering, productivity, and the future of web development.</p>
                 </div>
 
-                <div class="blog-category-pills" role="group" aria-label="Category filter">
-                    <span class="blog-category-pill active" data-filter-key="all" data-translate="blog.allPosts">All Posts</span>
+                <div class="blog-category-pills" role="group" aria-label="Search articles">
+                    <div class="blog-search-wrap">
+                        <input type="search" class="blog-search-input" id="blog-search-input" placeholder="Search articles…" aria-label="Search articles" autocomplete="off" data-translate="blog.searchPlaceholder">
+                    </div>
                 </div>
+                <p class="blog-search-no-results" id="blog-search-no-results" style="display: none;" data-translate="blog.noResults">No matching articles.</p>
 
                 <div class="blog-cards-grid">
                     <!-- Card 1: Accessibility post (featured) -->
-                    <article class="blog-card" data-tags="blog.tagAccessibility blog.tagResilience">
+                    <article class="blog-card" data-article-id="post-2" data-tags="blog.tagAccessibility blog.tagAutomation">
                         <a href="#" class="blog-card-link inline-load" data-url="html/pages/engineering/post-2.html">
                             <img src="/html/imgs/blog-accessibility-banner.jpg" alt="Accessibility and inclusive design" class="blog-card-image" loading="lazy">
                             <div class="blog-card-body">
@@ -53,7 +56,7 @@
                                 <p class="blog-card-description" data-translate="engineering.post2.featuredDescription">Why treating accessibility as infrastructure, not an afterthought, leads to more resilient systems—and better engineering for everyone.</p>
                                 <div class="blog-card-tags">
                                     <span class="blog-card-tag" data-filter-key="blog.tagAccessibility" data-translate="blog.tagAccessibility">ACCESSIBILITY</span>
-                                    <span class="blog-card-tag" data-filter-key="blog.tagResilience" data-translate="blog.tagResilience">RESILIENCE</span>
+                                    <span class="blog-card-tag" data-filter-key="blog.tagAutomation" data-translate="blog.tagAutomation">AUTOMATION</span>
                                 </div>
                                 <span class="blog-card-read-more"><span data-translate="blog.readMore">Read more</span> →</span>
                             </div>
@@ -61,7 +64,7 @@
                     </article>
 
                     <!-- Card 2: MS post -->
-                    <article class="blog-card" data-tags="blog.tagAutomation blog.tagResilience">
+                    <article class="blog-card" data-article-id="post-1" data-tags="blog.tagAutomation blog.tagAccessibility">
                         <a href="#" class="blog-card-link inline-load" data-url="html/pages/engineering/post-1.html">
                             <img src="/html/imgs/blog-featured-banner.png" alt="" class="blog-card-image" loading="lazy">
                             <div class="blog-card-body">
@@ -73,7 +76,7 @@
                                 <p class="blog-card-description" data-translate="engineering.post1.featuredDescription">Exploring the nuances of building under constraints—from determinism and recovery to automation and accessibility.</p>
                                 <div class="blog-card-tags">
                                     <span class="blog-card-tag" data-filter-key="blog.tagAutomation" data-translate="blog.tagAutomation">AUTOMATION</span>
-                                    <span class="blog-card-tag" data-filter-key="blog.tagResilience" data-translate="blog.tagResilience">RESILIENCE</span>
+                                    <span class="blog-card-tag" data-filter-key="blog.tagAccessibility" data-translate="blog.tagAccessibility">ACCESSIBILITY</span>
                                 </div>
                                 <span class="blog-card-read-more"><span data-translate="blog.readMore">Read more</span> →</span>
                             </div>
