@@ -249,11 +249,126 @@ test.describe('Blog Pages', () => {
     const hasNoResults = await content.locator('.blog-search-no-results').isVisible();
     expect(hasVisibleCard || hasNoResults).toBeTruthy();
 
-    // Clear search: all cards should be visible again
+    // Clear search: grid restored (no-results hidden, all cards shown again)
+    await searchInput.fill('');
+    await expect(content.locator('.blog-search-no-results')).toBeHidden({ timeout: 5000 });
+    await expect(searchInput).toHaveValue('');
+    const gridCards = content.locator('.blog-cards-grid .blog-card');
+    const totalCards = await gridCards.count();
+    await expect(gridCards.first()).toBeVisible({ timeout: 3000 });
+    await expect(gridCards).toHaveCount(totalCards);
+  });
+
+  test('Clearing search restores full card grid', async ({ page }) => {
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('engineering.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 20000 }
+    );
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await responsePromise.catch(() => {});
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
+    }, { timeout: 15000 });
+
+    const content = page.locator('#content');
+    const searchInput = content.locator('.blog-search-input');
+    const gridCards = content.locator('.blog-cards-grid .blog-card');
+    const totalBefore = await gridCards.count();
+    await expect(gridCards.first()).toBeVisible();
+
+    await searchInput.fill('accessibility');
+    await page.waitForTimeout(400);
+
     await searchInput.fill('');
     await page.waitForTimeout(100);
-    await expect(content.locator('.blog-card:not(.placeholder)')).toHaveCount(2);
-    await expect(content.locator('.blog-card.placeholder')).toHaveCount(1);
+    await expect(content.locator('.blog-search-no-results')).toBeHidden({ timeout: 5000 });
+    await expect(searchInput).toHaveValue('');
+    await expect(gridCards).toHaveCount(totalBefore);
+    await expect(gridCards.first()).toBeVisible();
+  });
+
+  test('Escape clears search and restores full card grid', async ({ page }) => {
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('engineering.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 20000 }
+    );
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-blog').getByRole('link', { name: 'Engineering' }).click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await responsePromise.catch(() => {});
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
+    }, { timeout: 15000 });
+
+    const content = page.locator('#content');
+    const searchInput = content.locator('.blog-search-input');
+    const gridCards = content.locator('.blog-cards-grid .blog-card');
+    const totalBefore = await gridCards.count();
+    await expect(gridCards.first()).toBeVisible();
+
+    await searchInput.fill('accessibility');
+    await page.waitForTimeout(400);
+
+    await searchInput.press('Escape');
+    await page.waitForTimeout(100);
+    await expect(searchInput).toHaveValue('');
+    await expect(content.locator('.blog-search-no-results')).toBeHidden({ timeout: 5000 });
+    await expect(gridCards).toHaveCount(totalBefore);
+    await expect(gridCards.first()).toBeVisible();
   });
 
   test('Read Article from Engineering loads post in SPA', async ({ page }) => {

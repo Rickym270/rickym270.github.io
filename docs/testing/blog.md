@@ -2,14 +2,14 @@
 
 ## Overview
 
-The blog has two listing pages (Engineering and Personal), reached from the Blog dropdown in the main nav. The Engineering page shows a Featured Post, a "Latest Insights" section with a **search bar**, and a grid of blog post cards (two real articles plus placeholders). The Personal page uses the same layout with "Coming Soon" placeholders throughout. Users can type free text in the search bar to see closest-matching articles (semantic or keyword-based via the API).
+The blog has two listing pages (Engineering and Personal), reached from the Blog dropdown in the main nav. The Engineering page shows a Featured Post, a "Latest Insights" section with a **search bar**, and a grid of blog post cards (two real articles plus placeholders). The Personal page uses the same layout with "Coming Soon" placeholders throughout. Users can type  text in the search bar to see closest-matching articles (semantic or keyword-based via the API).
 
 ## Structure
 
 ### Engineering (`html/pages/engineering.html`)
 
 - **Featured Post**: Hero section with real post title, short description, "Read Article" button, and metadata (date, read time). Links use SPA `inline-load` and `data-url="html/pages/engineering/post-2.html"` (featured) or `post-1.html`.
-- **Latest Insights**: Section heading (h2), subtitle, and a **search bar**. Typing in the search bar (debounced) calls `GET /api/search?q=...` and shows or hides cards by relevance. Empty query shows all cards including placeholders. "No matching articles" is shown when the query returns no results.
+- **Latest Insights**: Section heading (h2), subtitle, and a **search bar**. Typing in the search bar (debounced) calls `GET /api/search?q=...` and shows or hides cards by relevance. When the search box is empty, all cards are shown. When the user empties the search box (e.g. backspace to delete all text, or press Escape), the full grid is restored: any "Coming soon" placeholder cards reappear if present, or all real post cards when there are no placeholders. "No matching articles" is shown when the query returns no results.
 - **Blog cards grid**: Two real cards (post-2, post-1) with image, category, date, title, description, tags, and "Read more" link; one placeholder card with "Coming Soon". Cards have `data-article-id` for search matching.
 
 ### Personal (`html/pages/lifestyle.html`)
@@ -41,7 +41,7 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 
 - Engineering page loads via Blog dropdown (desktop and mobile).
 - Personal page loads via Blog dropdown (desktop and mobile).
-- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, search bar visible), at least one real card and one placeholder card. Typing in the search bar filters cards by API results; clearing search shows all cards again.
+- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, search bar visible), at least one real card and one placeholder card. Typing in the search bar filters cards by API results; emptying the search box (or Escape) restores the full card grid (placeholders reappear if present, or all real cards when there are no placeholders). Dedicated tests: **Clearing search restores full card grid**, **Escape clears search and restores full card grid**.
 - Personal page structure: Featured and Latest Insights with search bar present; three placeholder cards with "Coming Soon".
 - Navigation: Clicking "Read Article" from Engineering loads the post body in `#content` (SPA).
 - Post detail structure: banner, hero (meta + title), article body, and at least one blockquote visible when post is loaded in SPA.
