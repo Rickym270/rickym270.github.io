@@ -172,7 +172,6 @@ test.describe('[integration] End-to-End User Journeys', () => {
         throw error;
       }
     }
-    
     // Wait for DOM to update after API response (mobile/CI need more time for success handler)
     await page.waitForTimeout(isMobile ? 2000 : 500);
     
@@ -276,11 +275,11 @@ test.describe('[integration] End-to-End User Journeys', () => {
     
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
-    // Toggle to dark mode
+    // Toggle to dark mode (mobile uses theme pills, not a single toggle)
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('#mobile-theme-toggle, [data-theme-toggle]').click();
+      await page.locator('#mobile-theme-dark').click();
     } else {
       await page.locator('#theme-toggle, [data-theme-toggle]').click();
     }
@@ -330,11 +329,11 @@ test.describe('[integration] End-to-End User Journeys', () => {
     });
     expect(themeStillDark).toBeTruthy();
     
-    // Toggle back to light mode
+    // Toggle back to light mode (mobile uses theme pills)
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      await page.locator('#mobile-theme-toggle, [data-theme-toggle]').click();
+      await page.locator('#mobile-theme-light').click();
     } else {
       await page.locator('#theme-toggle, [data-theme-toggle]').click();
     }
