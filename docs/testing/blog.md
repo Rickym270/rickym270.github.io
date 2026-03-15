@@ -32,12 +32,12 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 
 ## Navigation
 
-- **Blog dropdown** (desktop and mobile): Opens Engineering and Personal links. Active state shows when on either blog page.
+- **Blog dropdown** (desktop and mobile): Opens Engineering and Personal links. Active state shows when on either blog page.a
 - **From Engineering**: "Read Article" (Featured) or the first card’s "Read more" link loads the full post (`html/pages/engineering/post-1.html`) into `#content` via the SPA (no full page reload).
 
 ## E2E Test Coverage
 
-**`tests/blog.spec.ts`** covers:
+`**tests/blog.spec.ts`** covers:
 
 - Engineering page loads via Blog dropdown (desktop and mobile).
 - Personal page loads via Blog dropdown (desktop and mobile).
@@ -51,8 +51,8 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 
 **Other specs that touch blog:**
 
-- **`tests/translation.spec.ts`**: Navigates to Engineering, clicks post link, and asserts translated post title and body in Spanish.
-- **`tests/navbar.spec.ts`**: Asserts Blog dropdown and Engineering/Personal links are visible.
+- `**tests/translation.spec.ts`**: Navigates to Engineering, clicks post link, and asserts translated post title and body in Spanish.
+- `**tests/navbar.spec.ts**`: Asserts Blog dropdown and Engineering/Personal links are visible.
 
 ## Running Blog Tests
 
@@ -68,3 +68,4 @@ npx playwright test tests/blog.spec.ts --project=firefox
 # Run with UI (interactive)
 npx playwright test tests/blog.spec.ts --ui
 ```
+

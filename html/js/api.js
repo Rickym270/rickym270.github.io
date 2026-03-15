@@ -66,6 +66,45 @@ var PROJECTS_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
 
 /**
+ * Load projects from cache only (static file then localStorage). Does not call the API.
+ * Use for fast first paint when API may be slow or sleeping.
+ * @returns {Promise<Array>} - Array of project objects
+ * @throws {Error} - If no cached data is available
+ */
+async function fetchProjectsCacheFirst() {
+    // 1. Static file (same-origin, fast)
+    try {
+        var r = await fetch(PROJECTS_STATIC_FALLBACK_URL);
+        if (r.ok) {
+            var data = await r.json();
+            if (data && Array.isArray(data) && data.length > 0) {
+                return data;
+            }
+        }
+    } catch (e) { /* ignore */ }
+    // 2. localStorage (if not expired)
+    try {
+        var raw = localStorage.getItem(PROJECTS_CACHE_KEY);
+        if (raw) {
+            var parsed = JSON.parse(raw);
+            if (parsed && Array.isArray(parsed.data) && parsed.data.length > 0 &&
+                (Date.now() - (parsed.at || 0)) < PROJECTS_CACHE_TTL_MS) {
+                return parsed.data;
+            }
+        }
+    } catch (e) { /* ignore */ }
+    throw new Error('No cached projects');
+}
+
+/**
+ * Fetch projects from API only (no fallback). For background refresh after cache-first display.
+ * @returns {Promise<Array>} - Array of project objects
+ */
+function fetchProjectsFromAPIBackground() {
+    return fetchFromAPI('/api/projects');
+}
+
+/**
  * Fetch projects: try API, then localStorage (if not expired), then static JSON fallback.
  * @returns {Promise<Array>} - Array of project objects
  */
