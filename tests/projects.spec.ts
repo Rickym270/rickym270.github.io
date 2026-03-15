@@ -624,6 +624,108 @@ test.describe('Projects Page', () => {
     await expect(complete).toBeAttached({ timeout: 5000 });
     await expect(comingSoon).toBeAttached({ timeout: 5000 });
   });
+
+  test('shows projects from cache first when API is slow (cache-first loading)', async ({ page }) => {
+    const cacheOnlyProjects = [
+      { name: 'Cache First Project', summary: 'Shown from static cache.', status: 'complete', tech: ['JS'], slug: 'cache-first-project', repo: 'https://github.com/example/cache-first', featured: true },
+    ];
+    // API delayed so cache-first path is used for initial render
+    await page.route('**/api/projects**', async (route) => {
+      await new Promise((r) => setTimeout(r, 8000));
+      await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Unavailable' }) });
+    });
+    await page.route('**/data/web_data/projects.json', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(cacheOnlyProjects),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForSelector('#content', { state: 'attached', timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner') || !!c?.querySelector('.hero-content');
+    }, { timeout: 20000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    // Cache-first: cards should appear quickly (from static file), not after API delay
+    await expect(page.locator('#content .card-title', { hasText: 'Cache First Project' })).toBeVisible({ timeout: 5000 });
+    const cards = page.locator('#content .project-card');
+    await expect(cards).toHaveCount(1);
+  });
+
+  test('silently updates projects when background API returns different data', async ({ page }) => {
+    const cachedProjects = [
+      { name: 'Cached Only', summary: 'From cache.', status: 'complete', tech: [], slug: 'cached-only', repo: 'https://github.com/example/cached', featured: true },
+    ];
+    const apiProjects = [
+      { name: 'Live Only', summary: 'From API.', status: 'complete', tech: [], slug: 'live-only', repo: 'https://github.com/example/live', featured: true },
+    ];
+    await page.route('**/data/web_data/projects.json', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(cachedProjects),
+      });
+    });
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(apiProjects),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForSelector('#content', { state: 'attached', timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner') || !!c?.querySelector('.hero-content');
+    }, { timeout: 20000 });
+
+    // Clear any prefetched cache so Projects page uses cache-first (static) then background API
+    await page.evaluate(() => {
+      (window as unknown as { projectsCache?: unknown }).projectsCache = null;
+      (window as unknown as { projectsCachePromise?: unknown }).projectsCachePromise = null;
+    });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    // Cache-first shows "Cached Only" first; then background fetch runs and may replace with "Live Only" quickly
+    // So we wait for either cached then live, or just live (if background was fast)
+    const cachedVisible = await page.locator('#content .card-title', { hasText: 'Cached Only' }).isVisible({ timeout: 3000 }).catch(() => false);
+    if (cachedVisible) {
+      await expect(page.locator('#content .card-title', { hasText: 'Live Only' })).toBeVisible({ timeout: 12000 });
+    } else {
+      await expect(page.locator('#content .card-title', { hasText: 'Live Only' })).toBeVisible({ timeout: 15000 });
+    }
+    // After background update, fallback note should be removed
+    const fallbackNote = page.locator('#content p[data-translate="projects.fallbackNote"]');
+    await expect(fallbackNote).toHaveCount(0);
+  });
 });
 
 

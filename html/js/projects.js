@@ -73,6 +73,42 @@ function matchesClassification(projectName, classificationArray) {
 
 // Static fallback URL when API is unavailable (same as api.js)
 var PROJECTS_STATIC_FALLBACK_URL = '/data/web_data/projects.json';
+// localStorage key for projects cache (must match api.js)
+var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
+
+/**
+ * Normalize project for comparison (slug, name, summary/description)
+ * @param {Object} p - Project object
+ * @returns {Object} - Normalized fingerprint
+ */
+function projectFingerprint(p) {
+    return {
+        slug: (p.slug || p.name || '').toString().toLowerCase(),
+        name: (p.name || '').toString(),
+        summary: (p.summary || p.description || '').toString()
+    };
+}
+
+/**
+ * Compare two project arrays for equality (order-independent by slug, same slugs with same name/summary)
+ * @param {Array} a - First list
+ * @param {Array} b - Second list
+ * @returns {boolean} - True if data is equivalent
+ */
+function projectsDataEqual(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    var mapA = {};
+    a.forEach(function(p) {
+        var fp = projectFingerprint(p);
+        mapA[fp.slug] = fp;
+    });
+    for (var i = 0; i < b.length; i++) {
+        var fp = projectFingerprint(b[i]);
+        var fromA = mapA[fp.slug];
+        if (!fromA || fromA.name !== fp.name || fromA.summary !== fp.summary) return false;
+    }
+    return true;
+}
 
 // Fetch projects function - works standalone or with api.js
 async function fetchProjectsFromAPI() {
@@ -392,7 +428,32 @@ window.resetProjectsInit = function resetProjectsInit() {
 };
 
 /**
+ * Run background API fetch and, if response differs from current data, silently update UI and cache.
+ * Call after rendering from cache. No-op if cache-first APIs are not available.
+ */
+function startProjectsBackgroundRefresh(classification, displayedProjects) {
+    if (typeof window.fetchProjectsFromAPIBackground !== 'function') return;
+    window.fetchProjectsFromAPIBackground()
+        .then(function(apiData) {
+            if (!Array.isArray(apiData) || projectsDataEqual(displayedProjects, apiData)) return;
+            window.projectsCache = apiData;
+            window.projectsFallbackUsed = false;
+            try {
+                localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: apiData, at: Date.now() }));
+            } catch (e) { /* ignore */ }
+            renderProjects(apiData, classification);
+            var fallbackNote = document.querySelector('#content p[data-translate="projects.fallbackNote"]');
+            if (fallbackNote) fallbackNote.remove();
+            if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.applyTranslations) {
+                window.TranslationManager.applyTranslations();
+            }
+        })
+        .catch(function() { /* ignore background failure */ });
+}
+
+/**
  * Initialize projects page - load and render projects from API
+ * Uses cache-first: show static/cached data immediately, then refresh from API in background and silently update if different.
  */
 async function initProjects() {
     // Prevent double initialization
@@ -422,15 +483,29 @@ async function initProjects() {
             ideasRow.innerHTML = `<div class="col-12 text-center"><p class="text-muted" data-translate="projects.loading">${loadingText}</p></div>`;
         }
         
-        // Load project classification and fetch projects in parallel
-        const [classification, projects] = await Promise.all([
-            loadProjectClassification(),
-            fetchProjectsFromAPI()
-        ]);
+        const classification = await loadProjectClassification();
+        var projects = null;
+        var usedCacheFirst = false;
+
+        if (typeof window.fetchProjectsCacheFirst === 'function') {
+            try {
+                projects = await window.fetchProjectsCacheFirst();
+                usedCacheFirst = true;
+                if (typeof window !== 'undefined') window.projectsFallbackUsed = true;
+                window.projectsCache = projects;
+            } catch (e) {
+                /* no cache, fall through to API/fallback */
+            }
+        }
+        if (!projects || projects.length === 0) {
+            projects = await fetchProjectsFromAPI();
+            if (projects) window.projectsCache = projects;
+        }
+
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
-            if (typeof window !== 'undefined' && window.projectsFallbackUsed) {
+            if (usedCacheFirst && typeof window !== 'undefined' && window.projectsFallbackUsed) {
                 var containerEl = document.querySelector('#content .container');
                 if (!containerEl) containerEl = document.querySelector('.container');
                 var fallbackNote = document.createElement('p');
@@ -444,6 +519,9 @@ async function initProjects() {
                         containerEl.appendChild(fallbackNote);
                     }
                 }
+            }
+            if (usedCacheFirst && typeof window.fetchProjectsFromAPIBackground === 'function') {
+                startProjectsBackgroundRefresh(classification, projects);
             }
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
