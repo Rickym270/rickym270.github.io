@@ -47,6 +47,7 @@ For comprehensive testing documentation, see:
 
 - **[API Testing Guide](../TESTING.md)** - Complete API testing guide with all endpoints
 - **[UI Testing Guide](../UI_TESTING.md)** - Complete Playwright E2E testing guide
+- For Firefox CI timeouts on `page.goto` with `networkidle`, see [Post-Mortem: CI Firefox page.goto networkidle Timeout](../Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
 
 ## Test Structure
 

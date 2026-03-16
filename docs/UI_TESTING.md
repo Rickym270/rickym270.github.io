@@ -372,6 +372,10 @@ Failed tests automatically capture:
 - Check `playwright.config.ts` for mobile-specific timeouts
 - For SPA navigation timeouts on **chromium-iphone**, use the wait-for-response-then-DOM pattern; see [Post-Mortem: CI Chromium-iPhone SPA Flakiness](Post-Mortem/ci-chromium-iphone-spa-flakiness.md)
 
+### Firefox: page.goto Times Out (networkidle)
+
+If `page.goto` times out in CI with "waiting until networkidle", use `waitUntil: 'domcontentloaded'` and explicit content waits (e.g. `waitForFunction` for `#content` or `data-content-loaded`). See [Post-Mortem: CI Firefox page.goto networkidle Timeout](Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
+
 ### Translation Tests Fail
 
 - Ensure TranslationManager is loaded
