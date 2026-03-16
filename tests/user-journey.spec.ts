@@ -260,8 +260,8 @@ test.describe('[integration] End-to-End User Journeys', () => {
   });
 
   test('complete user journey: theme switching and navigation', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    // Use domcontentloaded for all browsers; networkidle often never fires in CI for Firefox
+    const waitUntil = 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
@@ -349,8 +349,8 @@ test.describe('[integration] End-to-End User Journeys', () => {
   });
 
   test('complete user journey: view documentation', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    // Use domcontentloaded for all browsers; networkidle often never fires in CI for Firefox
+    const waitUntil = 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
