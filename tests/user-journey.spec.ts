@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('[integration] End-to-End User Journeys', () => {
   test.describe.configure({ timeout: 180000 }); // 3 minutes for full journeys
+  // Firefox: use domcontentloaded for page.goto; networkidle often never fires in CI (see docs/Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
 
   test('complete user journey: browse portfolio', async ({ page }) => {
     // Start at home page - use domcontentloaded for all browsers (networkidle often never fires in CI for Firefox)
@@ -408,8 +409,8 @@ test.describe('[integration] End-to-End User Journeys', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 });
     
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    // Use domcontentloaded for all browsers; networkidle often never fires in CI for Firefox
+    const waitUntil = 'domcontentloaded';
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
