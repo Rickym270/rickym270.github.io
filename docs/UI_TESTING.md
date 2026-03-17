@@ -211,7 +211,7 @@ Tests the desktop-first site footer:
 - Theme and language toggles in sync with nav
 - Reduced motion toggle and persistence
 - Reset preferences button
-- Quick links (GitHub, LinkedIn, Contact, Engineering) and Back to top
+- Quick links (GitHub, LinkedIn, Download resume (PDF), Contact, Engineering) and Back to top; Resume link points to PDF with download and target _blank
 
 **Example:**
 ```bash

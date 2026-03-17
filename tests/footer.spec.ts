@@ -86,13 +86,23 @@ test.describe('Site footer', () => {
     expect(reduced).toBe('false');
   });
 
-  test('quick links include GitHub, LinkedIn, Contact, Engineering', async ({ page }, testInfo) => {
+  test('quick links include GitHub, LinkedIn, Download resume, Contact, Engineering', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name === 'chromium-iphone', 'Footer is desktop-only');
     const footer = page.locator('.site-footer__links');
     await expect(footer.getByRole('link', { name: 'GitHub' })).toBeVisible();
     await expect(footer.getByRole('link', { name: /^LinkedIn$/ })).toBeVisible();
+    await expect(footer.getByRole('link', { name: /Download resume|Resume|Descargar currículum/i })).toBeVisible();
     await expect(footer.getByRole('link', { name: 'Contact' })).toBeVisible();
     await expect(footer.getByRole('link', { name: 'Engineering' })).toBeVisible();
+  });
+
+  test('footer Resume link points to PDF and has download and target _blank', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name === 'chromium-iphone', 'Footer is desktop-only');
+    const resumeLink = page.locator('.site-footer__links a[href*="Martinez"][href*=".pdf"]');
+    await expect(resumeLink).toHaveAttribute('href', /Martinez.*Sr\.\s*SDET\.pdf/);
+    await expect(resumeLink).toHaveAttribute('download', 'Martinez-Ricky-Sr-SDET.pdf');
+    await expect(resumeLink).toHaveAttribute('target', '_blank');
+    await expect(resumeLink).toHaveAttribute('rel', /noopener/);
   });
 
   test('external links have target _blank and noopener', async ({ page }, testInfo) => {
