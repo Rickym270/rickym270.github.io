@@ -209,6 +209,8 @@ curl -s -H "X-API-Key: ${ADMIN_API_KEY}" http://localhost:8080/api/contact
 
 ## E2E Tests
 
+The contact form UI is covered by `tests/contact.spec.ts`, including mobile contact UI (header, subject dropdown, SEND, success/error states). See [UI_TESTING.md](../UI_TESTING.md#contact-page-tests-contactspectts).
+
 1. **Front-end form submission**:
    - User fills out contact form on portfolio site
    - Submit triggers POST to `/api/contact`

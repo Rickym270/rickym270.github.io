@@ -4498,6 +4498,141 @@ pre code {
 }
 
 /* ============================================
+   Contact page – mobile (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .contact-page .contact-title-desktop { display: none; }
+    .contact-page .contact-title-mobile { display: block; }
+    .contact-page .contact-download-desktop { display: none; }
+    .contact-page .contact-form .contact-label-text { text-transform: uppercase; }
+    .contact-page .contact-form label {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+    .contact-page .contact-label-icon--name::before { content: ''; display: inline-block; width: 14px; height: 14px; background: currentColor; clip-path: ellipse(40% 50% at 50% 15%); opacity: 0.8; }
+    .contact-page .contact-label-icon--email::before { content: '@'; font-size: 0.9em; font-weight: 700; opacity: 0.8; }
+    .contact-page .contact-label-icon--subject::before { content: ''; display: inline-block; width: 12px; height: 14px; border: 2px solid currentColor; border-radius: 2px; opacity: 0.8; }
+    .contact-page .contact-label-icon--message::before { content: ''; display: inline-block; width: 14px; height: 12px; border: 2px solid currentColor; border-radius: 50%; opacity: 0.8; }
+    .contact-page .contact-submit-mobile { display: inline; }
+    .contact-page #submit-text { display: none; }
+    .contact-page .contact-submit-icon { display: inline; margin-left: var(--spacing-xs); }
+    .contact-page #submit-btn .contact-submit-icon { font-size: 1em; }
+    .contact-page .contact-inline-error { display: none; font-size: 0.875rem; color: #721c24; margin-top: var(--spacing-xs); }
+    .contact-page .contact-inline-error.contact-inline-error-visible { display: block; }
+    .contact-page .contact-state-block { margin-top: var(--spacing-xl); }
+    .contact-page .contact-terminal {
+        font-family: ui-monospace, monospace;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        margin-bottom: var(--spacing-lg);
+        background-color: var(--color-bg-secondary);
+    }
+    .contact-page .contact-terminal-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-bottom: 1px solid var(--color-border);
+        background-color: var(--color-bg-secondary);
+    }
+    .contact-page .contact-terminal-dots {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
+        box-shadow: 12px 0 0 #eab308, 24px 0 0 #22c55e;
+    }
+    .contact-page .contact-terminal-title { font-size: 0.7rem; color: var(--color-text-secondary); }
+    .contact-page .contact-terminal-output {
+        margin: 0;
+        padding: var(--spacing-md);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: #15803d;
+        background-color: var(--color-bg-secondary);
+        border: none;
+    }
+    .contact-page .contact-terminal-cursor { animation: contact-blink 1s step-end infinite; }
+    @keyframes contact-blink { 50% { opacity: 0; } }
+    [data-theme="dark"] .contact-page .contact-terminal-output { color: #4ade80; }
+    .contact-page .contact-message-sent-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        width: 100%;
+        justify-content: center;
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+    .contact-page .contact-error-heading {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #b91c1c;
+        margin-bottom: var(--spacing-md);
+    }
+    .contact-page .contact-error-card {
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    .contact-page .contact-error-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #b91c1c;
+        color: #fff;
+        font-weight: 700;
+    }
+    .contact-page .contact-error-text { margin: 0; color: #991b1b; font-size: 0.9rem; }
+    .contact-page .contact-retry-btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: #b91c1c;
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        cursor: pointer;
+        align-self: flex-start;
+    }
+    [data-theme="dark"] .contact-page .contact-error-heading { color: #fca5a5; }
+    [data-theme="dark"] .contact-page .contact-error-card {
+        background-color: rgba(185, 28, 28, 0.2);
+        border-color: rgba(248, 113, 113, 0.5);
+    }
+    [data-theme="dark"] .contact-page .contact-error-text { color: #fecaca; }
+    [data-theme="dark"] .contact-page .contact-inline-error.contact-inline-error-visible { color: #fca5a5; }
+}
+
+@media (min-width: 769px) {
+    .contact-page .contact-title-mobile { display: none !important; }
+    .contact-page .contact-title-desktop { display: block !important; }
+    .contact-page .contact-download-desktop { display: block !important; }
+    .contact-page .contact-submit-mobile,
+    .contact-page .contact-submit-icon { display: none !important; }
+    .contact-page #submit-text { display: inline !important; }
+    .contact-page .contact-state-block[hidden] { display: none !important; }
+}
+
+.contact-page .contact-state-block[hidden] { display: none !important; }
+.contact-page.contact-state-success .contact-form-section,
+.contact-page.contact-state-error .contact-form-section { display: none !important; }
+
+/* ============================================
    Loading States
    ============================================ */
 .loading {

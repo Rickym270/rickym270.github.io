@@ -10,6 +10,7 @@ This document describes the accessibility features and practices used on the sit
 - **SPA focus management**: When navigating between pages via the SPA, focus is moved to the main content area so screen reader and keyboard users are not left in the navigation.
 - **Footer**: A desktop-first footer (`role="contentinfo"`) provides identity, quick links (GitHub, LinkedIn, Download resume (PDF), Contact, Engineering), and utility controls (theme, language, reduced motion, reset preferences) and a Back to top link. The footer may be hidden or simplified on small screens.
 - **Mobile sidebar**: On small screens, the hamburger menu includes a PREFERENCES section with Language (EN/ES) and Dark Mode (toggle). Footer icons (contact, reset preferences) appear below. Reduced motion is available in the desktop footer and is still applied from stored or system preference on load. Controls are keyboard-accessible and stay in sync with the desktop footer. Coverage: `tests/mobile-sidebar.spec.ts`.
+- **Mobile contact form**: On viewports ≤768px, the contact page shows "Get in Touch", form labels with icons, subject dropdown, and success/error states (terminal-style success block, SYSTEM EXCEPTION error block with RETRY SEND). Inline email validation error is shown for invalid email. Labels and error handling are accessible.
 
 ## Testing
 

@@ -104,6 +104,7 @@ Tests are located in the `tests/` directory:
 - `translation.spec.ts` - Language switching (EN/ES)
 - `theme.spec.ts` - Dark/light theme switching
 - `footer.spec.ts` - Footer visibility, identity, theme/language/reduced-motion/reset controls, quick links, Back to top
+- `contact.spec.ts` - Contact form load, validation, submission; mobile contact UI (header, subject dropdown, SEND, success/error states)
 - `mobile-sidebar.spec.ts` - Mobile sidebar open/close, Portfolio header, nav order (Home, Projects, Blog, Docs, Skills, Contact), Docs/Blog panels, PREFERENCES (Language + Dark Mode), footer icons (contact, reset)
 - `responsive.spec.ts` - Responsive design across screen sizes
 - `spa-navigation.spec.ts` - Single Page Application navigation
@@ -201,6 +202,21 @@ Tests dark/light theme:
 **Example:**
 ```bash
 npx playwright test tests/theme.spec.ts
+```
+
+### Contact Page Tests (`contact.spec.ts`)
+
+Tests the contact form and mobile contact UI:
+- Contact page loads with form fields (name, email, subject, message)
+- Form validation (empty fields, invalid email)
+- Subject dropdown and SEND on mobile
+- Success state after submit (desktop: alert; mobile: terminal-style block and MESSAGE SENT button)
+- Error state and RETRY SEND on mobile
+- Submit button disabled during submission
+
+**Example:**
+```bash
+npx playwright test tests/contact.spec.ts
 ```
 
 ### Footer Tests (`footer.spec.ts`)

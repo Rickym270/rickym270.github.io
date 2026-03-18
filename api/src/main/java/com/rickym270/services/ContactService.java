@@ -1,6 +1,7 @@
 package com.rickym270.services;
 
 import com.rickym270.dto.ContactMessage;
+import com.rickym270.dto.ContactResponse;
 import com.rickym270.dto.ContactRequest;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class ContactService {
         this.emailService = emailService;
     }
 
-    public ContactMessage save(ContactRequest dto, String clientIp) {
+    public ContactResponse save(ContactRequest dto, String clientIp) {
         // Check honeypot field - if filled, it's spam
         if (dto.honeypot() != null && !dto.honeypot().trim().isEmpty()) {
             throw new IllegalArgumentException("Spam detected");
@@ -74,6 +75,7 @@ public class ContactService {
         messages.add(message);
         
         // Send email notification (non-blocking, failures don't prevent message storage)
+        boolean emailSent = true;
         try {
             emailService.sendContactEmail(
                 dto.email(),
@@ -85,9 +87,18 @@ public class ContactService {
         } catch (Exception e) {
             System.err.println("[ContactService] Failed to send email notification: " + e.getMessage());
             // Don't fail the request if email fails - message is still stored
+            emailSent = false;
         }
         
-        return message;
+        return new ContactResponse(
+                message.id(),
+                message.name(),
+                message.email(),
+                message.subject(),
+                message.message(),
+                message.receivedAt(),
+                emailSent
+        );
     }
 
     public List<ContactMessage> findAll() {

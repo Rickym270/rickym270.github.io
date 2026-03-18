@@ -188,6 +188,35 @@
 
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                // #region agent log contact submit handler entry
+                console.log('[contact-debug] submit handler entered', {
+                    defaultPrevented: !!e.defaultPrevented,
+                    nameProvided: !!document.getElementById('name')?.value,
+                    emailProvided: !!document.getElementById('email')?.value,
+                    subjectProvided: !!document.getElementById('subject')?.value
+                });
+                // #endregion
+                /* #region agent log contact submit handler entry ingest */
+                // Must be valid plain JS; TypeScript-only syntax breaks DOM insertion and prevents SPA submit handling.
+                try {
+                    fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Debug-Session-Id': '9313fb'
+                        },
+                        body: JSON.stringify({
+                            sessionId: '9313fb',
+                            runId: 'pre',
+                            hypothesisId: 'H2',
+                            location: 'contact.html:submit',
+                            message: 'submitHandlerEntered',
+                            data: {},
+                            timestamp: Date.now()
+                        })
+                    }).catch(function(){});
+                } catch (_) {}
+                /* #endregion */
                 hideMessage();
 
                 const name = document.getElementById('name').value.trim();
@@ -249,12 +278,20 @@
                 // If Turnstile is not configured, allow submission without token (backend will handle it)
 
                 setSubmitting(true);
+                const submitStartTs = Date.now();
 
                 try {
                     // Use API if available, otherwise fallback
                     const API_BASE_URL = (typeof window.API_BASE_URL !== 'undefined') 
                         ? window.API_BASE_URL 
                         : 'https://YOUR_RENDER_APP.onrender.com';
+                    // #region agent log contact api base
+                    console.log('[contact-debug] API_BASE_URL resolved', { apiBaseUrl: API_BASE_URL });
+                    // #endregion
+
+                    // #region agent log contact submit start
+                    fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9313fb'},body:JSON.stringify({sessionId:'9313fb',runId:'pre',hypothesisId:'A',location:'contact.html:submitStart',message:'submit started',data:{isMobileViewport: (window.innerWidth <= 768),apiBaseUrl: API_BASE_URL,turnstileConfigured: isTurnstileConfigured()},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
 
                     // Wrap fetch in Promise to handle all errors
                     let response;
@@ -262,12 +299,21 @@
                     try {
                         // Add timeout to prevent hanging (allow 60s for Render cold start)
                         const controller = new AbortController();
-                        const TIMEOUT_MS = 60000;
+                        // Allow longer: Render cold starts can exceed 60s in some conditions.
+                        const TIMEOUT_MS = 180000;
                         const timeoutId = setTimeout(function() {
                             clientTimeoutFired = true;
+                            console.log('[contact] timeout fired after', TIMEOUT_MS, 'ms; aborting fetch');
+                            // #region agent log contact abort timeout callback
+                            fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9313fb'},body:JSON.stringify({sessionId:'9313fb',runId:'pre',hypothesisId:'B',location:'contact.html:timeoutCallback',message:'timeout aborting fetch',data:{elapsedMs: Date.now() - submitStartTs,TIMEOUT_MS},timestamp:Date.now()})}).catch(()=>{});
+                            // #endregion
                             controller.abort();
                         }, TIMEOUT_MS);
                         
+                        // #region agent log contact fetch before request
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9313fb'},body:JSON.stringify({sessionId:'9313fb',runId:'pre',hypothesisId:'A',location:'contact.html:beforeFetch',message:'about to POST /api/contact',data:{url:`${API_BASE_URL}/api/contact`,timeoutMs: TIMEOUT_MS},timestamp:Date.now()})}).catch(()=>{});
+                        // #endregion
+
                         response = await fetch(`${API_BASE_URL}/api/contact`, {
                             method: 'POST',
                             headers: {
@@ -284,10 +330,18 @@
                             signal: controller.signal
                         });
                         
+                        // #region agent log contact fetch response received
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9313fb'},body:JSON.stringify({sessionId:'9313fb',runId:'pre',hypothesisId:'C',location:'contact.html:afterFetch',message:'fetch resolved',data:{elapsedMs: Date.now() - submitStartTs,status: response && response.status,ok: response && response.ok},timestamp:Date.now()})}).catch(()=>{});
+                        // #endregion
+
                         clearTimeout(timeoutId);
                     } catch (fetchError) {
                         // Handle network errors, CORS, timeouts, etc.
                         console.error('Fetch error:', fetchError);
+                        console.log('[contact] fetch failed with', fetchError && fetchError.name, fetchError && fetchError.message);
+                        // #region agent log contact fetch error
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9313fb'},body:JSON.stringify({sessionId:'9313fb',runId:'pre',hypothesisId:'B',location:'contact.html:fetchCatch',message:'fetch threw',data:{elapsedMs: Date.now() - submitStartTs,clientTimeoutFired: clientTimeoutFired,fetchErrorName: fetchError && fetchError.name,fetchErrorMessage: fetchError && fetchError.message},timestamp:Date.now()})}).catch(()=>{});
+                        // #endregion
                         if (fetchError.name === 'AbortError') {
                             throw new Error('Request timed out. Please check your connection and try again.');
                         } else if (fetchError.message && fetchError.message.includes('message channel')) {
@@ -326,11 +380,150 @@
                     }
 
                     const result = await response.json();
-                    const successMsg = typeof window.TranslationManager !== 'undefined' 
+                    // #region agent log contact emailNotificationSent
+                    try {
+                        const sentVal = (result && typeof result.emailNotificationSent === 'boolean')
+                            ? result.emailNotificationSent
+                            : null;
+                        console.log('[contact-debug] emailNotificationSent from API', { emailNotificationSent: sentVal, resultKeys: result && typeof result === 'object' ? Object.keys(result) : [] });
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9313fb' },
+                            body: JSON.stringify({
+                                sessionId: '9313fb',
+                                runId: 'pre',
+                                hypothesisId: 'E',
+                                location: 'contact.html:emailNotificationSent',
+                                message: 'parsed response.json()',
+                                data: { emailNotificationSent: sentVal },
+                                timestamp: Date.now()
+                            })
+                        }).catch(function(){});
+                    } catch (_) {}
+                    // #endregion
+                    const emailNotificationSentKnown = typeof result?.emailNotificationSent === 'boolean'
+                        ? result.emailNotificationSent
+                        : null; // If backend doesn't provide the field yet (older deployments), treat as unknown.
+
+                    const successMsg = typeof window.TranslationManager !== 'undefined'
                         ? window.TranslationManager.t('contact.success')
                         : '✓ Email sent successfully! Thank you for reaching out. I\'ll get back to you soon.';
-                    showMessage(successMsg, false);
+                    
+                    const emailFailedMsg = typeof window.TranslationManager !== 'undefined'
+                        ? window.TranslationManager.t('contact.emailNotificationFailed')
+                        : 'Message received, but email notification failed. Please try again later.';
+
+                    const emailUnknownMsg = typeof window.TranslationManager !== 'undefined'
+                        ? window.TranslationManager.t('contact.emailNotificationUnknown')
+                        : 'Message received, but email notification status is unknown. Please try again later.';
+
+                    // If message is stored but email delivery fails, show an error-style message.
+                    // This prevents misleading "success" when the email provider/config is broken.
+                    const showSuccess = emailNotificationSentKnown === true;
+                    const showMsg = showSuccess ? successMsg : (emailNotificationSentKnown === false ? emailFailedMsg : emailUnknownMsg);
+                    // #region agent log showMessage inputs
+                    try {
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9313fb' },
+                            body: JSON.stringify({
+                                sessionId: '9313fb',
+                                runId: 'pre',
+                                hypothesisId: 'F',
+                                location: 'contact.html:showMessage:before',
+                                message: 'before showMessage',
+                                data: {
+                                    emailNotificationSentKnown,
+                                    showSuccess,
+                                    showMsgTrim: typeof showMsg === 'string' ? showMsg.trim() : null,
+                                    showMsgLength: typeof showMsg === 'string' ? showMsg.length : null
+                                },
+                                timestamp: Date.now()
+                            })
+                        }).catch(function(){});
+                    } catch (_) {}
+                    // #endregion
+                    showMessage(showMsg, !showSuccess);
+                    // #region agent log showMessage results
+                    try {
+                        const contactSuccessBlock = document.getElementById('contact-success-block');
+                        const contactErrorBlock = document.getElementById('contact-error-block');
+                        const alertCandidates = Array.from(
+                            document.querySelectorAll('#form-message, [role="alert"], .alert-success, .alert-danger')
+                        );
+                        const alertSnapshot = alertCandidates.slice(0, 10).map(el => ({
+                            id: el.id || null,
+                            className: el.className || null,
+                            textTrim: (el.textContent && el.textContent.trim()) ? el.textContent.trim().slice(0, 200) : null,
+                            display: getComputedStyle(el).display,
+                            visibility: getComputedStyle(el).visibility,
+                            opacity: getComputedStyle(el).opacity
+                        }));
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9313fb' },
+                            body: JSON.stringify({
+                                sessionId: '9313fb',
+                                runId: 'pre',
+                                hypothesisId: 'F',
+                                location: 'contact.html:showMessage:after',
+                                message: 'after showMessage',
+                                data: {
+                                    formMessageExists: !!messageDiv,
+                                    formMessageTextTrim: messageDiv && messageDiv.textContent ? messageDiv.textContent.trim() : null,
+                                    formMessageClass: messageDiv ? messageDiv.className : null,
+                                    formMessageDisplay: messageDiv ? getComputedStyle(messageDiv).display : null,
+                                    formMessageColor: messageDiv ? getComputedStyle(messageDiv).color : null,
+                                    formMessageBackground: messageDiv ? getComputedStyle(messageDiv).backgroundColor : null,
+                                    formMessageOpacity: messageDiv ? getComputedStyle(messageDiv).opacity : null,
+                                    formMessageVisibility: messageDiv ? getComputedStyle(messageDiv).visibility : null,
+                                    formMessageFontSize: messageDiv ? getComputedStyle(messageDiv).fontSize : null,
+                                    formMessageHeight: messageDiv ? messageDiv.getBoundingClientRect().height : null,
+                                    formMessageWidth: messageDiv ? messageDiv.getBoundingClientRect().width : null,
+                                    formMessageOffsetHeight: messageDiv ? messageDiv.offsetHeight : null,
+                                    formMessageInnerTextTrim: messageDiv && messageDiv.innerText ? messageDiv.innerText.trim() : null,
+                                    viewportHeight: window.innerHeight,
+                                    formMessageRect: messageDiv ? {
+                                        top: messageDiv.getBoundingClientRect().top,
+                                        bottom: messageDiv.getBoundingClientRect().bottom
+                                    } : null,
+                                    alertSnapshot,
+                                    contactSuccessBlockExists: !!contactSuccessBlock,
+                                    contactSuccessBlockTextTrim: contactSuccessBlock && contactSuccessBlock.textContent ? contactSuccessBlock.textContent.trim() : null,
+                                    contactSuccessBlockDisplay: contactSuccessBlock ? getComputedStyle(contactSuccessBlock).display : null,
+                                    contactErrorBlockExists: !!contactErrorBlock,
+                                    contactErrorBlockTextTrim: contactErrorBlock && contactErrorBlock.textContent ? contactErrorBlock.textContent.trim() : null,
+                                    contactErrorBlockDisplay: contactErrorBlock ? getComputedStyle(contactErrorBlock).display : null
+                                },
+                                timestamp: Date.now()
+                            })
+                        }).catch(function(){});
+                    } catch (_) {}
+                    // #endregion
                     form.reset();
+                    // #region agent log contact after form.reset messageDiv text
+                    try {
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '9313fb' },
+                            body: JSON.stringify({
+                                sessionId: '9313fb',
+                                runId: 'pre',
+                                hypothesisId: 'G',
+                                location: 'contact.html:afterFormReset',
+                                message: 'after form.reset',
+                                data: {
+                                    formMessageTextTrim: messageDiv && messageDiv.textContent ? messageDiv.textContent.trim() : null,
+                                    formMessageClass: messageDiv ? messageDiv.className : null,
+                                    formMessageDisplay: messageDiv ? getComputedStyle(messageDiv).display : null,
+                                    formMessageVisibility: messageDiv ? getComputedStyle(messageDiv).visibility : null,
+                                    formMessageOpacity: messageDiv ? getComputedStyle(messageDiv).opacity : null
+                                },
+                                timestamp: Date.now()
+                            })
+                        }).catch(function(){});
+                    } catch (_) {}
+                    // #endregion
                     
                     // Reset Turnstile widget if it exists
                     if (typeof turnstile !== 'undefined' && isTurnstileConfigured()) {
@@ -343,6 +536,12 @@
                 } catch (error) {
                     console.error('Error submitting contact form:', error);
                     console.error('Error stack:', error.stack);
+                    // #region agent log contact outer catch
+                    try {
+                        const errMsg = error && error.message ? error.message : String(error);
+                        fetch('http://127.0.0.1:7242/ingest/6a51373e-0e77-47ee-bede-f80eb24e3f5c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9313fb'},body:JSON.stringify({sessionId:'9313fb',runId:'pre',hypothesisId:'D',location:'contact.html:outerCatch',message:'submit failed',data:{errorText: errMsg},timestamp:Date.now()})}).catch(()=>{});
+                    } catch (e) {}
+                    // #endregion
                     
                     // Extract the actual error message
                     let errorText = '';

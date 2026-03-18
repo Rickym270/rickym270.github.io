@@ -1,6 +1,7 @@
 package com.rickym270.controllers;
 
 import com.rickym270.dto.ContactMessage;
+import com.rickym270.dto.ContactResponse;
 import com.rickym270.dto.ContactRequest;
 import com.rickym270.exceptions.UnauthorizedException;
 import com.rickym270.services.ContactService;
@@ -22,7 +23,7 @@ public class ContactController {
     }
 
     @PostMapping("/contact")
-    public ResponseEntity<ContactMessage> create(
+    public ResponseEntity<ContactResponse> create(
             @Valid @RequestBody ContactRequest request,
             @RequestHeader(value = "X-Forwarded-For", required = false) String forwardedFor,
             @RequestHeader(value = "X-Real-IP", required = false) String realIp) {
@@ -49,8 +50,7 @@ public class ContactController {
                              "X-Forwarded-For=" + forwardedFor + ", X-Real-IP=" + realIp);
         }
         
-        ContactMessage saved = contactService.save(request, clientIp);
-        return ResponseEntity.status(201).body(saved);
+        return ResponseEntity.status(201).body(contactService.save(request, clientIp));
     }
 
     @GetMapping("/contact")
