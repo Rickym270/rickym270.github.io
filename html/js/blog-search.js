@@ -35,7 +35,16 @@
         var noResultsEl = section ? section.querySelector('.blog-search-no-results') : null;
         if (!grid) return;
 
-        var idSet = new Set(resultIds || []);
+        // Back-compat: production API may still return legacy ids (post-1/post-2).
+        // Map those to current slug ids so filtering continues to work after renames.
+        var legacyIdMap = {
+            'post-1': 'how-living-with-ms-changed-the-way-i-engineer-software',
+            'post-2': 'accessibility-is-not-just-a-feature'
+        };
+
+        var normalizedIds = (resultIds || []).map(function (id) { return legacyIdMap[id] || id; });
+        var idSet = new Set(normalizedIds);
+        var shownRealCards = 0;
 
         grid.querySelectorAll('.blog-card').forEach(function (card) {
             var id = card.getAttribute('data-article-id');
@@ -50,6 +59,7 @@
             if (id != null) {
                 if (idSet.has(id)) {
                     card.style.removeProperty('display');
+                    shownRealCards++;
                 } else {
                     card.style.setProperty('display', 'none');
                 }
@@ -57,7 +67,9 @@
         });
 
         if (noResultsEl) {
-            if (hasQuery && (!resultIds || resultIds.length === 0)) {
+            // Show "no results" if query is present and either the API returned no ids,
+            // or none of the returned ids matched any visible cards (e.g. stale API ids).
+            if (hasQuery && ((!resultIds || resultIds.length === 0) || shownRealCards === 0)) {
                 noResultsEl.style.setProperty('display', 'block');
             } else {
                 noResultsEl.style.setProperty('display', 'none');
@@ -75,6 +87,7 @@
         if (!grid) return;
 
         var debounceTimer = null;
+        var requestSeq = 0;
 
         function doSearch() {
             var q = (input.value || '').trim();
@@ -83,6 +96,7 @@
                 return;
             }
 
+            var seq = ++requestSeq;
             var baseUrl = getApiBaseUrl();
             var url = baseUrl + '/api/search?q=' + encodeURIComponent(q);
 
@@ -92,6 +106,10 @@
                     return res.json();
                 })
                 .then(function (data) {
+                    // Ignore stale responses if the query changed/cleared since the request started.
+                    if (seq !== requestSeq) return;
+                    var now = (input.value || '').trim();
+                    if (now !== q || now === '') return;
                     var ids = Array.isArray(data) ? data.map(function (item) { return item && item.id; }).filter(Boolean) : [];
                     var contentEl = document.getElementById('content');
                     var sectionToUpdate = contentEl ? contentEl.querySelector('.blog-insights-section') : section;
@@ -99,6 +117,9 @@
                 })
                 .catch(function (err) {
                     console.error('[blog-search]', err);
+                    if (seq !== requestSeq) return;
+                    var now = (input.value || '').trim();
+                    if (now !== q || now === '') return;
                     var contentEl = document.getElementById('content');
                     var sectionToUpdate = contentEl ? contentEl.querySelector('.blog-insights-section') : section;
                     applySearchResults(sectionToUpdate || section, [], true);
@@ -109,6 +130,7 @@
             if (debounceTimer) clearTimeout(debounceTimer);
             var q = (input.value || '').trim();
             if (q === '') {
+                requestSeq++;
                 var contentEl = document.getElementById('content');
                 var sectionToShow = contentEl ? contentEl.querySelector('.blog-insights-section') : section;
                 showAllCards(sectionToShow || section);
@@ -120,6 +142,7 @@
         input.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 input.value = '';
+                requestSeq++;
                 var contentEl = document.getElementById('content');
                 var sectionToShow = contentEl ? contentEl.querySelector('.blog-insights-section') : section;
                 showAllCards(sectionToShow || section);

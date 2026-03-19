@@ -2,15 +2,15 @@
 
 ## Overview
 
-The blog has two listing pages (Engineering and Personal), reached from the Blog dropdown in the main nav. The Engineering page shows a Featured Post, a "Latest Insights" section with a **search bar**, and a grid of blog post cards (two real articles plus placeholders). The Personal page uses the same layout with "Coming Soon" placeholders throughout. Users can type  text in the search bar to see closest-matching articles (semantic or keyword-based via the API).
+The blog has two listing pages (Engineering and Personal), reached from the Blog dropdown in the main nav. The Engineering page shows a Featured Post, a "Latest Insights" section with a **search bar**, and a grid of blog post cards (real articles). The Personal page uses the same layout with "Coming Soon" placeholders throughout. Users can type text in the search bar to see closest-matching articles (semantic or keyword-based via the API).
 
 ## Structure
 
 ### Engineering (`html/pages/engineering.html`)
 
-- **Featured Post**: Hero section with real post title, short description, "Read Article" button, and metadata (date, read time). Links use SPA `inline-load` and `data-url="html/pages/engineering/post-2.html"` (featured) or `post-1.html`.
+- **Featured Post**: Hero section with real post title, short description, "Read Article" button, and metadata (date, read time). Links use SPA `inline-load` and `data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"` (featured).
 - **Latest Insights**: Section heading (h2), subtitle, and a **search bar**. Typing in the search bar (debounced) calls `GET /api/search?q=...` and shows or hides cards by relevance. When the search box is empty, all cards are shown. When the user empties the search box (e.g. backspace to delete all text, or press Escape), the full grid is restored: any "Coming soon" placeholder cards reappear if present, or all real post cards when there are no placeholders. "No matching articles" is shown when the query returns no results.
-- **Blog cards grid**: Two real cards (post-2, post-1) with image, category, date, title, description, tags, and "Read more" link; one placeholder card with "Coming Soon". Cards have `data-article-id` for search matching.
+- **Blog cards grid**: Three real cards ordered newest → oldest with image, category, date, title, description, tags, and "Read more" link. Cards have `data-article-id` for search matching.
 
 ### Personal (`html/pages/lifestyle.html`)
 
@@ -20,10 +20,10 @@ The blog has two listing pages (Engineering and Personal), reached from the Blog
 
 ### Post detail page (article view)
 
-When a post is opened (e.g. from Engineering "Read Article" or the first card’s "Read more" link), the same content as `html/pages/engineering/post-1.html` is loaded into `#content` via the SPA.
+When a post is opened (e.g. from Engineering "Read Article" or a card’s "Read more" link), the post HTML is loaded into `#content` via the SPA.
 
 - **Structure**: Banner image at top (`.post-banner`, `.post-banner-img`), then `.post-hero` (`.post-meta` for date/category/read time and `.post-title`), then `#post-body` (article content: paragraphs, h2s, lists, blockquotes).
-- **Styling**: Banner has shadow, max-height, and rounded corners; post meta uses secondary text color; blockquotes use accent left border, background, and padding; body has spacing for h2s, paragraphs, and lists. Both `html/css/blog.css` and `html/css/modern.css` apply (post-1.html links both).
+- **Styling**: Banner has shadow, max-height, and rounded corners; post meta uses secondary text color; blockquotes use accent left border, background, and padding; body has spacing for h2s, paragraphs, and lists. Both `html/css/blog.css` and `html/css/modern.css` apply (posts link both).
 - **Entry points**: Reached via SPA from Engineering "Read Article" or from the first card’s "Read more" link.
 
 ### Styling
@@ -33,7 +33,7 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 ## Navigation
 
 - **Blog dropdown** (desktop and mobile): Opens Engineering and Personal links. Active state shows when on either blog page.a
-- **From Engineering**: "Read Article" (Featured) or the first card’s "Read more" link loads the full post (`html/pages/engineering/post-1.html`) into `#content` via the SPA (no full page reload).
+- **From Engineering**: "Read Article" (Featured) or a card’s "Read more" link loads the full post into `#content` via the SPA (no full page reload).
 
 ## E2E Test Coverage
 
@@ -41,13 +41,13 @@ When a post is opened (e.g. from Engineering "Read Article" or the first card’
 
 - Engineering page loads via Blog dropdown (desktop and mobile).
 - Personal page loads via Blog dropdown (desktop and mobile).
-- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, search bar visible), at least one real card and one placeholder card. Typing in the search bar filters cards by API results; emptying the search box (or Escape) restores the full card grid (placeholders reappear if present, or all real cards when there are no placeholders). Dedicated tests: **Clearing search restores full card grid**, **Escape clears search and restores full card grid**.
+- Engineering page structure: Featured Post (real title, "Read Article" link), Latest Insights (h2, search bar visible), and the full set of real cards. Typing in the search bar filters cards by API results; emptying the search box (or Escape) restores the full card grid. Dedicated tests: **Clearing search restores full card grid**, **Escape clears search and restores full card grid**.
 - Personal page structure: Featured and Latest Insights with search bar present; three placeholder cards with "Coming Soon".
 - Navigation: Clicking "Read Article" from Engineering loads the post body in `#content` (SPA).
 - Post detail structure: banner, hero (meta + title), article body, and at least one blockquote visible when post is loaded in SPA.
 - Dark mode: "Read Article" button has visible text when theme is dark.
 
-**Stability (chromium-iphone / CI):** Blog tests that navigate to Engineering or load a post use a **wait-for-response-then-DOM** pattern: they wait for the SPA request (e.g. `engineering.html`, `post-1.html`) to complete before waiting for DOM content. This reduces flakiness on the chromium-iphone project in CI. See [Post-Mortem: CI Chromium-iPhone SPA Flakiness](../Post-Mortem/ci-chromium-iphone-spa-flakiness.md).
+**Stability (chromium-iphone / CI):** Blog tests that navigate to Engineering or load a post use a **wait-for-response-then-DOM** pattern: they wait for the SPA request (e.g. `engineering.html`, an article `.html`) to complete before waiting for DOM content. This reduces flakiness on the chromium-iphone project in CI. See [Post-Mortem: CI Chromium-iPhone SPA Flakiness](../Post-Mortem/ci-chromium-iphone-spa-flakiness.md).
 
 **Other specs that touch blog:**
 

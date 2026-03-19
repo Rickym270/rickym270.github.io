@@ -578,8 +578,8 @@ components:
       properties:
         id:
           type: string
-          description: Article identifier (e.g. post-1, post-2)
-          example: "post-1"
+          description: Article identifier (e.g. accessibility-is-not-just-a-feature)
+          example: "accessibility-is-not-just-a-feature"
         title:
           type: string
           description: Article title
@@ -590,7 +590,7 @@ components:
         url:
           type: string
           description: Path to article (SPA URL)
-          example: "html/pages/engineering/post-1.html"
+          example: "html/pages/engineering/accessibility-is-not-just-a-feature.html"
         score:
           type: number
           format: double

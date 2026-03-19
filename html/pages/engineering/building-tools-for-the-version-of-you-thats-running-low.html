@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Tools for the Version of You That’s Running Low — Ricky Martinez</title>
+    <meta name="description" content="Design personal tooling for the tired version of you: reduce decisions, survive interruptions, and make workflows reconstructible under fatigue.">
+    <meta property="og:title" content="Building Tools for the Version of You That’s Running Low">
+    <meta property="og:description" content="Design personal tooling for the tired version of you: reduce decisions, survive interruptions, and make workflows reconstructible under fatigue.">
+    <meta property="og:url" content="https://rickym270.github.io/html/pages/engineering/building-tools-for-the-version-of-you-thats-running-low.html">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/html/imgs/blog-tools-running-low-banner.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Building Tools for the Version of You That’s Running Low">
+    <meta name="twitter:description" content="Design personal tooling for the tired version of you: reduce decisions, survive interruptions, and make workflows reconstructible under fatigue.">
+    <meta name="twitter:image" content="/html/imgs/blog-tools-running-low-banner.svg">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/html/css/modern.css">
+    <link rel="stylesheet" href="/html/css/style.css">
+    <link rel="stylesheet" href="/html/css/blog.css">
+</head>
+<body>
+    <div class="container container-padding-top article-content post-content">
+        <div class="post-banner" aria-hidden="true">
+            <img src="/html/imgs/blog-tools-running-low-banner.svg" alt="" class="post-banner-img">
+        </div>
+        <header class="post-hero text-center">
+            <div class="post-meta mb-3">
+                <time datetime="2026-03-18">Mar 18, 2026</time>
+                <span class="mx-2" aria-hidden="true">·</span>
+                <span>Engineering</span>
+                <span class="mx-2" aria-hidden="true">·</span>
+                <span id="reading-time"><span id="reading-time-num">—</span> min read</span>
+            </div>
+            <h1 class="post-title">Building Tools for the Version of You That’s Running Low</h1>
+        </header>
+
+        <article id="post-body">
+            <p>There’s a version of me that shows up on good days — focused, able to hold a lot of context at once, comfortable debugging something unfamiliar for an hour without losing the thread. And there’s another version that shows up when MS fatigue is doing its thing — functional, but running with reduced working memory, slower to recover from interruptions, more likely to make small errors under cognitive load.</p>
+
+            <p>For a long time, I built tools for the first version. I’d write scripts that required remembering flag order. I’d set up workflows with several manual handoff steps. I’d leave things in states that made sense in the moment but required reconstruction later. It mostly worked, until it didn’t — and when it didn’t, the failure was usually quiet: a step skipped, a detail dropped, a process that drifted from what it was supposed to do.</p>
+
+            <p>What I eventually understood is that building for the first version of yourself is a fragile design choice. The second version is not the exception. It’s a normal operating condition. And if your tools only work well when you’re sharp, you’ve introduced a dependency on something you can’t always guarantee.</p>
+
+            <hr>
+
+            <h2>The Tool That Broke When I Needed It Most</h2>
+
+            <p>A few years into managing my personal site, I had a note-to-HTML pipeline I’d built for myself — a lightweight markup system that parsed a custom format I’d settled into for journaling and writing. The goal was simple: write in my own shorthand, run the script, get a formatted page.</p>
+
+            <p>It worked, right up until I added some flexibility to the syntax without updating the parser. I added optional nesting, a few new markers, inconsistent whitespace handling — small things that felt fine when I made them. The script started producing malformed output intermittently. Not always. Not predictably.</p>
+
+            <p>The pattern I’d introduced was: the tool works correctly when I remember how I’ve been using it lately. That’s a terrible dependency. Memory is not a system property — it’s a runtime resource, and on constrained days, it’s in short supply.</p>
+
+            <p>The fix wasn’t complicated: stricter parsing, explicit error messages that told me exactly which line failed and why, and a syntax that was consistent enough that I didn’t need to remember recent changes to use it correctly. The tool became opinionated rather than flexible. It lost some expressiveness and gained a lot of reliability.</p>
+
+            <p>That trade-off — reliability over flexibility — comes up constantly when building tools for yourself. Flexibility is a tax. Every option is a decision. Every decision is cognitive overhead.</p>
+
+            <hr>
+
+            <h2>Designing for Interruption</h2>
+
+            <p>One thing MS teaches you quickly is that interruptions are not edge cases. A task that should take twenty minutes might take forty, with a break in the middle where you’ve lost the thread and have to reconstruct it.</p>
+
+            <p>That reconstruction cost is real. If a workflow requires you to hold state in your head — what ran, what’s pending, what the expected output looks like — then every interruption adds a recovery overhead. And if the tool itself doesn’t help you recover, you’re paying that cost entirely in working memory.</p>
+
+            <p>When I was hardening my Playwright test suite for a single-page application, I ran into this in a different form. SPA navigation doesn’t have hard page load boundaries, so naïve tests would proceed before the application was ready. Sometimes they passed. Sometimes they didn’t, with failures that were hard to reproduce because the timing depended on how the system happened to be running that day.</p>
+
+            <p>The fix was response-aware waits — waiting for network requests to complete, for specific elements to reach the right state, rather than waiting for an arbitrary amount of time. The tests became self-describing. They documented their own assumptions about readiness, rather than hoping those assumptions happened to be true.</p>
+
+            <p>I applied the same thinking to my personal tooling. Scripts now emit status at each step. If something fails, the output says where and why, not just that something went wrong. If I come back to a half-finished process, the state is visible — I don’t need to remember or infer where things stopped.</p>
+
+            <p>The goal is to make every workflow reconstructible by a version of you that has no memory of starting it.</p>
+
+            <hr>
+
+            <h2>Removing the Decisions That Don’t Need to Be Made</h2>
+
+            <p>When I automated my GitHub project sync, the original version had a few configuration options I’d left in: which repos to include, what metadata fields to display, what order to sort them. I’d exposed them as flags so I could customize things later.</p>
+
+            <p>I never changed them. I used the same values every time. But every time I ran the script, I had to either remember the flags or look them up.</p>
+
+            <p>I removed all of it and hardcoded the defaults I always used. The script became a single command with no arguments. The customization surface I’d preserved “just in case” was costing me more in friction than it would ever save.</p>
+
+            <p>This is a pattern worth paying attention to: the options you add to a tool are not free. They’re decision points, and decision points cost something — especially when you’re trying to conserve energy for the actual work. A tool with fewer choices is often a better tool, not a worse one.</p>
+
+            <p>There’s a reasonable counterargument that flexibility is what makes tools useful across contexts. That’s true for tools built for other people. For tools built for yourself, flexibility is often just unfinished design. You haven’t decided what the tool is yet, so you left the decision to runtime.</p>
+
+            <hr>
+
+            <h2>The Test: Can the Tired Version of You Use This?</h2>
+
+            <p>I’ve started using a simple heuristic when evaluating whether a personal tool is well-designed: can I use it correctly when I’m tired, mildly distracted, and running on reduced context?</p>
+
+            <p>That means: no required memory of previous states. No options that only make sense if I remember why I added them. No failure modes that produce silent bad output instead of a clear error. No setup steps that have to happen in a specific order that isn’t documented anywhere.</p>
+
+            <p>This isn’t a high bar. It’s roughly what you’d want from any well-designed command-line tool used by someone other than its author. The insight is just that building for yourself doesn’t exempt you from that standard — it makes it more important, because there’s no one else to ask.</p>
+
+            <p>The same heuristic applies to CI pipelines, automation scripts, test suites. Systems that require active monitoring and interpretation to use correctly are systems that will fail under constraint. The degraded state isn’t a hypothetical — it’s Tuesday.</p>
+
+            <hr>
+
+            <p>Building tools that hold up under variable conditions has made me a more deliberate engineer. I think more carefully about where state lives, what a failure should say, and how many decisions a user — including future me — should have to make to accomplish something. That discipline shows up in the systems I build professionally just as much as in personal projects.</p>
+
+            <p>If you’re working on teams where automation reliability or accessibility-driven engineering is a priority, it’s the kind of perspective I’d welcome a chance to bring to the work.</p>
+        </article>
+    </div>
+
+    <script>
+        (function() {
+            var numEl = document.getElementById('reading-time-num');
+            var body = document.getElementById('post-body');
+            if (numEl && body) {
+                var text = body.innerText || body.textContent || '';
+                var words = text.trim().split(/\s+/).filter(Boolean).length;
+                var mins = Math.max(1, Math.ceil(words / 200));
+                numEl.textContent = mins;
+            }
+        })();
+    </script>
+</body>
+</html>

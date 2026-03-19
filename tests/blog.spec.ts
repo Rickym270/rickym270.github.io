@@ -143,9 +143,13 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.blog-search-wrap')).toBeVisible();
     await expect(content.locator('.blog-search-input')).toBeVisible();
 
-    // Cards: at least one real card with post link, at least one placeholder
-    await expect(content.locator('.blog-card:not(.placeholder) a[data-url="html/pages/engineering/post-2.html"]').first()).toBeVisible();
-    await expect(content.locator('.blog-card.placeholder').filter({ hasText: 'Coming Soon' }).first()).toBeVisible();
+    // Cards: three real cards (newest → oldest)
+    const realCards = content.locator('.blog-card:not(.placeholder)');
+    await expect(realCards).toHaveCount(3);
+    await expect(realCards.first()).toContainText('Building Tools for the Version of You That’s Running Low');
+    await expect(content.locator('.blog-card a[data-url="html/pages/engineering/building-tools-for-the-version-of-you-thats-running-low.html"]').first()).toBeVisible();
+    await expect(content.locator('.blog-card a[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]').first()).toBeVisible();
+    await expect(content.locator('.blog-card a[data-url="html/pages/engineering/how-living-with-ms-changed-the-way-i-engineer-software.html"]').first()).toBeVisible();
   });
 
   test('Personal page shows Coming Soon in Featured and placeholder cards', async ({ page }) => {
@@ -242,12 +246,19 @@ test.describe('Blog Pages', () => {
 
     // Type a query; after debounce and API response either matching cards are visible or no-results is shown
     await searchInput.fill('accessibility');
-    await page.waitForTimeout(400); // debounce 300ms + small buffer
+    // Wait until the UI reacts (cards filtered or no-results shown). Network timing can vary in CI.
+    await page.waitForFunction(() => {
+      const content = document.querySelector('#content');
+      const noResults = content?.querySelector('.blog-search-no-results') as HTMLElement | null;
+      if (noResults && noResults.style.display !== 'none') return true;
+      const cards = Array.from(content?.querySelectorAll('.blog-cards-grid .blog-card') || []) as HTMLElement[];
+      return cards.some((c) => (c.style && c.style.display === 'none'));
+    }, { timeout: 8000 });
 
     // Either at least one real card is visible (API returned results) or no-results message is shown (API error or no match)
-    const hasVisibleCard = await content.locator('.blog-card:not(.placeholder)').first().isVisible();
+    const visibleRealCards = await content.locator('.blog-card:not(.placeholder):visible').count();
     const hasNoResults = await content.locator('.blog-search-no-results').isVisible();
-    expect(hasVisibleCard || hasNoResults).toBeTruthy();
+    expect(visibleRealCards > 0 || hasNoResults).toBeTruthy();
 
     // Clear search: grid restored (no-results hidden, all cards shown again)
     await searchInput.fill('');
@@ -405,11 +416,11 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
+    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-2.html') && res.status() === 200,
+      (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await readArticleLink.click();
@@ -458,11 +469,11 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
+    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-2.html') && res.status() === 200,
+      (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await readArticleLink.click();
