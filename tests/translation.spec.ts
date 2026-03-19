@@ -74,14 +74,14 @@ test.describe('Translation feature', () => {
     await page.locator('#mobile-menu-toggle').click();
     await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
     
-    // Check that setting labels are visible in English (default) — mobile sidebar uses Language + Dark Mode
+    // Check that setting labels are visible in English (default) — mobile sidebar uses Language + Theme
     const languageLabel = page.locator('.mobile-setting-label[data-translate="settings.language"]');
-    const darkModeLabel = page.locator('.mobile-setting-label[data-translate="settings.darkMode"]');
+    const themeLabel = page.locator('.mobile-setting-label[data-translate="settings.theme"]');
     
     await expect(languageLabel).toBeVisible();
-    await expect(darkModeLabel).toBeVisible();
+    await expect(themeLabel).toBeVisible();
     await expect(languageLabel).toHaveText('Language');
-    await expect(darkModeLabel).toHaveText('Dark Mode');
+    await expect(themeLabel).toHaveText('Theme');
     
     // Switch to Spanish
     const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');
@@ -90,7 +90,7 @@ test.describe('Translation feature', () => {
     
     // Check that labels are translated to Spanish
     await expect(languageLabel).toHaveText('Idioma');
-    await expect(darkModeLabel).toHaveText('Modo oscuro');
+    await expect(themeLabel).toHaveText('Tema');
     
     // Switch back to English
     const enButton = page.locator('#mobile-language-switcher button[data-lang="en"]');
@@ -99,7 +99,7 @@ test.describe('Translation feature', () => {
     
     // Check that labels are back to English
     await expect(languageLabel).toHaveText('Language');
-    await expect(darkModeLabel).toHaveText('Dark Mode');
+    await expect(themeLabel).toHaveText('Theme');
   });
 
   test('default language is English', async ({ page }) => {
@@ -538,12 +538,12 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // Click the Featured "Read Article" link (single element; card link would also work) — featured is post-2
-    const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]');
+    // Click the Featured "Read Article" link (single element; card link would also work)
+    const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
     await expect(postLink).toBeVisible({ timeout: 5000 });
     await postLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-2.html') && res.status() === 200,
+      (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
       { timeout: 20000 }
     );
     await postLink.click();
@@ -590,15 +590,15 @@ test.describe('Translation feature', () => {
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-2.html"]');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
     }, { timeout: 15000 });
     await page.waitForTimeout(300);
 
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('post-2.html') && res.status() === 200,
+      (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
       { timeout: 15000 }
     );
-    await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/post-2.html"]').click();
+    await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]').click();
     await responsePromise;
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -653,12 +653,12 @@ test.describe('Translation feature', () => {
     }
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/post-2.html"]');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('a[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // First card is featured post (post-2); title should be in Spanish
-    const cardTitle = page.locator('#content .blog-card:not(.placeholder) .blog-card-title').first();
+    // Accessibility card title should be in Spanish
+    const cardTitle = page.locator('#content .blog-card-title[data-translate="engineering.post2.title"]').first();
     await expect(cardTitle).toBeVisible({ timeout: 5000 });
     await expect(cardTitle).toHaveText('La accesibilidad no es solo una función');
   });

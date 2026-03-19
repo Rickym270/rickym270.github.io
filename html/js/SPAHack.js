@@ -286,16 +286,15 @@ $(document).ready(function(){
                             // Add a small delay to ensure DOM is fully updated
                             setTimeout(() => {
                                 window.TranslationManager.applyTranslations();
-                                // When post-1 is loaded via SPA, inline script does not run; compute reading time and set number
-                                if (sectionUrl.includes('post-1.html') || sectionUrl.includes('post-2.html')) {
-                                    var postBody = document.getElementById('post-body');
-                                    var readingTimeNum = document.getElementById('reading-time-num');
-                                    if (postBody && readingTimeNum) {
-                                        var text = postBody.innerText || postBody.textContent || '';
-                                        var words = text.trim().split(/\s+/).filter(Boolean).length;
-                                        var mins = Math.max(1, Math.ceil(words / 200));
-                                        readingTimeNum.textContent = mins;
-                                    }
+                                // When posts are loaded via SPA, inline scripts inside the HTML won't run.
+                                // Compute reading time for any post that includes these IDs.
+                                var postBody = document.getElementById('post-body');
+                                var readingTimeNum = document.getElementById('reading-time-num');
+                                if (postBody && readingTimeNum) {
+                                    var text = postBody.innerText || postBody.textContent || '';
+                                    var words = text.trim().split(/\s+/).filter(Boolean).length;
+                                    var mins = Math.max(1, Math.ceil(words / 200));
+                                    readingTimeNum.textContent = mins;
                                 }
                                 if (sectionUrl.includes('engineering.html') || sectionUrl.includes('lifestyle.html')) {
                                     if (typeof window.initBlogCategoryPills === 'function') {
