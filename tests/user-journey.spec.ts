@@ -122,6 +122,11 @@ test.describe('[integration] End-to-End User Journeys', () => {
     
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
+    // Wait for SPA to load contact.html (deterministic: response then DOM, same pattern as blog.spec)
+    const contactResponsePromise = page.waitForResponse(
+      (res) => res.url().includes('contact.html') && (res.status() === 200 || res.status() === 304),
+      { timeout: 25000 }
+    );
     // Navigate to Contact
     if (isMobile) {
       await page.waitForSelector('#mobile-menu-toggle', { state: 'visible', timeout: 5000 });
@@ -131,19 +136,11 @@ test.describe('[integration] End-to-End User Journeys', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Contact' }).first().click();
     }
-    
-    // Wait for contact form and SPA content
-    await page.waitForFunction(
-      () => {
-        const c = document.querySelector('#content');
-        return c && (c.getAttribute('data-content-loaded') === 'true' || !!c.querySelector('#contact-form'));
-      },
-      { timeout: 20000 }
-    );
-    const contactForm = page.locator('#contact-form, form').first();
-    await contactForm.waitFor({ state: 'attached', timeout: 20000 });
+    await contactResponsePromise.catch(() => {});
+    // Form is inside #content; wait for it to be visible (avoids race with data-content-loaded in Firefox)
+    const contactForm = page.locator('#content #contact-form');
+    await contactForm.waitFor({ state: 'visible', timeout: 25000 });
     await contactForm.scrollIntoViewIfNeeded();
-    await expect(contactForm).toBeVisible({ timeout: 10000 });
     
     // Fill out form
     await page.locator('input[name="name"], #name').fill('Test User');
