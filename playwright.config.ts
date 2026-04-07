@@ -58,7 +58,11 @@ config.projects = [
     // UI tests (require browsers)
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Local snapshot updates when bundled Chromium mismatches host arch (e.g. spawn -86 on macOS).
+        ...(process.env.PW_CHANNEL_CHROME === '1' ? { channel: 'chrome' as const } : {}),
+      },
       testIgnore: '**/*api*.spec.ts',
     },
     {
