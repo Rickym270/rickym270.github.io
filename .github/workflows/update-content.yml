@@ -103,6 +103,18 @@ jobs:
           echo "Using force push for automation update branch sync"
           git push origin "$UPDATE_BRANCH" --force
 
+      - name: Upload content-changed marker for Locator Maintenance
+        if: steps.check-changes.outputs.changed == 'true'
+        run: mkdir -p .ci && echo "${{ github.sha }}" > .ci/content-changed.txt
+
+      - name: Upload content-changed artifact
+        if: steps.check-changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-changed
+          path: .ci/content-changed.txt
+          retention-days: 2
+
       - name: Create PR if none exists
         id: create-pr
         if: steps.check-changes.outputs.changed == 'true'
