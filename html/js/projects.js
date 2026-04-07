@@ -212,15 +212,15 @@ function renderProjectCard(project, containerId) {
         ? tech.map(t => `<span class="tech-tag">${t}</span>`).join('') 
         : '';
     const repoUrl = typeof project.repo === 'string' ? project.repo.trim() : '';
-    const hasRepoLink = repoUrl.length > 0;
-    
+    const isPrivate = project.private === true;
+    const showSourceLink = repoUrl.length > 0 && !isPrivate;
+
     const projectSlug = project.slug || project.name.toLowerCase().replace(/\s+/g, '-');
-    const cardClass = hasRepoLink
-        ? 'project-card fade-in project-card-clickable'
-        : 'project-card fade-in project-card-static';
-    const ctaHtml = hasRepoLink
-        ? `<div class="project-card-actions">
-                <a class="project-card-link stretched-link"
+    const cardClass = 'project-card fade-in';
+    let ctaHtml = '';
+    if (showSourceLink) {
+        ctaHtml = `<div class="project-card-actions">
+                <a class="project-card-link"
                    href="${repoUrl}"
                    target="_blank"
                    rel="noopener noreferrer"
@@ -228,15 +228,22 @@ function renderProjectCard(project, containerId) {
                    aria-label="View source for ${project.name}">
                     <span class="project-card-cta" data-translate="projects.viewSource">View Source</span>
                 </a>
-            </div>`
-        : `<div class="project-card-actions">
+            </div>`;
+    } else if (isPrivate && repoUrl.length > 0) {
+        ctaHtml = `<div class="project-card-actions">
+                <span class="project-card-cta project-card-cta-disabled"
+                      data-translate="projects.privateRepo">Private Repository</span>
+            </div>`;
+    } else {
+        ctaHtml = `<div class="project-card-actions">
                 <span class="project-card-cta project-card-cta-disabled"
                       data-translate="projects.sourceUnavailable">Source Unavailable</span>
             </div>`;
-    
+    }
+
     const cardHtml = `
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-            <div class="${cardClass}" data-project-clickable="${hasRepoLink ? 'true' : 'false'}">
+            <div class="${cardClass}">
                 <div class="project-header">
                     <img src="${imagePath}" class="project-image" alt="${project.name}" 
                          onerror="this.onerror=null; this.style.display='none';"

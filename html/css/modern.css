@@ -2789,18 +2789,12 @@ pre code {
     height: 100%;
     display: flex;
     flex-direction: column;
-    position: relative;
 }
 
 .project-card:hover {
     border-color: var(--color-accent);
     box-shadow: var(--shadow-md);
     transform: translateY(-4px);
-}
-
-.project-card:focus-within {
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-md);
 }
 
 .project-card .card-title {
@@ -2816,14 +2810,6 @@ pre code {
     font-size: clamp(0.9rem, 1.8vw, 1.0625rem);
     line-height: 1.6;
     color: var(--color-text-secondary);
-}
-
-.project-card-clickable {
-    cursor: pointer;
-}
-
-.project-card-static {
-    opacity: 0.95;
 }
 
 .project-image {
@@ -2864,23 +2850,12 @@ pre code {
 }
 
 .project-card-link {
-    position: static;
     color: var(--color-accent);
     font-weight: 600;
     text-decoration: none;
 }
 
-.project-card-link::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: inherit;
-}
-
 .project-card .project-card-cta {
-    position: relative;
-    z-index: 2;
     display: inline-block;
 }
 

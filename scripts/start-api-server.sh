@@ -1,4 +1,16 @@
 #!/bin/bash
+
+# Fail fast if no real JDK (macOS ships /usr/bin/java stub that only prints an error).
+if ! java -version >/dev/null 2>&1; then
+  echo "Error: Java JDK is not installed or not on PATH." >&2
+  echo "This API targets Java 17 (see api/pom.xml). On macOS with Homebrew, for example:" >&2
+  echo "  brew install openjdk@17" >&2
+  echo "Then add the JDK bin directory to PATH (brew prints the exact path after install), e.g.:" >&2
+  echo "  export PATH=\"/opt/homebrew/opt/openjdk@17/bin:\$PATH\"   # Apple Silicon" >&2
+  echo "  export PATH=\"/usr/local/opt/openjdk@17/bin:\$PATH\"      # Intel" >&2
+  exit 1
+fi
+
 # Check if API server is already running and healthy (for reuseExistingServer: true)
 if lsof -ti:8080 > /dev/null 2>&1; then
   echo "API server already running on port 8080, checking health..."

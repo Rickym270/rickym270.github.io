@@ -186,15 +186,16 @@ test.describe('Projects Page', () => {
     expect(errorVisible).toBeFalsy();
   });
 
-  test('project card has explicit source CTA and stretched click target', async ({ page }) => {
+  test('project card shows source link only on CTA (card body is not a link)', async ({ page }) => {
     const mockProjects = [
       {
-        name: 'Clickable Card Project',
-        summary: 'Card should be fully clickable with explicit CTA.',
+        name: 'Public Repo Project',
+        summary: 'Only the View Source control should navigate to the repo.',
         status: 'complete',
         tech: ['TypeScript'],
-        slug: 'clickable-card-project',
-        repo: 'https://github.com/example/clickable-card-project',
+        slug: 'public-repo-project',
+        repo: 'https://github.com/example/public-repo-project',
+        private: false,
       },
     ];
 
@@ -227,25 +228,26 @@ test.describe('Projects Page', () => {
     await page.waitForSelector('#content .project-card', { timeout: 15000 });
 
     const card = page.locator('#content .project-card').first();
-    await expect(card).toHaveAttribute('data-project-clickable', 'true');
-
     const sourceLink = card.locator('a[data-project-action="repo"]');
     await expect(sourceLink).toBeVisible();
     await expect(sourceLink).toHaveAttribute('href', mockProjects[0].repo);
     await expect(card.locator('.project-card-cta')).toContainText(/View Source/i);
 
-    const popupPromise = page.waitForEvent('popup');
     await card.locator('.card-text').click();
+    await expect.poll(() => page.context().pages().length, { timeout: 2000 }).toBe(1);
+
+    const popupPromise = page.waitForEvent('popup');
+    await sourceLink.click();
     const popup = await popupPromise;
     await expect(popup).toHaveURL(mockProjects[0].repo);
     await popup.close();
   });
 
-  test('project card without repo is non-interactive', async ({ page }) => {
+  test('project card without repo shows no source link', async ({ page }) => {
     const mockProjects = [
       {
         name: 'No Repo Project',
-        summary: 'Card should not be clickable when repo is missing.',
+        summary: 'No repository URL.',
         status: 'complete',
         tech: ['JavaScript'],
         slug: 'no-repo-project',
@@ -281,9 +283,50 @@ test.describe('Projects Page', () => {
     await page.waitForSelector('#content .project-card', { timeout: 15000 });
 
     const card = page.locator('#content .project-card').first();
-    await expect(card).toHaveAttribute('data-project-clickable', 'false');
     await expect(card.locator('a[data-project-action="repo"]')).toHaveCount(0);
     await expect(card.locator('.project-card-cta-disabled')).toContainText(/Source Unavailable/i);
+  });
+
+  test('private repo project has no source link and shows private label', async ({ page }) => {
+    const mockProjects = [
+      {
+        name: 'Private Repo Project',
+        summary: 'Repository is private.',
+        status: 'complete',
+        tech: ['Rust'],
+        slug: 'private-repo-project',
+        repo: 'https://github.com/example/private-repo',
+        private: true,
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card', { timeout: 15000 });
+    const card = page.locator('#content .project-card').first();
+    await expect(card.locator('a[data-project-action="repo"]')).toHaveCount(0);
+    await expect(card.locator('.project-card-cta-disabled')).toContainText(/Private Repository/i);
   });
 
   test('project source CTA is keyboard focusable and activatable', async ({ page }) => {
