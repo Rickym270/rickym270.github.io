@@ -1,18 +1,69 @@
 name: Locator Maintenance
 
 on:
-  # Removed pull_request trigger to avoid duplicate test runs with Playwright Tests workflow
-  # This workflow now runs on schedule and manual dispatch only
-  schedule:
-    - cron: '0 10 * * *'
+  # Run after Update Site Content finishes; Playwright job runs only when that workflow
+  # uploaded the content-changed artifact (real data change). Manual dispatch always runs.
+  workflow_run:
+    workflows: [Update Site Content]
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
+  actions: read # list artifacts on the triggering Update Site Content run
 
 jobs:
+  should-run:
+    runs-on: ubuntu-latest
+    outputs:
+      run_lm: ${{ steps.decide.outputs.run_lm }}
+    steps:
+      - name: Decide whether to run Playwright
+        id: decide
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run_lm=true" >> "$GITHUB_OUTPUT"
+            echo "Manual workflow_dispatch: running Locator Maintenance."
+            exit 0
+          fi
+          if [ "${{ github.event_name }}" != "workflow_run" ]; then
+            echo "run_lm=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+            echo "run_lm=false" >> "$GITHUB_OUTPUT"
+            echo "Update Site Content did not succeed; skipping Locator Maintenance."
+            exit 0
+          fi
+          RUN_ID="${{ github.event.workflow_run.id }}"
+          NAMES=$(gh api "repos/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts" --jq '.artifacts[].name')
+          if echo "$NAMES" | grep -qx 'content-changed'; then
+            echo "run_lm=true" >> "$GITHUB_OUTPUT"
+            echo "content-changed artifact found on run ${RUN_ID}; running Locator Maintenance."
+          else
+            echo "run_lm=false" >> "$GITHUB_OUTPUT"
+            echo "No content-changed artifact (no projects data diff); skipping Locator Maintenance."
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Locator Maintenance" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Run Playwright (verify-and-update)**: \`${{ steps.decide.outputs.run_lm }}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.decide.outputs.run_lm }}" != "true" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Heavy tests were skipped. Use **workflow_dispatch** on this workflow to run them manually." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   verify-and-update:
+    needs: should-run
+    if: needs.should-run.outputs.run_lm == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
