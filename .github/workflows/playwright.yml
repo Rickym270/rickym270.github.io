@@ -247,12 +247,12 @@ jobs:
         run: npm i
 
       # Skip --with-deps: it runs apt for a large stack (ffmpeg, etc.) and often looks
-      # "stuck" for many minutes on ubuntu-latest. GH-hosted runners usually satisfy
-      # Chromium/Firefox; install only browsers used by full-suite projects.
+      # "stuck" for many minutes on ubuntu-latest. Install only browsers used by the
+      # configured projects (chromium, chromium-iphone/webkit, firefox).
       - name: Install Playwright browsers
         run: |
           echo "playwright_install_start=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          npx playwright install chromium firefox
+          npx playwright install chromium firefox webkit
           echo "playwright_install_end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
       - name: Skip full-suite
