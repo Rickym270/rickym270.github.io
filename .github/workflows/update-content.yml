@@ -57,7 +57,8 @@ jobs:
             if jq empty /tmp/projects.json 2>/dev/null; then
               PROJECT_COUNT=$(jq '. | length' /tmp/projects.json)
               echo "Fetched $PROJECT_COUNT projects from API"
-              cp /tmp/projects.json data/web_data/projects.json
+              jq '.' /tmp/projects.json > data/web_data/projects.json
+              echo "Normalized API JSON with jq pretty-print"
               echo "projects_count=$PROJECT_COUNT" >> $GITHUB_OUTPUT
               echo "updated=true" >> $GITHUB_OUTPUT
             else
@@ -98,7 +99,8 @@ jobs:
         run: |
           git add data/web_data/projects.json
           git commit -m "chore: update projects data from API [skip ci]"
-          git push origin "$UPDATE_BRANCH"
+          echo "Using force push for automation update branch sync"
+          git push origin "$UPDATE_BRANCH" --force
 
       - name: Create PR if none exists
         id: create-pr
