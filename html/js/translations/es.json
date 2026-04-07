@@ -58,6 +58,8 @@
     "loadError": "No se pudieron cargar los proyectos. Por favor, inténtelo de nuevo más tarde.",
     "fallbackNote": "Se muestran proyectos en caché; algunos datos pueden estar desactualizados.",
     "viewGitHub": "Ver en GitHub →",
+    "viewSource": "Ver código fuente",
+    "sourceUnavailable": "Código fuente no disponible",
     "privateRepo": "Repositorio Privado",
     "privateTooltip": "Este repositorio es privado y no es accesible públicamente",
     "descriptions": {

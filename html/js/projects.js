@@ -211,12 +211,32 @@ function renderProjectCard(project, containerId) {
     const techTags = tech.length > 0 
         ? tech.map(t => `<span class="tech-tag">${t}</span>`).join('') 
         : '';
+    const repoUrl = typeof project.repo === 'string' ? project.repo.trim() : '';
+    const hasRepoLink = repoUrl.length > 0;
     
     const projectSlug = project.slug || project.name.toLowerCase().replace(/\s+/g, '-');
+    const cardClass = hasRepoLink
+        ? 'project-card fade-in project-card-clickable'
+        : 'project-card fade-in project-card-static';
+    const ctaHtml = hasRepoLink
+        ? `<div class="project-card-actions">
+                <a class="project-card-link stretched-link"
+                   href="${repoUrl}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   data-project-action="repo"
+                   aria-label="View source for ${project.name}">
+                    <span class="project-card-cta" data-translate="projects.viewSource">View Source</span>
+                </a>
+            </div>`
+        : `<div class="project-card-actions">
+                <span class="project-card-cta project-card-cta-disabled"
+                      data-translate="projects.sourceUnavailable">Source Unavailable</span>
+            </div>`;
     
     const cardHtml = `
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-            <div class="project-card fade-in">
+            <div class="${cardClass}" data-project-clickable="${hasRepoLink ? 'true' : 'false'}">
                 <div class="project-header">
                     <img src="${imagePath}" class="project-image" alt="${project.name}" 
                          onerror="this.onerror=null; this.style.display='none';"
@@ -225,6 +245,7 @@ function renderProjectCard(project, containerId) {
                 <h5 class="card-title" data-no-translate="true">${project.name}</h5>
                 <p class="card-text" data-translate="projects.descriptions.${projectSlug}">${summary}</p>
                 ${techTags ? `<div class="project-tech">${techTags}</div>` : ''}
+                ${ctaHtml}
             </div>
         </div>
     `;
