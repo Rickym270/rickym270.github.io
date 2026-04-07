@@ -175,6 +175,7 @@ jobs:
         shardTotal: [5]
     env:
       TZ: America/New_York
+      PW_MANAGED_WEBSERVER: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -305,28 +306,6 @@ jobs:
           }
           echo "API server is ready!"
 
-      - name: Start UI server
-        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
-        run: |
-          echo "UI server start time: $(date -u)" > ui-server.log
-          node scripts/start-web-server-simple.js >> ui-server.log 2>&1 &
-          echo $! > ui-server.pid
-          echo "UI server started with PID $(cat ui-server.pid) on port 4321"
-          sleep 2
-          kill -0 $(cat ui-server.pid) 2>/dev/null && echo "UI server process is running" || echo "UI server process is NOT running"
-
-      - name: Wait for UI server to be ready
-        if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
-        run: |
-          echo "Waiting for UI server on port 4321..."
-          npx wait-on http://127.0.0.1:4321/ --timeout 60000 --interval 2000 || {
-            echo "ERROR: UI server failed to start"
-            [ -f ui-server.pid ] && kill -0 $(cat ui-server.pid) 2>/dev/null && echo "Process still running" || echo "Process not running"
-            cat ui-server.log || true
-            exit 1
-          }
-          echo "UI server is ready!"
-
       - name: Run regression and integration tests (shard)
         if: steps.skip-check.outputs.skip_all != 'true' && steps.skip-check.outputs.projects != ''
         timeout-minutes: 55
@@ -335,10 +314,25 @@ jobs:
             echo "No projects to run (all skipped)"
             exit 0
           fi
+          echo "Pre-test diagnostics:"
+          echo "  projects=${{ steps.skip-check.outputs.projects }}"
+          echo "  PW_MANAGED_WEBSERVER=${PW_MANAGED_WEBSERVER:-unset}"
+          if echo "${{ steps.skip-check.outputs.projects }}" | grep -Eq -- "--project=chromium|--project=chromium-iphone|--project=firefox"; then
+            echo "  ui_projects_selected=true"
+            if [ "${PW_MANAGED_WEBSERVER:-0}" != "1" ]; then
+              echo "ERROR: UI projects selected but PW_MANAGED_WEBSERVER is not enabled."
+              exit 1
+            fi
+            echo "  ui_readiness_url=http://127.0.0.1:4321/index.html (managed by Playwright webServer)"
+          else
+            echo "  ui_projects_selected=false"
+          fi
           echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with projects: ${{ steps.skip-check.outputs.projects }}"
           npx playwright test ${{ steps.skip-check.outputs.projects }} --grep '\[regression\]|\[integration\]' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=list,github || {
             echo "Tests failed or timed out"
-            curl -s http://127.0.0.1:4321/ > /dev/null && echo "UI server responding" || echo "UI server NOT responding"
+            if echo "${{ steps.skip-check.outputs.projects }}" | grep -Eq -- "--project=chromium|--project=chromium-iphone|--project=firefox"; then
+              curl -s http://127.0.0.1:4321/ > /dev/null && echo "UI server responding" || echo "UI server NOT responding"
+            fi
             exit 1
           }
 
@@ -356,31 +350,12 @@ jobs:
             rm -f api-server.pid
           fi
 
-      - name: Stop UI server
-        if: always()
-        run: |
-          if [ -f ui-server.pid ]; then
-            kill $(cat ui-server.pid) 2>/dev/null || true
-            rm -f ui-server.pid
-          fi
-          fuser -k 4321/tcp 2>/dev/null || true
-          pkill -f "start-web-server-simple" 2>/dev/null || true
-
       - name: Upload API server logs
         if: always() && env.ACT == ''
         uses: actions/upload-artifact@v4
         with:
           name: api-server-logs-shard-${{ matrix.shardIndex }}
           path: api/api-server.log
-          retention-days: 7
-          if-no-files-found: ignore
-
-      - name: Upload UI server logs
-        if: always() && env.ACT == ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: ui-server-logs-shard-${{ matrix.shardIndex }}
-          path: ui-server.log
           retention-days: 7
           if-no-files-found: ignore
 
