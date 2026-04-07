@@ -4,7 +4,7 @@ import path from 'path';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
-// Build config conditionally - in CI, server is started manually, so don't configure webServer
+// Build config conditionally.
 const config: any = {
   testDir: 'tests',
   timeout: process.env.CI ? 45_000 : 60_000, // Reduce timeout in CI to fail faster and allow more tests to run
@@ -21,8 +21,9 @@ const config: any = {
   },
 };
 
-// Only configure webServer locally - in CI, server is started manually by workflow
-if (!process.env.CI) {
+// Allow CI to opt into Playwright-managed web servers.
+const managedWebServer = !process.env.CI || process.env.PW_MANAGED_WEBSERVER === '1';
+if (managedWebServer) {
   // Configure UI server (for browser-based tests)
   config.webServer = [
     {
