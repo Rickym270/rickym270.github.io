@@ -186,6 +186,153 @@ test.describe('Projects Page', () => {
     expect(errorVisible).toBeFalsy();
   });
 
+  test('project card has explicit source CTA and stretched click target', async ({ page }) => {
+    const mockProjects = [
+      {
+        name: 'Clickable Card Project',
+        summary: 'Card should be fully clickable with explicit CTA.',
+        status: 'complete',
+        tech: ['TypeScript'],
+        slug: 'clickable-card-project',
+        repo: 'https://github.com/example/clickable-card-project',
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card', { timeout: 15000 });
+
+    const card = page.locator('#content .project-card').first();
+    await expect(card).toHaveAttribute('data-project-clickable', 'true');
+
+    const sourceLink = card.locator('a[data-project-action="repo"]');
+    await expect(sourceLink).toBeVisible();
+    await expect(sourceLink).toHaveAttribute('href', mockProjects[0].repo);
+    await expect(card.locator('.project-card-cta')).toContainText(/View Source/i);
+
+    const popupPromise = page.waitForEvent('popup');
+    await card.locator('.card-text').click();
+    const popup = await popupPromise;
+    await expect(popup).toHaveURL(mockProjects[0].repo);
+    await popup.close();
+  });
+
+  test('project card without repo is non-interactive', async ({ page }) => {
+    const mockProjects = [
+      {
+        name: 'No Repo Project',
+        summary: 'Card should not be clickable when repo is missing.',
+        status: 'complete',
+        tech: ['JavaScript'],
+        slug: 'no-repo-project',
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card', { timeout: 15000 });
+
+    const card = page.locator('#content .project-card').first();
+    await expect(card).toHaveAttribute('data-project-clickable', 'false');
+    await expect(card.locator('a[data-project-action="repo"]')).toHaveCount(0);
+    await expect(card.locator('.project-card-cta-disabled')).toContainText(/Source Unavailable/i);
+  });
+
+  test('project source CTA is keyboard focusable and activatable', async ({ page }) => {
+    const mockProjects = [
+      {
+        name: 'Keyboard CTA Project',
+        summary: 'Source link should be keyboard accessible.',
+        status: 'complete',
+        tech: ['Accessibility'],
+        slug: 'keyboard-cta-project',
+        repo: 'https://github.com/example/keyboard-cta-project',
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card a[data-project-action="repo"]', { timeout: 15000 });
+    const sourceLink = page.locator('#content .project-card a[data-project-action="repo"]').first();
+    await sourceLink.focus();
+    await expect(sourceLink).toBeFocused();
+
+    const popupPromise = page.waitForEvent('popup');
+    await page.keyboard.press('Enter');
+    const popup = await popupPromise;
+    await expect(popup).toHaveURL(mockProjects[0].repo);
+    await popup.close();
+  });
+
   test('shows project cards and fallback note when API fails but static fallback succeeds', async ({ page }) => {
     const mockFallbackProjects = [
       { name: 'Fallback Project', summary: 'From static file.', status: 'complete', tech: ['JS'], slug: 'fallback-project', repo: 'https://github.com/example/fallback' },
