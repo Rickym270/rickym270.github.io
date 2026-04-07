@@ -246,18 +246,13 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      # Ensure required Linux shared libraries are present for all browser engines on
-      # ubuntu-24.04 runners (especially chromium-iphone/webkit launch in CI shards).
-      - name: Install Playwright system dependencies
-        run: npx playwright install-deps chromium firefox webkit
-
       # Skip --with-deps: it runs apt for a large stack (ffmpeg, etc.) and often looks
       # "stuck" for many minutes on ubuntu-latest. Install only browsers used by the
-      # configured projects (chromium, chromium-iphone/webkit, firefox).
+      # configured projects (chromium, chromium-iphone, firefox).
       - name: Install Playwright browsers
         run: |
           echo "playwright_install_start=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          npx playwright install chromium firefox webkit
+          npx playwright install chromium firefox
           echo "playwright_install_end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
       - name: Skip full-suite

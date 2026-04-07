@@ -65,6 +65,9 @@ config.projects = [
       name: 'chromium-iphone',
       use: { 
         ...devices['iPhone 13 Pro'], // iPhone emulation for mobile testing
+        // Force Chromium engine for this mobile profile. The iPhone preset defaults
+        // to WebKit, which pulls additional Linux deps and slows/shakes CI shards.
+        browserName: 'chromium',
         // Mobile devices need more time for rendering and interactions
         actionTimeout: 20_000, // 20 seconds for actions
         navigationTimeout: 45_000, // 45 seconds for navigation
