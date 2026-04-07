@@ -26,6 +26,8 @@ jobs:
     timeout-minutes: 15
     env:
       TZ: America/New_York
+      # API is started manually in this job; do not let Playwright also bind 4321/8080.
+      PW_MANAGED_WEBSERVER: "0"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -244,37 +246,14 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      # Skip --with-deps: it runs apt for a large stack (ffmpeg, etc.) and often looks
+      # "stuck" for many minutes on ubuntu-latest. Install only browsers used by the
+      # configured projects (chromium, chromium-iphone, firefox).
       - name: Install Playwright browsers
         run: |
-          set -euo pipefail
-          RUN_ID="ci-shard-${{ matrix.shardIndex }}-${{ github.run_id }}-${{ github.run_attempt }}"
-          echo "Install start: $(date -u +%Y-%m-%dT%H:%M:%SZ) run_id=$RUN_ID"
-          # #region agent log
-          node -e "fetch('http://127.0.0.1:7790/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'$RUN_ID',hypothesisId:'H1',location:'.github/workflows/playwright.yml:InstallPlaywrightBrowsers:start',message:'Playwright browser install step started',data:{shard:'${{ matrix.shardIndex }}',withDeps:true},timestamp:Date.now()})}).catch(()=>{});"
-          # #endregion
-          (
-            while true; do
-              echo "heartbeat: playwright install still running at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-              # #region agent log
-              node -e "fetch('http://127.0.0.1:7790/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'$RUN_ID',hypothesisId:'H2',location:'.github/workflows/playwright.yml:InstallPlaywrightBrowsers:heartbeat',message:'Install heartbeat',data:{shard:'${{ matrix.shardIndex }}'},timestamp:Date.now()})}).catch(()=>{});"
-              # #endregion
-              sleep 30
-            done
-          ) &
-          HEARTBEAT_PID=$!
-          INSTALL_EXIT=0
-          npx playwright install --with-deps 2>&1 | tee playwright-install.log || INSTALL_EXIT=$?
-          kill "$HEARTBEAT_PID" 2>/dev/null || true
-          wait "$HEARTBEAT_PID" 2>/dev/null || true
-          echo "Install end: $(date -u +%Y-%m-%dT%H:%M:%SZ) exit_code=$INSTALL_EXIT"
-          # #region agent log
-          node -e "fetch('http://127.0.0.1:7790/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'$RUN_ID',hypothesisId:'H3',location:'.github/workflows/playwright.yml:InstallPlaywrightBrowsers:end',message:'Playwright browser install step ended',data:{shard:'${{ matrix.shardIndex }}',exitCode:$INSTALL_EXIT},timestamp:Date.now()})}).catch(()=>{});"
-          # #endregion
-          if [ "$INSTALL_EXIT" -ne 0 ]; then
-            echo "Playwright install failed; printing process snapshot for stall diagnosis"
-            ps -ef | rg -i "apt|dpkg|playwright|node|xvfb" || true
-            exit "$INSTALL_EXIT"
-          fi
+          echo "playwright_install_start=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          npx playwright install chromium firefox
+          echo "playwright_install_end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
       - name: Skip full-suite
         if: steps.skip-check.outputs.skip_all == 'true'
@@ -348,8 +327,8 @@ jobs:
           echo "  PW_MANAGED_WEBSERVER=${PW_MANAGED_WEBSERVER:-unset}"
           if echo "${{ steps.skip-check.outputs.projects }}" | grep -Eq -- "--project=chromium|--project=chromium-iphone|--project=firefox"; then
             echo "  ui_projects_selected=true"
-            if [ "${PW_MANAGED_WEBSERVER:-0}" != "1" ]; then
-              echo "ERROR: UI projects selected but PW_MANAGED_WEBSERVER is not enabled."
+            if [ "${PW_MANAGED_WEBSERVER:-}" = "0" ]; then
+              echo "ERROR: UI projects selected but PW_MANAGED_WEBSERVER=0 (managed servers disabled)."
               exit 1
             fi
             echo "  ui_readiness_url=http://127.0.0.1:4321/index.html (managed by Playwright webServer)"

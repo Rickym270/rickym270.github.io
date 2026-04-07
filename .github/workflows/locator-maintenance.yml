@@ -43,7 +43,10 @@ jobs:
           fi
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: |
+          echo "playwright_install_start=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          npx playwright install chromium firefox webkit
+          echo "playwright_install_end=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
       - name: Build Spring Boot API
         working-directory: ./api

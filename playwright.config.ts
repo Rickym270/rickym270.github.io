@@ -21,8 +21,11 @@ const config: any = {
   },
 };
 
-// Allow CI to opt into Playwright-managed web servers.
-const managedWebServer = !process.env.CI || process.env.PW_MANAGED_WEBSERVER === '1';
+// In CI, Playwright manages UI + API servers by default (fixes workflows that run full
+// `playwright test` without extra env). Workflows that start servers themselves must set
+// PW_MANAGED_WEBSERVER=0 to opt out and avoid port conflicts.
+const managedWebServer =
+  !process.env.CI || process.env.PW_MANAGED_WEBSERVER !== '0';
 if (managedWebServer) {
   // Configure UI server (for browser-based tests)
   config.webServer = [
@@ -62,6 +65,9 @@ config.projects = [
       name: 'chromium-iphone',
       use: { 
         ...devices['iPhone 13 Pro'], // iPhone emulation for mobile testing
+        // Force Chromium engine for this mobile profile. The iPhone preset defaults
+        // to WebKit, which pulls additional Linux deps and slows/shakes CI shards.
+        browserName: 'chromium',
         // Mobile devices need more time for rendering and interactions
         actionTimeout: 20_000, // 20 seconds for actions
         navigationTimeout: 45_000, // 45 seconds for navigation
