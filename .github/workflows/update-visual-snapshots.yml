@@ -10,6 +10,9 @@ jobs:
   update-snapshots:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # UI server is started manually below; avoid Playwright also starting webServer.
+      PW_MANAGED_WEBSERVER: "0"
     permissions:
       contents: write  # Needed to push updated snapshots
     steps:
