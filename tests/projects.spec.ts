@@ -329,6 +329,135 @@ test.describe('Projects Page', () => {
     await expect(card.locator('.project-card-cta-disabled')).toContainText(/Private Repository/i);
   });
 
+  test('private repo card body click does not open a new tab', async ({ page }) => {
+    const mockProjects = [
+      {
+        name: 'Private No Nav',
+        summary: 'Body click must not navigate.',
+        status: 'complete',
+        tech: ['Go'],
+        slug: 'private-no-nav',
+        repo: 'https://github.com/example/private-no-nav',
+        private: true,
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card', { timeout: 15000 });
+    const card = page.locator('#content .project-card').first();
+    await card.locator('.card-text').click();
+    await expect.poll(() => page.context().pages().length, { timeout: 2000 }).toBe(1);
+  });
+
+  test('non-boolean private value still shows source link (strict flag only)', async ({ page }) => {
+    const mockProjects: Array<Record<string, unknown>> = [
+      {
+        name: 'Loose Private Field',
+        summary: 'Malformed API should not hide public link.',
+        status: 'complete',
+        tech: ['TS'],
+        slug: 'loose-private',
+        repo: 'https://github.com/example/loose-private',
+        private: 'true',
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card a[data-project-action="repo"]', { timeout: 15000 });
+    const href = await page.locator('#content .project-card a[data-project-action="repo"]').first().getAttribute('href');
+    expect(href).toBe('https://github.com/example/loose-private');
+  });
+
+  test('private repo label uses Spanish translation', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('siteLanguage', 'es');
+    });
+
+    const mockProjects = [
+      {
+        name: 'Proyecto Privado',
+        summary: 'Sin enlace público.',
+        status: 'complete',
+        tech: ['Python'],
+        slug: 'proyecto-privado',
+        repo: 'https://github.com/example/hidden',
+        private: true,
+      },
+    ];
+
+    await page.route('**/api/projects**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockProjects),
+      });
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
+    }, { timeout: 15000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Proyectos' }).first().click();
+    }
+
+    await page.waitForSelector('#content .project-card', { timeout: 15000 });
+    const disabled = page.locator('#content .project-card .project-card-cta-disabled').first();
+    await expect(disabled).toBeVisible({ timeout: 10000 });
+    await expect(disabled).toHaveText('Repositorio Privado');
+  });
+
   test('project source CTA is keyboard focusable and activatable', async ({ page }) => {
     const mockProjects = [
       {
