@@ -448,11 +448,9 @@ test.describe('Navbar', () => {
     await expect(settings.locator('#mobile-theme-switcher')).toBeVisible();
     await expect(settings.locator('.mobile-theme-pill')).toHaveCount(2);
     
-    // Reset is inside PREFERENCES; footer icons have Contact only
+    // Reset is inside PREFERENCES in the current mobile layout (legacy footer icon strip removed).
     await expect(settings.locator('#mobile-footer-reset-icon')).toBeVisible();
-    const footerIcons = page.locator('.mobile-sidebar-footer-icons');
-    await expect(footerIcons).toBeVisible();
-    await expect(footerIcons.locator('a[aria-label="Contact"]')).toBeVisible();
+    await expect(page.locator('.mobile-sidebar-footer-icons')).toHaveCount(0);
     
     // Verify controls are functional
     const esButton = page.locator('#mobile-language-switcher button[data-lang="es"]');

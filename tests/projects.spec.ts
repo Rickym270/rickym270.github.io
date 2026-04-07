@@ -427,7 +427,8 @@ test.describe('Projects Page', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      themeToggle = page.locator('#mobile-theme-toggle');
+      const currentTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme') || 'light');
+      themeToggle = currentTheme === 'dark' ? page.locator('#mobile-theme-light') : page.locator('#mobile-theme-dark');
     } else {
       themeToggle = page.locator('#theme-toggle');
     }
