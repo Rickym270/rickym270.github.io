@@ -158,15 +158,16 @@ test.describe('[integration] Load and Stress Tests', () => {
   });
 
   test('frontend handles multiple theme toggles', async ({ page }) => {
-    // Firefox needs networkidle for reliable navigation
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const timeout = browserName === 'firefox' ? 60000 : 20000;
-    await page.goto('/', { waitUntil, timeout });
+    // Do not use networkidle: SPAs with CDNs/fonts/background requests often never reach 0 connections on CI (Firefox).
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     
     // Wait for initial content
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
+    }, { timeout: 15000 });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
     }, { timeout: 15000 });
     
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
