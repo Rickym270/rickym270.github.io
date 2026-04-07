@@ -13,10 +13,12 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
     // Theme toggle button should be visible (desktop or mobile)
     let themeToggle;
     if (isMobile) {
-      // On mobile, open sidebar to access theme toggle
+      // On mobile, theme is two pills inside #mobile-theme-switcher (no #mobile-theme-toggle).
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      themeToggle = page.locator('#mobile-theme-toggle');
+      await expect(page.locator('#mobile-theme-switcher')).toBeVisible();
+      const currentTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme') || 'light');
+      themeToggle = currentTheme === 'dark' ? page.locator('#mobile-theme-light') : page.locator('#mobile-theme-dark');
     } else {
       themeToggle = page.locator('#theme-toggle');
     }
@@ -57,7 +59,8 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
-      themeToggle = page.locator('#mobile-theme-toggle');
+      const currentTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme') || 'light');
+      themeToggle = currentTheme === 'dark' ? page.locator('#mobile-theme-light') : page.locator('#mobile-theme-dark');
     } else {
       themeToggle = page.locator('#theme-toggle');
     }
