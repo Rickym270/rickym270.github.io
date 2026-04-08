@@ -102,6 +102,11 @@ test.describe('[regression] API Contract Tests', () => {
       if (project.tech) {
         expect(Array.isArray(project.tech)).toBe(true);
       }
+
+      // Contract: private is optional; when present it must be boolean (GitHub visibility)
+      if (Object.prototype.hasOwnProperty.call(project, 'private')) {
+        expect(typeof project.private).toBe('boolean');
+      }
     }
   });
 

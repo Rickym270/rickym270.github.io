@@ -38,6 +38,17 @@ test.describe('[regression] API Projects Endpoint', () => {
     }
   });
 
+  test('GET /api/projects private field is boolean when present', async ({ request }) => {
+    const response = await request.get(`${API_BASE_URL}/api/projects`);
+    expect(response.ok()).toBeTruthy();
+    const projects = await response.json();
+    for (const project of projects as { private?: unknown }[]) {
+      if (Object.prototype.hasOwnProperty.call(project, 'private')) {
+        expect(typeof project.private).toBe('boolean');
+      }
+    }
+  });
+
   test('GET /api/projects returns valid repo URLs', async ({ request }) => {
     const response = await request.get(`${API_BASE_URL}/api/projects`);
     const projects = await response.json();
