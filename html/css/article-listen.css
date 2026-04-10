@@ -1,0 +1,55 @@
+/**
+ * Listen-to-article toolbar (blog posts + tutorials)
+ */
+.article-listen-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm, 0.75rem);
+    padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.25rem);
+    margin-bottom: var(--spacing-xl, 1.5rem);
+    border: 1px solid var(--color-border, #dee2e6);
+    border-radius: var(--radius-md, 0.375rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+}
+
+.article-listen-inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm, 0.75rem);
+    width: 100%;
+}
+
+.article-listen-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent, #007bff);
+    flex-shrink: 0;
+}
+
+.article-listen-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #212529);
+    flex: 1 1 auto;
+    min-width: 8rem;
+}
+
+.article-listen-toggle {
+    flex-shrink: 0;
+    font-weight: 600;
+}
+
+.article-listen-stop {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.article-listen-bar--unsupported {
+    background: var(--color-bg-tertiary, #e9ecef);
+}
+
+.article-listen-unsupported {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #6c757d);
+}

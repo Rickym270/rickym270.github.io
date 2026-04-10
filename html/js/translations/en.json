@@ -513,6 +513,16 @@
     "tagResilience": "RESILIENCE",
     "tagAutomation": "AUTOMATION"
   },
+  "articleListen": {
+    "label": "Listen to this article",
+    "listen": "Listen",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "playing": "Playing",
+    "paused": "Paused",
+    "unsupported": "Listen isn’t available in this browser."
+  },
   "lessons": {
     "pythonTutorial": {
       "title": "Python Tutorial",
