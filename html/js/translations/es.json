@@ -515,6 +515,7 @@
   },
   "articleListen": {
     "label": "Escuchar este artículo",
+    "mobileHint": "Reproducir para leer en voz alta",
     "listen": "Escuchar",
     "pause": "Pausa",
     "resume": "Reanudar",

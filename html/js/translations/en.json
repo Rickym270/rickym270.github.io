@@ -515,6 +515,7 @@
   },
   "articleListen": {
     "label": "Listen to this article",
+    "mobileHint": "Play to read out loud",
     "listen": "Listen",
     "pause": "Pause",
     "resume": "Resume",

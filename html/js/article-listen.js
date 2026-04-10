@@ -127,8 +127,13 @@
             '<span class="material-symbols-outlined article-listen-icon" aria-hidden="true">graphic_eq</span>' +
             '<span class="article-listen-label" data-translate="articleListen.label"></span>' +
             '<button type="button" class="btn article-listen-toggle" data-action="toggle" aria-pressed="false">' +
+            '<span class="article-listen-toggle-icons" aria-hidden="true">' +
+            '<span class="material-symbols-outlined article-listen-icon-play">play_arrow</span>' +
+            '<span class="material-symbols-outlined article-listen-icon-pause">pause</span>' +
+            '</span>' +
             '<span data-translate="articleListen.listen" class="article-listen-toggle-label">Listen</span>' +
             '</button>' +
+            '<span class="article-listen-mobile-hint" data-translate="articleListen.mobileHint" aria-hidden="true"></span>' +
             '<button type="button" class="btn btn-link article-listen-stop text-muted" data-action="stop" hidden>' +
             '<span data-translate="articleListen.stop">Stop</span>' +
             '</button>' +
@@ -151,15 +156,31 @@
         }
 
         function refreshToggleLabel() {
-            if (!window.TranslationManager || !labelSpan) return;
-            if (activeState === 'playing') {
-                labelSpan.setAttribute('data-translate', 'articleListen.pause');
-            } else if (activeState === 'paused') {
-                labelSpan.setAttribute('data-translate', 'articleListen.resume');
-            } else {
-                labelSpan.setAttribute('data-translate', 'articleListen.listen');
+            var tm = window.TranslationManager;
+            var key =
+                activeState === 'playing'
+                    ? 'articleListen.pause'
+                    : activeState === 'paused'
+                      ? 'articleListen.resume'
+                      : 'articleListen.listen';
+            if (tm && labelSpan) {
+                labelSpan.setAttribute('data-translate', key);
+                labelSpan.textContent = tm.t(key);
             }
-            labelSpan.textContent = window.TranslationManager.t(labelSpan.getAttribute('data-translate'));
+            if (tm) {
+                toggleBtn.setAttribute('aria-label', tm.t(key));
+            } else {
+                toggleBtn.setAttribute(
+                    'aria-label',
+                    activeState === 'playing' ? 'Pause' : activeState === 'paused' ? 'Resume' : 'Listen'
+                );
+            }
+            toggleBtn.classList.remove('article-listen-toggle--playing', 'article-listen-toggle--paused');
+            if (activeState === 'playing') {
+                toggleBtn.classList.add('article-listen-toggle--playing');
+            } else if (activeState === 'paused') {
+                toggleBtn.classList.add('article-listen-toggle--paused');
+            }
         }
 
         function speakFromStart() {
