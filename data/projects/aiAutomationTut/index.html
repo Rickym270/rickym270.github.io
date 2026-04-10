@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI for Engineering Automation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/html/css/modern.css">
+    <link rel="stylesheet" href="/html/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="lesson-content" data-testid="ai-tutorial-guide">
+            <span data-translate-title="lessons.aiTutorial.docTitle" class="d-none" aria-hidden="true"></span>
+            <div class="lesson-nav-top">
+                <a href="#" class="lesson-back-button inline-load" data-url="html/pages/tutorials.html">
+                    <span class="lesson-back-icon">←</span>
+                    <span data-translate="lessons.aiTutorial.backToTutorials">Back to Tutorials</span>
+                </a>
+            </div>
+
+            <div class="lesson-header-content">
+                <div class="lesson-badge" data-translate="lessons.aiTutorial.badge">Docs</div>
+                <h1 class="lesson-title" data-translate="lessons.aiTutorial.title">AI for Engineering Automation</h1>
+                <p class="lesson-subtitle" data-translate="lessons.aiTutorial.subtitle">Where AI helps in engineering workflows, how to pick a model, and patterns I use for automation.</p>
+            </div>
+
+            <div class="lesson-body">
+                <p data-translate="lessons.aiTutorial.introP1">This guide is opinionated and practical: it reflects how I use AI as an automation engineer—not a catalog of every tool on the market.</p>
+                <p data-translate="lessons.aiTutorial.introP2">Treat every model as a probabilistic component: it can speed you up or quietly ship subtle mistakes. The sections below are the decision points I run through before leaning on AI for a task.</p>
+
+                <h2 data-translate="lessons.aiTutorial.hWhere">Where to implement AI (and where not to)</h2>
+                <p data-translate="lessons.aiTutorial.whereP1">Good candidates share a few signals: repetition, clear inputs, tolerance for a first draft, and a human or automated check before anything reaches production.</p>
+                <ul>
+                    <li data-translate="lessons.aiTutorial.whereLi1">Boilerplate and scaffolding: test data, config stubs, migration sketches, repetitive CRUD—then you review and harden.</li>
+                    <li data-translate="lessons.aiTutorial.whereLi2">Explaining and decomposing: turning logs, stack traces, or legacy scripts into structured notes or a test plan.</li>
+                    <li data-translate="lessons.aiTutorial.whereLi3">Refactoring with guardrails: “same behavior, smaller functions” works when tests or typecheckers catch regressions.</li>
+                </ul>
+                <p data-translate="lessons.aiTutorial.whereP2">Poor fits: anything that needs a guaranteed correct answer with no verification (auth, billing, security policies), or work where the cost of a wrong word is higher than the cost of doing it slowly yourself.</p>
+
+                <figure class="my-4">
+                    <pre class="mermaid" data-translate="lessons.aiTutorial.diagramWhere">
+flowchart TD
+  subgraph in_signals [Inputs]
+    T[Task description]
+    A[Artifacts: code, logs, specs]
+  end
+  in_signals --> Q{Repeatable or exploratory?}
+  Q -->|Repeatable draft| D[AI-assisted draft]
+  Q -->|Exploratory design| E[AI brainstorm then narrow]
+  D --> V{Automated checks possible?}
+  E --> V
+  V -->|Yes| OK[Iterate with tests / linters / CI]
+  V -->|No| H[Prefer manual or pair review]
+                    </pre>
+                    <figcaption class="text-muted small mt-2" data-translate="lessons.aiTutorial.captionWhere">High level: use AI when you can verify outputs cheaply.</figcaption>
+                </figure>
+
+                <p data-translate="lessons.aiTutorial.whereP3">If you cannot name what would falsify a bad answer (a test, a diff, a policy check), pause before outsourcing the thinking.</p>
+
+                <h2 data-translate="lessons.aiTutorial.hTools">Distinguishing models and assistants</h2>
+                <p data-translate="lessons.aiTutorial.toolsP1">Capabilities overlap, but I reach for different products for different cognitive loads. Names and UIs change; the split below is about how I use them today.</p>
+                <p data-translate="lessons.aiTutorial.toolsP2">None of these replace domain judgment—they change how fast you draft, search, and stress-test ideas.</p>
+
+                <div class="table-responsive my-4">
+                    <table class="table table-bordered lesson-tool-table">
+                        <caption class="sr-only" data-translate="lessons.aiTutorial.tableCaption">AI tools compared for engineering use</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" data-translate="lessons.aiTutorial.thTool">Tool</th>
+                                <th scope="col" data-translate="lessons.aiTutorial.thUseFor">I use it for</th>
+                                <th scope="col" data-translate="lessons.aiTutorial.thWatch">Watch for</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" data-translate="lessons.aiTutorial.chatgptN">ChatGPT</th>
+                                <td data-translate="lessons.aiTutorial.chatgptUse">General explanations, rewriting, quick scripts, brainstorming product copy, turning rough notes into checklists.</td>
+                                <td data-translate="lessons.aiTutorial.chatgptWatch">Overconfidence on APIs you did not paste; vague “best practices” without your stack context.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" data-translate="lessons.aiTutorial.claudeN">Claude</th>
+                                <td data-translate="lessons.aiTutorial.claudeUse">Longer code review–style reads, comparing diffs, algorithmic reasoning, structured refactors across many files when I paste enough context.</td>
+                                <td data-translate="lessons.aiTutorial.claudeWatch">Still hallucinates imports and edge cases—verify with run/test.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" data-translate="lessons.aiTutorial.copilotN">Copilot / Cursor</th>
+                                <td data-translate="lessons.aiTutorial.copilotUse">In-IDE completion, small localized edits, boilerplate from surrounding symbols—fastest when the editor already has the repo open.</td>
+                                <td data-translate="lessons.aiTutorial.copilotWatch">Tunnel vision: it optimizes the current file, not the system.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" data-translate="lessons.aiTutorial.perplexityN">Perplexity (and similar)</th>
+                                <td data-translate="lessons.aiTutorial.perplexityUse">Grounded-ish lookup when I want citations to docs or release notes, not when I need executable code without checking.</td>
+                                <td data-translate="lessons.aiTutorial.perplexityWatch">Stale or wrong sources; always open the primary link.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <figure class="my-4">
+                    <pre class="mermaid" data-translate="lessons.aiTutorial.diagramTools">
+flowchart TD
+  L[New engineering task]
+  L --> C{Large context / multi-file reasoning?}
+  C -->|Yes| Claude[Claude]
+  C -->|No| G{Need grounded web facts?}
+  G -->|Yes| P[Perplexity / search-first assistant]
+  G -->|No| I{Inside editor, small change?}
+  I -->|Yes| IDE[Copilot / Cursor]
+  I -->|No| T[ChatGPT general pass]
+                    </pre>
+                    <figcaption class="text-muted small mt-2" data-translate="lessons.aiTutorial.captionTools">Rough routing—not strict rules.</figcaption>
+                </figure>
+
+                <p data-translate="lessons.aiTutorial.toolsP3">When a task spans “explain the approach” and “edit the repo,” I often start in Claude or ChatGPT for structure, then finish in the IDE with Copilot/Cursor for local syntax and repetition.</p>
+
+                <h2 data-translate="lessons.aiTutorial.hPatterns">Automation patterns that survive review</h2>
+                <p data-translate="lessons.aiTutorial.patternsP1">These are the shapes that have held up on my teams: they assume CI, linters, or a second pair of eyes exist somewhere in the loop.</p>
+                <ol>
+                    <li data-translate="lessons.aiTutorial.patternsLi1">Spec → generate → verify: paste constraints and interfaces; generate a script or test; run it in a sandbox before merging.</li>
+                    <li data-translate="lessons.aiTutorial.patternsLi2">Devil’s advocate: ask explicitly for failure modes, race conditions, and “what would break this in CI?” on a PR you already wrote.</li>
+                    <li data-translate="lessons.aiTutorial.patternsLi3">Documentation from truth: generate README or runbook sections from the actual commands in your pipeline file—never the other way around.</li>
+                    <li data-translate="lessons.aiTutorial.patternsLi4">Incremental prompts: one coherent step per message (repro command, expected vs actual, hypothesis) beats a wall of context.</li>
+                </ol>
+                <p data-translate="lessons.aiTutorial.patternsP2">The goal is not maximum tokens; it is minimum surprise when someone else runs your automation six months later.</p>
+
+                <figure class="my-4">
+                    <pre class="mermaid" data-translate="lessons.aiTutorial.diagramSequence">
+sequenceDiagram
+    participant Dev as Engineer
+    participant AI as Model
+    participant CI as CI / tests
+    Dev->>AI: Context + constraints + desired artifact
+    AI-->>Dev: Draft (code, test, or doc)
+    Dev->>Dev: Review + local run
+    Dev->>CI: Push with checks
+    CI-->>Dev: Pass / fail signal
+    Note over Dev,CI: AI output is untrusted until checks green
+                    </pre>
+                    <figcaption class="text-muted small mt-2" data-translate="lessons.aiTutorial.captionSequence">Human and automated gates around generated work.</figcaption>
+                </figure>
+
+                <h3 data-translate="lessons.aiTutorial.hPrompts">Prompt skeletons</h3>
+                <p data-translate="lessons.aiTutorial.promptsIntro">Use plain structure; models mirror the bullets you give them.</p>
+                <p class="font-weight-medium mb-1" data-translate="lessons.aiTutorial.promptLabel1">Automation / script generation</p>
+                <pre class="bg-light p-3 rounded border"><code data-translate="lessons.aiTutorial.promptBlock1">Goal: (one sentence)
+Environment: (OS, runtime, versions)
+Inputs / outputs: (files, APIs, env vars)
+Constraints: (no network, idempotent, must run in CI)
+Deliverable: (language) script + how to run + exit codes</code></pre>
+
+                <p class="font-weight-medium mb-1 mt-4" data-translate="lessons.aiTutorial.promptLabel2">PR / design critique</p>
+                <pre class="bg-light p-3 rounded border"><code data-translate="lessons.aiTutorial.promptBlock2">Change summary: (what you did)
+Risk focus: (data integrity, concurrency, security)
+Question: List the top 5 ways this could fail in production and how to test for each.</code></pre>
+
+                <p class="text-muted small mt-4 mb-0" data-translate="lessons.aiTutorial.footerNote">I will extend this page over time—splitting topics into separate lessons if the workflows grow.</p>
+            </div>
+        </div>
+    </div>
+    <script src="/html/js/mermaid-init.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof window.initMermaidInContent === 'function') {
+                window.initMermaidInContent(document.body);
+            }
+        });
+    </script>
+</body>
+</html>

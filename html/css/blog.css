@@ -192,6 +192,20 @@
     outline-offset: 2px;
 }
 
+/* Engineering / blog posts: explicit text selection (overrides any inherited user-select) */
+#content .container.post-content #post-body,
+#content .container.post-content #post-body p,
+#content .container.post-content #post-body li,
+#content .container.post-content #post-body h1,
+#content .container.post-content #post-body h2,
+#content .container.post-content #post-body h3,
+#content .container.post-content #post-body blockquote,
+#content .container.post-content #post-body pre,
+#content .container.post-content #post-body code {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
 /* ============================================
    Latest Insights Section
    ============================================ */

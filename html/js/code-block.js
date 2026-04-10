@@ -44,6 +44,11 @@
         const preElements = document.querySelectorAll('#content pre, #FAQMain pre, .container pre');
         
         preElements.forEach(function(pre) {
+            // Tutorial pages manage pre/code styling separately.
+            if (pre.closest('.lesson-content') || pre.closest('.lesson-body')) {
+                return;
+            }
+
             // Skip if already processed
             if (pre.closest('.code-block-wrapper')) {
                 return;

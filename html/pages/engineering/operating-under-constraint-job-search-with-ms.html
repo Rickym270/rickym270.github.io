@@ -38,7 +38,7 @@
             <h1 class="post-title" data-translate="engineering.post3.title">Operating Under Constraint: Job Search With MS</h1>
         </header>
 
-        <article id="post-body">
+        <article id="post-body" data-read-mins-override="9">
             <h2 data-translate="engineering.post3.h2WhereStarted">Where I Started</h2>
 
             <p data-translate="engineering.post3.p1">There was a company restructure. The initial momentum of a job search — the urgency, the structure and discipline it forces on you — carried me for a bit. Then it slowed. Follow-ups not following up. A market that was tougher than I originally expected, with more competition and fewer responses than the volume of applications.</p>
@@ -116,10 +116,15 @@
             var numEl = document.getElementById('reading-time-num');
             var body = document.getElementById('post-body');
             if (numEl && body) {
-                var text = body.innerText || body.textContent || '';
-                var words = text.trim().split(/\s+/).filter(Boolean).length;
-                var mins = Math.max(1, Math.ceil(words / 200));
-                numEl.textContent = mins;
+                var override = body.getAttribute('data-read-mins-override');
+                if (override && /^\d+$/.test(override.trim())) {
+                    numEl.textContent = String(parseInt(override, 10));
+                } else {
+                    var text = body.innerText || body.textContent || '';
+                    var words = text.trim().split(/\s+/).filter(Boolean).length;
+                    var mins = Math.max(1, Math.ceil(words / 200));
+                    numEl.textContent = mins;
+                }
             }
         })();
     </script>
