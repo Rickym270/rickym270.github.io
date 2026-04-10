@@ -119,7 +119,6 @@
                 return;
             }
             
-            var beforeScrollY = window.scrollY;
             this.isApplying = true;
             var mermaidNeedsRerender = false;
             // Only select elements with data-translate that don't have data-no-translate
@@ -212,20 +211,11 @@
             const aiGuide = document.querySelector('[data-testid="ai-tutorial-guide"]');
             if (aiGuide) {
                 const hasRenderedMermaid = aiGuide.querySelectorAll('.mermaid svg').length > 0;
-                // #region agent log
-                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix-mermaid',hypothesisId:'M1',location:'html/js/translation.js:applyTranslations',message:'mermaid gate state in translation pass',data:{hasRenderedMermaid:hasRenderedMermaid,initRequested:!!aiGuide.dataset.mermaidInitRequested,mermaidPreCount:aiGuide.querySelectorAll('.mermaid').length,svgCount:aiGuide.querySelectorAll('.mermaid svg').length},timestamp:Date.now()})}).catch(()=>{});
-                // #endregion
-                // #region agent log
-                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'post-fix-mermaid',hypothesisId:'M4',location:'html/js/translation.js:applyTranslations',message:'mermaid translation mutation state',data:{mermaidNeedsRerender:mermaidNeedsRerender,initRequested:!!aiGuide.dataset.mermaidInitRequested},timestamp:Date.now()})}).catch(()=>{});
-                // #endregion
                 if (hasRenderedMermaid) {
                     delete aiGuide.dataset.mermaidInitRequested;
                 }
                 if ((!aiGuide.dataset.mermaidInitRequested || mermaidNeedsRerender) && typeof window.initMermaidInContent === 'function') {
                     aiGuide.dataset.mermaidInitRequested = 'true';
-                    // #region agent log
-                    fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix-mermaid',hypothesisId:'M1',location:'html/js/translation.js:applyTranslations',message:'triggering initMermaidInContent from translation pass',data:{initRequestedNow:true},timestamp:Date.now()})}).catch(()=>{});
-                    // #endregion
                     window.initMermaidInContent(aiGuide);
                 }
             }
@@ -260,10 +250,7 @@
                     }
                 }
             });
-            // #region agent log
-            fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix',hypothesisId:'H4',location:'html/js/translation.js:applyTranslations',message:'translation pass scroll delta',data:{beforeScrollY:beforeScrollY,afterScrollY:window.scrollY,language:this.currentLanguage,elementsCount:elements.length},timestamp:Date.now()})}).catch(()=>{});
-            // #endregion
-            
+
             this.isApplying = false;
         },
 
