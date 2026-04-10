@@ -4,6 +4,17 @@ $(document).ready(function(){
         return; // Already initialized, don't run again
     }
     window.spaInitialized = true;
+    if (typeof window.__debugScrollProbeAttached === 'undefined') {
+        window.__debugScrollProbeAttached = true;
+        document.addEventListener('wheel', function(e) {
+            var t = e.target;
+            var pre = t && t.closest ? t.closest('.lesson-body pre, .lesson-content pre') : null;
+            var scrollable = !!(pre && pre.scrollHeight > pre.clientHeight);
+            // #region agent log
+            fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix',hypothesisId:'H3',location:'html/js/SPAHack.js:wheel',message:'wheel event scroll context',data:{deltaY:e.deltaY,windowScrollY:window.scrollY,inTutorialPre:!!pre,preScrollable:scrollable,preScrollTop:pre?pre.scrollTop:null},timestamp:Date.now()})}).catch(()=>{});
+            // #endregion
+        }, { passive: true });
+    }
     
     // Better URL parsing - handle both absolute and relative paths
     var pathParts = window.location.pathname.split("/").filter(Boolean);
@@ -229,6 +240,9 @@ $(document).ready(function(){
                             // Move focus to main content for keyboard/screen reader users
                             var mainEl = document.getElementById('content');
                             if (mainEl && mainEl.getAttribute('tabindex') === '-1') {
+                                // #region agent log
+                                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix',hypothesisId:'H2',location:'html/js/SPAHack.js:focusMain',message:'focusing main content',data:{sectionUrl:sectionUrl,beforeScrollY:window.scrollY},timestamp:Date.now()})}).catch(()=>{});
+                                // #endregion
                                 mainEl.focus({ preventScroll: false });
                             }
                             // Reinitialize theme after content loads
@@ -245,6 +259,9 @@ $(document).ready(function(){
                             }
                             // Re-setup click handlers for newly loaded content
                             setupClickHandlers();
+                            // #region agent log
+                            fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix',hypothesisId:'H1',location:'html/js/SPAHack.js:beforeScrollTo',message:'about to force scrollTo top',data:{sectionUrl:sectionUrl,beforeScrollY:window.scrollY},timestamp:Date.now()})}).catch(()=>{});
+                            // #endregion
                             window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
                             if (typeof window.initMermaidInContent === 'function' && document.getElementById('content') && document.getElementById('content').querySelector('.mermaid')) {
                                 window.requestAnimationFrame(function () {
@@ -340,6 +357,9 @@ $(document).ready(function(){
                             }, 200);
                         }
                         // Reset scroll to top after load (run after focus/layout so we win)
+                        // #region agent log
+                        fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix',hypothesisId:'H1',location:'html/js/SPAHack.js:setTimeoutScrollTo',message:'scheduled delayed scrollTo top',data:{sectionUrl:sectionUrl,currentScrollY:window.scrollY},timestamp:Date.now()})}).catch(()=>{});
+                        // #endregion
                         setTimeout(function() { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, 0);
                 });
                 }

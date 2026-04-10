@@ -5037,6 +5037,12 @@ pre code {
     margin: var(--spacing-lg) 0;
 }
 
+.lesson-body pre.mermaid,
+.lesson-content pre.mermaid {
+    white-space: pre !important;
+    line-height: 1.25 !important;
+}
+
 /* Undo global FAQ/docs single-line pre code metrics inside tutorials */
 .lesson-body pre,
 .lesson-content pre {
@@ -5049,6 +5055,15 @@ pre code {
     max-height: none;
 }
 
+#content .container .lesson-body pre,
+#content .container .lesson-content pre,
+#content .lesson-body pre,
+#content .lesson-content pre {
+    line-height: 1.5 !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
 .lesson-body pre code,
 .lesson-content pre code {
     display: block !important;
@@ -5056,8 +5071,29 @@ pre code {
     height: auto !important;
     min-height: 0 !important;
     line-height: 1.5 !important;
-    white-space: pre-wrap;
+    white-space: pre !important;
+    word-break: normal;
+    overflow-wrap: normal;
     overflow: visible;
+}
+
+#content .container .lesson-body pre code,
+#content .container .lesson-content pre code,
+#content .lesson-body pre code,
+#content .lesson-content pre code {
+    line-height: 1.5 !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+#content .container .lesson-body pre > *,
+#content .container .lesson-content pre > *,
+#content .lesson-body pre > *,
+#content .lesson-content pre > * {
+    line-height: 1.5 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
 }
 
 .lesson-list {

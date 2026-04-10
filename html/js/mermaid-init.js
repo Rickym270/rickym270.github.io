@@ -43,23 +43,47 @@
             return Promise.resolve();
         }
         var nodes = root.querySelectorAll('.mermaid');
-        if (!nodes.length) {
+        var runnableNodes = Array.prototype.filter.call(nodes, function (node) {
+            // Skip nodes that are already rendered (contain SVG output).
+            return !node.querySelector('svg');
+        });
+        // #region agent log
+        fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'post-fix-mermaid',hypothesisId:'M2',location:'html/js/mermaid-init.js:initMermaidInContent',message:'initMermaidInContent called',data:{nodeCount:nodes.length,runnableNodeCount:runnableNodes.length,hasGlobalMermaid:typeof window.mermaid!=='undefined'},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
+        if (!runnableNodes.length) {
             return Promise.resolve();
         }
         return loadMermaidIfNeeded()
             .then(function () {
                 if (typeof window.mermaid === 'undefined') {
+                    // #region agent log
+                    fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix-mermaid',hypothesisId:'M2',location:'html/js/mermaid-init.js:initMermaidInContent',message:'mermaid global missing after load',data:{},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
                     return;
                 }
+                Array.prototype.forEach.call(runnableNodes, function (node) {
+                    node.removeAttribute('data-processed');
+                });
                 window.mermaid.initialize({
                     startOnLoad: false,
                     theme: getMermaidTheme(),
                     securityLevel: 'loose'
                 });
-                return window.mermaid.run({ nodes: nodes });
+                return window.mermaid.run({ nodes: runnableNodes });
+            })
+            .then(function () {
+                // #region agent log
+                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'post-fix-mermaid',hypothesisId:'M3',location:'html/js/mermaid-init.js:initMermaidInContent',message:'mermaid run completed',data:{svgCount:root.querySelectorAll('.mermaid svg').length,processedCount:root.querySelectorAll('.mermaid[data-processed=\"true\"]').length},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
             })
             .catch(function (e) {
                 console.warn('[Mermaid]', e);
+                if (root && root.dataset) {
+                    delete root.dataset.mermaidInitRequested;
+                }
+                // #region agent log
+                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'post-fix-mermaid',hypothesisId:'M3',location:'html/js/mermaid-init.js:initMermaidInContent',message:'mermaid run error',data:{errorMessage:e&&e.message?e.message:String(e),clearedInitRequested:true},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
             });
     };
 })();

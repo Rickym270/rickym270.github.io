@@ -119,12 +119,33 @@
                 return;
             }
             
+            var beforeScrollY = window.scrollY;
             this.isApplying = true;
+            var mermaidNeedsRerender = false;
             // Only select elements with data-translate that don't have data-no-translate
             const elements = document.querySelectorAll('[data-translate]:not([data-no-translate])');
             elements.forEach(element => {
                 const key = element.getAttribute('data-translate');
                 const translation = this.t(key);
+                const isMermaidPre = element.tagName === 'PRE' && element.classList.contains('mermaid');
+
+                if (isMermaidPre) {
+                    const hasRenderedSvg = !!element.querySelector('svg');
+                    const nextSource = (translation || '').replace(/\\n/g, '\n');
+                    const currentSource = element.dataset.mermaidSource || '';
+                    const sourceChanged = currentSource !== nextSource;
+                    if (sourceChanged || !hasRenderedSvg) {
+                        if (element.textContent !== nextSource) {
+                            element.textContent = nextSource;
+                        }
+                        element.dataset.mermaidSource = nextSource;
+                        if (element.hasAttribute('data-processed')) {
+                            element.removeAttribute('data-processed');
+                        }
+                        mermaidNeedsRerender = true;
+                    }
+                    return;
+                }
                 
                 // Handle different element types
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
@@ -137,8 +158,17 @@
                         // Don't change text content for inputs/textarea, only placeholders
                     }
                 } else if (element.hasAttribute('data-translate-html')) {
-                    element.innerHTML = translation;
+                    if (element.innerHTML !== translation) {
+                        element.innerHTML = translation;
+                    }
                 } else {
+                    if (element.tagName === 'CODE' && element.closest('pre')) {
+                        const codeTranslation = (translation || '').replace(/\\n/g, '\n');
+                        if (element.textContent !== codeTranslation) {
+                            element.textContent = codeTranslation;
+                        }
+                    }
+                    else
                     // For mobile nav items, preserve icon spans
                     if (element.classList.contains('mobile-nav-item')) {
                         const iconSpan = element.querySelector('.mobile-nav-icon');
@@ -147,7 +177,9 @@
                             // Only update the label, preserve the icon
                             labelSpan.textContent = translation;
                         } else {
-                            element.textContent = translation;
+                            if (element.textContent !== translation) {
+                                element.textContent = translation;
+                            }
                         }
                     }
                     // For labels, preserve HTML like <span class="text-danger">*</span>
@@ -160,15 +192,43 @@
                             const textPart = parts[0].trim();
                             // Reconstruct with translation replacing the text part
                             const htmlPart = parts.slice(1).join(''); // Everything after first text
-                            element.innerHTML = translation + ' ' + htmlPart;
+                            const nextHtml = translation + ' ' + htmlPart;
+                            if (element.innerHTML !== nextHtml) {
+                                element.innerHTML = nextHtml;
+                            }
                         } else {
-                            element.textContent = translation;
+                            if (element.textContent !== translation) {
+                                element.textContent = translation;
+                            }
                         }
                     } else {
-                        element.textContent = translation;
+                        if (element.textContent !== translation) {
+                            element.textContent = translation;
+                        }
                     }
                 }
             });
+
+            const aiGuide = document.querySelector('[data-testid="ai-tutorial-guide"]');
+            if (aiGuide) {
+                const hasRenderedMermaid = aiGuide.querySelectorAll('.mermaid svg').length > 0;
+                // #region agent log
+                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix-mermaid',hypothesisId:'M1',location:'html/js/translation.js:applyTranslations',message:'mermaid gate state in translation pass',data:{hasRenderedMermaid:hasRenderedMermaid,initRequested:!!aiGuide.dataset.mermaidInitRequested,mermaidPreCount:aiGuide.querySelectorAll('.mermaid').length,svgCount:aiGuide.querySelectorAll('.mermaid svg').length},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
+                // #region agent log
+                fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'post-fix-mermaid',hypothesisId:'M4',location:'html/js/translation.js:applyTranslations',message:'mermaid translation mutation state',data:{mermaidNeedsRerender:mermaidNeedsRerender,initRequested:!!aiGuide.dataset.mermaidInitRequested},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
+                if (hasRenderedMermaid) {
+                    delete aiGuide.dataset.mermaidInitRequested;
+                }
+                if ((!aiGuide.dataset.mermaidInitRequested || mermaidNeedsRerender) && typeof window.initMermaidInContent === 'function') {
+                    aiGuide.dataset.mermaidInitRequested = 'true';
+                    // #region agent log
+                    fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix-mermaid',hypothesisId:'M1',location:'html/js/translation.js:applyTranslations',message:'triggering initMermaidInContent from translation pass',data:{initRequestedNow:true},timestamp:Date.now()})}).catch(()=>{});
+                    // #endregion
+                    window.initMermaidInContent(aiGuide);
+                }
+            }
             
             // Also process elements that only have data-translate-placeholder (inputs/textarea without data-translate)
             const placeholderElements = document.querySelectorAll('[data-translate-placeholder]:not([data-translate])');
@@ -183,7 +243,10 @@
             const titleElement = document.querySelector('[data-translate-title]');
             if (titleElement) {
                 const titleKey = titleElement.getAttribute('data-translate-title');
-                document.title = this.t(titleKey);
+                const translatedTitle = this.t(titleKey);
+                if (document.title !== translatedTitle) {
+                    document.title = translatedTitle;
+                }
             }
             
             // Update element title attributes (tooltips) with data-translate-title
@@ -192,9 +255,14 @@
                 const titleKey = element.getAttribute('data-translate-title');
                 if (titleKey) {
                     const translation = this.t(titleKey);
-                    element.setAttribute('title', translation);
+                    if (element.getAttribute('title') !== translation) {
+                        element.setAttribute('title', translation);
+                    }
                 }
             });
+            // #region agent log
+            fetch('http://127.0.0.1:7570/ingest/660eb9fa-1c39-4eb4-b364-3570247d54f6',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'174fcc'},body:JSON.stringify({sessionId:'174fcc',runId:'pre-fix',hypothesisId:'H4',location:'html/js/translation.js:applyTranslations',message:'translation pass scroll delta',data:{beforeScrollY:beforeScrollY,afterScrollY:window.scrollY,language:this.currentLanguage,elementsCount:elements.length},timestamp:Date.now()})}).catch(()=>{});
+            // #endregion
             
             this.isApplying = false;
         },
