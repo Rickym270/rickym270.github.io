@@ -296,10 +296,15 @@ $(document).ready(function(){
                                 var postBody = document.getElementById('post-body');
                                 var readingTimeNum = document.getElementById('reading-time-num');
                                 if (postBody && readingTimeNum) {
-                                    var text = postBody.innerText || postBody.textContent || '';
-                                    var words = text.trim().split(/\s+/).filter(Boolean).length;
-                                    var mins = Math.max(1, Math.ceil(words / 200));
-                                    readingTimeNum.textContent = mins;
+                                    var override = postBody.getAttribute('data-read-mins-override');
+                                    if (override && /^\d+$/.test(override.trim())) {
+                                        readingTimeNum.textContent = String(parseInt(override, 10));
+                                    } else {
+                                        var text = postBody.innerText || postBody.textContent || '';
+                                        var words = text.trim().split(/\s+/).filter(Boolean).length;
+                                        var mins = Math.max(1, Math.ceil(words / 200));
+                                        readingTimeNum.textContent = mins;
+                                    }
                                 }
                                 if (sectionUrl.includes('engineering.html') || sectionUrl.includes('lifestyle.html')) {
                                     if (typeof window.initBlogCategoryPills === 'function') {

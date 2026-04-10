@@ -3013,7 +3013,8 @@ pre code {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-[data-theme="dark"] .mobile-lang-btn.active {
+[data-theme="dark"] .mobile-lang-btn.active,
+[data-theme="dark"] .mobile-lang-btn[aria-pressed="true"] {
     background-color: #2563eb !important;
     color: #ffffff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -3026,14 +3027,27 @@ pre code {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-[data-theme="dark"] #language-switcher button.active,
-[data-theme="dark"] #language-switcher button[aria-pressed="true"],
-[data-theme="dark"] #language-switcher-medium button.active,
-[data-theme="dark"] #language-switcher-medium button[aria-pressed="true"] {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
-    color: #ffffff !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+@media (min-width: 769px) {
+    [data-theme="dark"] #language-switcher .nav-lang-pill .nav-lang-btn[aria-pressed="true"],
+    [data-theme="dark"] #language-switcher .nav-lang-pill .nav-lang-btn.active,
+    [data-theme="dark"] #language-switcher-medium .nav-lang-btn[aria-pressed="true"],
+    [data-theme="dark"] #language-switcher-medium .nav-lang-btn.active {
+        background: none !important;
+        border: none !important;
+        background-color: transparent !important;
+        color: var(--color-text-primary) !important;
+        font-weight: 700;
+        text-shadow: none;
+    }
+
+    [data-theme="dark"] #language-switcher .nav-lang-pill .nav-lang-btn[aria-pressed="false"],
+    [data-theme="dark"] #language-switcher-medium .nav-lang-btn[aria-pressed="false"] {
+        background: none !important;
+        border: none !important;
+        color: var(--color-text-tertiary) !important;
+        font-weight: 400;
+        text-shadow: none;
+    }
 }
 
 [data-theme="dark"] .tutorial-icon {
@@ -3176,14 +3190,29 @@ pre code {
     margin-top: 0;
 }
 
-#content .container.post-content h2,
-.container.post-content h2 {
+#content .container.post-content #post-body h2,
+.container.post-content #post-body h2 {
     font-size: 1.375rem;
     font-weight: 600;
     color: var(--color-text-primary);
-    margin-top: var(--spacing-3xl);
-    margin-bottom: var(--spacing-md);
-    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+    padding-top: 0;
+}
+
+#content .container.post-content #post-body h2:first-child,
+.container.post-content #post-body h2:first-child {
+    margin-top: 0;
+}
+
+#content .container.post-content #post-body h3,
+.container.post-content #post-body h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+    padding-top: 0;
 }
 
 #content .container.post-content #post-body p,
@@ -3744,7 +3773,8 @@ pre code {
     transition: all var(--transition-fast);
 }
 
-.mobile-lang-btn.active {
+.mobile-lang-btn.active,
+.mobile-lang-btn[aria-pressed="true"] {
     background-color: var(--color-accent);
     color: white;
 }
@@ -4303,13 +4333,24 @@ pre code {
     background: none;
 }
 
-#language-switcher .nav-lang-pill .nav-lang-btn.active,
-#language-switcher .nav-lang-pill .nav-lang-btn[aria-pressed="true"],
-#language-switcher-medium .nav-lang-btn.active,
-#language-switcher-medium .nav-lang-btn[aria-pressed="true"] {
-    background: none;
-    border: none;
-    color: var(--color-accent);
+@media (min-width: 769px) {
+    #language-switcher .nav-lang-pill .nav-lang-btn.active,
+    #language-switcher .nav-lang-pill .nav-lang-btn[aria-pressed="true"],
+    #language-switcher-medium .nav-lang-btn.active,
+    #language-switcher-medium .nav-lang-btn[aria-pressed="true"] {
+        background: none !important;
+        border: none !important;
+        color: var(--color-text-primary);
+        font-weight: 700;
+    }
+
+    #language-switcher .nav-lang-pill .nav-lang-btn[aria-pressed="false"],
+    #language-switcher-medium .nav-lang-btn[aria-pressed="false"] {
+        background: none !important;
+        border: none !important;
+        color: var(--color-text-tertiary);
+        font-weight: 400;
+    }
 }
 
 /* Ensure navbar items don't cause layout shifts */
@@ -4996,6 +5037,29 @@ pre code {
     margin: var(--spacing-lg) 0;
 }
 
+/* Undo global FAQ/docs single-line pre code metrics inside tutorials */
+.lesson-body pre,
+.lesson-content pre {
+    line-height: 1.5 !important;
+    margin-top: var(--spacing-md) !important;
+    margin-bottom: var(--spacing-md) !important;
+    padding-left: var(--spacing-md) !important;
+    overflow-x: auto;
+    overflow-y: visible;
+    max-height: none;
+}
+
+.lesson-body pre code,
+.lesson-content pre code {
+    display: block !important;
+    max-height: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    line-height: 1.5 !important;
+    white-space: pre-wrap;
+    overflow: visible;
+}
+
 .lesson-list {
     list-style: none;
     padding-left: 0;
@@ -5270,10 +5334,33 @@ pre code {
     cursor: pointer;
 }
 
-.site-footer .footer-lang-pill .nav-lang-btn:hover,
-.site-footer .footer-lang-pill .nav-lang-btn.active {
+.site-footer .footer-lang-pill .nav-lang-btn:hover {
     background-color: var(--color-bg-tertiary);
     color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+    .site-footer .footer-lang-pill .nav-lang-btn.active,
+    .site-footer .footer-lang-pill .nav-lang-btn[aria-pressed="true"] {
+        background-color: var(--color-bg-tertiary);
+        color: var(--color-text-primary);
+        font-weight: 500;
+    }
+}
+
+@media (min-width: 769px) {
+    .site-footer .footer-lang-pill .nav-lang-btn.active,
+    .site-footer .footer-lang-pill .nav-lang-btn[aria-pressed="true"] {
+        background-color: transparent !important;
+        border-color: var(--color-border);
+        color: var(--color-text-primary);
+        font-weight: 700;
+    }
+
+    .site-footer .footer-lang-pill .nav-lang-btn[aria-pressed="false"]:not(.active) {
+        color: var(--color-text-tertiary);
+        font-weight: 400;
+    }
 }
 
 .site-footer .footer-lang-pill .nav-lang-btn:focus-visible {
