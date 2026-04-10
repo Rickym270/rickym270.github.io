@@ -1016,6 +1016,12 @@ test.describe('Translation feature', () => {
     
     const viewChallenges = page.locator('#content a[data-translate="tutorials.viewChallenges"]');
     await expect(viewChallenges).toHaveText('Ver Desafíos →');
+
+    const aiTutorial = page.locator('#content h3[data-translate="tutorials.aiTutorial"]');
+    await expect(aiTutorial).toHaveText('IA para automatización en ingeniería');
+
+    const viewGuide = page.locator('#content a[data-translate="tutorials.viewGuide"]');
+    await expect(viewGuide).toHaveText('Leer guía →');
   });
 
 

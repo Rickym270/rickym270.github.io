@@ -4983,6 +4983,19 @@ pre code {
     margin-bottom: var(--spacing-sm);
 }
 
+.lesson-body .table {
+    font-size: 0.9375rem;
+}
+
+.lesson-body .table th,
+.lesson-body .table td {
+    vertical-align: top;
+}
+
+.lesson-body .mermaid {
+    margin: var(--spacing-lg) 0;
+}
+
 .lesson-list {
     list-style: none;
     padding-left: 0;
