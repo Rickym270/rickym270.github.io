@@ -1,5 +1,12 @@
 [
   {
+    "id": "operating-under-constraint-job-search-with-ms",
+    "title": "Operating Under Constraint: Job Search With MS",
+    "description": "Job search with multiple sclerosis: cognitive load, interview prep, using AI as a devil’s advocate, and framing automation as feedback systems—not memorization.",
+    "url": "html/pages/engineering/operating-under-constraint-job-search-with-ms.html",
+    "tags": ["automation", "accessibility"]
+  },
+  {
     "id": "accessibility-is-not-just-a-feature",
     "title": "Accessibility Is Not Just a Feature",
     "description": "Why treating accessibility as infrastructure, not an afterthought, leads to more resilient systems—and better engineering for everyone.",
