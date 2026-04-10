@@ -11,7 +11,6 @@
       "Spring Boot"
     ],
     "featured": true,
-    "private": true,
     "hasRecentActivity": false,
     "status": "complete"
   },
@@ -95,7 +94,6 @@
       "Python"
     ],
     "featured": false,
-    "private": true,
     "hasRecentActivity": false,
     "status": "complete"
   },
@@ -292,7 +290,6 @@
       "Machine Learning"
     ],
     "featured": false,
-    "private": true,
     "hasRecentActivity": false,
     "status": "complete"
   },
