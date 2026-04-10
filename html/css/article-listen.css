@@ -38,11 +38,32 @@
 .article-listen-toggle {
     flex-shrink: 0;
     font-weight: 600;
+    /* Bootstrap’s bare `.btn` keeps dark text (#212529); bar uses `--color-bg-secondary` (#111 in dark) → invisible label. */
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+}
+
+.article-listen-toggle:hover,
+.article-listen-toggle:focus {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-accent);
+}
+
+.article-listen-toggle .article-listen-toggle-label {
+    color: inherit;
 }
 
 .article-listen-stop {
     font-size: 0.875rem;
     padding: 0.25rem 0.5rem;
+    color: var(--color-text-secondary) !important;
+}
+
+.article-listen-stop:hover,
+.article-listen-stop:focus {
+    color: var(--color-text-primary) !important;
 }
 
 .article-listen-bar--unsupported {

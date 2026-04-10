@@ -66,6 +66,35 @@ test.describe('[regression] Article listen', () => {
     await expect(page.getByTestId('article-listen').getByRole('button', { name: /Listen/i })).toBeVisible();
   });
 
+  test('listen toggle text is visible in dark mode (contrast)', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('portfolio-theme', 'dark');
+    });
+    await gotoHomeReady(page);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await openEngineeringListing(page);
+    await page.locator('a.inline-load[data-url*="how-living-with-ms"]').first().click();
+    await page.waitForFunction(
+      () => document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true',
+      { timeout: 15_000 }
+    );
+    await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
+
+    const toggleRgb = await page.evaluate(() => {
+      const btn = document.querySelector('.article-listen-toggle');
+      if (!btn) return null;
+      return getComputedStyle(btn).color;
+    });
+    expect(toggleRgb).toBeTruthy();
+    const m = toggleRgb!.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    expect(m, `expected rgb color, got ${toggleRgb}`).toBeTruthy();
+    const r = parseInt(m![1], 10);
+    const g = parseInt(m![2], 10);
+    const b = parseInt(m![3], 10);
+    const luminance = r * 0.299 + g * 0.587 + b * 0.114;
+    expect(luminance, `toggle text too dark on dark bar: ${toggleRgb}`).toBeGreaterThan(160);
+  });
+
   test('listen utterance excludes Mermaid source on AI tutorial (SPA)', async ({ page }) => {
     await page.addInitScript(() => {
       const synth = window.speechSynthesis;
