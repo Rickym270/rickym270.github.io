@@ -538,8 +538,10 @@ test.describe('Translation feature', () => {
     }, { timeout: 15000 });
     await page.waitForTimeout(500);
 
-    // Click the Featured "Read Article" link (single element; card link would also work)
-    const postLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
+    // Open accessibility post from its card (featured highlights newest post)
+    const postLink = page.locator(
+      '#content .blog-card a[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]'
+    ).first();
     await expect(postLink).toBeVisible({ timeout: 5000 });
     await postLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
@@ -660,7 +662,10 @@ test.describe('Translation feature', () => {
       (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
       { timeout: 15000 }
     );
-    await page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]').click();
+    await page
+      .locator('#content .blog-card a[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]')
+      .first()
+      .click();
     await responsePromise;
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');

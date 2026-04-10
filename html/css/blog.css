@@ -9,7 +9,7 @@
 .blog-featured {
     position: relative;
     background: var(--color-bg-secondary);
-    background-image: url("/html/imgs/blog-accessibility-banner.jpg");
+    background-image: url("/html/imgs/blog-operating-under-constraint-job-search-ms-banner.png?v=2");
     background-size: cover;
     background-position: center;
     border: 1px solid var(--color-border);
@@ -143,9 +143,53 @@
     color: var(--color-text-tertiary);
 }
 
+.blog-featured-placeholder {
+    background-image: none;
+}
+
 .blog-featured-placeholder .blog-featured-title,
 .blog-featured-placeholder .blog-featured-description {
     color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   Engineering article: back to listing
+   ============================================ */
+#content .container.article-content.post-content {
+    border-top: none;
+}
+
+.post-back-nav {
+    margin-bottom: var(--spacing-md);
+}
+
+#content .container.post-content .post-back-link,
+.container.post-content .post-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-bg-primary);
+    transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+}
+
+#content .container.post-content .post-back-link:hover,
+.container.post-content .post-back-link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    text-decoration: none;
+}
+
+#content .container.post-content .post-back-link:focus-visible,
+.container.post-content .post-back-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
 }
 
 /* ============================================
