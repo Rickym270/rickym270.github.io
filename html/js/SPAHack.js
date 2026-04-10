@@ -301,6 +301,9 @@ $(document).ready(function(){
                                         window.initBlogCategoryPills();
                                     }
                                 }
+                                if (sectionUrl.includes('engineering.html') && typeof window.syncEngineeringFeaturedFromNewestCard === 'function') {
+                                    window.syncEngineeringFeaturedFromNewestCard();
+                                }
                             }, 50);
                         }
                         // Update active nav item

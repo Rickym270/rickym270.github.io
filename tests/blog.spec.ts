@@ -134,7 +134,7 @@ test.describe('Blog Pages', () => {
 
     // Featured Post
     await expect(content.locator('.blog-featured')).toBeVisible();
-    await expect(content.locator('.blog-featured')).toContainText('Accessibility Is Not Just a Feature');
+    await expect(content.locator('.blog-featured')).toContainText('Operating Under Constraint: Job Search With MS');
     await expect(content.getByRole('link', { name: 'Read Article' })).toBeVisible();
 
     // Latest Insights: search bar (replaces pills)
@@ -417,11 +417,15 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
+    const readArticleLink = page.locator('#content .blog-featured-cta').first();
+    await expect(readArticleLink).toHaveAttribute(
+      'data-url',
+      'html/pages/engineering/operating-under-constraint-job-search-with-ms.html'
+    );
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
+      (res) => res.url().includes('operating-under-constraint-job-search-with-ms.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await readArticleLink.click();
@@ -433,7 +437,7 @@ test.describe('Blog Pages', () => {
     }, { timeout: 10000 });
 
     await expect(page.locator('#content #post-body')).toBeVisible();
-    await expect(page.locator('#content')).toContainText('Accessibility Is Not Just a Feature');
+    await expect(page.locator('#content')).toContainText('Operating Under Constraint');
   });
 
   test('Post detail page shows banner, hero, and article body', async ({ page }) => {
@@ -470,11 +474,15 @@ test.describe('Blog Pages', () => {
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured-cta');
     }, { timeout: 15000 });
 
-    const readArticleLink = page.locator('#content .blog-featured-cta[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]');
+    const readArticleLink = page.locator('#content .blog-featured-cta').first();
+    await expect(readArticleLink).toHaveAttribute(
+      'data-url',
+      'html/pages/engineering/operating-under-constraint-job-search-with-ms.html'
+    );
     await expect(readArticleLink).toBeVisible({ timeout: 5000 });
     await readArticleLink.scrollIntoViewIfNeeded();
     const responsePromise = page.waitForResponse(
-      (res) => res.url().includes('accessibility-is-not-just-a-feature.html') && res.status() === 200,
+      (res) => res.url().includes('operating-under-constraint-job-search-with-ms.html') && res.status() === 200,
       { timeout: 15000 }
     );
     await readArticleLink.click();
@@ -490,10 +498,10 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.post-banner')).toBeVisible();
     await expect(content.locator('.post-banner-img')).toBeVisible();
     await expect(content.locator('.post-hero')).toBeVisible();
-    await expect(content.locator('.post-hero')).toContainText('Accessibility Is Not Just a Feature');
+    await expect(content.locator('.post-hero')).toContainText('Operating Under Constraint');
     await expect(content.locator('.post-meta')).toBeVisible();
     await expect(content.locator('#post-body')).toBeVisible();
-    await expect(content.locator('#post-body blockquote').first()).toBeVisible();
+    await expect(content.locator('#post-body h2').first()).toBeVisible();
   });
 
   test('Read Article button has visible text in dark mode', async ({ page }, testInfo) => {
