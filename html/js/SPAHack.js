@@ -246,6 +246,11 @@ $(document).ready(function(){
                             // Re-setup click handlers for newly loaded content
                             setupClickHandlers();
                             window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                            if (typeof window.initMermaidInContent === 'function' && document.getElementById('content') && document.getElementById('content').querySelector('.mermaid')) {
+                                window.requestAnimationFrame(function () {
+                                    window.initMermaidInContent(document.getElementById('content'));
+                                });
+                            }
                         } else {
                             console.error("Failed to load content from " + sectionUrl);
                         }
