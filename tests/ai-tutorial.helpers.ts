@@ -56,9 +56,16 @@ export async function openAiTutorialFromTutorialsCard(page: Page): Promise<void>
 export async function switchSiteLanguage(page: Page, lang: 'en' | 'es'): Promise<void> {
   const isMobile = await page.evaluate(() => window.innerWidth <= 768);
   if (isMobile) {
-    await page.locator('#mobile-menu-toggle').click();
-    await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
-    await page.locator(`#mobile-language-switcher button[data-lang="${lang}"]`).click();
+    const sidebarAlreadyOpen = (await page.locator('#mobile-sidebar.active').count()) > 0;
+    // When the drawer is already open (e.g. after SPA nav used the menu), the hamburger sits
+    // under the sidebar; clicking it hits .mobile-sidebar-header and times out (CI chromium-iphone).
+    if (!sidebarAlreadyOpen) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
+    }
+    const langBtn = page.locator(`#mobile-language-switcher button[data-lang="${lang}"]`);
+    await langBtn.waitFor({ state: 'visible', timeout: 10_000 });
+    await langBtn.click();
   } else {
     await page
       .locator(
