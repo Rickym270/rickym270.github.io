@@ -143,10 +143,11 @@ test.describe('Blog Pages', () => {
     await expect(content.locator('.blog-search-wrap')).toBeVisible();
     await expect(content.locator('.blog-search-input')).toBeVisible();
 
-    // Cards: three real cards (newest → oldest)
+    // Cards: four real cards (newest → oldest)
     const realCards = content.locator('.blog-card:not(.placeholder)');
-    await expect(realCards).toHaveCount(3);
-    await expect(realCards.first()).toContainText('Building Tools for the Version of You That’s Running Low');
+    await expect(realCards).toHaveCount(4);
+    await expect(realCards.first()).toContainText('Operating Under Constraint: Job Search With MS');
+    await expect(content.locator('.blog-card a[data-url="html/pages/engineering/operating-under-constraint-job-search-with-ms.html"]').first()).toBeVisible();
     await expect(content.locator('.blog-card a[data-url="html/pages/engineering/building-tools-for-the-version-of-you-thats-running-low.html"]').first()).toBeVisible();
     await expect(content.locator('.blog-card a[data-url="html/pages/engineering/accessibility-is-not-just-a-feature.html"]').first()).toBeVisible();
     await expect(content.locator('.blog-card a[data-url="html/pages/engineering/how-living-with-ms-changed-the-way-i-engineer-software.html"]').first()).toBeVisible();

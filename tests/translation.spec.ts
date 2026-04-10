@@ -566,6 +566,68 @@ test.describe('Translation feature', () => {
     await expect(firstParagraph).toContainText('accesibilidad');
   });
 
+  test('Engineering post3 (job search MS) is translated when language is Spanish', async ({ page }) => {
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('#mobile-language-switcher button[data-lang="es"]').click();
+      await page.waitForTimeout(300);
+    } else {
+      await page.locator('#language-switcher button[data-lang="es"]').click();
+      await page.waitForTimeout(500);
+    }
+
+    if (isMobile) {
+      await page.evaluate(() => {
+        const panel = document.getElementById('mobile-nav-panel-blog');
+        if (panel) {
+          panel.classList.add('mobile-nav-group-panel-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+      await page.locator('#mobile-nav-panel-blog a[data-url="html/pages/engineering.html"]').click();
+    } else {
+      const blogButton = page.locator('#navbar-links').getByRole('button', { name: 'Blog' }).or(
+        page.locator('#navbar-links').getByRole('link', { name: 'Blog' })
+      );
+      await blogButton.hover();
+      await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
+    }
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
+    }, { timeout: 15000 });
+    await page.waitForTimeout(500);
+
+    const postLink = page.locator(
+      '#content .blog-card a[data-url="html/pages/engineering/operating-under-constraint-job-search-with-ms.html"]'
+    ).first();
+    await expect(postLink).toBeVisible({ timeout: 5000 });
+    await postLink.scrollIntoViewIfNeeded();
+    const responsePromise = page.waitForResponse(
+      (res) => res.url().includes('operating-under-constraint-job-search-with-ms.html') && res.status() === 200,
+      { timeout: 20000 }
+    );
+    await postLink.click();
+    await responsePromise;
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return !!c?.querySelector('#post-body') || !!c?.querySelector('.post-title');
+    }, { timeout: 10000 });
+    await page.waitForTimeout(500);
+
+    const postTitle = page.locator('#content .post-title[data-translate="engineering.post3.title"]');
+    await expect(postTitle).toBeVisible({ timeout: 5000 });
+    await expect(postTitle).toContainText('Operar bajo restricción');
+
+    const firstParagraph = page.locator('#content #post-body p[data-translate="engineering.post3.p1"]');
+    await expect(firstParagraph).toBeVisible({ timeout: 5000 });
+    await expect(firstParagraph).toContainText('reestructuración');
+  });
+
   test('Engineering post updates when language is switched after loading post', async ({ page }) => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
 
