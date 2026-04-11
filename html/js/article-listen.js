@@ -289,6 +289,16 @@
         mountBar(ctx);
     }
 
+    /**
+     * Call after SPA replaces #content (SPAHack .load / .html). Ensures speech stops and the listen
+     * bar rebinds even if MutationObserver misses the swap or races with jQuery.
+     */
+    function afterSpaContentReplaced() {
+        cancelSpeech();
+        lastMountedListenBody = null;
+        scanAndMount();
+    }
+
     function scheduleScan() {
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(function () {
@@ -331,5 +341,6 @@
         extractSpeakableText: extractSpeakableText,
         scanAndMount: scanAndMount,
         findListenContext: findListenContext,
+        afterSpaContentReplaced: afterSpaContentReplaced,
     };
 })();
