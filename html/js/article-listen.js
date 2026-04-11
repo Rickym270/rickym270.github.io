@@ -188,21 +188,25 @@
             var ut = new SpeechSynthesisUtterance(text);
             ut.lang = getSpeakLang() === 'es' ? 'es-ES' : 'en-US';
             ut.rate = 1;
+            // Headless / CI engines may invoke onend or onerror synchronously inside speak(),
+            // which would reset the UI before the click task finishes (tests never see "Pause").
+            function scheduleUtteranceFinished(utRef) {
+                window.setTimeout(function () {
+                    if (activeUtterance !== utRef) return;
+                    activeState = 'idle';
+                    activeUtterance = null;
+                    toggleBtn.setAttribute('aria-pressed', 'false');
+                    if (stopBtn) stopBtn.hidden = true;
+                    refreshToggleLabel();
+                    setStatus('');
+                }, 0);
+            }
+
             ut.onend = function () {
-                activeState = 'idle';
-                activeUtterance = null;
-                toggleBtn.setAttribute('aria-pressed', 'false');
-                if (stopBtn) stopBtn.hidden = true;
-                refreshToggleLabel();
-                setStatus('');
+                scheduleUtteranceFinished(ut);
             };
             ut.onerror = function () {
-                activeState = 'idle';
-                activeUtterance = null;
-                toggleBtn.setAttribute('aria-pressed', 'false');
-                if (stopBtn) stopBtn.hidden = true;
-                refreshToggleLabel();
-                setStatus('');
+                scheduleUtteranceFinished(ut);
             };
             activeUtterance = ut;
             activeState = 'playing';
