@@ -42,6 +42,8 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **Visual Regression Tests** (`tests/visual-regression.spec.ts`) - Screenshot comparison
 - **Footer Tests** (`tests/footer.spec.ts`) - Footer visibility, identity, theme/language/reduced-motion/reset, quick links, Back to top
 - **Mobile Sidebar Tests** (`tests/mobile-sidebar.spec.ts`) - Mobile hamburger menu, nav items, Docs/Blog panels, accessibility controls (theme, language, reduce motion, reset preferences)
+- **Article listen Tests** (`tests/article-listen.spec.ts`) - Listen control on SPA blog post, dark-mode toggle contrast, mobile hint, pause state, `extractSpeakableText` API, Mermaid/code excluded from utterance (mocked speech)
+- **Mermaid Tests** (`tests/mermaid.spec.ts`) - Diagrams render via SPA and full-page load, three SVGs on AI tutorial, language switch stability, sequence diagram text
 
 ### Individual Test Documentation
 - **[Contact API Tests](testing/contact.md)** - Testing the contact form API endpoint
@@ -57,6 +59,8 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 
 - **[Repository Analysis](REPO_ANALYSIS.md)** - Comprehensive analysis of repository structure, test coverage, and workflows
 - **[Accessibility](ACCESSIBILITY.md)** - Skip link, main landmark, focus visibility, and a11y test coverage
+- **[Article listen (read aloud)](ARTICLE_LISTEN.md)** - Web Speech “listen” feature for blog posts and tutorials: UX, spoken vs skipped content, i18n, SPA behavior, and tests
+- **[Mermaid diagrams (SPA)](MERMAID.md)** - Lazy-loaded Mermaid, theme and i18n re-render, SPA hooks, relation to read-aloud exclusions, and Playwright coverage
 
 ## Contributing
 
@@ -79,6 +83,8 @@ docs/
 ├── EMAIL_SETUP.md               # Email/SMTP configuration
 ├── TURNSTILE_SETUP.md           # Turnstile CAPTCHA setup
 ├── REPO_ANALYSIS.md             # Repository analysis
+├── ARTICLE_LISTEN.md            # Read-aloud (Web Speech) feature for posts & tutorials
+├── MERMAID.md                   # Mermaid in SPA: init, i18n, tests, troubleshooting
 ├── testing/                     # Individual test documentation
 │   ├── contact.md
 │   ├── health.md

@@ -121,4 +121,50 @@ test.describe('[regression] Article listen', () => {
     expect(spoken.length).toBeGreaterThan(200);
     expect(spoken).toMatch(/AI|automation|model/i);
   });
+
+  test('mobile viewport shows hint text beside listen control', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await gotoHomeReady(page);
+    await openEngineeringListing(page);
+    await page.locator('a.inline-load[data-url*="how-living-with-ms"]').first().click();
+    await page.waitForFunction(
+      () => document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true',
+      { timeout: 15_000 }
+    );
+    await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('.article-listen-mobile-hint')).toBeVisible();
+    await expect(page.locator('.article-listen-mobile-hint')).toHaveText(/Play to read out loud/i);
+  });
+
+  test('Listen click switches toggle accessible name to Pause (playing state)', async ({ page }) => {
+    await gotoHomeReady(page);
+    await openTutorialsPageFromNav(page);
+    await openAiTutorialFromTutorialsCard(page);
+    await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
+    await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
+    await expect(page.getByTestId('article-listen').getByRole('button', { name: /Pause/i })).toBeVisible({
+      timeout: 5000,
+    });
+  });
+
+  test('ArticleListen.extractSpeakableText strips Mermaid pre source from lesson body', async ({
+    page,
+  }) => {
+    await gotoHomeReady(page);
+    await openTutorialsPageFromNav(page);
+    await openAiTutorialFromTutorialsCard(page);
+    await expect(page.locator('[data-testid="ai-tutorial-guide"]')).toBeVisible({ timeout: 15_000 });
+
+    const extracted = await page.evaluate(() => {
+      const w = window as typeof window & {
+        ArticleListen?: { extractSpeakableText: (el: Element | null) => string };
+      };
+      const body = document.querySelector('.lesson-body');
+      return w.ArticleListen?.extractSpeakableText(body || null) || '';
+    });
+
+    expect(extracted.length).toBeGreaterThan(200);
+    expect(extracted).not.toMatch(/flowchart|sequenceDiagram|subgraph|participant\s/i);
+    expect(extracted).toMatch(/AI|automation|model/i);
+  });
 });
