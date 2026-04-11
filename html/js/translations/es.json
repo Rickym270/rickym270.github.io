@@ -513,6 +513,17 @@
     "tagResilience": "RESILIENCIA",
     "tagAutomation": "AUTOMATIZACIÓN"
   },
+  "articleListen": {
+    "label": "Escuchar este artículo",
+    "mobileHint": "Reproducir para leer en voz alta",
+    "listen": "Escuchar",
+    "pause": "Pausa",
+    "resume": "Reanudar",
+    "stop": "Detener",
+    "playing": "Reproduciendo",
+    "paused": "En pausa",
+    "unsupported": "La lectura en voz alta no está disponible en este navegador."
+  },
   "lessons": {
     "pythonTutorial": {
       "title": "Tutorial de Python",

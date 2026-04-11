@@ -1,0 +1,172 @@
+/**
+ * Listen-to-article toolbar (blog posts + tutorials)
+ */
+.article-listen-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm, 0.75rem);
+    padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.25rem);
+    margin-bottom: var(--spacing-xl, 1.5rem);
+    border: 1px solid var(--color-border, #dee2e6);
+    border-radius: var(--radius-md, 0.375rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+}
+
+.article-listen-inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm, 0.75rem);
+    width: 100%;
+}
+
+.article-listen-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent, #007bff);
+    flex-shrink: 0;
+}
+
+.article-listen-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #212529);
+    flex: 1 1 auto;
+    min-width: 8rem;
+}
+
+.article-listen-toggle {
+    flex-shrink: 0;
+    font-weight: 600;
+    /* Bootstrap’s bare `.btn` keeps dark text (#212529); bar uses `--color-bg-secondary` (#111 in dark) → invisible label. */
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+}
+
+.article-listen-toggle:hover,
+.article-listen-toggle:focus {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-accent);
+}
+
+.article-listen-toggle .article-listen-toggle-label {
+    color: inherit;
+}
+
+.article-listen-stop {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-text-secondary) !important;
+}
+
+.article-listen-stop:hover,
+.article-listen-stop:focus {
+    color: var(--color-text-primary) !important;
+}
+
+.article-listen-bar--unsupported {
+    background: var(--color-bg-tertiary, #e9ecef);
+}
+
+.article-listen-unsupported {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #6c757d);
+}
+
+/* Desktop: text toggle only (NYT-style full bar). Icon pair exists for mobile but stays hidden. */
+.article-listen-toggle-icons {
+    display: none;
+}
+
+/* Shown only in mobile breakpoint; keeps desktop bar unchanged. */
+.article-listen-mobile-hint {
+    display: none;
+}
+
+/* Mobile only: compact circular play / pause like NYT app — desktop rules above unchanged. */
+@media (max-width: 768px) {
+    /* Shrink to the control only — no full-width strip or right-aligned “floating” button. */
+    .article-listen-bar {
+        display: inline-flex;
+        width: fit-content;
+        max-width: 100%;
+        padding: 0;
+        margin-bottom: var(--spacing-sm, 0.5rem);
+        border: none;
+        background: transparent;
+    }
+
+    .article-listen-inner {
+        width: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .article-listen-mobile-hint {
+        display: inline;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--color-text-primary);
+        line-height: 1.25;
+        max-width: 12rem;
+    }
+
+    .article-listen-icon,
+    .article-listen-label {
+        display: none !important;
+    }
+
+    .article-listen-stop {
+        display: none !important;
+    }
+
+    .article-listen-toggle-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .article-listen-toggle-icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .article-listen-icon-pause {
+        display: none;
+    }
+
+    .article-listen-toggle.article-listen-toggle--playing .article-listen-icon-play {
+        display: none;
+    }
+
+    .article-listen-toggle.article-listen-toggle--playing .article-listen-icon-pause {
+        display: block;
+    }
+
+    .article-listen-toggle {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .article-listen-toggle .article-listen-toggle-icons .material-symbols-outlined {
+        font-size: 1.75rem;
+    }
+}

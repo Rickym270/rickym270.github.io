@@ -18,6 +18,8 @@ The tutorials page has been redesigned with a modern card-based layout. Python t
   - `lesson-2-hello-world.html` - First Python program
   - `lesson-3-conditionals.html` - If/else statements
   - `lesson-4-loops.html` - For and while loops
+- **Listen (read aloud)**: SPA-loaded tutorials that use `.lesson-content` / `.lesson-body` can show the same Web Speech toolbar as blog posts when there is enough speakable text. See **[Article listen](../ARTICLE_LISTEN.md)** and `tests/article-listen.spec.ts` (AI tutorial scenario).
+- **Mermaid**: The AI engineering tutorial includes `<pre class="mermaid">` blocks rendered as SVG in the SPA. See **[Mermaid diagrams](../MERMAID.md)**, `tests/mermaid.spec.ts`, and `tests/tutorial-rendering.spec.ts`.
 
 ## Navigation Features
 - Each lesson page has a back button at the top linking to table of contents
