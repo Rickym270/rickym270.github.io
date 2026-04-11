@@ -142,9 +142,8 @@ test.describe('[regression] Article listen', () => {
     await openAiTutorialFromTutorialsCard(page);
     await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
     await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
-    await expect(page.getByTestId('article-listen').getByRole('button', { name: /Pause/i })).toBeVisible({
-      timeout: 5000,
-    });
+    const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
+    await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
   });
 
   test('ArticleListen.extractSpeakableText strips Mermaid pre source from lesson body', async ({

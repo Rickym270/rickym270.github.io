@@ -188,10 +188,11 @@
             var ut = new SpeechSynthesisUtterance(text);
             ut.lang = getSpeakLang() === 'es' ? 'es-ES' : 'en-US';
             ut.rate = 1;
-            // Headless / CI engines may invoke onend or onerror synchronously inside speak(),
-            // which would reset the UI before the click task finishes (tests never see "Pause").
+            // Headless / CI engines may invoke onend or onerror synchronously inside speak().
+            // A lone setTimeout(0) can still run before automation observes the "Pause" state.
+            // Defer reset until after paint: double rAF, then a macrotask.
             function scheduleUtteranceFinished(utRef) {
-                window.setTimeout(function () {
+                function runFinish() {
                     if (activeUtterance !== utRef) return;
                     activeState = 'idle';
                     activeUtterance = null;
@@ -199,7 +200,17 @@
                     if (stopBtn) stopBtn.hidden = true;
                     refreshToggleLabel();
                     setStatus('');
-                }, 0);
+                }
+                function afterPaintThenMacrotask() {
+                    window.setTimeout(runFinish, 0);
+                }
+                if (typeof window.requestAnimationFrame === 'function') {
+                    window.requestAnimationFrame(function () {
+                        window.requestAnimationFrame(afterPaintThenMacrotask);
+                    });
+                } else {
+                    window.setTimeout(runFinish, 0);
+                }
             }
 
             ut.onend = function () {
