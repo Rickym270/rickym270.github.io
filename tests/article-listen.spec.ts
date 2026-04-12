@@ -3,6 +3,7 @@ import {
   gotoHomeReady,
   openAiTutorialFromTutorialsCard,
   openTutorialsPageFromNav,
+  waitAiTutorialMermaidDiagramsStable,
 } from './ai-tutorial.helpers';
 
 /** Counts `speechSynthesis.cancel()` for SPA speech-reset assertions. */
@@ -23,7 +24,7 @@ async function getListenCancelCount(page: Page): Promise<number> {
   return page.evaluate(() => (window as unknown as { __listenCancelCount?: number }).__listenCancelCount || 0);
 }
 
-/** Firefox on GitHub Actions often never leaves idle (aria-label stays Listen); Chromium covers this path. */
+/** Firefox on GitHub Actions often never reaches playing (Web Speech stays idle); Chromium covers this path. */
 function skipWebSpeechPlayingAssertionsInFirefoxCi(page: Page): void {
   const name = page.context().browser()?.browserType().name() || '';
   test.skip(
@@ -136,6 +137,7 @@ test.describe('[regression] Article listen', () => {
     await gotoHomeReady(page);
     await openTutorialsPageFromNav(page);
     await openAiTutorialFromTutorialsCard(page);
+    await waitAiTutorialMermaidDiagramsStable(page);
 
     await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
     await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
@@ -168,10 +170,11 @@ test.describe('[regression] Article listen', () => {
     await gotoHomeReady(page);
     await openTutorialsPageFromNav(page);
     await openAiTutorialFromTutorialsCard(page);
+    await waitAiTutorialMermaidDiagramsStable(page);
     await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
     await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
     const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
-    await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
+    await expect.poll(async () => toggle.getAttribute('aria-pressed'), { timeout: 20_000 }).toBe('true');
   });
 
   test('SPA navigation away from blog post calls speech cancel while Listen is playing', async ({ page }) => {
@@ -187,7 +190,7 @@ test.describe('[regression] Article listen', () => {
     await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
     await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
     const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
-    await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
+    await expect.poll(async () => toggle.getAttribute('aria-pressed'), { timeout: 20_000 }).toBe('true');
     const cancelsAfterPlaying = await getListenCancelCount(page);
     await page.locator('a.inline-load.post-back-link').first().click();
     await page.waitForFunction(
@@ -205,10 +208,11 @@ test.describe('[regression] Article listen', () => {
     await gotoHomeReady(page);
     await openTutorialsPageFromNav(page);
     await openAiTutorialFromTutorialsCard(page);
+    await waitAiTutorialMermaidDiagramsStable(page);
     await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
     await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
     const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
-    await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
+    await expect.poll(async () => toggle.getAttribute('aria-pressed'), { timeout: 20_000 }).toBe('true');
     const cancelsAfterPlaying = await getListenCancelCount(page);
     await page.locator('a.lesson-back-button.inline-load').click();
     await page.waitForFunction(
