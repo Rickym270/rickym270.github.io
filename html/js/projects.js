@@ -76,40 +76,6 @@ var PROJECTS_STATIC_FALLBACK_URL = '/data/web_data/projects.json';
 // localStorage key for projects cache (must match api.js)
 var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
 
-/**
- * Normalize project for comparison (slug, name, summary/description)
- * @param {Object} p - Project object
- * @returns {Object} - Normalized fingerprint
- */
-function projectFingerprint(p) {
-    return {
-        slug: (p.slug || p.name || '').toString().toLowerCase(),
-        name: (p.name || '').toString(),
-        summary: (p.summary || p.description || '').toString()
-    };
-}
-
-/**
- * Compare two project arrays for equality (order-independent by slug, same slugs with same name/summary)
- * @param {Array} a - First list
- * @param {Array} b - Second list
- * @returns {boolean} - True if data is equivalent
- */
-function projectsDataEqual(a, b) {
-    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-    var mapA = {};
-    a.forEach(function(p) {
-        var fp = projectFingerprint(p);
-        mapA[fp.slug] = fp;
-    });
-    for (var i = 0; i < b.length; i++) {
-        var fp = projectFingerprint(b[i]);
-        var fromA = mapA[fp.slug];
-        if (!fromA || fromA.name !== fp.name || fromA.summary !== fp.summary) return false;
-    }
-    return true;
-}
-
 // Fetch projects function - works standalone or with api.js
 async function fetchProjectsFromAPI() {
     if (typeof fetchProjects !== 'undefined') {
@@ -123,6 +89,10 @@ async function fetchProjectsFromAPI() {
         if (!response.ok) {
             throw new Error('HTTP error! status: ' + response.status);
         }
+        if (typeof window !== 'undefined') {
+            window.projectsFallbackUsed = false;
+            window.projectsCacheFromApi = true;
+        }
         return await response.json();
     } catch (error) {
         try {
@@ -130,7 +100,10 @@ async function fetchProjectsFromAPI() {
             if (fallbackResponse.ok) {
                 var data = await fallbackResponse.json();
                 if (data && Array.isArray(data)) {
-                    if (typeof window !== 'undefined') window.projectsFallbackUsed = true;
+                    if (typeof window !== 'undefined') {
+                        window.projectsFallbackUsed = true;
+                        window.projectsCacheFromApi = false;
+                    }
                     return data;
                 }
             }
@@ -447,8 +420,21 @@ function deduplicateProjects(projects) {
 if (typeof projectsInitialized === 'undefined') {
     var projectsInitialized = false;
 }
-// Make it accessible globally for SPA navigation
-window.projectsInitialized = false;
+// Make it accessible globally for SPA navigation (do not reset on every script re-exec via SPA .load)
+if (typeof window.projectsInitialized === 'undefined') {
+    window.projectsInitialized = false;
+}
+
+/**
+ * Remove any existing "cached projects" banner(s). SPA may run init more than once; notes must not stack.
+ */
+function removeProjectFallbackNotesFromContent() {
+    var c = document.getElementById('content');
+    if (!c) return;
+    c.querySelectorAll('p[data-translate="projects.fallbackNote"]').forEach(function (el) {
+        el.remove();
+    });
+}
 // Provide a safe reset API so SPA can re-initialize when navigating back
 window.resetProjectsInit = function resetProjectsInit() {
     projectsInitialized = false;
@@ -456,32 +442,8 @@ window.resetProjectsInit = function resetProjectsInit() {
 };
 
 /**
- * Run background API fetch and, if response differs from current data, silently update UI and cache.
- * Call after rendering from cache. No-op if cache-first APIs are not available.
- */
-function startProjectsBackgroundRefresh(classification, displayedProjects) {
-    if (typeof window.fetchProjectsFromAPIBackground !== 'function') return;
-    window.fetchProjectsFromAPIBackground()
-        .then(function(apiData) {
-            if (!Array.isArray(apiData) || projectsDataEqual(displayedProjects, apiData)) return;
-            window.projectsCache = apiData;
-            window.projectsFallbackUsed = false;
-            try {
-                localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: apiData, at: Date.now() }));
-            } catch (e) { /* ignore */ }
-            renderProjects(apiData, classification);
-            var fallbackNote = document.querySelector('#content p[data-translate="projects.fallbackNote"]');
-            if (fallbackNote) fallbackNote.remove();
-            if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.applyTranslations) {
-                window.TranslationManager.applyTranslations();
-            }
-        })
-        .catch(function() { /* ignore background failure */ });
-}
-
-/**
  * Initialize projects page - load and render projects from API
- * Uses cache-first: show static/cached data immediately, then refresh from API in background and silently update if different.
+ * Uses in-memory session cache when present (same SPA tab), otherwise api.js: API first, then localStorage/static fallbacks.
  */
 async function initProjects() {
     // Prevent double initialization
@@ -513,19 +475,17 @@ async function initProjects() {
         
         const classification = await loadProjectClassification();
         var projects = null;
-        var usedCacheFirst = false;
+        var fromSessionMemory =
+            window.projectsCache &&
+            Array.isArray(window.projectsCache) &&
+            window.projectsCache.length > 0;
 
-        if (typeof window.fetchProjectsCacheFirst === 'function') {
-            try {
-                projects = await window.fetchProjectsCacheFirst();
-                usedCacheFirst = true;
-                if (typeof window !== 'undefined') window.projectsFallbackUsed = true;
-                window.projectsCache = projects;
-            } catch (e) {
-                /* no cache, fall through to API/fallback */
+        if (fromSessionMemory) {
+            projects = window.projectsCache;
+            if (typeof window !== 'undefined') {
+                window.projectsFallbackUsed = !window.projectsCacheFromApi;
             }
-        }
-        if (!projects || projects.length === 0) {
+        } else {
             projects = await fetchProjectsFromAPI();
             if (projects) window.projectsCache = projects;
         }
@@ -533,9 +493,10 @@ async function initProjects() {
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
-            if (usedCacheFirst && typeof window !== 'undefined' && window.projectsFallbackUsed) {
+            if (!fromSessionMemory && typeof window !== 'undefined' && window.projectsFallbackUsed) {
                 var containerEl = document.querySelector('#content .container');
                 if (!containerEl) containerEl = document.querySelector('.container');
+                removeProjectFallbackNotesFromContent();
                 var fallbackNote = document.createElement('p');
                 fallbackNote.className = 'text-muted small mb-2';
                 fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
@@ -547,9 +508,6 @@ async function initProjects() {
                         containerEl.appendChild(fallbackNote);
                     }
                 }
-            }
-            if (usedCacheFirst && typeof window.fetchProjectsFromAPIBackground === 'function') {
-                startProjectsBackgroundRefresh(classification, projects);
             }
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
@@ -615,11 +573,8 @@ async function initProjects() {
     function tryInit() {
         // Check if projects container exists (means we're on the projects page)
         if (document.querySelector('#ProjInProgress')) {
-            // Reset initialization flag if page was reloaded
-            if (window.projectsInitialized && !document.querySelector('#ProjInProgress .project-card')) {
-                window.projectsInitialized = false;
-                projectsInitialized = false;
-            }
+            // Do not clear init flags while async initProjects is still awaiting (no .project-card yet).
+            // SPAHack calls resetProjectsInit() before loading projects.html; that is the supported reset path.
             // Ensure DOM is fully ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initProjects);

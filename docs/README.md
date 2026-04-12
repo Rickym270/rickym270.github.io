@@ -50,7 +50,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **[Health API Tests](testing/health.md)** - Testing the health check endpoint
 - **[Home API Tests](testing/home.md)** - Testing the home page API
 - **[Meta API Tests](testing/meta.md)** - Testing the metadata API
-- **[Projects API Tests](testing/projects.md)** - Projects API, cache-first loading, background refresh, silent update
+- **[Projects API Tests](testing/projects.md)** - Projects API, API-first UI with tab session cache, fallbacks, SPA without duplicate `/api/projects` calls
 - **[Stats API Tests](testing/stats.md)** - Testing the stats API
 - **[Tutorials Tests](testing/tutorials.md)** - Testing the tutorials page
 - **[Blog Tests](testing/blog.md)** - Engineering and Personal listing pages, Featured Post, Latest Insights, navigation to post, post detail structure (banner, hero, body)
