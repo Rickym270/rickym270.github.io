@@ -19,6 +19,10 @@ After new HTML is injected into `#content`, the SPA checks for `.mermaid` and ca
 
 For the AI automation tutorial, `data-translate` can swap the **text inside** `<pre class="mermaid">`. When that source changes, the script tracks `dataset.mermaidSource`, sets a flag, and calls `initMermaidInContent` again so diagrams update for the new language. Already-rendered nodes (with `<svg>`) are skipped until the source changes and the pre is eligible for a new run.
 
+### Flowchart label gotchas (Mermaid 11.x)
+
+In `flowchart` / `graph` node text inside `[...]` or `{...}`, an unquoted **`:`** is treated as syntax, which yields **“Syntax error in text”** at render time. Parentheses and other punctuation can also interact badly with the parser depending on context. Prefer **double-quoted labels** whenever the visible text includes a colon, parentheses, slashes you intend as literal text, or other characters that might read as Mermaid syntax, e.g. `A["Artifacts: code, logs, specs"]` instead of `A[Artifacts: code, logs, specs]`, and `B["Step (optional)"]` instead of unquoted `B[Step (optional)]` when in doubt. Apply the same rule after i18n: keep translated diagram strings valid Mermaid. This applies both to SPA `<pre class="mermaid">` sources and to Mermaid fenced blocks in Markdown (for example in [`docs/testing/projects.md`](testing/projects.md)).
+
 ## Where it is used
 
 | Location | Notes |
@@ -42,6 +46,7 @@ npx playwright test tests/tutorial-rendering.spec.ts
 
 ## Troubleshooting
 
+- **Repeated “Syntax error in text” after navigation or language change:** Often unquoted `:` (or similar) in static or translated diagram source. See [Post-Mortem: static assets, Mermaid, and projects loading](Post-Mortem/static-assets-repeated-errors-mermaid-projects.md).
 - **Blank diagram area**: Check the browser console for `[Mermaid]` warnings; confirm CDN is reachable (corporate blockers).
 - **Diagrams after language switch**: Ensure `initMermaidInContent` runs after translation updates (see `translation.js` and `dataset.mermaidInitRequested` on the guide root).
 - **Theme mismatch**: Toggle site dark mode and re-open the page or trigger a re-init so `getMermaidTheme()` runs again.
@@ -51,3 +56,4 @@ npx playwright test tests/tutorial-rendering.spec.ts
 - **[Article listen](ARTICLE_LISTEN.md)** — Read-aloud feature; skips `pre` / Mermaid source for speech
 - **[UI testing](UI_TESTING.md)** — Running Playwright locally
 - **[Tutorials testing](testing/tutorials.md)** — Tutorial navigation and lesson structure
+- **[Projects testing](testing/projects.md)** — Includes Markdown Mermaid diagrams; quote labels as above so GitHub and the SPA stay valid

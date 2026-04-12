@@ -435,6 +435,104 @@ function removeProjectFallbackNotesFromContent() {
         el.remove();
     });
 }
+
+/**
+ * @returns {Array|null} Session snapshot from API or null
+ */
+function tryReadSessionApiProjects() {
+    try {
+        var key = 'portfolio_projects_api_session_v1';
+        var rawSession = sessionStorage.getItem(key);
+        if (!rawSession) return null;
+        var sessionParsed = JSON.parse(rawSession);
+        if (
+            sessionParsed &&
+            Array.isArray(sessionParsed.data) &&
+            sessionParsed.data.length > 0 &&
+            sessionParsed.fromApi === true
+        ) {
+            return sessionParsed.data;
+        }
+    } catch (e) { /* ignore */ }
+    return null;
+}
+
+function projectFingerprint(p) {
+    if (!p) return '';
+    var slug = String(p.slug || '').toLowerCase();
+    var name = String(p.name || '').toLowerCase();
+    var sum = String(p.summary || p.description || '').trim();
+    return slug + '|' + name + '|' + sum;
+}
+
+function projectsDataEqual(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+        return false;
+    }
+    var fa = a.map(projectFingerprint).sort();
+    var fb = b.map(projectFingerprint).sort();
+    for (var i = 0; i < fa.length; i++) {
+        if (fa[i] !== fb[i]) return false;
+    }
+    return true;
+}
+
+function insertProjectsFallbackNote() {
+    var containerEl = document.querySelector('#content .container');
+    if (!containerEl) containerEl = document.querySelector('.container');
+    removeProjectFallbackNotesFromContent();
+    var fallbackNote = document.createElement('p');
+    fallbackNote.className = 'text-muted small mb-2';
+    fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
+    fallbackNote.textContent = 'Showing cached projects; some data may be outdated.';
+    if (containerEl) {
+        if (containerEl.firstChild) {
+            containerEl.insertBefore(fallbackNote, containerEl.firstChild);
+        } else {
+            containerEl.appendChild(fallbackNote);
+        }
+    }
+}
+
+/**
+ * After cache-first paint, refresh from `/api/projects` only; diff vs displayed; persist on success.
+ */
+function startProjectsBackgroundRefresh(classification, displayedProjects) {
+    if (typeof fetchProjectsFromAPIBackground === 'undefined') {
+        return;
+    }
+    if (window.__projectsBackgroundRefreshPending) {
+        return;
+    }
+    window.__projectsBackgroundRefreshPending = true;
+    fetchProjectsFromAPIBackground()
+        .then(function (apiData) {
+            if (!apiData || !Array.isArray(apiData) || apiData.length === 0) {
+                return;
+            }
+            removeProjectFallbackNotesFromContent();
+            if (projectsDataEqual(displayedProjects, apiData)) {
+                if (typeof persistProjectsApiSnapshot === 'function') {
+                    persistProjectsApiSnapshot(apiData);
+                }
+            } else {
+                renderProjects(apiData, classification);
+                if (typeof persistProjectsApiSnapshot === 'function') {
+                    persistProjectsApiSnapshot(apiData);
+                }
+            }
+            if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.applyTranslations) {
+                window.TranslationManager.applyTranslations();
+            }
+        })
+        .catch(function (err) {
+            console.warn('Projects background API refresh failed:', err);
+        })
+        .then(function () {
+            window.__projectsBackgroundRefreshPending = false;
+        });
+}
+
 // Provide a safe reset API so SPA can re-initialize when navigating back
 window.resetProjectsInit = function resetProjectsInit() {
     projectsInitialized = false;
@@ -442,8 +540,7 @@ window.resetProjectsInit = function resetProjectsInit() {
 };
 
 /**
- * Initialize projects page - load and render projects from API
- * Uses in-memory session cache when present (same SPA tab), otherwise api.js: API first, then localStorage/static fallbacks.
+ * Initialize projects page — warm path (API session / memory), or cold cache-first + background API refresh.
  */
 async function initProjects() {
     // Prevent double initialization
@@ -475,39 +572,68 @@ async function initProjects() {
         
         const classification = await loadProjectClassification();
         var projects = null;
-        var fromSessionMemory =
+        var displayedForBackground = null;
+        var skipBackground = false;
+
+        if (window.projectsCachePromise) {
+            try {
+                await window.projectsCachePromise;
+            } catch (e) { /* ignore */ }
+        }
+
+        if (
             window.projectsCache &&
             Array.isArray(window.projectsCache) &&
-            window.projectsCache.length > 0;
-
-        if (fromSessionMemory) {
+            window.projectsCache.length > 0 &&
+            window.projectsCacheFromApi
+        ) {
             projects = window.projectsCache;
-            if (typeof window !== 'undefined') {
-                window.projectsFallbackUsed = !window.projectsCacheFromApi;
-            }
+            window.projectsFallbackUsed = false;
+            skipBackground = true;
         } else {
-            projects = await fetchProjectsFromAPI();
-            if (projects) window.projectsCache = projects;
+            var sessionApi = tryReadSessionApiProjects();
+            if (sessionApi) {
+                projects = sessionApi;
+                window.projectsCache = sessionApi;
+                window.projectsCacheFromApi = true;
+                window.projectsFallbackUsed = false;
+                skipBackground = true;
+            } else if (
+                window.projectsCache &&
+                Array.isArray(window.projectsCache) &&
+                window.projectsCache.length > 0 &&
+                !window.projectsCacheFromApi
+            ) {
+                projects = window.projectsCache;
+                window.projectsFallbackUsed = true;
+                displayedForBackground = projects.slice();
+            } else {
+                try {
+                    if (typeof fetchProjectsCacheFirst !== 'undefined') {
+                        projects = await fetchProjectsCacheFirst();
+                        window.projectsCache = projects;
+                        window.projectsFallbackUsed = true;
+                        window.projectsCacheFromApi = false;
+                        displayedForBackground = projects.slice();
+                    } else {
+                        throw new Error('fetchProjectsCacheFirst unavailable');
+                    }
+                } catch (cacheFirstErr) {
+                    projects = await fetchProjectsFromAPI();
+                    if (projects) window.projectsCache = projects;
+                    skipBackground = true;
+                }
+            }
         }
 
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
-            if (!fromSessionMemory && typeof window !== 'undefined' && window.projectsFallbackUsed) {
-                var containerEl = document.querySelector('#content .container');
-                if (!containerEl) containerEl = document.querySelector('.container');
-                removeProjectFallbackNotesFromContent();
-                var fallbackNote = document.createElement('p');
-                fallbackNote.className = 'text-muted small mb-2';
-                fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
-                fallbackNote.textContent = 'Showing cached projects; some data may be outdated.';
-                if (containerEl) {
-                    if (containerEl.firstChild) {
-                        containerEl.insertBefore(fallbackNote, containerEl.firstChild);
-                    } else {
-                        containerEl.appendChild(fallbackNote);
-                    }
-                }
+            if (window.projectsFallbackUsed) {
+                insertProjectsFallbackNote();
+            }
+            if (!skipBackground && displayedForBackground && displayedForBackground.length > 0) {
+                startProjectsBackgroundRefresh(classification, displayedForBackground);
             }
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {

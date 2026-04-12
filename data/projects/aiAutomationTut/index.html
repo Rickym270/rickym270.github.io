@@ -43,14 +43,14 @@
 flowchart TD
   subgraph in_signals [Inputs]
     T[Task description]
-    A[Artifacts: code, logs, specs]
+    A["Artifacts: code, logs, specs"]
   end
   in_signals --> Q{Repeatable or exploratory?}
   Q -->|Repeatable draft| D[AI-assisted draft]
   Q -->|Exploratory design| E[AI brainstorm then narrow]
   D --> V{Automated checks possible?}
   E --> V
-  V -->|Yes| OK[Iterate with tests / linters / CI]
+  V -->|Yes| OK["Iterate with tests / linters / CI"]
   V -->|No| H[Prefer manual or pair review]
                     </pre>
                     <figcaption class="text-muted small mt-2" data-translate="lessons.aiTutorial.captionWhere">High level: use AI when you can verify outputs cheaply.</figcaption>

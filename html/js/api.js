@@ -77,6 +77,28 @@ var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
 var PROJECTS_SESSION_KEY = 'portfolio_projects_api_session_v1';
 
 /**
+ * Persist a successful `/api/projects` snapshot (memory, localStorage TTL, sessionStorage).
+ * @param {Array} projects - Project rows from the API
+ */
+function persistProjectsApiSnapshot(projects) {
+    if (!projects || !Array.isArray(projects)) {
+        return;
+    }
+    window.projectsFallbackUsed = false;
+    window.projectsCacheFromApi = true;
+    window.projectsCache = projects;
+    try {
+        localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: projects, at: Date.now() }));
+    } catch (e) { /* ignore */ }
+    try {
+        sessionStorage.setItem(
+            PROJECTS_SESSION_KEY,
+            JSON.stringify({ data: projects, fromApi: true, at: Date.now() })
+        );
+    } catch (e) { /* ignore */ }
+}
+
+/**
  * Load projects from cache only (static file then localStorage). Does not call the API.
  * Use for fast first paint when API may be slow or sleeping.
  * @returns {Promise<Array>} - Array of project objects
@@ -141,17 +163,7 @@ async function fetchProjectsWithFallback() {
     // 2) API (primary for this tab until success is stored above)
     try {
         var projects = await fetchFromAPI('/api/projects');
-        window.projectsFallbackUsed = false;
-        window.projectsCacheFromApi = true;
-        try {
-            localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: projects, at: Date.now() }));
-        } catch (e) { /* ignore */ }
-        try {
-            sessionStorage.setItem(
-                PROJECTS_SESSION_KEY,
-                JSON.stringify({ data: projects, fromApi: true, at: Date.now() })
-            );
-        } catch (e) { /* ignore */ }
+        persistProjectsApiSnapshot(projects);
         return projects;
     } catch (apiErr) {
         try {

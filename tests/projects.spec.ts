@@ -964,7 +964,7 @@ test.describe('Projects Page', () => {
     await expect(comingSoon).toBeAttached({ timeout: 5000 });
   });
 
-  test('Projects waits for API then uses static fallback when API is slow or errors', async ({ page }) => {
+  test('Projects shows static fallback when API is slow or errors (cache-first paint)', async ({ page }) => {
     const cacheOnlyProjects = [
       { name: 'Static Fallback Project', summary: 'Shown from static after API fails.', status: 'complete', tech: ['JS'], slug: 'static-fallback-project', repo: 'https://github.com/example/sf', featured: true },
     ];
@@ -1247,6 +1247,99 @@ test.describe('Projects Page', () => {
     await expect(page.locator('#content .card-title', { hasText: 'From API List' })).toBeVisible({ timeout: 15000 });
     await expect(page.locator('#content .card-title', { hasText: 'Static Only Name' })).toHaveCount(0);
     await expect(page.locator('#content p[data-translate="projects.fallbackNote"]')).toHaveCount(0);
+  });
+
+  test('Projects cold-paints static then replaces with API when background succeeds', async ({ page }) => {
+    await page.addInitScript(() => {
+      // Disable home prefetch so cold static paint is deterministic before delayed API.
+      (window as unknown as { prefetchProjects: () => null }).prefetchProjects = () => null;
+    });
+
+    const staticRows = [
+      {
+        name: 'Cold Paint Static',
+        summary: 'From static JSON for first paint.',
+        status: 'complete',
+        tech: ['HTML'],
+        slug: 'cold-paint-static',
+        repo: 'https://github.com/example/cold-static',
+        featured: true,
+      },
+    ];
+    const apiRows = [
+      {
+        name: 'API Upgrade Row',
+        summary: 'From live API after background refresh.',
+        status: 'complete',
+        tech: ['API'],
+        slug: 'api-upgrade-row',
+        repo: 'https://github.com/example/api-upgrade',
+        featured: true,
+      },
+    ];
+    let apiCallCount = 0;
+    await page.route('**/api/projects**', async (route) => {
+      apiCallCount += 1;
+      await new Promise((r) => setTimeout(r, 2500));
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(apiRows),
+      });
+    });
+    await page.route('**/data/web_data/projects.json', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(staticRows),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return (
+        c?.getAttribute('data-content-loaded') === 'true' ||
+        !!c?.querySelector('#homeBanner') ||
+        !!c?.querySelector('.hero-content')
+      );
+    }, { timeout: 20000 });
+
+    await page.evaluate(() => {
+      try {
+        sessionStorage.removeItem('portfolio_projects_api_session_v1');
+      } catch {
+        /* ignore */
+      }
+      const w = window as unknown as {
+        projectsCache?: unknown;
+        projectsCachePromise?: unknown;
+        projectsCacheFromApi?: boolean;
+      };
+      w.projectsCache = null;
+      w.projectsCachePromise = null;
+      w.projectsCacheFromApi = false;
+    });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+    } else {
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+    }
+
+    await expect(page.locator('#content .card-title', { hasText: 'Cold Paint Static' })).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('#content p[data-translate="projects.fallbackNote"]')).toBeVisible({ timeout: 3000 });
+
+    await expect(page.locator('#content .card-title', { hasText: 'API Upgrade Row' })).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('#content .card-title', { hasText: 'Cold Paint Static' })).toHaveCount(0);
+    await expect(page.locator('#content p[data-translate="projects.fallbackNote"]')).toHaveCount(0);
+    expect(apiCallCount).toBeGreaterThanOrEqual(1);
   });
 });
 

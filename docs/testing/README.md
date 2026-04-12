@@ -23,7 +23,7 @@ This directory contains detailed documentation for testing individual API endpoi
 
 - **[Projects API](projects.md)** - Testing the projects endpoint
   - GET `/api/projects` - Merged GitHub + curated projects list
-  - Cache-first loading (static file / localStorage first), background API refresh, silent UI update
+  - Cache-first loading (static file / localStorage first), background API refresh, silent UI update; Mermaid diagrams for runtime flow and browser vs CI wiring
   - GitHub API integration and fallback behavior
 
 - **[Stats API](stats.md)** - Testing statistics endpoint
