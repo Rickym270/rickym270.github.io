@@ -11,6 +11,13 @@ status: "Resolved"
 
 Firefox tests in CI (e.g. user-journey: theme switching, view documentation, mobile navigation flow) failed with `TimeoutError: page.goto: Timeout 60000ms exceeded` when using `waitUntil: 'networkidle'`. The root cause: in GitHub Actions the page often never reaches "network idle" (ongoing requests, prefetch, or SPA behavior), so the wait never resolves.
 
+```mermaid
+flowchart LR
+  OLD["goto with networkidle on Firefox"] --> HANG["CI may never reach idle"]
+  NEW["spaGotoWaitUntil domcontentloaded"] --> READY["Explicit DOM readiness"]
+  READY --> PASS["Stable assertions"]
+```
+
 ## Impact
 
 - Failures on Firefox in CI (e.g. Playwright Shard 3/5): "complete user journey: theme switching and navigation", "complete user journey: view documentation", "complete user journey: mobile navigation flow".
@@ -43,11 +50,11 @@ Ensures CI passes without changing app behavior. Explicit content waits (e.g. `w
 
 ## Prevention
 
-- For any test that runs in CI with Firefox and does `page.goto('/')` (or similar): prefer `waitUntil: 'domcontentloaded'` and follow with explicit `waitForFunction` / `waitForSelector` for the content under test.
-- Use `networkidle` for Firefox only where CI has been observed to reach idle (e.g. short, isolated tests). If a test times out in CI with "waiting until networkidle", switch that test to `domcontentloaded`.
+- For any test that runs in CI with Firefox and does `page.goto('/')` (or similar): use `spaGotoWaitUntil()` from `tests/nav-wait.ts` and follow with explicit `waitForFunction` / `waitForSelector` for the content under test.
+- Do not use `networkidle` on `page.goto` for this SPA in CI. For optional quiet-network checks after load, use `tryWaitNetworkIdleBounded(page, ms)` from `tests/nav-wait.ts`.
 - Link this post-mortem from [UI_TESTING.md](../UI_TESTING.md) and [testing/README.md](../testing/README.md) so the guideline is discoverable.
 
 ## Action Items
 
 - [x] Link this post-mortem from UI_TESTING.md and testing README.
-- [ ] Consider unifying other Firefox `page.goto` calls to `domcontentloaded` if they start failing in CI (navbar, theme, blog, contact, seo, etc. still use `networkidle` for Firefox).
+- [x] Unified Firefox and other browsers on `spaGotoWaitUntil()` / `domcontentloaded` for `page.goto` across UI specs (see `tests/nav-wait.ts`).

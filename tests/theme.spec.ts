@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Theme Toggle (Dark/Light Mode)', () => {
   test('theme toggle button is visible and functional', async ({ page }) => {
     // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Check if we're on mobile
@@ -47,8 +47,7 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
 
   test('theme persists across page navigation', async ({ page }) => {
     // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Check if we're on mobile
@@ -90,8 +89,7 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
 
   test('links are white in dark mode and black in light mode', async ({ page }) => {
     // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for content to load
@@ -152,8 +150,7 @@ test.describe('Theme Toggle (Dark/Light Mode)', () => {
   test('body background adapts to theme', async ({ page }) => {
     // For Firefox, use networkidle instead of domcontentloaded as it's more reliable
     // networkidle waits for network to be idle, which is better for SPA navigation
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     

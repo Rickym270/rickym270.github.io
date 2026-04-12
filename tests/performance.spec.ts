@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil, tryWaitNetworkIdleBounded } from './nav-wait';
 
 test.describe('Performance', () => {
   test.describe.configure({ timeout: 120000 });
@@ -14,13 +15,10 @@ test.describe('Performance', () => {
 
   test('page loads within acceptable time', async ({ page }) => {
     const startTime = Date.now();
-    
-    // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
-    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
-    
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60_000 });
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
@@ -31,19 +29,16 @@ test.describe('Performance', () => {
     }, { timeout: 15000 });
 
     const loadTime = Date.now() - startTime;
-    
-    // Page should load within 5 seconds (Chromium) or 8 seconds (Firefox with networkidle)
-    const maxLoadTime = browserName === 'firefox' ? 8000 : 5000;
-    expect(loadTime).toBeLessThan(maxLoadTime);
+
+    // Same ceiling for all browsers (avoid networkidle on goto in CI; bounded idle wait above)
+    expect(loadTime).toBeLessThan(8000);
   });
 
   test('SPA navigation is fast', async ({ page }) => {
-    // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
-    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
-    
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60_000 });
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
@@ -78,10 +73,10 @@ test.describe('Performance', () => {
   });
 
   test('images are optimized', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
-    
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
@@ -116,10 +111,10 @@ test.describe('Performance', () => {
       }
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
-    
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
@@ -134,10 +129,10 @@ test.describe('Performance', () => {
   });
 
   test('page is interactive quickly', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
-    
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     const interactiveTime = await page.evaluate(() => {
       return new Promise((resolve) => {
         if (document.readyState === 'complete') {
@@ -155,10 +150,10 @@ test.describe('Performance', () => {
   });
 
   test('no memory leaks on navigation', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
-    
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for page to be ready - check if content element exists
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
@@ -195,10 +190,10 @@ test.describe('Performance', () => {
   });
 
   test('page performance metrics are acceptable', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
-    
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for page to be ready
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;
@@ -257,11 +252,10 @@ test.describe('Performance', () => {
       }
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const gotoTimeout = browserName === 'firefox' ? 90000 : 60000;
-    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: gotoTimeout });
-    
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60_000 });
+    await tryWaitNetworkIdleBounded(page, 8000);
+
     // Wait for content
     await page.waitForFunction(() => {
       return document.querySelector('#content') !== null;

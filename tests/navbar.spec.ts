@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil, waitForSpaHtmlFragmentResponse } from './nav-wait';
 
 test.describe('Navbar', () => {
   // Set timeout for all tests in this describe block
@@ -13,11 +14,8 @@ test.describe('Navbar', () => {
   });
 
   test('has top navbar with expected links', async ({ page }) => {
-    // Firefox needs networkidle for reliable navigation
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const timeout = browserName === 'firefox' ? 60000 : 20000;
-    await page.goto('/', { waitUntil, timeout });
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil, timeout: 60_000 });
 
     const nav = page.locator('nav.navbar');
     await expect(nav).toBeVisible();
@@ -90,8 +88,7 @@ test.describe('Navbar', () => {
   });
 
   test('Docs dropdown arrow is on same line as text', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Skip on mobile - navbar links are hidden
@@ -118,14 +115,14 @@ test.describe('Navbar', () => {
   });
 
   test('Home link loads home page content', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile - navbar links are hidden on mobile
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     // Navigate away from home
+    const projectsResp = waitForSpaHtmlFragmentResponse(page, 'projects.html');
     if (isMobile) {
       // On mobile, open sidebar and click Projects
       await page.locator('#mobile-menu-toggle').click();
@@ -135,6 +132,7 @@ test.describe('Navbar', () => {
       // Desktop: use navbar scoped selector to avoid mobile sidebar duplicates
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
+    await projectsResp.catch(() => {});
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' || !!document.querySelector('#ProjInProgress .row, #ProjComplete .row');
@@ -168,6 +166,7 @@ test.describe('Navbar', () => {
     }
     
     // Click Home link
+    const homeResp = waitForSpaHtmlFragmentResponse(page, 'home.html');
     if (isMobile) {
       // On mobile, click RM brand or open sidebar and click Home
       await page.locator('.navbar-brand-name').click();
@@ -175,7 +174,8 @@ test.describe('Navbar', () => {
       // Desktop: use navbar scoped selector
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
-    
+    await homeResp.catch(() => {});
+
     // Wait for content to load - use waitForFunction for better reliability on iPhone
     // Check for multiple possible indicators that home content has loaded
     await page.waitForFunction(() => {
@@ -212,8 +212,7 @@ test.describe('Navbar', () => {
   });
 
   test('Skills link navigates to skills page', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -274,8 +273,7 @@ test.describe('Navbar', () => {
   test('mobile sidebar opens and closes correctly', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to load
@@ -311,8 +309,7 @@ test.describe('Navbar', () => {
   test('mobile sidebar navigation works', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to load
@@ -368,8 +365,7 @@ test.describe('Navbar', () => {
   test('RM brand navigates to home on mobile', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to load
@@ -412,8 +408,7 @@ test.describe('Navbar', () => {
   test('mobile sidebar footer has organized settings structure', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to load

@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Contact Page', () => {
-  test.beforeEach(async ({ page, browserName }) => {
+  test.beforeEach(async ({ page }) => {
     // Ensure English is set for these tests
-    // Use networkidle for Firefox, domcontentloaded for others
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    await page.goto('/', { waitUntil, timeout: 90000 });
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil, timeout: 90_000 });
     
     // Wait for TranslationManager to be available and initialized
     await page.waitForFunction(() => {
@@ -331,10 +331,8 @@ test.describe('Contact Page', () => {
       }
     });
     
-    // Use networkidle for Firefox, domcontentloaded for others
-    const browserName = page.context().browser()?.browserType().name() || 'chromium';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    await page.goto('/', { waitUntil, timeout: 90000 });
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil, timeout: 90_000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists
@@ -461,8 +459,6 @@ test.describe('Contact Page', () => {
       resolveRouteFulfill = resolve;
     });
     
-    // Use networkidle for Firefox, domcontentloaded for others
-    const browserName = page.context().browser()?.browserType().name() || 'chromium';
     // Set up route BEFORE navigation - Playwright routes persist across navigation
     // Use regex pattern for more reliable interception across absolute and relative URLs
     await page.route(/.*\/api\/contact(?:\?.*)?$/, async (route) => {
@@ -510,8 +506,8 @@ test.describe('Contact Page', () => {
     page.on('requestfailed', r => console.log('[requestfailed]', r.method(), r.url(), r.failure()?.errorText));
     page.on('response', r => console.log('[response]', r.status(), r.url()));
 
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    await page.goto('/', { waitUntil, timeout: 90000 });
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', { waitUntil, timeout: 90_000 });
     
     // Wait for initial load
     // Wait for page to be ready - check if content element exists

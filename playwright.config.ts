@@ -7,13 +7,12 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 // Build config conditionally.
 const config: any = {
   testDir: 'tests',
+  retries: process.env.CI ? 1 : 0,
   timeout: process.env.CI ? 45_000 : 60_000, // Reduce timeout in CI to fail faster and allow more tests to run
   expect: { timeout: 10_000 },
   outputDir: path.join(rootDir, 'test-results'),
-  // Enable parallel test execution within each project
-  // Use 2 workers in CI to avoid resource contention and ensure webServer stability
-  // With 3 browser projects running in parallel, 2 workers per project = 6 concurrent test executions
-  workers: process.env.CI ? 2 : undefined, // 2 workers in CI, auto-detect locally
+  // Single worker in CI reduces browser + webServer contention on ubuntu-latest (see Playwright CI stabilization)
+  workers: process.env.CI ? 1 : undefined,
   fullyParallel: true, // Run all tests in parallel (within each project)
   use: {
     baseURL: 'http://127.0.0.1:4321', // Use 127.0.0.1 instead of localhost for better CI reliability

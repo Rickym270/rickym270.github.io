@@ -1,12 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('[integration] End-to-End User Journeys', () => {
   test.describe.configure({ timeout: 180000 }); // 3 minutes for full journeys
-  // Firefox: use domcontentloaded for page.goto; networkidle often never fires in CI (see docs/Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
 
   test('complete user journey: browse portfolio', async ({ page }) => {
-    // Start at home page - use domcontentloaded for all browsers (networkidle often never fires in CI for Firefox)
-    const waitUntil = 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
@@ -112,7 +111,7 @@ test.describe('[integration] End-to-End User Journeys', () => {
     });
 
     // domcontentloaded for all browsers (networkidle often never fires in CI for Firefox)
-    const waitUntil = 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
@@ -191,7 +190,7 @@ test.describe('[integration] End-to-End User Journeys', () => {
 
   test('complete user journey: language switching', async ({ page }) => {
     // domcontentloaded for all browsers (networkidle often never fires in CI for Firefox)
-    const waitUntil = 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
@@ -262,7 +261,7 @@ test.describe('[integration] End-to-End User Journeys', () => {
 
   test('complete user journey: theme switching and navigation', async ({ page }) => {
     // Use domcontentloaded for all browsers; networkidle often never fires in CI for Firefox
-    const waitUntil = 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
@@ -351,7 +350,7 @@ test.describe('[integration] End-to-End User Journeys', () => {
 
   test('complete user journey: view documentation', async ({ page }) => {
     // Use domcontentloaded for all browsers; networkidle often never fires in CI for Firefox
-    const waitUntil = 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content
@@ -410,7 +409,7 @@ test.describe('[integration] End-to-End User Journeys', () => {
     await page.setViewportSize({ width: 375, height: 812 });
     
     // Use domcontentloaded for all browsers; networkidle often never fires in CI for Firefox
-    const waitUntil = 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial content

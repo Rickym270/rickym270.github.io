@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Error Handling', () => {
   test.describe.configure({ timeout: 120000 });
@@ -28,8 +29,7 @@ test.describe('Error Handling', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -88,8 +88,7 @@ test.describe('Error Handling', () => {
       await route.abort();
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -125,8 +124,7 @@ test.describe('Error Handling', () => {
   });
 
   test('handles invalid form submission', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -212,8 +210,7 @@ test.describe('Error Handling', () => {
       // Navigation failed - verify we can still navigate to home (proves page is functional)
       if (!page.isClosed()) {
         try {
-          const browserName = page.context().browser()?.browserType().name() || '';
-          const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+          const waitUntil = spaGotoWaitUntil();
           await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
           const homeUrl = page.url();
           expect(homeUrl).toBeTruthy();
@@ -238,8 +235,7 @@ test.describe('Error Handling', () => {
       }
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -264,8 +260,7 @@ test.describe('Error Handling', () => {
   });
 
   test('handles missing translation keys gracefully', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -321,8 +316,7 @@ test.describe('Error Handling', () => {
       };
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Page should still load and function

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Home Page Initial Load', () => {
   // Set timeout for all tests in this describe block
@@ -14,8 +15,7 @@ test.describe('Home Page Initial Load', () => {
 
   test('loads Home content on initial load', async ({ page }) => {
     // Use domcontentloaded for faster loads (networkidle is too slow)
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load - give SPA time to initialize
@@ -45,8 +45,7 @@ test.describe('Home Page Initial Load', () => {
     test.setTimeout(90000); // Increase timeout for this test (90 seconds)
     
     // Use domcontentloaded for faster loads
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for home content to load initially
@@ -147,8 +146,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page tagline is centered and displays correctly', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
@@ -179,8 +177,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page About Me section displays correctly', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
@@ -210,8 +207,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page Tech Stack section displays correctly', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
@@ -234,8 +230,7 @@ test.describe('Home Page Initial Load', () => {
   });
 
   test('home page hero buttons are clickable and have correct links', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load

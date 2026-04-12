@@ -24,6 +24,13 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 
 ## Testing Documentation
 
+```mermaid
+flowchart LR
+  API["API tests Spring Boot port 8080"] --> Guides["TESTING.md"]
+  UI["UI tests Playwright port 4321"] --> UIG["UI_TESTING.md"]
+  UIG --> NW["tests/nav-wait.ts SPA waits"]
+```
+
 ### Main Testing Guides
 - **[API Testing](TESTING.md)** - Complete guide for testing the Spring Boot API
 - **[UI Testing](UI_TESTING.md)** - Complete guide for Playwright E2E tests

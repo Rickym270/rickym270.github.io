@@ -89,6 +89,19 @@ There are two GitHub Actions workflows for testing:
 
 Per-job steps (simplified): checkout, setup Node/Java, install deps, (sanity: no browsers; full-suite: install Playwright browsers), build/start API (and UI for full-suite), run tests, upload artifacts (reports, traces, screenshots).
 
+```mermaid
+flowchart TB
+  subgraph pr["Pull request"]
+    S["Sanity job<br/>API GET 200 checks only"]
+    F["Full suite<br/>5 shards in parallel"]
+    S --> M["Merge allowed"]
+    F --> M
+  end
+  subgraph master["Push to master / schedule / dispatch"]
+    FM["Full suite only<br/>when ref is master"]
+  end
+```
+
 ## Test Structure
 
 Tests are located in the `tests/` directory:
@@ -112,14 +125,37 @@ Tests are located in the `tests/` directory:
 
 Configuration is in `playwright.config.ts`:
 
-- **Base URL**: `http://localhost:4321`
-- **Test timeout**: 60 seconds
-- **Expect timeout**: 10 seconds
-- **Web server**: Automatically starts `http-server` on port 4321
+- **Base URL**: `http://127.0.0.1:4321` (avoids `localhost` resolution quirks in CI)
+- **Test timeout**: 45 seconds in CI, 60 seconds locally (per-project overrides exist for mobile)
+- **Expect timeout**: 10 seconds (15 seconds on the `chromium-iphone` project)
+- **Web server**: Playwright can start the static UI server (`scripts/start-web-server-simple.js`) and API (`scripts/start-api-server.sh`) when `PW_MANAGED_WEBSERVER` is not opted out
 - **Browsers**: Chromium, Firefox, Chromium-iPhone (mobile emulation)
-- **Workers**: 2 in CI (reduced from 4 to minimize resource contention and improve test stability)
+- **Workers**: 1 in CI (fewer concurrent browsers + JVM + servers on `ubuntu-latest`); auto locally
+- **Retries**: 1 in CI, 0 locally
 - **Parallel execution**: Enabled within each browser project
 - **Trace**: Enabled on first retry for debugging
+
+### SPA navigation waits (deterministic tests)
+
+Use shared helpers in `tests/nav-wait.ts` so CI does not hang on `networkidle` during `page.goto`, and so fragment navigations align with real network timing on slow profiles (e.g. `chromium-iphone`).
+
+```mermaid
+flowchart LR
+  subgraph initialLoad["Initial load page.goto"]
+    A["spaGotoWaitUntil()<br/>domcontentloaded"]
+    B["waitForFunction / locators<br/>for #content and flags"]
+  end
+  subgraph frag["SPA fragment e.g. Projects"]
+    C["waitForSpaHtmlFragmentResponse()<br/>before click"]
+    D["Click nav link"]
+    E["await response.catch for cache"]
+    F["waitForFunction for DOM"]
+  end
+  A --> B
+  C --> D
+  D --> E
+  E --> F
+```
 
 ## Test Suites
 
@@ -379,6 +415,8 @@ Failed tests automatically capture:
 ### Firefox: page.goto Times Out (networkidle)
 
 If `page.goto` times out in CI with "waiting until networkidle", use `waitUntil: 'domcontentloaded'` and explicit content waits (e.g. `waitForFunction` for `#content` or `data-content-loaded`). See [Post-Mortem: CI Firefox page.goto networkidle Timeout](Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
+
+**Rule:** Use `spaGotoWaitUntil()` from `tests/nav-wait.ts` for `page.goto` on this SPA (always `domcontentloaded`). Do not branch on Firefox with `networkidle` on `goto`. After navigation, use explicit readiness (`waitForFunction`, locators) or, for fragment loads, `waitForSpaHtmlFragmentResponse` then DOM (see [Post-Mortem: CI Chromium-iPhone SPA Flakiness](Post-Mortem/ci-chromium-iphone-spa-flakiness.md)). For optional quiet-network checks after load, use `tryWaitNetworkIdleBounded(page, ms)` instead of `goto` + `networkidle`.
 
 ### Translation Tests Fail
 

@@ -1,28 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { gotoHomeReady } from './nav-wait';
 
 test.describe('Translation feature', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate with increased timeout for Firefox
-    try {
-      await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 45000 });
-    } catch (error) {
-      // If navigation times out, try again with networkidle
-      await page.goto('/', { waitUntil: 'networkidle', timeout: 60000 });
-    }
-    
-    // Wait for content element to be attached
-    // Wait for page to be ready - check if content element exists
-    await page.waitForFunction(() => {
-      return document.querySelector('#content') !== null;
-    }, { timeout: 30000 });
-    
-    // Wait for content to load
-    await page.waitForFunction(() => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    }, { timeout: 20000 });
-    
-    // Small delay to ensure everything is settled
+    await gotoHomeReady(page);
     await page.waitForTimeout(500);
   });
 

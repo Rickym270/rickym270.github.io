@@ -11,6 +11,19 @@ status: "Resolved"
 
 Playwright tests on the **chromium-iphone** project intermittently failed in CI (and sometimes on master after merge) when asserting content after SPA navigation. Failures included: "Post detail page shows banner, hero, and article body" (timeout waiting for `#post-body`), "Read Article button has visible text in dark mode" (timeout waiting for `.blog-featured-cta`), and "projects page matches visual baseline" (0 project cards). The root cause was tests relying on a fixed DOM wait timeout without syncing to the SPA's network request; on chromium-iphone, CI timing is more variable, so the DOM sometimes appeared after the timeout.
 
+```mermaid
+sequenceDiagram
+  participant T as Test
+  participant B as Browser
+  participant S as SPA jQuery load
+  T->>B: waitForResponse fragment URL
+  T->>B: click link
+  B->>S: fetch fragment
+  S-->>B: 200 or 304
+  B-->>T: response optional catch if cache
+  T->>B: waitForFunction DOM ready
+```
+
 ## Impact
 
 - Intermittent CI failures on `chromium-iphone` for blog post-load, blog dark-mode CTA, translation post content, and visual-regression projects page.
@@ -54,5 +67,5 @@ Syncing to the network response removes reliance on a fixed timeout and aligns t
 
 ## Action Items
 
-- [ ] Consider adding a shared SPA navigation helper used by blog, translation, visual-regression, and other specs.
+- [x] Shared helpers in `tests/nav-wait.ts`: `waitForSpaHtmlFragmentResponse`, `gotoHomeReady`, `spaGotoWaitUntil` (used by spa-navigation, navbar, translation `beforeEach`, and others).
 - [ ] Remove any remaining debug-only instrumentation (e.g. `debugLog`) from test files once stability is confirmed.

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Blog Pages', () => {
   test.describe.configure({ timeout: 120000 });
@@ -10,8 +11,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Engineering page loads via Blog dropdown', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -58,8 +58,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Personal page loads via Blog dropdown', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -97,8 +96,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Engineering page shows Featured Post, Latest Insights, and blog cards', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -154,8 +152,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Personal page shows Coming Soon in Featured and placeholder cards', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -203,8 +200,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Latest Insights search filters cards by query', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -272,8 +268,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Clearing search restores full card grid', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -328,8 +323,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Escape clears search and restores full card grid', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -384,8 +378,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Read Article from Engineering loads post in SPA', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -441,8 +434,7 @@ test.describe('Blog Pages', () => {
   });
 
   test('Post detail page shows banner, hero, and article body', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');

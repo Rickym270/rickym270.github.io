@@ -22,6 +22,18 @@ The blog has two listing pages (Engineering and Personal), reached from the Blog
 
 When a post is opened (e.g. from Engineering "Read Article" or a card’s "Read more" link), the post HTML is loaded into `#content` via the SPA.
 
+E2E tests should follow **response-then-DOM** (see [CI Chromium-iPhone SPA Flakiness](../Post-Mortem/ci-chromium-iphone-spa-flakiness.md) and `waitForSpaHtmlFragmentResponse` in `tests/nav-wait.ts`):
+
+```mermaid
+sequenceDiagram
+  participant PW as Playwright
+  participant P as Page
+  PW->>P: start waitForResponse post html
+  PW->>P: click Read Article
+  P-->>PW: optional 200 or 304
+  PW->>P: waitForFunction post body in DOM
+```
+
 - **Structure**: Banner image at top (`.post-banner`, `.post-banner-img`), then `.post-hero` (`.post-meta` for date/category/read time and `.post-title`), then `#post-body` (article content: paragraphs, h2s, lists, blockquotes).
 - **Listen (read aloud)**: When the post has enough text, a Web Speech toolbar may appear above `#post-body`. See **[Article listen](../ARTICLE_LISTEN.md)** for UX, exclusions (e.g. Mermaid/code), and `tests/article-listen.spec.ts` (including SPA “back to listing” while playing, which must call `speechSynthesis.cancel`).
 - **Styling**: Banner has shadow, max-height, and rounded corners; post meta uses secondary text color; blockquotes use accent left border, background, and padding; body has spacing for h2s, paragraphs, and lists. Both `html/css/blog.css` and `html/css/modern.css` apply (posts link both).

@@ -1,25 +1,8 @@
 import { expect, type Page } from '@playwright/test';
 
-/**
- * Shared navigation for AI tutorial E2E tests (SPA from home → Tutorials → AI guide).
- */
-export async function gotoHomeReady(page: Page): Promise<void> {
-  const browserName = page.context().browser()?.browserType().name() || '';
-  const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-  await page.goto('/', {
-    waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
-    timeout: 60_000,
-  });
+export { gotoHomeReady, spaGotoWaitUntil } from './nav-wait';
 
-  await page.waitForFunction(
-    () => {
-      const c = document.querySelector('#content');
-      return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner');
-    },
-    { timeout: 15_000 }
-  );
-}
-
+/** Shared navigation for AI tutorial E2E tests (SPA from home → Tutorials → AI guide). */
 export async function openTutorialsPageFromNav(page: Page): Promise<void> {
   const isMobile = await page.evaluate(() => window.innerWidth <= 768);
   if (isMobile) {

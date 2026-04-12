@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Home page content', () => {
   test('banner image centered with dark background and hero content', async ({ page }) => {
-    // Firefox needs networkidle instead of default 'load' for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     // Ensure Home loaded into #content and banner is visible
     await page.waitForFunction(() => {
@@ -32,8 +31,7 @@ test.describe('Home page content', () => {
   });
 
   test('hero buttons link to LinkedIn and Github correctly', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -48,8 +46,7 @@ test.describe('Home page content', () => {
   });
 
   test('two-column content: left story, right skills', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for content to load
@@ -84,8 +81,7 @@ test.describe('Home page content', () => {
   });
 
   test('hero portrait image is properly displayed', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     const banner = page.locator('#content #homeBanner');
@@ -112,8 +108,7 @@ test.describe('Home page content', () => {
   });
 
   test('View All Skills button has transparent fill and blue outline', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     const viewAllSkillsBtn = page.locator('#content a').filter({ hasText: /View All Skills/i });
@@ -146,8 +141,7 @@ test.describe('Home page content', () => {
   });
 
   test('View All Skills button navigates to skills page via SPA', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for content to load
@@ -237,8 +231,7 @@ test.describe('Home page content', () => {
   });
 
   test('Quick Stats displays last updated in correct format', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for stats section to potentially load
@@ -274,9 +267,7 @@ test.describe('Home page content', () => {
   });
   
   test('Quick Stats cards have centered content and proper text size', async ({ page }) => {
-    // Firefox needs networkidle instead of default 'load' for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'load';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit' });
     
     // Wait for stats section to load - use proper wait instead of arbitrary timeout
