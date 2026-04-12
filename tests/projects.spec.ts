@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Projects Page', () => {
   // Set timeout for all tests in this describe block
@@ -13,8 +14,7 @@ test.describe('Projects Page', () => {
   });
 
   test('navigates to Projects via navbar and renders content', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -138,8 +138,7 @@ test.describe('Projects Page', () => {
         body: JSON.stringify(mockProjects),
       });
     });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {
@@ -207,8 +206,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {
@@ -262,8 +260,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {
@@ -520,8 +517,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForSelector('#content', { state: 'attached', timeout: 15000 });
@@ -573,8 +569,7 @@ test.describe('Projects Page', () => {
 
   test('uses local API base when running on localhost', async ({ page }) => {
     test.skip(!!process.env.CI, 'In CI the app may load production api-config so API_BASE_URL is Render URL; only assert when running locally');
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => typeof (window as unknown as { API_BASE_URL?: string }).API_BASE_URL !== 'undefined', { timeout: 10000 });
@@ -593,8 +588,7 @@ test.describe('Projects Page', () => {
   });
 
   test('shows loading message in each section while projects load', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -648,8 +642,7 @@ test.describe('Projects Page', () => {
   test('projects reload correctly when navigating to page multiple times', async ({ page }) => {
     test.setTimeout(90000); // Increase timeout for this test (90 seconds)
     
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -753,8 +746,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project icons are visible in dark mode', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
@@ -809,8 +801,7 @@ test.describe('Projects Page', () => {
   });
 
   test('projects page has correct title and subtitle', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -861,8 +852,7 @@ test.describe('Projects Page', () => {
 
   test('project cards have correct structure when loaded', async ({ page }) => {
     // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -920,8 +910,7 @@ test.describe('Projects Page', () => {
   });
 
   test('project sections exist (In Progress, Complete, Coming Soon)', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -980,8 +969,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForSelector('#content', { state: 'attached', timeout: 15000 });
@@ -1031,8 +1019,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', {
       waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
       timeout: 60000,
@@ -1122,8 +1109,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', {
       waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
       timeout: 60000,
@@ -1209,8 +1195,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForSelector('#content', { state: 'attached', timeout: 15000 });
@@ -1295,8 +1280,7 @@ test.describe('Projects Page', () => {
       });
     });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {

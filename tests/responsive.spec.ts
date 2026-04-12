@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 const viewports = [
   { name: 'mobile', size: { width: 375, height: 812 } },
@@ -10,10 +11,11 @@ test.describe('Responsive layout', () => {
   for (const vp of viewports) {
     test(`home layout is cohesive on ${vp.name}`, async ({ page }) => {
       await page.setViewportSize(vp.size);
-      // Use networkidle for Firefox, domcontentloaded for others
-      const browserName = page.context().browser()?.browserType().name() || '';
-      const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-      await page.goto('/', { waitUntil, timeout: 90000 });
+      const waitUntil = spaGotoWaitUntil();
+      await page.goto('/', {
+        waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
+        timeout: 90_000,
+      });
 
       // Wait for content to load
       await page.waitForFunction(() => {
@@ -67,8 +69,7 @@ test.describe('Responsive layout', () => {
   
   test('hero banner stacks correctly on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     await page.waitForFunction(() => {
@@ -95,8 +96,7 @@ test.describe('Responsive layout', () => {
   
   test('stats cards stack vertically on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for content to load
@@ -140,8 +140,7 @@ test.describe('Responsive layout', () => {
 
   test('mobile sidebar shows Blog links (Engineering, Personal)', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {

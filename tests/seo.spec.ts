@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('SEO & Meta Tags', () => {
   test.describe.configure({ timeout: 120000 });
@@ -19,9 +20,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('home page has proper meta tags', async ({ page }) => {
-    // Firefox needs networkidle instead of domcontentloaded for reliability
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to fully load
@@ -90,8 +89,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('page has Open Graph meta tags', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check for Open Graph tags (optional but recommended)
@@ -113,8 +111,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('page has canonical URL', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.waitForFunction(() => {
@@ -137,8 +134,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('favicon is present', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check for favicon link
@@ -152,8 +148,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('structured data is present', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -178,8 +173,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('headings follow semantic structure', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -211,7 +205,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('links are crawlable', async ({ page }) => {
-    const waitUntil = 'domcontentloaded'; // networkidle often never fires in CI (Firefox)
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for page to be ready - check if content element exists
@@ -238,9 +232,7 @@ test.describe('SEO & Meta Tags', () => {
   });
 
   test('robots meta tag is configured', async ({ page }) => {
-    // Use networkidle for Firefox, domcontentloaded for others
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil, timeout: 90000 });
     
     // Check for robots meta tag

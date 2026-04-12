@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { test, expect, type Page, type TestInfo } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 function readPngDimensions(filePath: string) {
   try {
@@ -71,11 +72,10 @@ test.describe('Visual Regression Tests', () => {
     await page.addInitScript(() => {
       localStorage.setItem('siteLanguage', 'en');
     });
-});
+  });
   test('home page matches visual baseline', async ({ page }) => {
     test.skip(!!process.env.CI, 'Full-page screenshot height differs on CI Linux vs baseline; run locally or update snapshots from CI');
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
@@ -97,11 +97,11 @@ test.describe('Visual Regression Tests', () => {
 
   test('home page hero section matches baseline', async ({ page }) => {
     test.skip(!!process.env.CI, 'Hero screenshot differs on CI Linux vs baseline; run locally or update snapshots from CI');
-    // Firefox needs networkidle for reliable navigation
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
-    const timeout = browserName === 'firefox' ? 60000 : 20000;
-    await page.goto('/', { waitUntil, timeout });
+    const waitUntil = spaGotoWaitUntil();
+    await page.goto('/', {
+      waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
+      timeout: 60_000,
+    });
 
     // Wait for content to load
     await page.waitForFunction(() => {
@@ -121,8 +121,7 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('navbar matches visual baseline', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Target only the top navbar (exclude #mobile-sidebar which is also a nav)
@@ -163,7 +162,7 @@ test.describe('Visual Regression Tests', () => {
       });
     });
 
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for initial content
@@ -265,7 +264,7 @@ test.describe('Visual Regression Tests', () => {
   });
 
   test('contact form matches visual baseline', async ({ page }) => {
-    const waitUntil = 'domcontentloaded'; // networkidle often never fires in CI (Firefox)
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for initial content
@@ -308,8 +307,7 @@ test.describe('Visual Regression Tests', () => {
 
   test('dark mode matches visual baseline', async ({ page }) => {
     test.skip(!!process.env.CI, 'Full-page dark screenshot height differs on CI Linux vs baseline; run locally or update snapshots from CI');
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
@@ -349,8 +347,7 @@ test.describe('Visual Regression Tests', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 }); // iPhone 13 Pro size
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load
@@ -374,8 +371,7 @@ test.describe('Visual Regression Tests', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 812 });
 
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     // Wait for content to load

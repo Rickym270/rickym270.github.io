@@ -47,6 +47,11 @@ The fixes align tests with the real SPA navigation flow, which removes reliance 
 - Align SEO tests on a shared navigation helper and Firefox-safe wait strategy.
 
 ## Action Items
+
 - Create reusable navigation helpers for SPA tests.
 - Add a lightweight logging utility that always logs to console in CI.
 - Review other visual tests for explicit SPA readiness waits.
+
+## Follow-up (April 2026)
+
+Centralized helpers now live in **`tests/nav-wait.ts`** (`spaGotoWaitUntil`, `gotoHomeReady`, `waitForSpaHtmlFragmentResponse`, `tryWaitNetworkIdleBounded`). **Do not** use Firefox-only `networkidle` on `page.goto` for this SPA in CI; that direction caused hangs (see [CI Firefox page.goto networkidle Timeout](ci-firefox-page-goto-networkidle-timeout.md)). Historical bullets above that recommend `networkidle` on `goto` are superseded for current CI practice.

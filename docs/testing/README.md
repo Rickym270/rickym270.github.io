@@ -47,7 +47,7 @@ For comprehensive testing documentation, see:
 
 - **[API Testing Guide](../TESTING.md)** - Complete API testing guide with all endpoints
 - **[UI Testing Guide](../UI_TESTING.md)** - Complete Playwright E2E testing guide
-- For Firefox CI timeouts on `page.goto` with `networkidle`, see [Post-Mortem: CI Firefox page.goto networkidle Timeout](../Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
+- For `page.goto` on this SPA, use `spaGotoWaitUntil()` from `tests/nav-wait.ts` (never Firefox-only `networkidle` on `goto`). Background: [Post-Mortem: CI Firefox page.goto networkidle Timeout](../Post-Mortem/ci-firefox-page-goto-networkidle-timeout.md).
 
 ## Test Structure
 
@@ -146,6 +146,15 @@ Playwright tests use a **tiered strategy** so master stays the source of truth (
 Merge is only allowed when sanity and all full-suite shards have passed on the PR, so master is not broken by a merge.
 
 See [UI Testing Guide](../UI_TESTING.md#cicd-integration) for skip keywords and artifact details.
+
+```mermaid
+flowchart LR
+  PR["Open PR"] --> SJ["Sanity job"]
+  PR --> FS["Full suite<br/>5 shards"]
+  SJ --> OK["Both green"]
+  FS --> OK
+  OK --> MERGE["Merge to master"]
+```
 
 ## Need Help?
 

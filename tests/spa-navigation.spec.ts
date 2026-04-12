@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil, waitForSpaHtmlFragmentResponse } from './nav-wait';
 
 test.describe('SPA Navigation', () => {
   // Set timeout for all tests in this describe block
@@ -13,8 +14,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('navigation loads content into #content without full page reload', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Initial page load - wait for content
@@ -34,6 +34,7 @@ test.describe('SPA Navigation', () => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     // Navigate to Projects - handle mobile
+    const projectsResp = waitForSpaHtmlFragmentResponse(page, 'projects.html');
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
@@ -41,7 +42,8 @@ test.describe('SPA Navigation', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
-    
+    await projectsResp.catch(() => {});
+
     // Wait for projects page to load
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -83,8 +85,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('theme persists across SPA navigation', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Check if we're on mobile
@@ -108,13 +109,15 @@ test.describe('SPA Navigation', () => {
     });
     
     // Navigate to different pages - handle mobile
+    const projectsResp = waitForSpaHtmlFragmentResponse(page, 'projects.html');
     if (isMobile) {
       // Sidebar should still be open
       await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
-    await page.waitForTimeout(1000);
+    await projectsResp.catch(() => {});
+    await page.waitForTimeout(500);
     
     let themeAfter = await page.evaluate(() => {
       return document.documentElement.getAttribute('data-theme');
@@ -122,6 +125,7 @@ test.describe('SPA Navigation', () => {
     expect(themeAfter).toBe(themeBefore);
     
     // Navigate to Skills - handle mobile
+    const skillsResp = waitForSpaHtmlFragmentResponse(page, 'skills.html');
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
@@ -129,7 +133,8 @@ test.describe('SPA Navigation', () => {
     } else {
       await page.locator('#navbar-links a[data-translate="nav.skills"]').first().click();
     }
-    await page.waitForTimeout(1000);
+    await skillsResp.catch(() => {});
+    await page.waitForTimeout(500);
     
     themeAfter = await page.evaluate(() => {
       return document.documentElement.getAttribute('data-theme');
@@ -138,8 +143,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('tutorials page does not reload entire page when clicked', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     const initialUrl = page.url();
@@ -148,6 +152,7 @@ test.describe('SPA Navigation', () => {
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     
     // Click Tutorials - handle mobile (Docs dropdown on desktop)
+    const tutorialsResp = waitForSpaHtmlFragmentResponse(page, 'tutorials.html');
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
@@ -166,7 +171,8 @@ test.describe('SPA Navigation', () => {
       await docsButton.hover();
       await page.locator('.dropdown-menu').first().getByRole('link', { name: 'Tutorials' }).click();
     }
-    
+    await tutorialsResp.catch(() => {});
+
     // Wait for content to load - use waitForFunction for better reliability
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -208,8 +214,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('content does not duplicate on multiple navigations', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     
     // Wait for initial load
@@ -224,6 +229,7 @@ test.describe('SPA Navigation', () => {
     
     // Navigate to Projects multiple times - handle mobile
     for (let i = 0; i < 3; i++) {
+      const projectsResp = waitForSpaHtmlFragmentResponse(page, 'projects.html');
       if (isMobile) {
         await page.locator('#mobile-menu-toggle').click();
         await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
@@ -231,7 +237,8 @@ test.describe('SPA Navigation', () => {
       } else {
         await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
       }
-      
+      await projectsResp.catch(() => {});
+
       // Wait for projects page to load
       await page.waitForFunction(() => {
         const c = document.querySelector('#content');
@@ -262,8 +269,7 @@ test.describe('SPA Navigation', () => {
   });
 
   test('SPA navigation resets scroll to top', async ({ page }) => {
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
@@ -271,6 +277,7 @@ test.describe('SPA Navigation', () => {
     }, { timeout: 15000 });
 
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const engineeringResp = waitForSpaHtmlFragmentResponse(page, 'engineering.html');
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
@@ -284,6 +291,7 @@ test.describe('SPA Navigation', () => {
       await blogButton.hover();
       await page.locator('.dropdown-menu-blog').first().getByRole('link', { name: 'Engineering' }).click();
     }
+    await engineeringResp.catch(() => {});
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('.blog-featured');
@@ -298,6 +306,7 @@ test.describe('SPA Navigation', () => {
       expect(scrollAfterEngineering).toBe(0);
     }
 
+    const homeResp = waitForSpaHtmlFragmentResponse(page, 'home.html');
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
       await page.waitForSelector('#mobile-sidebar.active', { timeout: 5000 });
@@ -305,6 +314,7 @@ test.describe('SPA Navigation', () => {
     } else {
       await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
     }
+    await homeResp.catch(() => {});
     await page.waitForFunction(() => {
       const c = document.querySelector('#content');
       return c?.getAttribute('data-content-loaded') === 'true' && !!c?.querySelector('#homeBanner, .carousel');

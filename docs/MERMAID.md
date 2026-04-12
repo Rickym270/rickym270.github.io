@@ -23,6 +23,10 @@ For the AI automation tutorial, `data-translate` can swap the **text inside** `<
 
 In `flowchart` / `graph` node text inside `[...]` or `{...}`, an unquoted **`:`** is treated as syntax, which yields **“Syntax error in text”** at render time. Parentheses and other punctuation can also interact badly with the parser depending on context. Prefer **double-quoted labels** whenever the visible text includes a colon, parentheses, slashes you intend as literal text, or other characters that might read as Mermaid syntax, e.g. `A["Artifacts: code, logs, specs"]` instead of `A[Artifacts: code, logs, specs]`, and `B["Step (optional)"]` instead of unquoted `B[Step (optional)]` when in doubt. Apply the same rule after i18n: keep translated diagram strings valid Mermaid. This applies both to SPA `<pre class="mermaid">` sources and to Mermaid fenced blocks in Markdown (for example in [`docs/testing/projects.md`](testing/projects.md)).
 
+### Mermaid in repository Markdown (GitHub)
+
+Fenced blocks with language `mermaid` render on GitHub and in many editors. Use the same quoting rules as above so diagrams in [`docs/UI_TESTING.md`](UI_TESTING.md), post-mortems, and [`docs/testing/README.md`](testing/README.md) stay valid when labels contain colons or parentheses.
+
 ## Where it is used
 
 | Location | Notes |

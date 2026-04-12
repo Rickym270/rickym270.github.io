@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { spaGotoWaitUntil } from './nav-wait';
 
 test.describe('Mobile sidebar', () => {
   test.describe.configure({ timeout: 60000 });
@@ -10,8 +11,7 @@ test.describe('Mobile sidebar', () => {
       localStorage.setItem('siteLanguage', 'en');
     });
     await page.setViewportSize(mobileViewport);
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
   });
 
@@ -63,8 +63,7 @@ test.describe('Mobile sidebar', () => {
       localStorage.setItem('portfolio-reduced-motion', 'true');
     });
     await page.setViewportSize(mobileViewport);
-    const browserName = page.context().browser()?.browserType().name() || '';
-    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    const waitUntil = spaGotoWaitUntil();
     await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
 
     await page.locator('#mobile-menu-toggle').click();
