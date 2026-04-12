@@ -42,7 +42,7 @@ Welcome to the documentation for rickym270.github.io. This index provides an ove
 - **Visual Regression Tests** (`tests/visual-regression.spec.ts`) - Screenshot comparison
 - **Footer Tests** (`tests/footer.spec.ts`) - Footer visibility, identity, theme/language/reduced-motion/reset, quick links, Back to top
 - **Mobile Sidebar Tests** (`tests/mobile-sidebar.spec.ts`) - Mobile hamburger menu, nav items, Docs/Blog panels, accessibility controls (theme, language, reduce motion, reset preferences)
-- **Article listen Tests** (`tests/article-listen.spec.ts`) - Listen control on SPA blog post, dark-mode toggle contrast, mobile hint, pause state, `extractSpeakableText` API, Mermaid/code excluded from utterance (mocked speech)
+- **Article listen Tests** (`tests/article-listen.spec.ts`) - Listen on SPA engineering post and AI tutorial, dark-mode toggle contrast, mobile hint, playing/pause, `extractSpeakableText`, Mermaid/code excluded from utterance (mocked `speak`), **SPA back navigation cancels speech** (instrumented `speechSynthesis.cancel`)
 - **Mermaid Tests** (`tests/mermaid.spec.ts`) - Diagrams render via SPA and full-page load, three SVGs on AI tutorial, language switch stability, sequence diagram text
 
 ### Individual Test Documentation

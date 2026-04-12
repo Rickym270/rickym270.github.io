@@ -5,6 +5,24 @@ import {
   openTutorialsPageFromNav,
 } from './ai-tutorial.helpers';
 
+/** Counts `speechSynthesis.cancel()` for SPA speech-reset assertions. */
+async function installSpeechCancelCounter(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const synth = window.speechSynthesis;
+    if (!synth || typeof synth.cancel !== 'function') return;
+    const orig = synth.cancel.bind(synth);
+    synth.cancel = function (...args: unknown[]) {
+      const w = window as unknown as { __listenCancelCount: number };
+      w.__listenCancelCount = (w.__listenCancelCount || 0) + 1;
+      return orig(...args);
+    };
+  });
+}
+
+async function getListenCancelCount(page: Page): Promise<number> {
+  return page.evaluate(() => (window as unknown as { __listenCancelCount?: number }).__listenCancelCount || 0);
+}
+
 async function openEngineeringListing(page: Page): Promise<void> {
   const isMobile = await page.evaluate(() => window.innerWidth <= 768);
   const responsePromise = page.waitForResponse(
@@ -144,6 +162,51 @@ test.describe('[regression] Article listen', () => {
     await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
     const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
     await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
+  });
+
+  test('SPA navigation away from blog post calls speech cancel while Listen is playing', async ({ page }) => {
+    await installSpeechCancelCounter(page);
+    await gotoHomeReady(page);
+    await openEngineeringListing(page);
+    await page.locator('a.inline-load[data-url*="how-living-with-ms"]').first().click();
+    await page.waitForFunction(
+      () => document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true',
+      { timeout: 15_000 }
+    );
+    await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
+    await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
+    const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
+    await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
+    const cancelsAfterPlaying = await getListenCancelCount(page);
+    await page.locator('a.inline-load.post-back-link').first().click();
+    await page.waitForFunction(
+      () => document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true',
+      { timeout: 15_000 }
+    );
+    await expect
+      .poll(async () => getListenCancelCount(page), { timeout: 10_000 })
+      .toBeGreaterThan(cancelsAfterPlaying);
+  });
+
+  test('SPA navigation away from AI tutorial calls speech cancel while Listen is playing', async ({ page }) => {
+    await installSpeechCancelCounter(page);
+    await gotoHomeReady(page);
+    await openTutorialsPageFromNav(page);
+    await openAiTutorialFromTutorialsCard(page);
+    await expect(page.getByTestId('article-listen')).toBeVisible({ timeout: 15_000 });
+    await page.getByTestId('article-listen').getByRole('button', { name: /Listen/i }).click();
+    const toggle = page.getByTestId('article-listen').locator('[data-action="toggle"]');
+    await expect.poll(async () => toggle.getAttribute('aria-label'), { timeout: 10_000 }).toMatch(/Pause/i);
+    const cancelsAfterPlaying = await getListenCancelCount(page);
+    await page.locator('a.lesson-back-button.inline-load').click();
+    await page.waitForFunction(
+      () => document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true',
+      { timeout: 15_000 }
+    );
+    await expect(page.getByTestId('ai-tutorial-spa')).toBeVisible({ timeout: 15_000 });
+    await expect
+      .poll(async () => getListenCancelCount(page), { timeout: 10_000 })
+      .toBeGreaterThan(cancelsAfterPlaying);
   });
 
   test('ArticleListen.extractSpeakableText strips Mermaid pre source from lesson body', async ({

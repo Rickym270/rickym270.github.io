@@ -23,7 +23,7 @@ The blog has two listing pages (Engineering and Personal), reached from the Blog
 When a post is opened (e.g. from Engineering "Read Article" or a card’s "Read more" link), the post HTML is loaded into `#content` via the SPA.
 
 - **Structure**: Banner image at top (`.post-banner`, `.post-banner-img`), then `.post-hero` (`.post-meta` for date/category/read time and `.post-title`), then `#post-body` (article content: paragraphs, h2s, lists, blockquotes).
-- **Listen (read aloud)**: When the post has enough text, a Web Speech toolbar may appear above `#post-body`. See **[Article listen](../ARTICLE_LISTEN.md)** for UX, exclusions (e.g. Mermaid/code), and `tests/article-listen.spec.ts`.
+- **Listen (read aloud)**: When the post has enough text, a Web Speech toolbar may appear above `#post-body`. See **[Article listen](../ARTICLE_LISTEN.md)** for UX, exclusions (e.g. Mermaid/code), and `tests/article-listen.spec.ts` (including SPA “back to listing” while playing, which must call `speechSynthesis.cancel`).
 - **Styling**: Banner has shadow, max-height, and rounded corners; post meta uses secondary text color; blockquotes use accent left border, background, and padding; body has spacing for h2s, paragraphs, and lists. Both `html/css/blog.css` and `html/css/modern.css` apply (posts link both).
 - **Entry points**: Reached via SPA from Engineering "Read Article" or from the first card’s "Read more" link.
 
@@ -52,6 +52,7 @@ When a post is opened (e.g. from Engineering "Read Article" or a card’s "Read 
 
 **Other specs that touch blog:**
 
+- `**tests/article-listen.spec.ts`**: Opens an engineering post via SPA, starts Listen (playing), then uses the post’s **Back to Engineering** link; asserts `speechSynthesis.cancel` runs again (no stale playback on listing).
 - `**tests/translation.spec.ts`**: Navigates to Engineering, clicks post link, and asserts translated post title and body in Spanish.
 - `**tests/navbar.spec.ts**`: Asserts Blog dropdown and Engineering/Personal links are visible.
 

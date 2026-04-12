@@ -7,6 +7,8 @@
     var debounceTimer = null;
     var activeUtterance = null;
     var activeState = 'idle'; // idle | playing | paused
+    /** @type {HTMLElement | null} */
+    var lastMountedListenBody = null;
 
     function supported() {
         return typeof window !== 'undefined' && window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined';
@@ -90,6 +92,15 @@
         var container = ctx.container;
         var insertBefore = ctx.insertBefore;
         var body = ctx.body;
+
+        // SPA: new article = new body node; there may be no prior bar in this container, so we must
+        // stop any speech tied to the previous article.
+        var navigatedToNewBody =
+            lastMountedListenBody !== null && lastMountedListenBody !== body;
+        if (navigatedToNewBody) {
+            cancelSpeech();
+        }
+        lastMountedListenBody = body;
 
         var text = extractSpeakableText(body);
         if (!text || text.length < 20) {
@@ -268,8 +279,24 @@
 
     function scanAndMount() {
         var ctx = findListenContext();
-        if (!ctx) return;
+        if (!ctx) {
+            if (lastMountedListenBody !== null) {
+                cancelSpeech();
+                lastMountedListenBody = null;
+            }
+            return;
+        }
         mountBar(ctx);
+    }
+
+    /**
+     * Call after SPA replaces #content (SPAHack .load / .html). Ensures speech stops and the listen
+     * bar rebinds even if MutationObserver misses the swap or races with jQuery.
+     */
+    function afterSpaContentReplaced() {
+        cancelSpeech();
+        lastMountedListenBody = null;
+        scanAndMount();
     }
 
     function scheduleScan() {
@@ -284,6 +311,10 @@
         var content = document.getElementById('content');
         if (!content) return;
         var obs = new MutationObserver(function () {
+            // #content direct children changed (typical SPA shell swap). Stop speech immediately so we
+            // do not rely only on debounced mountBar; also clear body tracking for the next scan.
+            cancelSpeech();
+            lastMountedListenBody = null;
             scheduleScan();
         });
         // childList only: avoid remounting when Mermaid or translations mutate inside the article.
@@ -310,5 +341,6 @@
         extractSpeakableText: extractSpeakableText,
         scanAndMount: scanAndMount,
         findListenContext: findListenContext,
+        afterSpaContentReplaced: afterSpaContentReplaced,
     };
 })();

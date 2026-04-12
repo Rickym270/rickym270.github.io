@@ -5,6 +5,12 @@ $(document).ready(function(){
     }
     window.spaInitialized = true;
 
+    function notifyArticleListenContentReplaced() {
+        if (window.ArticleListen && typeof window.ArticleListen.afterSpaContentReplaced === 'function') {
+            window.ArticleListen.afterSpaContentReplaced();
+        }
+    }
+
     // Better URL parsing - handle both absolute and relative paths
     var pathParts = window.location.pathname.split("/").filter(Boolean);
     var location_name = pathParts[pathParts.length - 1] || "";
@@ -42,6 +48,7 @@ $(document).ready(function(){
             }
             // Set active nav item
             updateActiveNavItem('html/pages/home.html');
+            notifyArticleListenContentReplaced();
             window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
         });
     } else {
@@ -243,6 +250,7 @@ $(document).ready(function(){
                             if (typeof window.TranslationManager !== 'undefined') {
                                 window.TranslationManager.applyTranslations();
                             }
+                            notifyArticleListenContentReplaced();
                             // Re-setup click handlers for newly loaded content
                             setupClickHandlers();
                             window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -319,6 +327,7 @@ $(document).ready(function(){
                         // Update active nav item
                         // Update active nav items
                         updateActiveNavItem(sectionUrl);
+                        notifyArticleListenContentReplaced();
                         // Re-setup click handlers for newly loaded content
                         setupClickHandlers();
                         // Load scripts if projects page

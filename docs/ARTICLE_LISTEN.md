@@ -62,14 +62,18 @@ Keys include: `label`, `mobileHint`, `listen`, `pause`, `resume`, `stop`, `playi
 | File | Role |
 | ---- | ---- |
 | `html/js/article-listen.js` | Mount logic, text extraction, synthesis control, observer, `window.ArticleListen` debug API |
+| `html/js/SPAHack.js` | Calls `ArticleListen.afterSpaContentReplaced()` after full `#content` swaps the SPA performs |
 | `html/css/article-listen.css` | Desktop bar, mobile compact layout, dark-mode-friendly toggle colors |
 | `index.html` | Loads stylesheet and script (global, after other site scripts as configured) |
-| `tests/article-listen.spec.ts` | Regression: SPA post control, dark toggle contrast, Mermaid exclusion (mocked `speak`) |
+| `tests/article-listen.spec.ts` | Regression: SPA blog + AI tutorial, dark toggle, mobile hint, playing state, Mermaid exclusion (mocked `speak`), `extractSpeakableText`, **SPA navigation triggers `speechSynthesis.cancel` while playing** (instrumented `cancel`) |
 
 ## SPA lifecycle
 
 - **Initial mount**: `DOMContentLoaded` runs `scanAndMount()`.
-- **Navigation**: A **`MutationObserver`** on `#content` watches **`childList` only** (not subtree), with a short **debounce**, so swapping the whole loaded page re-runs the mount without reacting to every in-article DOM tweak (e.g. Mermaid or translation updates).
+- **`#content` observer**: A **`MutationObserver`** on `#content` watches **direct `childList` changes only** (not subtree). When the SPA replaces the subtree under `#content`, **`speechSynthesis` is cancelled immediately**, the last mounted body reference is cleared, and a short **debounced** `scanAndMount()` runs. That avoids remounting on every in-article tweak (Mermaid render, translations) while still reacting to real page swaps.
+- **`ArticleListen.afterSpaContentReplaced()`**: `html/js/SPAHack.js` calls this after known full content replacements (e.g. home load, `/data/projects/` HTML injection, successful `#content.load`) so cancellation and remount stay aligned with jQuery-driven navigation if observer timing races.
+- **New article or lesson body**: `mountBar` compares the current body node to the previous one; if the user navigated to a **different** `#post-body` / `.lesson-body`, speech is cancelled before attaching the new bar.
+- **Leaving listen context**: When `findListenContext()` returns null (e.g. blog or tutorials **listing**), any in-flight speech is cancelled and body tracking is cleared.
 - **Duplicate guard**: A node with `[data-article-listen-root]` is removed before inserting a new bar for the same container.
 
 ## Developer debugging
@@ -80,6 +84,7 @@ In the browser console (when the script is loaded):
 window.ArticleListen.findListenContext();
 window.ArticleListen.extractSpeakableText(document.querySelector('#post-body'));
 window.ArticleListen.scanAndMount();
+window.ArticleListen.afterSpaContentReplaced(); // after a full #content swap (same as SPAHack hooks)
 ```
 
 Useful to verify mount targets and extracted text without starting playback.
