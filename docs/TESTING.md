@@ -96,7 +96,7 @@ curl -s http://localhost:8080/api/home
 - Sorts featured first, then by name.
 - On any GitHub error/rate limit, falls back to curated JSON only.
 
-**Frontend fallback:** The Projects page uses API → localStorage (1h TTL) → static file `data/web_data/projects.json`. When the API fails, the UI may still show projects from cache or the static file and display a "Showing cached projects" note. See `docs/testing/projects.md` for details.
+**Frontend loading:** On a **cold** visit (no in-memory API cache and no `sessionStorage` API snapshot), the Projects page **paints from static** `data/web_data/projects.json` (then TTL **localStorage**), may show a short **“cached / outdated”** note, then **refreshes from `/api/projects` in the background** and updates the DOM when the response differs. **Warm** visits reuse **`window.projectsCache`** when `projectsCacheFromApi` is true, or hydrate from **`sessionStorage`** (`portfolio_projects_api_session_v1`) so SPA revisits avoid extra API calls. Home **`prefetchProjects()`** can fill the cache before navigation; `html/js/projects.js` awaits an in-flight **`projectsCachePromise`** to avoid racing static paint against prefetch. The committed static JSON is refreshed by **`.github/workflows/update-content.yml`** (scheduled / dispatch); the browser does not write that file. See **[docs/testing/projects.md](testing/projects.md)** (includes Mermaid diagrams of the flow and wiring).
 
 Optional: to raise GitHub API limits
 ```bash

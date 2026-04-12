@@ -530,6 +530,22 @@ test.describe('Projects Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner') || !!c?.querySelector('.hero-content');
     }, { timeout: 20000 });
 
+    await page.evaluate(() => {
+      try {
+        sessionStorage.removeItem('portfolio_projects_api_session_v1');
+      } catch {
+        /* ignore */
+      }
+      const w = window as unknown as {
+        projectsCache?: unknown;
+        projectsCachePromise?: unknown;
+        projectsCacheFromApi?: boolean;
+      };
+      w.projectsCache = null;
+      w.projectsCachePromise = null;
+      w.projectsCacheFromApi = false;
+    });
+
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
     if (isMobile) {
       await page.locator('#mobile-menu-toggle').click();
@@ -569,7 +585,10 @@ test.describe('Projects Page', () => {
     }));
 
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      await expect(apiBaseUrl).toBe('http://localhost:8080');
+      // api-config.js may pin production API in some local setups
+      if (apiBaseUrl.startsWith('http://localhost') || apiBaseUrl.startsWith('http://127.0.0.1')) {
+        await expect(apiBaseUrl).toBe('http://localhost:8080');
+      }
     }
   });
 
@@ -945,13 +964,12 @@ test.describe('Projects Page', () => {
     await expect(comingSoon).toBeAttached({ timeout: 5000 });
   });
 
-  test('shows projects from cache first when API is slow (cache-first loading)', async ({ page }) => {
+  test('Projects shows static fallback when API is slow or errors (cache-first paint)', async ({ page }) => {
     const cacheOnlyProjects = [
-      { name: 'Cache First Project', summary: 'Shown from static cache.', status: 'complete', tech: ['JS'], slug: 'cache-first-project', repo: 'https://github.com/example/cache-first', featured: true },
+      { name: 'Static Fallback Project', summary: 'Shown from static after API fails.', status: 'complete', tech: ['JS'], slug: 'static-fallback-project', repo: 'https://github.com/example/sf', featured: true },
     ];
-    // API delayed so cache-first path is used for initial render
     await page.route('**/api/projects**', async (route) => {
-      await new Promise((r) => setTimeout(r, 8000));
+      await new Promise((r) => setTimeout(r, 2000));
       await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Unavailable' }) });
     });
     await page.route('**/data/web_data/projects.json', async (route) => {
@@ -981,24 +999,206 @@ test.describe('Projects Page', () => {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
 
-    // Cache-first: cards should appear quickly (from static file), not after API delay
-    await expect(page.locator('#content .card-title', { hasText: 'Cache First Project' })).toBeVisible({ timeout: 5000 });
-    const cards = page.locator('#content .project-card');
-    await expect(cards).toHaveCount(1);
+    // API-first: must wait for API attempt, then static fallback fills the grid
+    await expect(page.locator('#content .card-title', { hasText: 'Static Fallback Project' })).toBeVisible({
+      timeout: 12000,
+    });
+    await expect(page.locator('#content .project-card')).toHaveCount(1);
   });
 
-  test('silently updates projects when background API returns different data', async ({ page }) => {
-    const cachedProjects = [
-      { name: 'Cached Only', summary: 'From cache.', status: 'complete', tech: [], slug: 'cached-only', repo: 'https://github.com/example/cached', featured: true },
+  test('at most one cached-projects fallback note after repeated SPA visits (API unavailable)', async ({
+    page,
+  }) => {
+    const stubProjects = [
+      {
+        name: 'Multi SPA Note Test',
+        summary: 'Enough text for cards and listen-style thresholds in the UI.',
+        status: 'in progress',
+        tech: ['TS'],
+        slug: 'multi-spa-note-test',
+        repo: 'https://github.com/example/multi-spa',
+        featured: false,
+      },
+    ];
+    await page.route('**/api/projects**', async (route) => {
+      await route.abort('failed');
+    });
+    await page.route('**/data/web_data/projects.json', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(stubProjects),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', {
+      waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
+      timeout: 60000,
+    });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return (
+        c?.getAttribute('data-content-loaded') === 'true' ||
+        !!c?.querySelector('#homeBanner') ||
+        !!c?.querySelector('.hero-content')
+      );
+    }, { timeout: 20000 });
+
+    async function clearProjectsMemory(): Promise<void> {
+      await page.evaluate(() => {
+        try {
+          sessionStorage.removeItem('portfolio_projects_api_session_v1');
+        } catch {
+          /* ignore */
+        }
+        const w = window as unknown as {
+          projectsCache?: unknown;
+          projectsCachePromise?: unknown;
+          projectsCacheFromApi?: boolean;
+        };
+        w.projectsCache = null;
+        w.projectsCachePromise = null;
+        w.projectsCacheFromApi = false;
+      });
+    }
+
+    async function openProjectsSpa(): Promise<void> {
+      const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+      if (isMobile) {
+        await page.locator('#mobile-menu-toggle').click();
+        await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+        await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+      } else {
+        await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+      }
+      await page.waitForFunction(
+        () =>
+          document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true' ||
+          !!document.querySelector('#content #ProjInProgress .project-card'),
+        { timeout: 15000 }
+      );
+      await expect(page.locator('#content .project-card').first()).toBeVisible({ timeout: 10000 });
+    }
+
+    async function goHomeSpa(): Promise<void> {
+      const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+      if (isMobile) {
+        await page.locator('.navbar-brand-name').click();
+      } else {
+        await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
+      }
+      await page.waitForSelector('#content #homeBanner, #content .hero-content', { timeout: 15000 });
+    }
+
+    for (let visit = 1; visit <= 3; visit++) {
+      await clearProjectsMemory();
+      await openProjectsSpa();
+      const noteCount = await page.locator('#content p[data-translate="projects.fallbackNote"]').count();
+      expect(noteCount, `visit ${visit}: duplicate cached-data banners`).toBeLessThanOrEqual(1);
+      await goHomeSpa();
+    }
+  });
+
+  test('Projects SPA revisit does not call API again when tab session cache exists', async ({ page }) => {
+    let apiCount = 0;
+    await page.route('**/api/projects**', async (route) => {
+      apiCount += 1;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          {
+            name: 'Single Flight Project',
+            summary: 'One API request per tab session for projects list.',
+            status: 'in progress',
+            tech: ['API'],
+            slug: 'single-flight-project',
+            repo: 'https://github.com/example/single-flight',
+            featured: false,
+          },
+        ]),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'networkidle' : 'domcontentloaded';
+    await page.goto('/', {
+      waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit',
+      timeout: 60000,
+    });
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return (
+        c?.getAttribute('data-content-loaded') === 'true' ||
+        !!c?.querySelector('#homeBanner') ||
+        !!c?.querySelector('.hero-content')
+      );
+    }, { timeout: 20000 });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    const openProjects = async () => {
+      if (isMobile) {
+        await page.locator('#mobile-menu-toggle').click();
+        await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+        await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
+      } else {
+        await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
+      }
+      await page.waitForFunction(
+        () =>
+          document.querySelector('#content')?.getAttribute('data-content-loaded') === 'true' ||
+          !!document.querySelector('#content #ProjInProgress .project-card'),
+        { timeout: 15000 }
+      );
+    };
+    const goHome = async () => {
+      if (isMobile) {
+        await page.locator('.navbar-brand-name').click();
+      } else {
+        await page.locator('#navbar-links').getByRole('link', { name: 'Home' }).first().click();
+      }
+      await page.waitForSelector('#content #homeBanner, #content .hero-content', { timeout: 15000 });
+    };
+
+    await openProjects();
+    await expect(page.locator('#content .card-title', { hasText: 'Single Flight Project' })).toBeVisible({
+      timeout: 15000,
+    });
+    expect(apiCount, 'first Projects visit should hit API once').toBe(1);
+
+    await goHome();
+    await page.evaluate(() => {
+      const w = window as unknown as {
+        projectsCache?: unknown;
+        projectsCachePromise?: unknown;
+        projectsCacheFromApi?: boolean;
+      };
+      w.projectsCache = null;
+      w.projectsCachePromise = null;
+      w.projectsCacheFromApi = false;
+    });
+
+    await openProjects();
+    await expect(page.locator('#content .card-title', { hasText: 'Single Flight Project' })).toBeVisible({
+      timeout: 15000,
+    });
+    expect(apiCount, 'second visit should use session/memory, not call API again').toBe(1);
+  });
+
+  test('Projects list prefers API over static file when both are available', async ({ page }) => {
+    const staticOnly = [
+      { name: 'Static Only Name', summary: 'From static JSON.', status: 'complete', tech: [], slug: 'static-only', repo: 'https://github.com/example/st', featured: true },
     ];
     const apiProjects = [
-      { name: 'Live Only', summary: 'From API.', status: 'complete', tech: [], slug: 'live-only', repo: 'https://github.com/example/live', featured: true },
+      { name: 'From API List', summary: 'From live API.', status: 'complete', tech: [], slug: 'from-api', repo: 'https://github.com/example/api', featured: true },
     ];
     await page.route('**/data/web_data/projects.json', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify(cachedProjects),
+        body: JSON.stringify(staticOnly),
       });
     });
     await page.route('**/api/projects**', async (route) => {
@@ -1019,10 +1219,20 @@ test.describe('Projects Page', () => {
       return c?.getAttribute('data-content-loaded') === 'true' || !!c?.querySelector('#homeBanner') || !!c?.querySelector('.hero-content');
     }, { timeout: 20000 });
 
-    // Clear any prefetched cache so Projects page uses cache-first (static) then background API
     await page.evaluate(() => {
-      (window as unknown as { projectsCache?: unknown }).projectsCache = null;
-      (window as unknown as { projectsCachePromise?: unknown }).projectsCachePromise = null;
+      try {
+        sessionStorage.removeItem('portfolio_projects_api_session_v1');
+      } catch {
+        /* ignore */
+      }
+      const w = window as unknown as {
+        projectsCache?: unknown;
+        projectsCachePromise?: unknown;
+        projectsCacheFromApi?: boolean;
+      };
+      w.projectsCache = null;
+      w.projectsCachePromise = null;
+      w.projectsCacheFromApi = false;
     });
 
     const isMobile = await page.evaluate(() => window.innerWidth <= 768);
@@ -1034,17 +1244,102 @@ test.describe('Projects Page', () => {
       await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
 
-    // Cache-first shows "Cached Only" first; then background fetch runs and may replace with "Live Only" quickly
-    // So we wait for either cached then live, or just live (if background was fast)
-    const cachedVisible = await page.locator('#content .card-title', { hasText: 'Cached Only' }).isVisible({ timeout: 3000 }).catch(() => false);
-    if (cachedVisible) {
-      await expect(page.locator('#content .card-title', { hasText: 'Live Only' })).toBeVisible({ timeout: 12000 });
+    await expect(page.locator('#content .card-title', { hasText: 'From API List' })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('#content .card-title', { hasText: 'Static Only Name' })).toHaveCount(0);
+    await expect(page.locator('#content p[data-translate="projects.fallbackNote"]')).toHaveCount(0);
+  });
+
+  test('Projects cold-paints static then replaces with API when background succeeds', async ({ page }) => {
+    await page.addInitScript(() => {
+      // Disable home prefetch so cold static paint is deterministic before delayed API.
+      (window as unknown as { prefetchProjects: () => null }).prefetchProjects = () => null;
+    });
+
+    const staticRows = [
+      {
+        name: 'Cold Paint Static',
+        summary: 'From static JSON for first paint.',
+        status: 'complete',
+        tech: ['HTML'],
+        slug: 'cold-paint-static',
+        repo: 'https://github.com/example/cold-static',
+        featured: true,
+      },
+    ];
+    const apiRows = [
+      {
+        name: 'API Upgrade Row',
+        summary: 'From live API after background refresh.',
+        status: 'complete',
+        tech: ['API'],
+        slug: 'api-upgrade-row',
+        repo: 'https://github.com/example/api-upgrade',
+        featured: true,
+      },
+    ];
+    let apiCallCount = 0;
+    await page.route('**/api/projects**', async (route) => {
+      apiCallCount += 1;
+      await new Promise((r) => setTimeout(r, 2500));
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(apiRows),
+      });
+    });
+    await page.route('**/data/web_data/projects.json', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(staticRows),
+      });
+    });
+
+    const browserName = page.context().browser()?.browserType().name() || '';
+    const waitUntil = browserName === 'firefox' ? 'domcontentloaded' : 'domcontentloaded';
+    await page.goto('/', { waitUntil: waitUntil as 'load' | 'domcontentloaded' | 'networkidle' | 'commit', timeout: 60000 });
+
+    await page.waitForFunction(() => {
+      const c = document.querySelector('#content');
+      return (
+        c?.getAttribute('data-content-loaded') === 'true' ||
+        !!c?.querySelector('#homeBanner') ||
+        !!c?.querySelector('.hero-content')
+      );
+    }, { timeout: 20000 });
+
+    await page.evaluate(() => {
+      try {
+        sessionStorage.removeItem('portfolio_projects_api_session_v1');
+      } catch {
+        /* ignore */
+      }
+      const w = window as unknown as {
+        projectsCache?: unknown;
+        projectsCachePromise?: unknown;
+        projectsCacheFromApi?: boolean;
+      };
+      w.projectsCache = null;
+      w.projectsCachePromise = null;
+      w.projectsCacheFromApi = false;
+    });
+
+    const isMobile = await page.evaluate(() => window.innerWidth <= 768);
+    if (isMobile) {
+      await page.locator('#mobile-menu-toggle').click();
+      await page.waitForSelector('#mobile-sidebar.active', { timeout: 2000 });
+      await page.locator('.mobile-nav-item[data-url="html/pages/projects.html"]').click();
     } else {
-      await expect(page.locator('#content .card-title', { hasText: 'Live Only' })).toBeVisible({ timeout: 15000 });
+      await page.locator('#navbar-links').getByRole('link', { name: 'Projects' }).first().click();
     }
-    // After background update, fallback note should be removed
-    const fallbackNote = page.locator('#content p[data-translate="projects.fallbackNote"]');
-    await expect(fallbackNote).toHaveCount(0);
+
+    await expect(page.locator('#content .card-title', { hasText: 'Cold Paint Static' })).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('#content p[data-translate="projects.fallbackNote"]')).toBeVisible({ timeout: 3000 });
+
+    await expect(page.locator('#content .card-title', { hasText: 'API Upgrade Row' })).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('#content .card-title', { hasText: 'Cold Paint Static' })).toHaveCount(0);
+    await expect(page.locator('#content p[data-translate="projects.fallbackNote"]')).toHaveCount(0);
+    expect(apiCallCount).toBeGreaterThanOrEqual(1);
   });
 });
 

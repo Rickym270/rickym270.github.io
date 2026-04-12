@@ -76,40 +76,6 @@ var PROJECTS_STATIC_FALLBACK_URL = '/data/web_data/projects.json';
 // localStorage key for projects cache (must match api.js)
 var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
 
-/**
- * Normalize project for comparison (slug, name, summary/description)
- * @param {Object} p - Project object
- * @returns {Object} - Normalized fingerprint
- */
-function projectFingerprint(p) {
-    return {
-        slug: (p.slug || p.name || '').toString().toLowerCase(),
-        name: (p.name || '').toString(),
-        summary: (p.summary || p.description || '').toString()
-    };
-}
-
-/**
- * Compare two project arrays for equality (order-independent by slug, same slugs with same name/summary)
- * @param {Array} a - First list
- * @param {Array} b - Second list
- * @returns {boolean} - True if data is equivalent
- */
-function projectsDataEqual(a, b) {
-    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-    var mapA = {};
-    a.forEach(function(p) {
-        var fp = projectFingerprint(p);
-        mapA[fp.slug] = fp;
-    });
-    for (var i = 0; i < b.length; i++) {
-        var fp = projectFingerprint(b[i]);
-        var fromA = mapA[fp.slug];
-        if (!fromA || fromA.name !== fp.name || fromA.summary !== fp.summary) return false;
-    }
-    return true;
-}
-
 // Fetch projects function - works standalone or with api.js
 async function fetchProjectsFromAPI() {
     if (typeof fetchProjects !== 'undefined') {
@@ -123,6 +89,10 @@ async function fetchProjectsFromAPI() {
         if (!response.ok) {
             throw new Error('HTTP error! status: ' + response.status);
         }
+        if (typeof window !== 'undefined') {
+            window.projectsFallbackUsed = false;
+            window.projectsCacheFromApi = true;
+        }
         return await response.json();
     } catch (error) {
         try {
@@ -130,7 +100,10 @@ async function fetchProjectsFromAPI() {
             if (fallbackResponse.ok) {
                 var data = await fallbackResponse.json();
                 if (data && Array.isArray(data)) {
-                    if (typeof window !== 'undefined') window.projectsFallbackUsed = true;
+                    if (typeof window !== 'undefined') {
+                        window.projectsFallbackUsed = true;
+                        window.projectsCacheFromApi = false;
+                    }
                     return data;
                 }
             }
@@ -447,8 +420,119 @@ function deduplicateProjects(projects) {
 if (typeof projectsInitialized === 'undefined') {
     var projectsInitialized = false;
 }
-// Make it accessible globally for SPA navigation
-window.projectsInitialized = false;
+// Make it accessible globally for SPA navigation (do not reset on every script re-exec via SPA .load)
+if (typeof window.projectsInitialized === 'undefined') {
+    window.projectsInitialized = false;
+}
+
+/**
+ * Remove any existing "cached projects" banner(s). SPA may run init more than once; notes must not stack.
+ */
+function removeProjectFallbackNotesFromContent() {
+    var c = document.getElementById('content');
+    if (!c) return;
+    c.querySelectorAll('p[data-translate="projects.fallbackNote"]').forEach(function (el) {
+        el.remove();
+    });
+}
+
+/**
+ * @returns {Array|null} Session snapshot from API or null
+ */
+function tryReadSessionApiProjects() {
+    try {
+        var key = 'portfolio_projects_api_session_v1';
+        var rawSession = sessionStorage.getItem(key);
+        if (!rawSession) return null;
+        var sessionParsed = JSON.parse(rawSession);
+        if (
+            sessionParsed &&
+            Array.isArray(sessionParsed.data) &&
+            sessionParsed.data.length > 0 &&
+            sessionParsed.fromApi === true
+        ) {
+            return sessionParsed.data;
+        }
+    } catch (e) { /* ignore */ }
+    return null;
+}
+
+function projectFingerprint(p) {
+    if (!p) return '';
+    var slug = String(p.slug || '').toLowerCase();
+    var name = String(p.name || '').toLowerCase();
+    var sum = String(p.summary || p.description || '').trim();
+    return slug + '|' + name + '|' + sum;
+}
+
+function projectsDataEqual(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+        return false;
+    }
+    var fa = a.map(projectFingerprint).sort();
+    var fb = b.map(projectFingerprint).sort();
+    for (var i = 0; i < fa.length; i++) {
+        if (fa[i] !== fb[i]) return false;
+    }
+    return true;
+}
+
+function insertProjectsFallbackNote() {
+    var containerEl = document.querySelector('#content .container');
+    if (!containerEl) containerEl = document.querySelector('.container');
+    removeProjectFallbackNotesFromContent();
+    var fallbackNote = document.createElement('p');
+    fallbackNote.className = 'text-muted small mb-2';
+    fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
+    fallbackNote.textContent = 'Showing cached projects; some data may be outdated.';
+    if (containerEl) {
+        if (containerEl.firstChild) {
+            containerEl.insertBefore(fallbackNote, containerEl.firstChild);
+        } else {
+            containerEl.appendChild(fallbackNote);
+        }
+    }
+}
+
+/**
+ * After cache-first paint, refresh from `/api/projects` only; diff vs displayed; persist on success.
+ */
+function startProjectsBackgroundRefresh(classification, displayedProjects) {
+    if (typeof fetchProjectsFromAPIBackground === 'undefined') {
+        return;
+    }
+    if (window.__projectsBackgroundRefreshPending) {
+        return;
+    }
+    window.__projectsBackgroundRefreshPending = true;
+    fetchProjectsFromAPIBackground()
+        .then(function (apiData) {
+            if (!apiData || !Array.isArray(apiData) || apiData.length === 0) {
+                return;
+            }
+            removeProjectFallbackNotesFromContent();
+            if (projectsDataEqual(displayedProjects, apiData)) {
+                if (typeof persistProjectsApiSnapshot === 'function') {
+                    persistProjectsApiSnapshot(apiData);
+                }
+            } else {
+                renderProjects(apiData, classification);
+                if (typeof persistProjectsApiSnapshot === 'function') {
+                    persistProjectsApiSnapshot(apiData);
+                }
+            }
+            if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.applyTranslations) {
+                window.TranslationManager.applyTranslations();
+            }
+        })
+        .catch(function (err) {
+            console.warn('Projects background API refresh failed:', err);
+        })
+        .then(function () {
+            window.__projectsBackgroundRefreshPending = false;
+        });
+}
+
 // Provide a safe reset API so SPA can re-initialize when navigating back
 window.resetProjectsInit = function resetProjectsInit() {
     projectsInitialized = false;
@@ -456,32 +540,7 @@ window.resetProjectsInit = function resetProjectsInit() {
 };
 
 /**
- * Run background API fetch and, if response differs from current data, silently update UI and cache.
- * Call after rendering from cache. No-op if cache-first APIs are not available.
- */
-function startProjectsBackgroundRefresh(classification, displayedProjects) {
-    if (typeof window.fetchProjectsFromAPIBackground !== 'function') return;
-    window.fetchProjectsFromAPIBackground()
-        .then(function(apiData) {
-            if (!Array.isArray(apiData) || projectsDataEqual(displayedProjects, apiData)) return;
-            window.projectsCache = apiData;
-            window.projectsFallbackUsed = false;
-            try {
-                localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: apiData, at: Date.now() }));
-            } catch (e) { /* ignore */ }
-            renderProjects(apiData, classification);
-            var fallbackNote = document.querySelector('#content p[data-translate="projects.fallbackNote"]');
-            if (fallbackNote) fallbackNote.remove();
-            if (typeof window.TranslationManager !== 'undefined' && window.TranslationManager.applyTranslations) {
-                window.TranslationManager.applyTranslations();
-            }
-        })
-        .catch(function() { /* ignore background failure */ });
-}
-
-/**
- * Initialize projects page - load and render projects from API
- * Uses cache-first: show static/cached data immediately, then refresh from API in background and silently update if different.
+ * Initialize projects page — warm path (API session / memory), or cold cache-first + background API refresh.
  */
 async function initProjects() {
     // Prevent double initialization
@@ -513,43 +572,68 @@ async function initProjects() {
         
         const classification = await loadProjectClassification();
         var projects = null;
-        var usedCacheFirst = false;
+        var displayedForBackground = null;
+        var skipBackground = false;
 
-        if (typeof window.fetchProjectsCacheFirst === 'function') {
+        if (window.projectsCachePromise) {
             try {
-                projects = await window.fetchProjectsCacheFirst();
-                usedCacheFirst = true;
-                if (typeof window !== 'undefined') window.projectsFallbackUsed = true;
-                window.projectsCache = projects;
-            } catch (e) {
-                /* no cache, fall through to API/fallback */
-            }
+                await window.projectsCachePromise;
+            } catch (e) { /* ignore */ }
         }
-        if (!projects || projects.length === 0) {
-            projects = await fetchProjectsFromAPI();
-            if (projects) window.projectsCache = projects;
+
+        if (
+            window.projectsCache &&
+            Array.isArray(window.projectsCache) &&
+            window.projectsCache.length > 0 &&
+            window.projectsCacheFromApi
+        ) {
+            projects = window.projectsCache;
+            window.projectsFallbackUsed = false;
+            skipBackground = true;
+        } else {
+            var sessionApi = tryReadSessionApiProjects();
+            if (sessionApi) {
+                projects = sessionApi;
+                window.projectsCache = sessionApi;
+                window.projectsCacheFromApi = true;
+                window.projectsFallbackUsed = false;
+                skipBackground = true;
+            } else if (
+                window.projectsCache &&
+                Array.isArray(window.projectsCache) &&
+                window.projectsCache.length > 0 &&
+                !window.projectsCacheFromApi
+            ) {
+                projects = window.projectsCache;
+                window.projectsFallbackUsed = true;
+                displayedForBackground = projects.slice();
+            } else {
+                try {
+                    if (typeof fetchProjectsCacheFirst !== 'undefined') {
+                        projects = await fetchProjectsCacheFirst();
+                        window.projectsCache = projects;
+                        window.projectsFallbackUsed = true;
+                        window.projectsCacheFromApi = false;
+                        displayedForBackground = projects.slice();
+                    } else {
+                        throw new Error('fetchProjectsCacheFirst unavailable');
+                    }
+                } catch (cacheFirstErr) {
+                    projects = await fetchProjectsFromAPI();
+                    if (projects) window.projectsCache = projects;
+                    skipBackground = true;
+                }
+            }
         }
 
         // Render all projects (no feature-only filter)
         if (projects && projects.length > 0) {
             renderProjects(projects, classification);
-            if (usedCacheFirst && typeof window !== 'undefined' && window.projectsFallbackUsed) {
-                var containerEl = document.querySelector('#content .container');
-                if (!containerEl) containerEl = document.querySelector('.container');
-                var fallbackNote = document.createElement('p');
-                fallbackNote.className = 'text-muted small mb-2';
-                fallbackNote.setAttribute('data-translate', 'projects.fallbackNote');
-                fallbackNote.textContent = 'Showing cached projects; some data may be outdated.';
-                if (containerEl) {
-                    if (containerEl.firstChild) {
-                        containerEl.insertBefore(fallbackNote, containerEl.firstChild);
-                    } else {
-                        containerEl.appendChild(fallbackNote);
-                    }
-                }
+            if (window.projectsFallbackUsed) {
+                insertProjectsFallbackNote();
             }
-            if (usedCacheFirst && typeof window.fetchProjectsFromAPIBackground === 'function') {
-                startProjectsBackgroundRefresh(classification, projects);
+            if (!skipBackground && displayedForBackground && displayedForBackground.length > 0) {
+                startProjectsBackgroundRefresh(classification, displayedForBackground);
             }
             // Re-apply translations after projects are rendered
             if (typeof window.TranslationManager !== 'undefined') {
@@ -615,11 +699,8 @@ async function initProjects() {
     function tryInit() {
         // Check if projects container exists (means we're on the projects page)
         if (document.querySelector('#ProjInProgress')) {
-            // Reset initialization flag if page was reloaded
-            if (window.projectsInitialized && !document.querySelector('#ProjInProgress .project-card')) {
-                window.projectsInitialized = false;
-                projectsInitialized = false;
-            }
+            // Do not clear init flags while async initProjects is still awaiting (no .project-card yet).
+            // SPAHack calls resetProjectsInit() before loading projects.html; that is the supported reset path.
             // Ensure DOM is fully ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initProjects);

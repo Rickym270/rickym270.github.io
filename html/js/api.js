@@ -55,15 +55,48 @@ async function fetchFromAPI(endpoint) {
     }
 }
 
-// Global cache for projects data
-window.projectsCache = null;
-window.projectsCachePromise = null;
-/** Set to true when projects were loaded from static fallback or localStorage (for optional UI note) */
-window.projectsFallbackUsed = false;
+// Global cache for projects data — do not reset on SPA re-injection of this script (projects.html loads api.js again)
+if (typeof window.projectsCache === 'undefined') {
+    window.projectsCache = null;
+}
+if (typeof window.projectsCachePromise === 'undefined') {
+    window.projectsCachePromise = null;
+}
+if (typeof window.projectsFallbackUsed === 'undefined') {
+    window.projectsFallbackUsed = false;
+}
+/** True when `projectsCache` / session list came from a successful API response (not static/localStorage fallback) */
+if (typeof window.projectsCacheFromApi === 'undefined') {
+    window.projectsCacheFromApi = false;
+}
 
 var PROJECTS_STATIC_FALLBACK_URL = '/data/web_data/projects.json';
 var PROJECTS_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 var PROJECTS_CACHE_KEY = 'portfolio_projects_cache';
+/** Tab session: last successful `/api/projects` JSON (avoids repeat API calls on SPA revisits / same tab) */
+var PROJECTS_SESSION_KEY = 'portfolio_projects_api_session_v1';
+
+/**
+ * Persist a successful `/api/projects` snapshot (memory, localStorage TTL, sessionStorage).
+ * @param {Array} projects - Project rows from the API
+ */
+function persistProjectsApiSnapshot(projects) {
+    if (!projects || !Array.isArray(projects)) {
+        return;
+    }
+    window.projectsFallbackUsed = false;
+    window.projectsCacheFromApi = true;
+    window.projectsCache = projects;
+    try {
+        localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: projects, at: Date.now() }));
+    } catch (e) { /* ignore */ }
+    try {
+        sessionStorage.setItem(
+            PROJECTS_SESSION_KEY,
+            JSON.stringify({ data: projects, fromApi: true, at: Date.now() })
+        );
+    } catch (e) { /* ignore */ }
+}
 
 /**
  * Load projects from cache only (static file then localStorage). Does not call the API.
@@ -109,12 +142,28 @@ function fetchProjectsFromAPIBackground() {
  * @returns {Promise<Array>} - Array of project objects
  */
 async function fetchProjectsWithFallback() {
+    // 1) Same-tab session: reuse last successful API response without hitting the network again
+    try {
+        var rawSession = sessionStorage.getItem(PROJECTS_SESSION_KEY);
+        if (rawSession) {
+            var sessionParsed = JSON.parse(rawSession);
+            if (
+                sessionParsed &&
+                Array.isArray(sessionParsed.data) &&
+                sessionParsed.data.length > 0 &&
+                sessionParsed.fromApi === true
+            ) {
+                window.projectsFallbackUsed = false;
+                window.projectsCacheFromApi = true;
+                return sessionParsed.data;
+            }
+        }
+    } catch (e) { /* ignore */ }
+
+    // 2) API (primary for this tab until success is stored above)
     try {
         var projects = await fetchFromAPI('/api/projects');
-        window.projectsFallbackUsed = false;
-        try {
-            localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify({ data: projects, at: Date.now() }));
-        } catch (e) { /* ignore */ }
+        persistProjectsApiSnapshot(projects);
         return projects;
     } catch (apiErr) {
         try {
@@ -123,6 +172,7 @@ async function fetchProjectsWithFallback() {
                 var parsed = JSON.parse(raw);
                 if (parsed && Array.isArray(parsed.data) && (Date.now() - (parsed.at || 0)) < PROJECTS_CACHE_TTL_MS) {
                     window.projectsFallbackUsed = true;
+                    window.projectsCacheFromApi = false;
                     return parsed.data;
                 }
             }
@@ -133,6 +183,7 @@ async function fetchProjectsWithFallback() {
                 var data = await r.json();
                 if (data && Array.isArray(data)) {
                     window.projectsFallbackUsed = true;
+                    window.projectsCacheFromApi = false;
                     return data;
                 }
             }

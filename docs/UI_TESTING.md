@@ -170,6 +170,10 @@ Tests projects page:
 - Projects page loads
 - Project cards display correctly
 - Project filtering and categorization
+- Cold path: static JSON (and TTL **localStorage**) paints first when there is no API-backed memory or **sessionStorage** snapshot; **prefetch** on the home page can fill `projectsCachePromise` so the list may skip that path
+- Background `/api/projects` refresh, fallback note removal when the API confirms data (including the “same as static” case without a DOM swap)
+
+For endpoint behavior, cache keys, workflow that updates committed static JSON, and Mermaid diagrams of the flow, see **[Projects API / UI loading](testing/projects.md)** (companion to the API section in [TESTING.md](TESTING.md#projects-endpoint-behavior)).
 
 **Example:**
 ```bash

@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 /**
  * Shared navigation for AI tutorial E2E tests (SPA from home → Tutorials → AI guide).
@@ -51,6 +51,17 @@ export async function openAiTutorialFromTutorialsCard(page: Page): Promise<void>
     { timeout: 15_000 }
   );
   await page.getByTestId('ai-tutorial-guide').waitFor({ state: 'visible', timeout: 15_000 });
+}
+
+/**
+ * Wait until Mermaid has rendered all three diagram SVGs in the SPA-loaded AI guide.
+ * Reduces flakes where the listen bar is remounted or speech is cancelled while the lesson DOM is still settling.
+ */
+export async function waitAiTutorialMermaidDiagramsStable(page: Page): Promise<void> {
+  await expect(async () => {
+    const count = await page.locator('[data-testid="ai-tutorial-guide"] pre.mermaid svg').count();
+    expect(count).toBe(3);
+  }).toPass({ timeout: 25_000, intervals: [500, 1000, 2000] });
 }
 
 export async function switchSiteLanguage(page: Page, lang: 'en' | 'es'): Promise<void> {
