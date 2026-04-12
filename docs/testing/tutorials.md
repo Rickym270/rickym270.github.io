@@ -18,7 +18,7 @@ The tutorials page has been redesigned with a modern card-based layout. Python t
   - `lesson-2-hello-world.html` - First Python program
   - `lesson-3-conditionals.html` - If/else statements
   - `lesson-4-loops.html` - For and while loops
-- **Listen (read aloud)**: SPA-loaded tutorials that use `.lesson-content` / `.lesson-body` can show the same Web Speech toolbar as blog posts when there is enough speakable text. See **[Article listen](../ARTICLE_LISTEN.md)** and `tests/article-listen.spec.ts` (AI tutorial scenario).
+- **Listen (read aloud)**: SPA-loaded tutorials that use `.lesson-content` / `.lesson-body` can show the same Web Speech toolbar as blog posts when there is enough speakable text. See **[Article listen](../ARTICLE_LISTEN.md)** and `tests/article-listen.spec.ts` (AI tutorial: utterance content, playing state, **Back to Tutorials while playing** must cancel synthesis).
 - **Mermaid**: The AI engineering tutorial includes `<pre class="mermaid">` blocks rendered as SVG in the SPA. See **[Mermaid diagrams](../MERMAID.md)**, `tests/mermaid.spec.ts`, and `tests/tutorial-rendering.spec.ts`.
 
 ## Navigation Features
@@ -34,6 +34,8 @@ Tests verify:
 - Individual lesson pages load with proper navigation
 - Back button returns to lesson index
 - Previous/Next navigation works between lessons
+
+**Article listen:** `tests/article-listen.spec.ts` loads the AI guide via SPA, starts Listen while playing, then **Back to Tutorials**; it asserts `speechSynthesis.cancel` is invoked so audio does not continue over the index page.
 
 ## Visual Design
 - Modern card-based layout matching projects page style
