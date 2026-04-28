@@ -146,6 +146,7 @@ Playwright tests use a **tiered strategy** so master stays the source of truth (
 Merge is only allowed when sanity and all full-suite shards have passed on the PR, so master is not broken by a merge.
 
 See [UI Testing Guide](../UI_TESTING.md#cicd-integration) for skip keywords and artifact details.
+For shard/workers setup and tuning, see [CI Parallel Execution](ci-parallel-execution.md).
 
 ```mermaid
 flowchart LR
