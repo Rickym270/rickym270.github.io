@@ -35,6 +35,7 @@ flowchart LR
 - **[API Testing](TESTING.md)** - Complete guide for testing the Spring Boot API
 - **[UI Testing](UI_TESTING.md)** - Complete guide for Playwright E2E tests
 - **[Testing Index](testing/README.md)** - Overview of all test documentation
+- **[CI Parallel Execution](testing/ci-parallel-execution.md)** - How workflow sharding and Playwright workers control CI parallel runs
 
 ### Test Types
 - **Blog Tests** (`tests/blog.spec.ts`) - Blog listing pages (Engineering, Personal), Featured Post, Latest Insights, navigation to post, post detail structure (banner, hero, body)

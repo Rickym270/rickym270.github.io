@@ -87,6 +87,8 @@ There are two GitHub Actions workflows for testing:
 - Note: Does NOT run on pull requests to avoid duplicate test runs
 - Purpose: Run all tests and normalize locators if tests fail
 
+Need to tune CI parallelism (shards vs Playwright workers)? See [CI Parallel Execution](testing/ci-parallel-execution.md).
+
 Per-job steps (simplified): checkout, setup Node/Java, install deps, (sanity: no browsers; full-suite: install Playwright browsers), build/start API (and UI for full-suite), run tests, upload artifacts (reports, traces, screenshots).
 
 ```mermaid
