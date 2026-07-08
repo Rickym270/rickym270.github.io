@@ -1,3 +1,4 @@
+import { assertPoolAnswerBullets } from './answerBullets';
 import { topics } from './topics';
 import { panelRounds } from './panelRounds';
 import { strongAnswers } from './strongAnswers';
@@ -7,6 +8,7 @@ export type PoolQuestion = {
   topicId: string;
   question: string;
   modelAnswer: string;
+  answerBullets: string[];
   compareBullets: string[];
   pitfalls: string[];
   category: string;
@@ -23,6 +25,7 @@ function buildPool(): PoolQuestion[] {
         topicId: topic.id,
         question: q,
         modelAnswer: topic.sampleAnswers[i] ?? '',
+        answerBullets: topic.sampleAnswerBullets[i] ?? [],
         compareBullets: topic.strongAnswerBullets,
         pitfalls: topic.commonPitfalls,
         category: topic.title,
@@ -39,6 +42,7 @@ function buildPool(): PoolQuestion[] {
         topicId: q.topicId,
         question: q.question,
         modelAnswer: q.sampleAnswer,
+        answerBullets: q.strongAnswerIncludes,
         compareBullets: q.strongAnswerIncludes,
         pitfalls: topic?.commonPitfalls ?? [],
         category: round.title,
@@ -74,6 +78,7 @@ function buildPool(): PoolQuestion[] {
       topicId,
       question: sa.question,
       modelAnswer: sa.answer,
+      answerBullets: sa.answerBullets,
       compareBullets: topic?.strongAnswerBullets ?? [],
       pitfalls: topic?.commonPitfalls ?? [],
       category: 'Strong Answers',
@@ -85,6 +90,7 @@ function buildPool(): PoolQuestion[] {
 }
 
 export const questionPool = buildPool();
+assertPoolAnswerBullets(questionPool);
 
 export function shufflePool(pool: PoolQuestion[] = questionPool): PoolQuestion[] {
   const weighted: PoolQuestion[] = [];

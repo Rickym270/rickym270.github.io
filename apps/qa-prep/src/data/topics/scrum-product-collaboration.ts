@@ -53,6 +53,28 @@ export const scrumProductCollaboration: Topic = {
     'In refinement I ask "how will we know this is done?" and map ACs to test scenarios. In planning I estimate automation vs. manual effort and call out data dependencies. I update the team on coverage status in standup and block early if staging or personas are missing.',
     'Before a formulary release I showed PM a one-page summary: three plan types failing eligibility, estimated member impact, and two options—delay 48 hours or ship with monitored rollback. They chose delay; I framed it as protecting members, not blocking the sprint.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I meet PM in refinement to clarify acceptance criteria and flag testability gaps early.',
+      'When scope is tight, I propose a risk-based test plan—core eligibility paths full coverage, edge cases documented for fast follow-up.',
+      'I get written agreement on residual risk, never a silent skip.',
+    ],
+    [
+      'I triage with eng lead and PM using impact times severity—wrong eligibility for a plan type is P1; cosmetic UI is P4.',
+      'I provide repro steps, member persona, and logs.',
+      'We slot P1 and P2 into the current sprint; P3 goes to backlog with owner and target sprint.',
+    ],
+    [
+      'In refinement I ask how will we know this is done and map acceptance criteria to test scenarios.',
+      'In planning I estimate automation vs. manual effort and call out data dependencies.',
+      'I update the team on coverage status in standup and block early if staging or personas are missing.',
+    ],
+    [
+      'Before a formulary release I showed PM a one-page summary: three plan types failing eligibility and estimated member impact.',
+      'I presented two options—delay 48 hours or ship with monitored rollback.',
+      'They chose delay; I framed it as protecting members, not blocking the sprint.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I document what regression was skipped and the scenarios at risk, then propose smoke plus production monitoring. If they ship anyway, I execute the agreed plan and watch dashboards closely—no "I told you so," just fast escalation if issues appear.',
     'I clarify with the Scrum Master whether it is a one-off or recurring ask. If it helps the sprint goal and I have capacity, I may help briefly—but I redirect sustained non-QA work back to the backlog with proper sizing so QA capacity is visible.',

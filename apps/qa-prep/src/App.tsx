@@ -31,10 +31,12 @@ import { AdvancedModuleDetail } from './components/AdvancedModuleDetail';
 import { WeakSpotReview } from './components/WeakSpotReview';
 import { StoryNavigator } from './components/StoryNavigator';
 import { RandomInterviewMode } from './components/RandomInterviewMode';
+import { PartnerMode } from './components/PartnerMode';
 import { useTrainingProgress } from './hooks/useTrainingProgress';
 
 type TrainingMode =
   | null
+  | 'partner'
   | 'panel'
   | 'random'
   | 'weakSpots'
@@ -126,6 +128,7 @@ function App() {
   }
 
   const trainingModes: { id: TrainingMode; label: string }[] = [
+    { id: 'partner', label: 'Partner' },
     { id: 'panel', label: 'Mock Panel' },
     { id: 'random', label: 'Random Interview' },
     { id: 'weakSpots', label: 'Weak Spots' },
@@ -336,7 +339,9 @@ function App() {
           </aside>
         )}
 
-        {trainingMode === 'panel' ? (
+        {trainingMode === 'partner' ? (
+          <PartnerMode onExit={() => setMode(null)} />
+        ) : trainingMode === 'panel' ? (
           <MockPanelMode onExit={() => setMode(null)} />
         ) : trainingMode === 'random' ? (
           <RandomInterviewMode onExit={() => setMode(null)} />

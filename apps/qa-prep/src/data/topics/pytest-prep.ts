@@ -52,6 +52,28 @@ export const pytestPrep: Topic = {
     'Root conftest.py holds shared auth and URLs; each service package has its own conftest for domain fixtures. Packages import shared helpers from a test_utils module. Markers at the root define CI tiers so monorepo packages run the right subset per pipeline stage.',
     'Robot keywords become plain Python helper functions; test data tables become parametrize lists. Page Object patterns become fixtures for UI tests. I migrate one domain at a time, keep both frameworks running in CI until parity, then cut over.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I organize by domain—eligibility, claims, formulary—with a root conftest.py for auth tokens and base URLs.',
+      'Session-scoped fixtures handle expensive setup; function-scoped fixtures keep tests isolated.',
+      'I use @pytest.mark.parametrize for edge cases and markers to split fast PR checks from staging integration tests.',
+    ],
+    [
+      'I define a fixture that returns member ID, plan type, and expected eligibility outcome as a tuple.',
+      'I parametrize over a list of cases—the fixture handles API client setup and each param row is one eligibility scenario.',
+      'That keeps tests readable and data-driven.',
+    ],
+    [
+      'Root conftest.py holds shared auth and URLs; each service package has its own conftest for domain fixtures.',
+      'Packages import shared helpers from a test_utils module.',
+      'Markers at the root define CI tiers so monorepo packages run the right subset per pipeline stage.',
+    ],
+    [
+      'Robot keywords become plain Python helper functions; test data tables become parametrize lists.',
+      'Page Object patterns become fixtures for UI tests.',
+      'I migrate one domain at a time, keep both frameworks running in CI until parity, then cut over.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I mock at the HTTP layer for fast PR feedback—WireMock or pytest-httpx—but keep a staging integration tier that hits real services. Test containers are useful for databases; for external APIs I prefer contract tests plus periodic real integration runs.',
     'Shared fixtures live in a top-level conftest or a dedicated test_fixtures package installed as a dev dependency. Session-scoped fixtures for auth; function-scoped for data. Each service conftest imports from the shared package to avoid duplication.',

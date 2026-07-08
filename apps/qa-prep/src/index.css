@@ -2222,3 +2222,102 @@ button {
   margin: 0 0 0.5rem;
   font-size: 1rem;
 }
+
+/* Partner Mode — simple Q&A for paired study */
+.partner-mode {
+  width: 100%;
+  min-width: 0;
+}
+
+.partner-mode__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.partner-mode__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.partner-mode__meta {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.partner-mode__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.partner-mode__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.partner-mode__toggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-accent);
+}
+
+.partner-mode__question {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+.partner-mode__bullets {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.partner-mode__bullets li {
+  margin-bottom: 0.85rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.partner-mode__hidden-hint {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-accent-light);
+  border-radius: var(--radius);
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.partner-mode__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .partner-mode__question {
+    font-size: 1.15rem;
+  }
+
+  .partner-mode__bullets li {
+    font-size: 1.1rem;
+    line-height: 1.65;
+  }
+
+  .partner-mode__controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+

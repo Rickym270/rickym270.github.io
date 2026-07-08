@@ -53,6 +53,31 @@ export const sqlDataTriage: Topic = {
     'I JOIN members to plan_assignments and eligibility_rules on member_id and plan_id, filter WHERE effective_date <= rollover_date AND (term_date IS NULL OR term_date > rollover_date), then GROUP BY member_id HAVING COUNT(*) > 1 to find duplicates. I prioritize synthetic test personas first before widening the search.',
     'After an API assertion, I query the same member_id and claim_id in the claims table and diff status, amount, and last_updated against the response JSON. If the test passed but DB is stale, I flag a seed refresh issue; if DB is correct, I escalate to the service layer.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I start from the failing test—member ID, timestamp, expected vs. actual API fields.',
+      'I run a targeted query against eligibility and plan tables with WHERE on the synthetic member ID and effective date.',
+      'I compare DB state to the API response and check rule version ID.',
+      'I never SELECT * on large tables and redact results before sharing.',
+    ],
+    [
+      'I grab the member ID and as-of date from the test and query eligibility with effective/term date filters.',
+      'I compare active_plan_id and coverage_status to the API payload.',
+      'If they differ, I check whether seed data was refreshed or a rule version changed.',
+      'I attach the query and row snapshot—redacted—to the ticket.',
+    ],
+    [
+      'I JOIN members to plan_assignments and eligibility_rules on member_id and plan_id.',
+      'I filter WHERE effective_date <= rollover_date AND term_date is null or after rollover_date.',
+      'I GROUP BY member_id HAVING COUNT greater than one to find duplicates.',
+      'I prioritize synthetic test personas first before widening the search.',
+    ],
+    [
+      'After an API assertion, I query the same member_id and claim_id in the claims table.',
+      'I diff status, amount, and last_updated against the response JSON.',
+      'If the test passed but DB is stale, I flag a seed refresh issue; if DB is correct, I escalate to the service layer.',
+    ],
+  ],
   followUpSampleAnswers: [
     'SELECT member_id, plan_id, COUNT(*) FROM eligibility WHERE member_id = @test_id GROUP BY member_id, plan_id HAVING COUNT(*) > 1. For orphans, LEFT JOIN plan_assignments and find rows with no matching active plan.',
     'I ask for member_id_hash, rule_version_id, effective_date, and decision_outcome columns indexed for lookup. That lets me triage without full table scans or reading raw PHI.',

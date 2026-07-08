@@ -52,6 +52,28 @@ export const testDataStrategy: Topic = {
     'I walk them through the persona catalog, show how to run seed scripts locally, and pair on their first test. Documentation maps each persona to business scenarios. Within a week they should create tests using existing fixtures without asking for custom data every time.',
     'When staging data is stale I run a controlled refresh from seed scripts, quarantine tests that depend on corrupted records, and communicate the refresh window to the team. I never patch data manually without updating the version-controlled seed so others can reproduce.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I define a small set of reusable personas—active member, COB, high-deductible, terminated—with deterministic IDs and documented scenario coverage.',
+      'Data is seeded via fixtures or factories and version-controlled alongside tests.',
+      'Staging refreshes on a schedule, and destructive tests get isolated records so parallel CI jobs never collide.',
+    ],
+    [
+      'I build synthetic personas that mirror production patterns—plan tiers, copay levels, NDC codes—without copying production dumps.',
+      'Each persona is documented for which eligibility edge cases it covers.',
+      'New scenarios extend the persona library rather than creating one-off records.',
+    ],
+    [
+      'I walk them through the persona catalog and show how to run seed scripts locally.',
+      'I pair on their first test and map each persona to business scenarios in documentation.',
+      'Within a week they should create tests using existing fixtures without asking for custom data every time.',
+    ],
+    [
+      'When staging data is stale I run a controlled refresh from seed scripts.',
+      'I quarantine tests that depend on corrupted records and communicate the refresh window to the team.',
+      'I never patch data manually without updating the version-controlled seed so others can reproduce.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I keep CI personas minimal—five to ten core profiles—for fast repeatable runs. Performance tests use a separate larger dataset generated on demand or nightly, not on every PR. That gives realistic volume when needed without slowing daily feedback.',
     'I evaluate whether the scenario belongs in the persona library long term. If yes, I add a factory function and document it. If it is a one-off, I still create an isolated fixture with a clear name so the next person does not reinvent it.',

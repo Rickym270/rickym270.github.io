@@ -52,6 +52,31 @@ export const backendApiTesting: Topic = {
     'I use service accounts or OAuth client credentials scoped to a test environment, stored in CI secrets—not production credentials. I rotate test tokens regularly and use synthetic member IDs that mirror production patterns without real PHI. Auth tests cover 401, 403, and expired token scenarios explicitly.',
     'For claims submission I would test inactive members, terminated coverage, invalid or missing NDC codes, duplicate submissions for idempotency, and formulary mismatches. I would also cover 422 validation errors, rate limiting at 429, and verify error responses never leak member PII.',
   ],
+  sampleAnswerBullets: [
+    [
+      "I'd start with the highest-risk endpoints and learn the team's test patterns.",
+      'I layer contract tests against the OpenAPI spec, then integration tests with synthetic member IDs for auth, plan lookup, and eligibility.',
+      'I cover inactive members, terminated coverage, and missing NDC data.',
+      'I assert PHI never appears in logs or CI artifacts.',
+    ],
+    [
+      'Contract tests validate the API surface—schema, status codes, and error body shapes—without needing full business logic running.',
+      'Integration tests exercise auth, database lookups, and real eligibility decisions with synthetic data.',
+      'Contract tests are fast and catch breaking changes early.',
+      'Integration tests catch logic bugs that contract tests cannot see.',
+    ],
+    [
+      'I use service accounts or OAuth client credentials scoped to a test environment, stored in CI secrets—not production credentials.',
+      'I rotate test tokens regularly and use synthetic member IDs that mirror production patterns without real PHI.',
+      'Auth tests cover 401, 403, and expired token scenarios explicitly.',
+    ],
+    [
+      'For claims submission I test inactive members, terminated coverage, and invalid or missing NDC codes.',
+      'I test duplicate submissions for idempotency and formulary mismatches.',
+      'I cover 422 validation errors and rate limiting at 429.',
+      'I verify error responses never leak member PII.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I mock at the HTTP boundary with tools like WireMock or responses fixtures, but run a smaller set of real integration tests against staging on a schedule. That way fast PR tests do not hide wiring bugs, but we still catch contract drift without depending on every downstream service in CI.',
     'Contract tests own request/response shape and documented error codes. Integration tests own business outcomes—eligibility flags, copay tiers, auth enforcement. If a test only checks JSON fields, it belongs in contract; if it checks whether a terminated member is rejected, it is integration.',

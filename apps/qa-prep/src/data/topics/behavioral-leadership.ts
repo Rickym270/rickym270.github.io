@@ -54,6 +54,34 @@ export const behavioralLeadership: Topic = {
     'I acknowledge the deadline, document what testing we can skip vs. what is non-negotiable, and offer a focused smoke suite plus fast follow-up. I never say "skip all testing"—I negotiate scope and get agreement in writing on residual risk.',
     'I owned a missed edge case on COB that reached staging. I wrote the regression test, shared learnings in team retro, and updated our persona library. The fix prevented a production incident and I was transparent about my role in the miss.',
   ],
+  sampleAnswerBullets: [
+    [
+      'Before a formulary release, regression showed eligibility failures for three plan types.',
+      'I documented affected scenarios and presented risk to the PM and eng lead.',
+      'We delayed 48 hours to fix rule config and the release went clean with zero production incidents.',
+      'I framed it as protecting members, not blocking the team.',
+    ],
+    [
+      'When staging was down and QA could not verify, I escalated with a clear risk summary.',
+      'I proposed a phased rollout with extra monitoring.',
+      'The eng lead backed a 24-hour delay; we shipped safely and I followed up with a retro on environment reliability.',
+    ],
+    [
+      'I paired with a developer on a high-risk module and shared before/after test examples.',
+      'I added PR checklist items for negative paths.',
+      'Within a month their test quality improved and they started asking for review before opening PRs.',
+    ],
+    [
+      'I acknowledge the deadline and document what testing we can skip vs. what is non-negotiable.',
+      'I offer a focused smoke suite plus fast follow-up.',
+      'I never say skip all testing—I negotiate scope and get agreement in writing on residual risk.',
+    ],
+    [
+      'I owned a missed edge case on COB that reached staging.',
+      'I wrote the regression test and shared learnings in team retro.',
+      'I updated our persona library—the fix prevented a production incident and I was transparent about my role in the miss.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I pair early, give feedback as questions not lectures, and celebrate catches before production. Developers see me as someone who helps ship safely, not someone who only says no.',
     'I document my recommendation and residual risk, execute the agreed test plan, and monitor closely post-release. If issues appear, I avoid "I told you so"—focus on fixing and improving the process for next time.',

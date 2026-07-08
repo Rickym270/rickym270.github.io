@@ -52,6 +52,30 @@ export const loggingMonitoring: Topic = {
     'I dashboard CI failure rate, flaky-test count, and p95 test duration. Alerts fire when failure rate doubles over a rolling window or flaky count exceeds a threshold. That catches infrastructure issues before the team stops trusting CI.',
     'I use the same correlation ID field in test and production logs. When a test fails in CI, I search Splunk with that ID. If I see similar errors in production dashboards, I escalate as a potential real defect, not just a test issue.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I capture correlation IDs from API responses in test output.',
+      'I search CloudWatch or Splunk for that request window.',
+      'I redact PHI from logged payloads and set alerts on CI failure spikes.',
+      'I track test duration trends so slowdowns are caught early.',
+    ],
+    [
+      'I grab the trace ID from the failed test assertion.',
+      'I search logs for that ID within the CI job timestamp window.',
+      'I compare expected vs. actual server behavior.',
+      'I redact member fields before sharing logs in Slack or tickets.',
+    ],
+    [
+      'I dashboard CI failure rate, flaky-test count, and p95 test duration.',
+      'Alerts fire when failure rate doubles over a rolling window or flaky count exceeds a threshold.',
+      'That catches infrastructure issues before the team stops trusting CI.',
+    ],
+    [
+      'I use the same correlation ID field in test and production logs.',
+      'When a test fails in CI, I search Splunk with that ID.',
+      'If I see similar errors in production dashboards, I escalate as a potential real defect, not just a test issue.',
+    ],
+  ],
   followUpSampleAnswers: [
     'Same workflow—correlation ID, service name, environment, timestamp. Datadog traces link test requests to spans. I compare staging failures to production error patterns to see if we are catching real issues.',
     'I ask for correlation/trace ID, member ID hash—not raw PHI—request path, rule version, and decision outcome on eligibility errors. That lets me debug without reading production dumps.',
