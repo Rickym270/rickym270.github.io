@@ -52,6 +52,29 @@ export const cicdAutomationArchitecture: Topic = {
     'Every commit: lint, unit, contract tests. PR gate: integration against staging. Post-deploy: smoke E2E on production-like env. Nightly: full regression including edge cases. Release: performance and security scans as needed.',
     'Secrets live in GitHub Secrets or AWS SSM—never in the repo. CI injects credentials at runtime; test configs reference env vars only. I audit logs to ensure PHI never appears in CI output and rotate test credentials regularly.',
   ],
+  sampleAnswerBullets: [
+    [
+      "I'd profile what's slow in the current pipeline and propose incremental tier splits.",
+      'Lint and unit tests on every push; integration tests gate PR merges against staging with synthetic data.',
+      'Smoke E2E after deploy; full regression nightly.',
+      'I parallelize by domain where needed to keep PR feedback under 15 minutes and publish clear artifacts on failure.',
+    ],
+    [
+      'I split the E2E suite into shards using a CI matrix—parallel jobs by test file group.',
+      'Smoke tests run on PR; full sharded regression on merge.',
+      'I tag slow tests and move setup to session-scoped fixtures to cut redundant browser or API warm-up.',
+    ],
+    [
+      'Every commit: lint, unit, and contract tests.',
+      'PR gate: integration against staging. Post-deploy: smoke E2E on production-like env.',
+      'Nightly: full regression including edge cases. Release: performance and security scans as needed.',
+    ],
+    [
+      'Secrets live in GitHub Secrets or AWS SSM—never in the repo.',
+      'CI injects credentials at runtime; test configs reference env vars only.',
+      'I audit logs to ensure PHI never appears in CI output and rotate test credentials regularly.',
+    ],
+  ],
   followUpSampleAnswers: [
     'Same approach—vault-stored secrets, synthetic data only, redacted artifacts. HIPAA-sensitive tests run only in approved staging environments with access controls. PR pipelines use mocks; full compliance tests run on scheduled staging jobs.',
     'Performance tests run nightly or on demand before major releases—not on every PR. PR pipeline stays under 15 minutes with unit and integration only. I trend duration over time to catch suite slowdown early.',

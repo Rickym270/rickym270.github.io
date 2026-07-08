@@ -13,6 +13,7 @@ Static interview prep app for paired study sessions. Hosted at an obscure, unlis
 - Practice drills with mock questions and model answers
 - Scoring rubrics and self-score grading (useful for paired study)
 - Mock Panel, Random Interview, Weak Spots, and Stories modes
+- **Partner Mode** — simple question + speakable bullet answers for paired study (answers hidden by default; toggle to reveal)
 - Study mode: flashcards, strong-answer bullets, pitfalls, static mentor content
 
 ## What was removed

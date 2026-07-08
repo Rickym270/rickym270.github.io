@@ -56,6 +56,30 @@ export const eligibilityRulesEngine: Topic = {
     'When a formulary update changes eligibility flags, I diff the formulary version, identify affected NDC and plan combinations, and run parameterized tests for each changed row. I include before-and-after cases around the effective date of the update.',
     'For COB I test primary vs. secondary payer ordering, overlapping coverage dates, and scenarios where one plan terminates mid-year. Each case maps to a decision table row with member ID, plan sequence, and expected copay or rejection outcome.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I build decision tables mapping inputs—member status, effective date, plan tier—to expected outcomes.',
+      'I automate them with parameterized tests tied to rule version IDs.',
+      'When plans change, I diff the rule config and run targeted regression before the full suite.',
+      'Boundary tests cover effective dates, terminations, and plan year rollovers.',
+    ],
+    [
+      'I prioritize by business impact and change frequency using a risk matrix.',
+      'High-impact rules—core eligibility, COB, PA triggers—get full combinatorial coverage.',
+      'Lower-impact edge cases get spot checks.',
+      'I document what each test row covers so gaps are visible.',
+    ],
+    [
+      'When a formulary update changes eligibility flags, I diff the formulary version.',
+      'I identify affected NDC and plan combinations and run parameterized tests for each changed row.',
+      'I include before-and-after cases around the effective date of the update.',
+    ],
+    [
+      'For COB I test primary vs. secondary payer ordering and overlapping coverage dates.',
+      'I test scenarios where one plan terminates mid-year.',
+      'Each case maps to a decision table row with member ID, plan sequence, and expected copay or rejection outcome.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I version the external formulary feed in test fixtures and run cases immediately before and after the effective date. Integration tests hit staging with the updated feed; unit tests use frozen snapshots so CI stays fast and deterministic.',
     'A config diff touching shared rule modules triggers targeted regression for affected plan types. A plan year rollover or new rule engine version triggers full regression. I document these triggers in the test plan so the team knows which suite to run.',

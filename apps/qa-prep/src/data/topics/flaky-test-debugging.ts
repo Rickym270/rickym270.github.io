@@ -52,6 +52,28 @@ export const flakyTestDebugging: Topic = {
     'Retries are a last resort with a tracked ticket to fix root cause. I allow @pytest.mark.flaky only temporarily with an owner and deadline. Policy: no new flaky markers without a written root-cause hypothesis.',
     'I measure flaky-test rate over time, quarantine blockers with tickets, and celebrate fixes in team standups. When CI is unreliable, developers skip it—I treat flakiness as a production incident for the test suite.',
   ],
+  sampleAnswerBullets: [
+    [
+      'I collect CI failure logs and timestamps to spot patterns—shard, time of day, parallel vs. isolated.',
+      'I run the test alone vs. in the full suite to detect order dependency.',
+      'I fix root cause with unique member IDs, explicit waits, or proper fixture scoping—not retry decorators.',
+    ],
+    [
+      'Environment failures are consistent—a specific staging outage or bad deploy.',
+      'Flaky tests pass and fail without code or environment changes.',
+      'I reproduce flakiness by running the test 50–100 times locally or in CI to confirm non-determinism before debugging.',
+    ],
+    [
+      'Retries are a last resort with a tracked ticket to fix root cause.',
+      'I allow @pytest.mark.flaky only temporarily with an owner and deadline.',
+      'Policy: no new flaky markers without a written root-cause hypothesis.',
+    ],
+    [
+      'I measure flaky-test rate over time and quarantine blockers with tickets.',
+      'I celebrate fixes in team standups.',
+      'When CI is unreliable, developers skip it—I treat flakiness as a production incident for the test suite.',
+    ],
+  ],
   followUpSampleAnswers: [
     'I quarantine when the fix needs more than one day and the test blocks the pipeline. I create a ticket with failure logs, link it in the test skip reason, and set a fix-by date. Never silently delete or ignore.',
     'After the fix I run the test 100+ times in CI and locally, then run the full suite multiple times. I verify the failure mode is gone, not just masked. If it was a timing issue, I document what condition we now wait on.',

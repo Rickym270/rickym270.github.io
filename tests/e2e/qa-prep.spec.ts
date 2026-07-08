@@ -13,6 +13,34 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       timeout: 20_000,
     });
     await expect(page.getByRole('button', { name: 'Mock Panel' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Partner' })).toBeVisible();
+  });
+
+  test('Partner mode shows question with hidden answers until toggled', async ({
+    page,
+  }) => {
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await page.getByRole('button', { name: 'Partner' }).click();
+    await expect(page.getByRole('heading', { name: 'Partner Mode' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Question' })).toBeVisible();
+    await expect(page.getByText('Answers are hidden')).toBeVisible();
+
+    await page.getByRole('checkbox', { name: 'Show answers' }).check();
+    await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
+    await expect(page.locator('.partner-mode__bullets li').first()).toBeVisible();
+
+    const firstQuestion = await page
+      .locator('.partner-mode__question')
+      .textContent();
+    await page.getByRole('button', { name: 'Next' }).click();
+    const secondQuestion = await page
+      .locator('.partner-mode__question')
+      .textContent();
+    expect(secondQuestion).not.toBe(firstQuestion);
   });
 
   test('topic Train drill shows rubric self-score on compare step', async ({

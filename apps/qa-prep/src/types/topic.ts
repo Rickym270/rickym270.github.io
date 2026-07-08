@@ -9,6 +9,7 @@ export type Topic = {
   flashcards: Flashcard[];
   mockQuestions: string[];
   sampleAnswers: string[];
+  sampleAnswerBullets: string[][];
   strongAnswerBullets: string[];
   commonPitfalls: string[];
   followUpQuestions: string[];
