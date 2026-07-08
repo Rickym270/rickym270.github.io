@@ -18,6 +18,8 @@
     "test:e2e": "playwright test --project=chromium --project=chromium-iphone --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "serve": "http-server -p 4321 -c-1 -d false -i false .",
+    "build:qa-prep": "npm run build --prefix apps/qa-prep",
+    "dev:qa-prep": "npm run dev --prefix apps/qa-prep",
     "locators:update": "node scripts/update-locators.js"
   },
   "devDependencies": {

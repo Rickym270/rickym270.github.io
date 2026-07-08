@@ -11,6 +11,7 @@
 playwright-report/
 test-results/
 node_modules/
+apps/qa-prep/node_modules/
 .idea/
 *.iml
 .classpath
