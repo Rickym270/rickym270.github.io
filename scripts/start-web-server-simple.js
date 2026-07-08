@@ -45,13 +45,23 @@ const server = createServer((req, res) => {
   let filePath = pathname === '/' ? 'index.html' : pathname;
   // Remove leading slash for path.join
   filePath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
-  const fullPath = join(repoRoot, filePath);
+  let fullPath = join(repoRoot, filePath);
 
   // Security: prevent directory traversal
   if (!fullPath.startsWith(repoRoot)) {
     res.writeHead(403);
     res.end('Forbidden');
     return;
+  }
+
+  // Serve index.html for directory paths (e.g. /p/loop-prep/)
+  if (existsSync(fullPath) && statSync(fullPath).isDirectory()) {
+    fullPath = join(fullPath, 'index.html');
+  } else if (!existsSync(fullPath) || !statSync(fullPath).isFile()) {
+    const indexCandidate = join(repoRoot, filePath, 'index.html');
+    if (existsSync(indexCandidate) && statSync(indexCandidate).isFile()) {
+      fullPath = indexCandidate;
+    }
   }
 
   // Check if file exists
