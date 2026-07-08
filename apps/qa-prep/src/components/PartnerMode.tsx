@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { questionPool } from '../data/questionPool';
+import { buildPartnerSession } from '../data/questionPool';
 import { ContentSection } from './ContentSection';
 
 type PartnerModeProps = {
@@ -7,11 +7,12 @@ type PartnerModeProps = {
 };
 
 export function PartnerMode({ onExit }: PartnerModeProps) {
+  const [sessionPool, setSessionPool] = useState(() => buildPartnerSession());
   const [index, setIndex] = useState(0);
   const [showAnswers, setShowAnswers] = useState(false);
 
-  const question = questionPool[index];
-  const total = questionPool.length;
+  const question = sessionPool[index];
+  const total = sessionPool.length;
 
   if (!question) {
     return (
@@ -19,6 +20,11 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
         <p>No questions available.</p>
       </article>
     );
+  }
+
+  function reshuffle() {
+    setSessionPool(buildPartnerSession());
+    setIndex(0);
   }
 
   function goPrev() {
@@ -35,7 +41,10 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
         <div>
           <h2 className="partner-mode__title">Partner Mode</h2>
           <p className="partner-mode__meta">
-            Question {index + 1} of {total} · {question.category}
+            <span className="partner-mode__progress">
+              Question {index + 1} of {total}
+            </span>
+            <span className="partner-mode__category">{question.category}</span>
           </p>
         </div>
         <div className="partner-mode__controls">
@@ -47,6 +56,13 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
             />
             Show answers
           </label>
+          <button
+            type="button"
+            className="practice-drill__secondary"
+            onClick={reshuffle}
+          >
+            Shuffle
+          </button>
           {onExit && (
             <button type="button" className="panel-mode__exit" onClick={onExit}>
               Exit

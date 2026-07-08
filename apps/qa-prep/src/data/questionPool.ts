@@ -92,6 +92,9 @@ function buildPool(): PoolQuestion[] {
 export const questionPool = buildPool();
 assertPoolAnswerBullets(questionPool);
 
+/** Max questions per Partner Mode session (full pool is much larger). */
+export const PARTNER_SESSION_SIZE = 18;
+
 export function shufflePool(pool: PoolQuestion[] = questionPool): PoolQuestion[] {
   const weighted: PoolQuestion[] = [];
   for (const q of pool) {
@@ -111,4 +114,12 @@ export function shufflePool(pool: PoolQuestion[] = questionPool): PoolQuestion[]
     }
   }
   return result;
+}
+
+/** Shuffled subset for Partner Mode — capped so sessions stay manageable. */
+export function buildPartnerSession(
+  pool: PoolQuestion[] = questionPool,
+  size: number = PARTNER_SESSION_SIZE
+): PoolQuestion[] {
+  return shufflePool(pool).slice(0, Math.min(size, pool.length));
 }
