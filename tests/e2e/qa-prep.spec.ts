@@ -26,6 +26,9 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
 
     await page.getByRole('button', { name: 'Partner' }).click();
     await expect(page.getByRole('heading', { name: 'Partner Mode' })).toBeVisible();
+    await expect(page.locator('.partner-mode__progress')).toHaveText(
+      /Question 1 of (1[0-8]|[1-9])/
+    );
     await expect(page.getByRole('heading', { name: 'Question' })).toBeVisible();
     await expect(page.getByText('Answers are hidden')).toBeVisible();
 
@@ -41,6 +44,37 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       .locator('.partner-mode__question')
       .textContent();
     expect(secondQuestion).not.toBe(firstQuestion);
+
+    await page.getByRole('button', { name: 'Shuffle' }).click();
+    await expect(page.getByText('Question 1 of')).toBeVisible();
+    const afterShuffle = await page
+      .locator('.partner-mode__question')
+      .textContent();
+    expect(afterShuffle?.length).toBeGreaterThan(0);
+  });
+
+  test('Partner mode fits mobile viewport without horizontal overflow', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await page.getByRole('button', { name: 'Partner' }).click();
+    await expect(page.getByRole('heading', { name: 'Partner Mode' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Shuffle' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Next' })).toBeVisible();
+
+    await page.getByRole('checkbox', { name: 'Show answers' }).check();
+    await expect(page.locator('.partner-mode__bullets li').first()).toBeVisible();
+
+    const overflow = await page.evaluate(() => {
+      const doc = document.documentElement;
+      return doc.scrollWidth > doc.clientWidth + 1;
+    });
+    expect(overflow).toBe(false);
   });
 
   test('topic Train drill shows rubric self-score on compare step', async ({
