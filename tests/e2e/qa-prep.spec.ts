@@ -33,8 +33,20 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(page.getByText('Answers are hidden')).toBeVisible();
 
     await page.getByRole('checkbox', { name: 'Show answers' }).check();
-    await expect(page.getByRole('heading', { name: 'Answer' })).toBeVisible();
-    await expect(page.locator('.partner-mode__bullets li').first()).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Answer — grade points covered' })
+    ).toBeVisible();
+    await expect(page.locator('.partner-grade-score')).toHaveText(
+      /0 \/ \d+ points · 0%/
+    );
+
+    await page
+      .locator('.partner-point-checklist__item input[type="checkbox"]')
+      .first()
+      .check();
+    await expect(page.locator('.partner-grade-score')).toHaveText(
+      /1 \/ \d+ points · \d+%/
+    );
 
     const firstQuestion = await page
       .locator('.partner-mode__question')
@@ -44,6 +56,9 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       .locator('.partner-mode__question')
       .textContent();
     expect(secondQuestion).not.toBe(firstQuestion);
+    await expect(page.locator('.partner-grade-score')).toHaveText(
+      /0 \/ \d+ points · 0%/
+    );
 
     await page.getByRole('button', { name: 'Shuffle' }).click();
     await expect(page.getByText('Question 1 of')).toBeVisible();
@@ -68,7 +83,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(page.getByRole('button', { name: 'Next' })).toBeVisible();
 
     await page.getByRole('checkbox', { name: 'Show answers' }).check();
-    await expect(page.locator('.partner-mode__bullets li').first()).toBeVisible();
+    await expect(page.locator('.partner-point-checklist__item').first()).toBeVisible();
 
     const overflow = await page.evaluate(() => {
       const doc = document.documentElement;

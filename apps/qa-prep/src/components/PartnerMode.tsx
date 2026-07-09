@@ -1,18 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { buildPartnerSession } from '../data/questionPool';
 import { ContentSection } from './ContentSection';
+import { PartnerPointChecklist } from './PartnerPointChecklist';
 
 type PartnerModeProps = {
   onExit?: () => void;
 };
 
+function emptyChecked(length: number): boolean[] {
+  return Array.from({ length }, () => false);
+}
+
 export function PartnerMode({ onExit }: PartnerModeProps) {
   const [sessionPool, setSessionPool] = useState(() => buildPartnerSession());
   const [index, setIndex] = useState(0);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [checked, setChecked] = useState<boolean[]>([]);
 
   const question = sessionPool[index];
   const total = sessionPool.length;
+
+  useEffect(() => {
+    if (!question) return;
+    setChecked(emptyChecked(question.answerBullets.length));
+  }, [question?.id, question?.answerBullets.length]);
 
   if (!question) {
     return (
@@ -20,6 +31,25 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
         <p>No questions available.</p>
       </article>
     );
+  }
+
+  const checkedForQuestion =
+    checked.length === question.answerBullets.length
+      ? checked
+      : emptyChecked(question.answerBullets.length);
+
+  function togglePoint(pointIndex: number) {
+    setChecked((prev) => {
+      const base =
+        prev.length === question.answerBullets.length
+          ? prev
+          : emptyChecked(question.answerBullets.length);
+      return base.map((value, i) => (i === pointIndex ? !value : value));
+    });
+  }
+
+  function clearPoints() {
+    setChecked(emptyChecked(question.answerBullets.length));
   }
 
   function reshuffle() {
@@ -76,17 +106,18 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
       </ContentSection>
 
       {showAnswers ? (
-        <ContentSection title="Answer">
-          <ol className="partner-mode__bullets topic-list-styled">
-            {question.answerBullets.map((bullet) => (
-              <li key={bullet}>{bullet}</li>
-            ))}
-          </ol>
+        <ContentSection title="Answer — grade points covered">
+          <PartnerPointChecklist
+            bullets={question.answerBullets}
+            checked={checkedForQuestion}
+            onToggle={togglePoint}
+            onClear={clearPoints}
+          />
         </ContentSection>
       ) : (
         <p className="partner-mode__hidden-hint">
           Answers are hidden. Turn on &ldquo;Show answers&rdquo; to read the
-          bullet script aloud.
+          bullet script aloud and check off points you covered.
         </p>
       )}
 

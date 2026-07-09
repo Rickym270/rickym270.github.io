@@ -1571,6 +1571,14 @@ button {
     min-height: 44px;
   }
 
+  .partner-grade-clear {
+    width: 100%;
+  }
+
+  .partner-point-checklist__item {
+    padding: 0.75rem 0;
+  }
+
   .panel-mode__reveal-bar {
     flex-direction: column;
   }
@@ -2411,5 +2419,72 @@ button {
     font-size: 1.1rem;
     line-height: 1.65;
   }
+
+  .partner-point-checklist__text {
+    font-size: 1.1rem;
+    line-height: 1.65;
+  }
+}
+
+.partner-grade-score-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.partner-grade-score {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.partner-grade-clear {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.partner-point-checklist__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.partner-point-checklist__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.65rem 0;
+  cursor: pointer;
+}
+
+.partner-point-checklist__item input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  accent-color: var(--color-accent);
+}
+
+.partner-point-checklist__text {
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(1rem, 2.2vw, 1.05rem);
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+.partner-point-checklist__item:has(input:checked) .partner-point-checklist__text {
+  color: var(--color-text);
+}
+
+.partner-point-checklist__item:has(input:not(:checked)) .partner-point-checklist__text {
+  color: var(--color-muted);
 }
 
