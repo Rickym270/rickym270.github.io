@@ -2403,10 +2403,65 @@ button {
 }
 
 @media (min-width: 640px) {
+  .partner-mode {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+  }
+
+  .partner-mode__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .partner-mode__meta {
+    flex-direction: row;
+    align-items: baseline;
+  }
+
+  .partner-mode__category::before {
+    display: inline;
+  }
+
+  .partner-mode__controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: auto;
+    max-width: none;
+    flex-shrink: 0;
+  }
+
+  .partner-mode__toggle {
+    min-height: auto;
+    padding: 0;
+  }
+
+  .partner-mode__controls .practice-drill__secondary,
+  .partner-mode__controls .panel-mode__exit {
+    width: auto;
+    min-height: auto;
+  }
+
+  .partner-mode__nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
   .partner-mode__nav .practice-cta,
   .partner-mode__nav .practice-drill__secondary {
     width: auto;
     min-width: 7rem;
+  }
+
+  .partner-grade-clear {
+    width: auto;
+    min-height: auto;
   }
 }
 

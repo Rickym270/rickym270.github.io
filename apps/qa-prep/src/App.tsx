@@ -191,7 +191,7 @@ function App() {
       )}
 
       <main
-        className={`app-main ${trainingMode === 'panel' ? 'app-main--panel' : ''}`}
+        className={`app-main ${trainingMode !== null ? 'app-main--panel' : ''}`}
       >
         {browseMode && (
           <aside

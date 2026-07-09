@@ -68,6 +68,52 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     expect(afterShuffle?.length).toBeGreaterThan(0);
   });
 
+  test('Partner mode uses desktop layout on wide viewport', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== 'chromium',
+      'Desktop layout check runs on chromium only'
+    );
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await page.getByRole('button', { name: 'Partner' }).click();
+    await expect(page.getByRole('heading', { name: 'Partner Mode' })).toBeVisible();
+
+    const layout = await page.evaluate(() => {
+      const main = document.querySelector('.app-main');
+      const header = document.querySelector('.partner-mode__header');
+      const nav = document.querySelector('.partner-mode__nav');
+      const controls = document.querySelector('.partner-mode__controls');
+      if (!main || !header || !nav || !controls) return null;
+      const mainStyle = getComputedStyle(main);
+      const headerStyle = getComputedStyle(header);
+      const navStyle = getComputedStyle(nav);
+      const controlsStyle = getComputedStyle(controls);
+      return {
+        mainColumns: mainStyle.gridTemplateColumns,
+        headerDirection: headerStyle.flexDirection,
+        navDirection: navStyle.flexDirection,
+        controlsDisplay: controlsStyle.display,
+        partnerWidth: document.querySelector('.partner-mode')?.clientWidth ?? 0,
+        isFullWidthMain: main.classList.contains('app-main--panel'),
+      };
+    });
+
+    expect(layout).not.toBeNull();
+    expect(layout!.isFullWidthMain).toBe(true);
+    expect(layout!.mainColumns.split(/\s+/).length).toBe(1);
+    expect(layout!.headerDirection).toBe('row');
+    expect(layout!.navDirection).toBe('row');
+    expect(layout!.controlsDisplay).toBe('flex');
+    expect(layout!.partnerWidth).toBeGreaterThan(600);
+  });
+
   test('Partner mode fits mobile viewport without horizontal overflow', async ({
     page,
   }) => {
