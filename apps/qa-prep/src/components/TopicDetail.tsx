@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Topic } from '../types/topic';
 import type { ScoringRubric as RubricData } from '../types/scoringRubric';
 import { getMentorProfile } from '../data/mentor/topicMentorProfiles';
-import { ContentSection } from './ContentSection';
 import { Flashcard } from './Flashcard';
 import { ScoringRubric } from './ScoringRubric';
 import { TopicPracticeDrill } from './TopicPracticeDrill';
@@ -10,6 +9,9 @@ import { RevealSampleAnswer } from './RevealSampleAnswer';
 import { TopicMentorStudy } from './mentor/TopicMentorStudy';
 import { InterviewerMindPanel } from './mentor/InterviewerMindPanel';
 import { WhyButton } from './mentor/WhyButton';
+import { MemoryAnchorCard } from './mentor/MemoryAnchorCard';
+import { StudyCollapsibleSection } from './study/StudyCollapsibleSection';
+import { StudySectionNav } from './study/StudySectionNav';
 
 type TopicDetailProps = {
   topic: Topic;
@@ -22,6 +24,22 @@ type ViewMode = 'practice' | 'study';
 export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) {
   const [mode, setMode] = useState<ViewMode>('practice');
   const profile = getMentorProfile(topic.id);
+
+  const studySections = useMemo(() => {
+    const sections = [
+      { id: 'study-questions', label: 'Questions' },
+      { id: 'study-cheatsheet', label: 'Cheat sheet' },
+    ];
+    if (profile && !profile.isStub) {
+      sections.push({ id: 'study-mentor', label: 'Mentor guide' });
+    }
+    sections.push({ id: 'study-flashcards', label: 'Flashcards' });
+    if (rubric) {
+      sections.push({ id: 'study-rubric', label: 'Rubric' });
+    }
+    sections.push({ id: 'study-followups', label: 'Follow-ups' });
+    return sections;
+  }, [profile, rubric]);
 
   return (
     <article className="topic-detail">
@@ -45,33 +63,23 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
         </div>
       </div>
 
-      {profile && mode === 'study' && (
-        <div className="topic-detail__interviewer-mind">
-          <InterviewerMindPanel content={profile.interviewerMind} />
-          <WhyButton topicId={topic.id} />
-        </div>
-      )}
 
       {mode === 'practice' && (
         <TopicPracticeDrill topic={topic} rubric={rubric} />
       )}
 
       {mode === 'study' && (
-        <>
-          {profile && (
-            <TopicMentorStudy profile={profile} onSelectTopic={onSelectTopic} />
+        <div className="topic-detail__study">
+          <StudySectionNav sections={studySections} />
+
+          {profile && !profile.isStub && (
+            <MemoryAnchorCard anchor={profile.memoryAnchor} />
           )}
 
-          <ContentSection title={`Flashcards (${topic.flashcards.length})`}>
-            <div className="flashcard-stack">
-              {topic.flashcards.map((card, i) => (
-                <Flashcard key={i} front={card.front} back={card.back} />
-              ))}
-            </div>
-          </ContentSection>
-
-          <ContentSection
-            title={`Mock Interview Questions (${topic.mockQuestions.length})`}
+          <StudyCollapsibleSection
+            id="study-questions"
+            title={`Mock interview questions (${topic.mockQuestions.length})`}
+            defaultOpen
           >
             <ol className="topic-list-styled topic-list-styled--with-reveal">
               {topic.mockQuestions.map((q, i) => (
@@ -84,28 +92,68 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
                 </li>
               ))}
             </ol>
-          </ContentSection>
+          </StudyCollapsibleSection>
 
-          {rubric && <ScoringRubric rubric={rubric} />}
+          <StudyCollapsibleSection
+            id="study-cheatsheet"
+            title="Answer cheat sheet"
+            defaultOpen
+          >
+            <div className="study-cheatsheet">
+              <div className="study-cheatsheet__col">
+                <h4 className="study-cheatsheet__heading">Strong answer bullets</h4>
+                <ul className="topic-list-styled">
+                  {topic.strongAnswerBullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="study-cheatsheet__col study-cheatsheet__col--pitfalls">
+                <h4 className="study-cheatsheet__heading">Common pitfalls</h4>
+                <ul className="topic-list-styled">
+                  {topic.commonPitfalls.map((pitfall) => (
+                    <li key={pitfall}>{pitfall}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </StudyCollapsibleSection>
 
-          <ContentSection title="Strong Answer Bullets">
-            <ul className="topic-list-styled">
-              {topic.strongAnswerBullets.map((bullet) => (
-                <li key={bullet}>{bullet}</li>
+          {profile && !profile.isStub && (
+            <StudyCollapsibleSection id="study-mentor" title="Mentor deep dive">
+              <div className="topic-detail__interviewer-mind">
+                <InterviewerMindPanel content={profile.interviewerMind} />
+                <WhyButton topicId={topic.id} />
+              </div>
+              <TopicMentorStudy
+                profile={profile}
+                onSelectTopic={onSelectTopic}
+                compact
+                showMemoryAnchor={false}
+              />
+            </StudyCollapsibleSection>
+          )}
+
+          <StudyCollapsibleSection
+            id="study-flashcards"
+            title={`Flashcards (${topic.flashcards.length})`}
+          >
+            <div className="flashcard-stack">
+              {topic.flashcards.map((card, i) => (
+                <Flashcard key={i} front={card.front} back={card.back} />
               ))}
-            </ul>
-          </ContentSection>
+            </div>
+          </StudyCollapsibleSection>
 
-          <ContentSection title="Common Pitfalls" variant="mistake">
-            <ul className="topic-list-styled">
-              {topic.commonPitfalls.map((pitfall) => (
-                <li key={pitfall}>{pitfall}</li>
-              ))}
-            </ul>
-          </ContentSection>
+          {rubric && (
+            <StudyCollapsibleSection id="study-rubric" title="Scoring rubric">
+              <ScoringRubric rubric={rubric} />
+            </StudyCollapsibleSection>
+          )}
 
-          <ContentSection
-            title={`Follow-up Questions (${topic.followUpQuestions.length})`}
+          <StudyCollapsibleSection
+            id="study-followups"
+            title={`Follow-up questions (${topic.followUpQuestions.length})`}
           >
             <ol className="topic-list-styled topic-list-styled--with-reveal">
               {topic.followUpQuestions.map((q, i) => (
@@ -118,8 +166,8 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
                 </li>
               ))}
             </ol>
-          </ContentSection>
-        </>
+          </StudyCollapsibleSection>
+        </div>
       )}
     </article>
   );

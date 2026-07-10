@@ -1,11 +1,12 @@
 import type { LearnTheWhy } from '../../types/mentorContent';
 import { personalStories } from '../../data/personalStories';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import { ContentSection } from '../ContentSection';
 import { ExplainedBlock } from './ExplainedBlock';
 
 type LearnTheWhySectionProps = {
   content: LearnTheWhy;
+  defaultLevelOpen?: boolean;
+  embedded?: boolean;
 };
 
 function levelText(level: LearnTheWhy): Record<string, string> {
@@ -22,14 +23,17 @@ function levelText(level: LearnTheWhy): Record<string, string> {
   };
 }
 
-export function LearnTheWhySection({ content }: LearnTheWhySectionProps) {
-  const isMobile = useIsMobile();
+export function LearnTheWhySection({
+  content,
+  defaultLevelOpen = false,
+  embedded = false,
+}: LearnTheWhySectionProps) {
   const texts = levelText(content);
   const { technical, interviewAnswer, myExperience } = content;
 
-  return (
-    <ContentSection title="Learn the Why">
-      <details className="mentor-accordion" open={!isMobile}>
+  const body = (
+    <>
+      <details className="mentor-accordion" open={defaultLevelOpen}>
         <summary>Level 1 — Plain English</summary>
         <ExplainedBlock text={texts['1-plain']!} label="plain english">
           <p>{content.plainEnglish}</p>
@@ -80,6 +84,12 @@ export function LearnTheWhySection({ content }: LearnTheWhySectionProps) {
           )}
         </ExplainedBlock>
       </details>
-    </ContentSection>
+    </>
   );
+
+  if (embedded) {
+    return body;
+  }
+
+  return <ContentSection title="Learn the Why">{body}</ContentSection>;
 }

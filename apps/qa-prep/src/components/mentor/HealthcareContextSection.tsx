@@ -3,19 +3,27 @@ import { ExplainedBlock } from './ExplainedBlock';
 
 type HealthcareContextSectionProps = {
   items: string[];
+  embedded?: boolean;
 };
 
-export function HealthcareContextSection({ items }: HealthcareContextSectionProps) {
+export function HealthcareContextSection({
+  items,
+  embedded = false,
+}: HealthcareContextSectionProps) {
   const text = items.join(' ');
-  return (
-    <ContentSection title="Healthcare Context">
-      <ExplainedBlock text={text} label="healthcare context">
-        <ul className="topic-list-styled">
-          {items.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </ExplainedBlock>
-    </ContentSection>
+  const body = (
+    <ExplainedBlock text={text} label="healthcare context">
+      <ul className="topic-list-styled">
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </ExplainedBlock>
   );
+
+  if (embedded) {
+    return body;
+  }
+
+  return <ContentSection title="Healthcare Context">{body}</ContentSection>;
 }
