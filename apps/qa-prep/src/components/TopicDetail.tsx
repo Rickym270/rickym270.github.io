@@ -63,6 +63,7 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
         </div>
       </div>
 
+
       {mode === 'practice' && (
         <TopicPracticeDrill topic={topic} rubric={rubric} />
       )}
