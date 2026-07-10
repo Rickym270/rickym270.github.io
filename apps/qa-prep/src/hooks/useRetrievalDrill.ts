@@ -22,20 +22,19 @@ export type RetrievalFeatures = {
 };
 
 const DEFAULT_FEATURES: RetrievalFeatures = {
-  experience: true,
+  experience: false,
   coach: true,
   confidence: true,
   challenge: true,
-  socratic: false,
+  socratic: true,
 };
 
 const STEP_ORDER: RetrievalStepId[] = [
   'answer',
-  'reflect',
   'socratic',
+  'reflect',
   'reveal',
   'compare',
-  'experience',
   'coach',
   'confidence',
   'challenge',

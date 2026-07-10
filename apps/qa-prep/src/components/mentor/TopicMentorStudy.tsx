@@ -43,6 +43,7 @@ export function TopicMentorStudy({ profile, onSelectTopic }: TopicMentorStudyPro
         <ContentSection title="Related Concepts">
           <ConceptGraphNav
             relatedConceptIds={profile.relatedConceptIds}
+            currentTopicId={profile.topicId}
             onSelectTopic={onSelectTopic}
           />
         </ContentSection>

@@ -17,4 +17,7 @@ export type PersonalStory = {
   relatedTopicIds?: string[];
   memorizePriority?: number;
   isBonus?: boolean;
+  lessonsLearned?: string;
+  judiHealthRelevance?: string;
+  likelyFollowUps?: string[];
 };

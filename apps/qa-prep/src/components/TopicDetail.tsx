@@ -9,6 +9,7 @@ import { TopicPracticeDrill } from './TopicPracticeDrill';
 import { RevealSampleAnswer } from './RevealSampleAnswer';
 import { TopicMentorStudy } from './mentor/TopicMentorStudy';
 import { InterviewerMindPanel } from './mentor/InterviewerMindPanel';
+import { WhyButton } from './mentor/WhyButton';
 
 type TopicDetailProps = {
   topic: Topic;
@@ -47,6 +48,7 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
       {profile && mode === 'study' && (
         <div className="topic-detail__interviewer-mind">
           <InterviewerMindPanel content={profile.interviewerMind} />
+          <WhyButton topicId={topic.id} />
         </div>
       )}
 

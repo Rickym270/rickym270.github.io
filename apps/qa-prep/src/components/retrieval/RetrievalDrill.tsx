@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { ScoringRubric as RubricData } from '../../types/scoringRubric';
 import {
   useRetrievalDrill,
@@ -10,16 +10,26 @@ import {
   type ConfidenceLevel,
   type CommunicationClarity,
 } from '../../hooks/useTrainingProgress';
-import type { ProjectId } from '../../data/contentGraph';
+import type { CoachDimensionScores } from '../../types/trainingProgress';
+import { getRecommendedStory } from '../../data/storyRecommendations';
+import { getFollowUpChain } from '../../data/followUpChains';
+import { buildCoachFeedback } from '../../data/coachFeedback';
 import { ContentSection } from '../ContentSection';
 import { PracticeTimer } from '../practice/PracticeTimer';
 import { SelfScoreRubric } from '../practice/SelfScoreRubric';
 import { RevealSampleAnswer } from '../RevealSampleAnswer';
 import { RetrievalStepBar } from './RetrievalStepBar';
 import { ConfidencePicker, CommunicationCoach } from './ConfidencePicker';
-import { ExperienceMapper } from './ExperienceMapper';
 import { AnswerCoachFramework } from './AnswerCoachFramework';
 import { ChallengeMeStep } from './ChallengeMeStep';
+import { StoryRecommendationCard } from './StoryRecommendationCard';
+import { NotesCapture } from './NotesCapture';
+import { FollowUpChainStep } from './FollowUpChainStep';
+import {
+  CoachDimensionPicker,
+  ConfidenceCoachPanel,
+} from './ConfidenceCoachPanel';
+import { WhyButton } from '../mentor/WhyButton';
 
 const REFLECT_PROMPTS = [
   'What was your direct answer in one sentence?',
@@ -35,10 +45,19 @@ const STEP_PROMPTS: Record<RetrievalStepId, string> = {
   compare: 'Check strong points and common traps.',
   experience: 'Connect this question to a real project story.',
   coach: 'Map your answer to the coaching framework.',
-  confidence: 'Rate your confidence and communication.',
+  confidence: 'Rate your confidence and get coaching feedback.',
   challenge: 'Answer the senior follow-up probe together.',
   next: 'Ready for the next question?',
 };
+
+const COACH_DIMENSION_KEYS = [
+  'technicalAccuracy',
+  'communication',
+  'specificity',
+  'businessThinking',
+  'confidence',
+  'realExample',
+] as const;
 
 export type RetrievalDrillProps = {
   questionKey: string;
@@ -85,34 +104,74 @@ export function RetrievalDrill({
   const drill = useRetrievalDrill(1, categories, features);
   const { recordAttempt } = useTrainingProgress();
 
+  const storyRecommendation = useMemo(
+    () => getRecommendedStory(questionKey, topicId),
+    [questionKey, topicId]
+  );
+  const followUpChain = useMemo(
+    () => getFollowUpChain(questionKey, topicId),
+    [questionKey, topicId]
+  );
+
   const [confidence, setConfidence] = useState<ConfidenceLevel | null>(null);
   const [answeredQuestion, setAnsweredQuestion] = useState<
     'yes' | 'partially' | 'no' | null
   >(null);
   const [communication, setCommunication] =
     useState<CommunicationClarity | null>(null);
-  const [selectedProject, setSelectedProject] = useState<ProjectId | null>(
-    null
-  );
+  const [coachDimensions, setCoachDimensions] = useState<
+    Partial<CoachDimensionScores>
+  >({});
+  const [followUpIndex, setFollowUpIndex] = useState(0);
+  const [committedToStory, setCommittedToStory] = useState(false);
 
   const step = drill.currentStep;
+
+  const coachFeedback = useMemo(() => {
+    if (step !== 'confidence' && step !== 'next') return '';
+    return buildCoachFeedback({
+      topicId,
+      confidence,
+      coachDimensions,
+      rubricAvg: averageRubric(drill.scores),
+      storyRecommendation,
+      usedRealExample: committedToStory || (coachDimensions.realExample ?? 0) >= 3,
+    });
+  }, [
+    step,
+    topicId,
+    confidence,
+    coachDimensions,
+    drill.scores,
+    storyRecommendation,
+    committedToStory,
+  ]);
 
   function resetSessionState() {
     setConfidence(null);
     setAnsweredQuestion(null);
     setCommunication(null);
-    setSelectedProject(null);
+    setCoachDimensions({});
+    setFollowUpIndex(0);
+    setCommittedToStory(false);
+  }
+
+  function averageRubric(scores: Record<string, number | null | undefined>) {
+    const values = Object.values(scores).filter(
+      (v): v is number => v !== null && v !== undefined
+    );
+    return values.length > 0
+      ? values.reduce((a, b) => a + b, 0) / values.length
+      : undefined;
+  }
+
+  function allCoachDimensionsScored() {
+    return COACH_DIMENSION_KEYS.every((k) => coachDimensions[k] !== undefined);
   }
 
   function saveAttempt() {
     if (!confidence) return;
-    const rubricValues = Object.values(drill.scores).filter(
-      (v): v is NonNullable<typeof v> => v !== null
-    );
-    const rubricAvg =
-      rubricValues.length > 0
-        ? rubricValues.reduce((a, b) => a + b, 0) / rubricValues.length
-        : undefined;
+    const rubricAvg = averageRubric(drill.scores);
     recordAttempt({
       questionKey,
       topicId,
@@ -120,13 +179,22 @@ export function RetrievalDrill({
       rubricAvg,
       answeredQuestion: answeredQuestion ?? undefined,
       communication: communication ?? undefined,
-      selectedProject: selectedProject ?? undefined,
+      coachDimensions:
+        Object.keys(coachDimensions).length > 0 ? coachDimensions : undefined,
     });
   }
 
   function handlePrimaryAction() {
     if (step === 'compare' && rubric && !drill.allScored) return;
-    if (step === 'confidence' && !confidence) return;
+    if (step === 'confidence' && (!confidence || !allCoachDimensionsScored()))
+      return;
+
+    if (step === 'socratic') {
+      if (followUpIndex < followUpChain.probes.length - 1) {
+        setFollowUpIndex((i) => i + 1);
+        return;
+      }
+    }
 
     if (step === 'next') {
       saveAttempt();
@@ -135,6 +203,10 @@ export function RetrievalDrill({
         resetSessionState();
       }
       return;
+    }
+
+    if (step === 'socratic') {
+      setFollowUpIndex(0);
     }
 
     drill.advanceStep();
@@ -147,12 +219,20 @@ export function RetrievalDrill({
         : 'Next question'
       : step === 'answer'
         ? "We've answered"
-        : 'Continue';
+        : step === 'socratic' &&
+            followUpIndex < followUpChain.probes.length - 1
+          ? 'Next follow-up'
+          : 'Continue';
 
   const primaryDisabled =
     (step === 'compare' && rubric !== undefined && !drill.allScored) ||
-    (step === 'confidence' && !confidence) ||
+    (step === 'confidence' &&
+      (!confidence || !allCoachDimensionsScored())) ||
     (step === 'next' && isLast && !onNext);
+
+  const showStoryRec =
+    storyRecommendation &&
+    (step === 'answer' || step === 'reflect' || step === 'socratic');
 
   return (
     <div className="practice-drill retrieval-drill">
@@ -162,14 +242,25 @@ export function RetrievalDrill({
         </div>
       )}
 
-      <RetrievalStepBar
-        activeSteps={drill.activeSteps}
-        currentStep={step}
-      />
+      <RetrievalStepBar activeSteps={drill.activeSteps} currentStep={step} />
 
       <div className="practice-prompt">
         <strong>Your move:</strong> {STEP_PROMPTS[step]}
       </div>
+
+      {showStoryRec && (
+        <>
+          <StoryRecommendationCard recommendation={storyRecommendation} />
+          <label className="story-recommendation__commit">
+            <input
+              type="checkbox"
+              checked={committedToStory}
+              onChange={(e) => setCommittedToStory(e.target.checked)}
+            />
+            I plan to lead with this story
+          </label>
+        </>
+      )}
 
       {step === 'answer' && <PracticeTimer />}
 
@@ -183,10 +274,16 @@ export function RetrievalDrill({
             </span>
           )}
           <p className="practice-drill__question">{question}</p>
+          <WhyButton topicId={topicId} />
+          <NotesCapture questionKey={questionKey} />
           <p className="retrieval-drill__hint">
             No sample answer yet — recall from memory first.
           </p>
         </ContentSection>
+      )}
+
+      {step === 'socratic' && (
+        <FollowUpChainStep chain={followUpChain} probeIndex={followUpIndex} />
       )}
 
       {step === 'reflect' && (
@@ -237,16 +334,6 @@ export function RetrievalDrill({
         </>
       )}
 
-      {step === 'experience' && (
-        <ContentSection title="Experience Mapping">
-          <ExperienceMapper
-            topicId={topicId}
-            selectedProject={selectedProject}
-            onSelect={setSelectedProject}
-          />
-        </ContentSection>
-      )}
-
       {step === 'coach' && (
         <details className="retrieval-accordion" open>
           <summary>Answer Coach</summary>
@@ -260,6 +347,15 @@ export function RetrievalDrill({
             <summary>How confident were you?</summary>
             <ConfidencePicker value={confidence} onChange={setConfidence} />
           </details>
+          <details className="retrieval-accordion" open>
+            <summary>Confidence dimensions</summary>
+            <CoachDimensionPicker
+              scores={coachDimensions}
+              onScore={(dim, score) =>
+                setCoachDimensions((prev) => ({ ...prev, [dim]: score }))
+              }
+            />
+          </details>
           <details className="retrieval-accordion">
             <summary>Communication Coach</summary>
             <CommunicationCoach
@@ -269,6 +365,9 @@ export function RetrievalDrill({
               onClarityChange={setCommunication}
             />
           </details>
+          {confidence && allCoachDimensionsScored() && (
+            <ConfidenceCoachPanel feedback={coachFeedback} />
+          )}
         </>
       )}
 
@@ -283,6 +382,9 @@ export function RetrievalDrill({
 
       {step === 'next' && (
         <ContentSection title="Question Complete">
+          {coachFeedback && (
+            <ConfidenceCoachPanel feedback={coachFeedback} />
+          )}
           <p>
             {isLast
               ? (completeMessage ??

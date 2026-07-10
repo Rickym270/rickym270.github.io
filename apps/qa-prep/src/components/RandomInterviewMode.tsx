@@ -5,10 +5,14 @@ import { RetrievalDrill } from './retrieval/RetrievalDrill';
 
 type RandomInterviewModeProps = {
   onExit?: () => void;
+  topicFilter?: string[];
 };
 
-export function RandomInterviewMode({ onExit }: RandomInterviewModeProps) {
-  const [pool] = useState(() => shufflePool());
+export function RandomInterviewMode({
+  onExit,
+  topicFilter,
+}: RandomInterviewModeProps) {
+  const [pool] = useState(() => shufflePool(undefined, topicFilter));
   const [index, setIndex] = useState(0);
   const [drillKey, setDrillKey] = useState(0);
   const [started, setStarted] = useState(false);
@@ -26,7 +30,9 @@ export function RandomInterviewMode({ onExit }: RandomInterviewModeProps) {
     return (
       <article className="topic-detail random-interview">
         <div className="random-interview__header">
-          <h2 className="topic-detail__title">Random Interview</h2>
+          <h2 className="topic-detail__title">
+            {topicFilter?.length ? 'Review Session' : 'Random Interview'}
+          </h2>
           {onExit && (
             <button type="button" className="panel-mode__exit" onClick={onExit}>
               Exit
@@ -34,9 +40,9 @@ export function RandomInterviewMode({ onExit }: RandomInterviewModeProps) {
           )}
         </div>
         <p className="random-interview__intro">
-          Cross-topic shuffle across backend, behavioral, SQL, CloudWatch,
-          CI/CD, PyTest, healthcare, and flaky-test questions. Answer together
-          first — no hints until reveal.
+          {topicFilter?.length
+            ? 'Focused shuffle across your weak or due topics. Story recommendations and follow-up chains run before reveal.'
+            : 'Cross-topic shuffle across backend, behavioral, SQL, CloudWatch, CI/CD, PyTest, healthcare, and flaky-test questions.'}
         </p>
         <p className="random-interview__count">
           {pool.length} questions in this session
@@ -45,8 +51,9 @@ export function RandomInterviewMode({ onExit }: RandomInterviewModeProps) {
           type="button"
           className="practice-cta"
           onClick={() => setStarted(true)}
+          disabled={pool.length === 0}
         >
-          Start random interview
+          {pool.length === 0 ? 'No questions for selected topics' : 'Start session'}
         </button>
       </article>
     );
@@ -89,7 +96,7 @@ export function RandomInterviewMode({ onExit }: RandomInterviewModeProps) {
         }}
         canPrev={index > 0}
         isLast={index >= pool.length - 1}
-        completeMessage="Random interview complete. Run again for a new shuffle or review weak spots."
+        completeMessage="Session complete. Review weak spots or run another round."
       />
     </div>
   );

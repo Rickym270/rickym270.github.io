@@ -6,6 +6,8 @@ type AnswerComparisonListProps = {
   selectedId: string | null;
   onSelect: (id: string) => void;
   heading?: string;
+  hideHeading?: boolean;
+  compact?: boolean;
 };
 
 export function AnswerComparisonList({
@@ -13,11 +15,18 @@ export function AnswerComparisonList({
   selectedId,
   onSelect,
   heading = 'Bad Answer vs Better Answer',
+  hideHeading = false,
+  compact = false,
 }: AnswerComparisonListProps) {
   return (
-    <nav className="sidebar-section" aria-label={heading}>
-      <h3 className="sidebar-section__subheading">{heading}</h3>
-      <div className="topic-list">
+    <nav
+      className={`sidebar-section ${compact ? 'sidebar-section--compact' : ''}`}
+      aria-label={heading}
+    >
+      {!hideHeading && (
+        <h3 className="sidebar-section__subheading">{heading}</h3>
+      )}
+      <div className={`topic-list ${compact ? 'topic-list--compact' : ''}`}>
         {comparisons.map((comparison) => (
           <TopicCard
             key={comparison.id}
@@ -25,6 +34,7 @@ export function AnswerComparisonList({
             label={comparison.title}
             selected={comparison.id === selectedId}
             onSelect={onSelect}
+            compact={compact}
           />
         ))}
       </div>

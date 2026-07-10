@@ -1,16 +1,20 @@
 export const PREP_LEVELS = {
   core: {
-    label: 'Core: What this role is most likely to test',
+    label: 'Core Prep',
+    shortDescription:
+      'APIs, test data, debugging, SQL/logs, and collaboration.',
     description:
       'Practical, hands-on prep for Technical QA Analyst II — APIs, test data, debugging, SQL/logs, and cross-functional collaboration.',
   },
   stretch: {
-    label: 'Stretch: Explain the why behind your approach',
+    label: 'Stretch',
+    shortDescription: 'Explain the why behind your approach.',
     description:
       'Experienced IC thinking — sound thoughtful without over-leveling into Staff QA strategy.',
   },
   advanced: {
-    label: 'Advanced / Optional: Senior-level strategy for future roles',
+    label: 'Advanced',
+    shortDescription: 'Senior-level strategy — optional depth.',
     description:
       'Optional depth if an interviewer goes further, or for future Senior SDET / QA Lead roles.',
   },
