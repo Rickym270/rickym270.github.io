@@ -23,4 +23,7 @@ export type InterviewRound = {
   duration: string;
   focusAreas: string[];
   questions: PanelQuestion[];
+  roundTheme?: string;
+  roundIntro?: string;
+  feelsLike?: string;
 };

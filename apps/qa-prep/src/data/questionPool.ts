@@ -95,9 +95,16 @@ assertPoolAnswerBullets(questionPool);
 /** Max questions per Partner Mode session (full pool is much larger). */
 export const PARTNER_SESSION_SIZE = 18;
 
-export function shufflePool(pool: PoolQuestion[] = questionPool): PoolQuestion[] {
+export function shufflePool(
+  pool: PoolQuestion[] = questionPool,
+  topicIds?: string[]
+): PoolQuestion[] {
+  const source =
+    topicIds && topicIds.length > 0
+      ? pool.filter((q) => topicIds.includes(q.topicId))
+      : pool;
   const weighted: PoolQuestion[] = [];
-  for (const q of pool) {
+  for (const q of source) {
     const copies = Math.max(1, Math.round(q.weight));
     for (let i = 0; i < copies; i++) weighted.push(q);
   }

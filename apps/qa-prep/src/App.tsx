@@ -32,6 +32,8 @@ import { WeakSpotReview } from './components/WeakSpotReview';
 import { StoryNavigator } from './components/StoryNavigator';
 import { RandomInterviewMode } from './components/RandomInterviewMode';
 import { PartnerMode } from './components/PartnerMode';
+import { JudiLessonsSection } from './components/JudiLessonsSection';
+import { SidebarNavGroup } from './components/SidebarNavGroup';
 import { useTrainingProgress } from './hooks/useTrainingProgress';
 
 type TrainingMode =
@@ -66,6 +68,7 @@ function formatDaysAgo(timestamp: number): string {
 
 function App() {
   const [trainingMode, setTrainingMode] = useState<TrainingMode>(null);
+  const [randomTopicFilter, setRandomTopicFilter] = useState<string[] | undefined>();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [selection, setSelection] = useState<Selection>({
     kind: 'topic',
@@ -125,11 +128,14 @@ function App() {
   function setMode(mode: TrainingMode) {
     setTrainingMode(mode);
     setMobileNavOpen(false);
+    if (mode !== 'random') {
+      setRandomTopicFilter(undefined);
+    }
   }
 
   const trainingModes: { id: TrainingMode; label: string }[] = [
     { id: 'partner', label: 'Partner' },
-    { id: 'panel', label: 'Mock Panel' },
+    { id: 'panel', label: 'Hiring Loop' },
     { id: 'random', label: 'Random Interview' },
     { id: 'weakSpots', label: 'Weak Spots' },
     { id: 'storyNav', label: 'Stories' },
@@ -168,7 +174,7 @@ function App() {
                 }
               >
                 {trainingMode === m.id && m.id === 'panel'
-                  ? 'Exit Panel'
+                  ? 'Exit Loop'
                   : m.label}
               </button>
             ))}
@@ -237,51 +243,78 @@ function App() {
 
             <PrepLevelSection
               label={PREP_LEVELS.core.label}
-              description={PREP_LEVELS.core.description}
+              description={PREP_LEVELS.core.shortDescription}
               variant="core"
             >
-              <TopicList
-                topics={topics}
-                selectedId={selection.kind === 'topic' ? selection.id : null}
-                onSelect={(id) =>
-                  selectAndClose(() => setSelection({ kind: 'topic', id }))
-                }
-              />
-              <StrongAnswerList
-                answers={coreStrongAnswers}
-                selectedId={
-                  selection.kind === 'strongAnswer' ? selection.id : null
-                }
-                onSelect={(id) =>
-                  selectAndClose(() =>
-                    setSelection({ kind: 'strongAnswer', id })
-                  )
-                }
-              />
-              <AnswerComparisonList
-                comparisons={answerComparisons}
-                selectedId={
-                  selection.kind === 'comparison' ? selection.id : null
-                }
-                onSelect={(id) =>
-                  selectAndClose(() =>
-                    setSelection({ kind: 'comparison', id })
-                  )
-                }
-              />
-              <StoryBankList
-                stories={coreStories}
-                selectedId={selection.kind === 'story' ? selection.id : null}
-                onSelect={(id) =>
-                  selectAndClose(() => setSelection({ kind: 'story', id }))
-                }
-              />
+              <SidebarNavGroup
+                title="Interview topics"
+                count={topics.length}
+                defaultOpen
+              >
+                <TopicList
+                  topics={topics}
+                  selectedId={selection.kind === 'topic' ? selection.id : null}
+                  onSelect={(id) =>
+                    selectAndClose(() => setSelection({ kind: 'topic', id }))
+                  }
+                  hideHeading
+                  compact
+                />
+              </SidebarNavGroup>
+              <SidebarNavGroup
+                title="Interview questions"
+                count={coreStrongAnswers.length}
+              >
+                <StrongAnswerList
+                  answers={coreStrongAnswers}
+                  selectedId={
+                    selection.kind === 'strongAnswer' ? selection.id : null
+                  }
+                  onSelect={(id) =>
+                    selectAndClose(() =>
+                      setSelection({ kind: 'strongAnswer', id })
+                    )
+                  }
+                  hideHeading
+                  compact
+                />
+              </SidebarNavGroup>
+              <SidebarNavGroup
+                title="Answer comparisons"
+                count={answerComparisons.length}
+              >
+                <AnswerComparisonList
+                  comparisons={answerComparisons}
+                  selectedId={
+                    selection.kind === 'comparison' ? selection.id : null
+                  }
+                  onSelect={(id) =>
+                    selectAndClose(() =>
+                      setSelection({ kind: 'comparison', id })
+                    )
+                  }
+                  hideHeading
+                  compact
+                />
+              </SidebarNavGroup>
+              <SidebarNavGroup title="STAR stories" count={coreStories.length}>
+                <StoryBankList
+                  stories={coreStories}
+                  selectedId={selection.kind === 'story' ? selection.id : null}
+                  onSelect={(id) =>
+                    selectAndClose(() => setSelection({ kind: 'story', id }))
+                  }
+                  hideHeading
+                  compact
+                />
+              </SidebarNavGroup>
             </PrepLevelSection>
 
             <PrepLevelSection
               label={PREP_LEVELS.stretch.label}
-              description={PREP_LEVELS.stretch.description}
+              description={PREP_LEVELS.stretch.shortDescription}
               variant="stretch"
+              defaultCollapsed
             >
               <StretchConceptList
                 concepts={stretchConcepts}
@@ -291,12 +324,13 @@ function App() {
                 onSelect={(id) =>
                   selectAndClose(() => setSelection({ kind: 'stretch', id }))
                 }
+                compact
               />
             </PrepLevelSection>
 
             <PrepLevelSection
               label={PREP_LEVELS.advanced.label}
-              description={PREP_LEVELS.advanced.description}
+              description={PREP_LEVELS.advanced.shortDescription}
               variant="advanced"
               defaultCollapsed
             >
@@ -308,34 +342,51 @@ function App() {
                 onSelect={(id) =>
                   selectAndClose(() => setSelection({ kind: 'advanced', id }))
                 }
+                compact
               />
               {advancedStrongAnswers.length > 0 && (
-                <StrongAnswerList
-                  answers={advancedStrongAnswers}
-                  heading="Optional Strong Answers"
-                  selectedId={
-                    selection.kind === 'strongAnswer' ? selection.id : null
-                  }
-                  onSelect={(id) =>
-                    selectAndClose(() =>
-                      setSelection({ kind: 'strongAnswer', id })
-                    )
-                  }
-                />
+                <SidebarNavGroup
+                  title="Optional questions"
+                  count={advancedStrongAnswers.length}
+                >
+                  <StrongAnswerList
+                    answers={advancedStrongAnswers}
+                    heading="Optional Strong Answers"
+                    selectedId={
+                      selection.kind === 'strongAnswer' ? selection.id : null
+                    }
+                    onSelect={(id) =>
+                      selectAndClose(() =>
+                        setSelection({ kind: 'strongAnswer', id })
+                      )
+                    }
+                    hideHeading
+                    compact
+                  />
+                </SidebarNavGroup>
               )}
               {advancedStories.length > 0 && (
-                <StoryBankList
-                  stories={advancedStories}
-                  heading="Optional Stories"
-                  selectedId={
-                    selection.kind === 'story' ? selection.id : null
-                  }
-                  onSelect={(id) =>
-                    selectAndClose(() => setSelection({ kind: 'story', id }))
-                  }
-                />
+                <SidebarNavGroup
+                  title="Optional stories"
+                  count={advancedStories.length}
+                >
+                  <StoryBankList
+                    stories={advancedStories}
+                    heading="Optional Stories"
+                    selectedId={
+                      selection.kind === 'story' ? selection.id : null
+                    }
+                    onSelect={(id) =>
+                      selectAndClose(() => setSelection({ kind: 'story', id }))
+                    }
+                    hideHeading
+                    compact
+                  />
+                </SidebarNavGroup>
               )}
             </PrepLevelSection>
+
+            <JudiLessonsSection />
           </aside>
         )}
 
@@ -344,7 +395,10 @@ function App() {
         ) : trainingMode === 'panel' ? (
           <MockPanelMode onExit={() => setMode(null)} />
         ) : trainingMode === 'random' ? (
-          <RandomInterviewMode onExit={() => setMode(null)} />
+          <RandomInterviewMode
+            topicFilter={randomTopicFilter}
+            onExit={() => setMode(null)}
+          />
         ) : trainingMode === 'weakSpots' ? (
           <WeakSpotReview
             onSelectTopic={(id) => {
@@ -352,6 +406,10 @@ function App() {
               setMode(null);
             }}
             onSelectStory={() => setMode('storyNav')}
+            onStartReviewSession={(topicIds) => {
+              setRandomTopicFilter(topicIds);
+              setMode('random');
+            }}
           />
         ) : trainingMode === 'storyNav' ? (
           <StoryNavigator onExit={() => setMode(null)} />

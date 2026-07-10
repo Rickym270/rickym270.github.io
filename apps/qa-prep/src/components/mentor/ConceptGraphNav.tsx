@@ -3,11 +3,13 @@ import { topics } from '../../data/topics';
 
 type ConceptGraphNavProps = {
   relatedConceptIds: string[];
+  currentTopicId?: string;
   onSelectTopic: (topicId: string) => void;
 };
 
 export function ConceptGraphNav({
   relatedConceptIds,
+  currentTopicId,
   onSelectTopic,
 }: ConceptGraphNavProps) {
   const nodes = conceptGraphNodes.filter(
@@ -22,14 +24,18 @@ export function ConceptGraphNav({
   if (nodes.length === 0) return null;
 
   return (
-    <div className="concept-graph">
-      <ul className="concept-graph__nodes">
+    <div className="concept-graph concept-graph-nav">
+      <ul className="concept-graph__nodes concept-graph-nav__list">
         {nodes.map((node) => (
           <li key={node.id}>
             {node.topicId ? (
               <button
                 type="button"
-                className="concept-graph__link"
+                className={`concept-graph__link concept-graph-nav__btn ${
+                  node.topicId === currentTopicId
+                    ? 'concept-graph-nav__btn--current'
+                    : ''
+                }`}
                 onClick={() => onSelectTopic(node.topicId!)}
               >
                 {node.label}

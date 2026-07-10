@@ -17,6 +17,15 @@ export const personalStories: PersonalStory[] = [
       'The intermittent failures were eliminated, CI became much more reliable, and we maintained confidence that any remaining failures represented genuine application issues rather than timing problems.',
     bestQuestionFor:
       'Flaky tests, CloudWatch, APIs, debugging, Python, backend automation',
+    lessonsLearned:
+      'Readiness checks beat sleeps; bounded retries are fine when tied to a real signal.',
+    judiHealthRelevance:
+      'Same pattern applies when backend eligibility or auth services warm up in staging—correlate logs before changing assertions.',
+    likelyFollowUps: [
+      'What specifically did YOU build in the fixture?',
+      'How did you know it was cold start and not a bad test?',
+      'What would you do if retries hid a real bug?',
+    ],
   },
   {
     id: 'test-data-management',
@@ -34,6 +43,14 @@ export const personalStories: PersonalStory[] = [
       'The testing process became more consistent, test setup was faster, and the team could validate realistic healthcare scenarios without exposing sensitive information.',
     bestQuestionFor:
       'Test data, healthcare, backend testing, fixtures',
+    lessonsLearned:
+      'Version-controlled personas beat one-off records; document which scenarios each persona covers.',
+    judiHealthRelevance:
+      'PBM test data pain is the #1 interview theme—synthetic members with plan types and COB scenarios.',
+    likelyFollowUps: [
+      'How do parallel jobs avoid colliding on the same records?',
+      'Why not refresh from production?',
+    ],
   },
   {
     id: 'hipaa-api-validation',
@@ -67,6 +84,14 @@ export const personalStories: PersonalStory[] = [
       'Execution time dropped from roughly 10–20 minutes to approximately 1–2 minutes. Faster feedback encouraged more frequent commits and significantly improved the development workflow.',
     bestQuestionFor:
       'CI/CD, Playwright, automation frameworks, performance',
+    lessonsLearned:
+      'Measure PR duration first; shard where the pain is worst before redesigning the whole pipeline.',
+    judiHealthRelevance:
+      'Interviewers connect this to squad-level CI tiers—fast PR signal vs. full regression before release.',
+    likelyFollowUps: [
+      'What metrics improved?',
+      'How many shards and how did you avoid flakes across runners?',
+    ],
   },
   {
     id: 'xpress-transit-requirements',
@@ -100,6 +125,14 @@ export const personalStories: PersonalStory[] = [
       'Developers became more comfortable writing tests themselves, reducing QA bottlenecks and improving overall software quality.',
     bestQuestionFor:
       'Collaboration, leadership, code reviews, unit testing',
+    lessonsLearned:
+      'Pairing and examples beat lecturing; checklist items in PRs scale better than QA gatekeeping.',
+    judiHealthRelevance:
+      'Round 3 probes how you partner with devs under sprint pressure—this is the go-to mentoring story.',
+    likelyFollowUps: [
+      'What specifically did you change in their tests?',
+      'How did you handle pushback on deadlines?',
+    ],
   },
   {
     id: 'splunk-dashboard',

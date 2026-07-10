@@ -12,6 +12,15 @@ export type CommunicationClarity =
   | 'too-short'
   | 'rambling';
 
+export type CoachDimensionScores = {
+  technicalAccuracy: number;
+  communication: number;
+  specificity: number;
+  businessThinking: number;
+  confidence: number;
+  realExample: number;
+};
+
 export type AttemptRecord = {
   questionKey: string;
   topicId: string;
@@ -21,6 +30,7 @@ export type AttemptRecord = {
   answeredQuestion?: 'yes' | 'partially' | 'no';
   communication?: CommunicationClarity;
   selectedProject?: string;
+  coachDimensions?: Partial<CoachDimensionScores>;
   timestamp: number;
 };
 

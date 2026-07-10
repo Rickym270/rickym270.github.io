@@ -12,7 +12,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(page.getByRole('heading', { name: 'QA Loop Prep' })).toBeVisible({
       timeout: 20_000,
     });
-    await expect(page.getByRole('button', { name: 'Mock Panel' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Hiring Loop' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Partner' })).toBeVisible();
   });
 
@@ -30,9 +30,12 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       /Question 1 of (1[0-8]|[1-9])/
     );
     await expect(page.getByRole('heading', { name: 'Question' })).toBeVisible();
-    await expect(page.getByText('Answers are hidden')).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Show grading script' })
+    ).toBeVisible();
+    await expect(page.getByText('Tap')).toBeVisible();
 
-    await page.getByRole('checkbox', { name: 'Show answers' }).check();
+    await page.getByRole('button', { name: 'Show grading script' }).click();
     await expect(
       page.getByRole('heading', { name: 'Answer — grade points covered' })
     ).toBeVisible();
@@ -61,11 +64,38 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     );
 
     await page.getByRole('button', { name: 'Shuffle' }).click();
-    await expect(page.getByText('Question 1 of')).toBeVisible();
+    await expect(page.locator('.partner-mode__progress')).toHaveText(
+      /Question 1 of/
+    );
     const afterShuffle = await page
       .locator('.partner-mode__question')
       .textContent();
     expect(afterShuffle?.length).toBeGreaterThan(0);
+  });
+
+  test('Partner mode session nav jumps to selected question', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await page.getByRole('button', { name: 'Partner' }).click();
+    await expect(page.getByRole('heading', { name: 'Partner Mode' })).toBeVisible();
+
+    const sessionItems = page.locator('.partner-session-nav__item');
+    await expect(sessionItems).toHaveCount(18);
+
+    await sessionItems.nth(2).click();
+    await expect(page.locator('.partner-mode__progress')).toHaveText(/Question 3 of 18/);
+
+    await page.getByRole('button', { name: 'Show grading script' }).click();
+    await expect(page.locator('.partner-mode__question-sticky')).toContainText(
+      /Question 3 of 18/
+    );
+    await expect(
+      page.getByRole('heading', { name: 'Answer — grade points covered' })
+    ).toBeVisible();
   });
 
   test('Partner mode uses desktop layout on wide viewport', async ({
@@ -129,6 +159,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(page.getByRole('button', { name: 'Next' })).toBeVisible();
 
     await page.getByRole('checkbox', { name: 'Show answers' }).check();
+    await expect(page.locator('.partner-mode__question-sticky')).toBeVisible();
     await expect(page.locator('.partner-point-checklist__item').first()).toBeVisible();
 
     const overflow = await page.evaluate(() => {
@@ -138,7 +169,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     expect(overflow).toBe(false);
   });
 
-  test('topic Train drill shows rubric self-score on compare step', async ({
+  test('topic Train drill shows story rec and rubric on compare step', async ({
     page,
   }) => {
     await page.goto(QA_PREP_URL, {
@@ -150,16 +181,40 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       timeout: 20_000,
     });
 
-    // Default topic is selected; advance through drill to compare/rubric step
-    await page.getByRole('button', { name: "We've answered" }).click();
-    await page.getByRole('button', { name: 'Continue' }).click(); // reflect → reveal
-    await page.getByRole('button', { name: 'Continue' }).click(); // reveal → compare
+    await expect(
+      page.getByRole('heading', { name: 'Recommended story — lead with this' })
+    ).toBeVisible();
 
-    // On compare, Continue stays disabled until rubric categories are scored
+    await page.getByRole('button', { name: "We've answered" }).click();
+
+    const nextFollowUp = page.getByRole('button', { name: 'Next follow-up' });
+    for (let i = 0; i < 5; i++) {
+      if (!(await nextFollowUp.isVisible())) break;
+      await nextFollowUp.click();
+    }
+
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('button', { name: 'Continue' }).click();
+
     await expect(page.getByText('Self-Score Your Answer')).toBeVisible({
       timeout: 10_000,
     });
-    // Rubric legend: score levels 1, 3, 5
     await expect(page.locator('.rubric-legend__score').first()).toBeVisible();
+  });
+
+  test('Hiring Loop picker shows three round themes', async ({ page }) => {
+    await page.goto(QA_PREP_URL, { waitUntil: 'load', timeout: 30_000 });
+    await page.getByRole('button', { name: 'Hiring Loop' }).click();
+    await expect(page.getByRole('heading', { name: 'Hiring Loop' })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /Backend QA — Vivek Mugunthan/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /Debugging & Technical Reasoning — Clinton Anderson/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /Behavioral & Collaboration — Raghu Tayanna/ })
+    ).toBeVisible();
   });
 });

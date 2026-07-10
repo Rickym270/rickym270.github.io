@@ -314,68 +314,83 @@ const r3Mentoring: PanelQuestion = {
 export const panelRounds: InterviewRound[] = [
   {
     id: 'round-1',
+    roundTheme: 'Backend QA',
+    roundIntro:
+      'APIs, automation, test data, and healthcare-aware validation — show how you design tests, not just name tools.',
+    feelsLike:
+      'A technical screen with PyTest and backend depth. Expect “how would you structure this?” more than architecture lectures.',
     interviewer: {
       name: 'Vivek Mugunthan',
       focusSummary:
-        'Probes technical depth—how you structure tests, isolate failures, and validate edge cases, not just tool names.',
+        'Probes backend QA depth—API validation, PyTest structure, test data, and automation that fits a PBM context.',
       watchFor: [
         'Clear test design and fixture strategy',
-        'Root-cause debugging, not retries or sleeps',
-        'Edge cases and failure validation',
+        'Healthcare-aware negative paths and PHI boundaries',
+        'Practical automation tiers, not buzzwords',
       ],
     },
-    title: 'Technical Depth',
+    title: 'Backend QA',
     duration: '30 minutes',
     focusAreas: [
-      'PyTest & test design',
-      'CI/CD',
-      'Flaky debugging',
-      'Observability',
+      'APIs & backend validation',
+      'PyTest & automation',
+      'Test planning',
+      'Test data & healthcare',
     ],
-    questions: [r1Pytest, r1Cicd, r1Flaky, r2Observability],
+    questions: [r1Pytest, r1Cicd, r1TestData, r1Flaky],
   },
   {
     id: 'round-2',
+    roundTheme: 'Debugging & Technical Reasoning',
+    roundIntro:
+      'CloudWatch, logs, SQL, flaky tests, CI/CD, and root-cause thinking — walk through how you investigate.',
+    feelsLike:
+      'A troubleshooting conversation. They want your reasoning trail, not a definition of monitoring.',
     interviewer: {
       name: 'Clinton Anderson',
       focusSummary:
-        'Focuses on QA judgment, test planning, and how you communicate defects and partner with developers and product.',
+        'Focuses on observability, data triage, and debugging judgment when tests or production signals disagree.',
       watchFor: [
-        'Collaborative tone with eng and PM',
-        'Clear defect communication and repro context',
-        'Risk-based planning without gatekeeping',
+        'Correlation IDs and log reasoning',
+        'SQL ground-truth validation',
+        'Root-cause fixes vs. retries and sleeps',
       ],
     },
-    title: 'Process & Collaboration',
+    title: 'Debugging & Technical Reasoning',
     duration: '30 minutes',
     focusAreas: [
-      'Test planning',
-      'Defect communication',
-      'PM partnership',
-      'Developer collaboration',
+      'CloudWatch & logs',
+      'SQL triage',
+      'Flaky tests',
+      'CI/CD & monitoring',
     ],
-    questions: [r3PmScope, r3Mentoring, r3SprintPriority, r2Logs],
+    questions: [r2Observability, r2Logs, r2SqlTriage, r2SqlClaims],
   },
   {
     id: 'round-3',
+    roundTheme: 'Behavioral & Collaboration',
+    roundIntro:
+      'Mentoring, ownership, PM partnership, and quality decisions under pressure — STAR with specifics.',
+    feelsLike:
+      'A collaboration and judgment round. They probe follow-ups on what YOU did and how you worked with eng/PM.',
     interviewer: {
       name: 'Raghu Tayanna',
       focusSummary:
-        'Evaluates ownership and problem-solving—how you prioritize quality when capacity is tight and see investigations through.',
+        'Evaluates ownership, communication, and prioritization when capacity is tight in a regulated product.',
       watchFor: [
-        'Personal ownership of problems end-to-end',
-        'Prioritization under release pressure',
-        'Ground-truth validation and follow-through',
+        'Personal ownership with named examples',
+        'Collaborative advocacy, not gatekeeping',
+        'Clear results and lessons learned',
       ],
     },
-    title: 'Ownership Under Pressure',
+    title: 'Behavioral & Collaboration',
     duration: '30 minutes',
     focusAreas: [
-      'Quality advocacy',
-      'Test data ownership',
-      'SQL investigation',
-      'Discrepancy triage',
+      'Mentoring & ownership',
+      'PM & developer partnership',
+      'Prioritization',
+      'Quality decisions',
     ],
-    questions: [r3ReleasePushback, r1TestData, r2SqlTriage, r2SqlClaims],
+    questions: [r3ReleasePushback, r3PmScope, r3SprintPriority, r3Mentoring],
   },
 ];

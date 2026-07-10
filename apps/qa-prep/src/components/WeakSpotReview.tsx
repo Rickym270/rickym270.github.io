@@ -2,11 +2,13 @@ import { useTrainingProgress } from '../hooks/useTrainingProgress';
 import { topics } from '../data/topics';
 import { getMemorizeFirstStoryIds, topicStoryLinks } from '../data/contentGraph';
 import { personalStories } from '../data/personalStories';
+import { DIMENSION_LABELS } from '../data/coachFeedback';
 import { ContentSection } from './ContentSection';
 
 type WeakSpotReviewProps = {
   onSelectTopic: (topicId: string) => void;
   onSelectStory: (storyId: string) => void;
+  onStartReviewSession: (topicIds: string[]) => void;
 };
 
 function formatDaysAgo(timestamp: number): string {
@@ -19,9 +21,17 @@ function formatDaysAgo(timestamp: number): string {
 export function WeakSpotReview({
   onSelectTopic,
   onSelectStory,
+  onStartReviewSession,
 }: WeakSpotReviewProps) {
-  const { progress, getWeakTopics, getLastPracticed } = useTrainingProgress();
+  const {
+    progress,
+    getWeakTopics,
+    getLastPracticed,
+    getReviewQueue,
+    getWeakDimension,
+  } = useTrainingProgress();
   const weakTopics = getWeakTopics(3);
+  const reviewQueue = getReviewQueue(5);
   const memorizeIds = getMemorizeFirstStoryIds();
 
   const staleTopics = topics
@@ -47,9 +57,25 @@ export function WeakSpotReview({
     <article className="topic-detail weak-spot-review">
       <h2 className="topic-detail__title">Review Next</h2>
       <p className="weak-spot-review__intro">
-        Topics ranked by lowest confidence and rubric scores. Practice these
-        before your next mock panel.
+        Topics ranked by confidence, rubric scores, and coach dimensions.
+        Spaced repetition surfaces what is due for review.
       </p>
+
+      {reviewQueue.length > 0 && (
+        <ContentSection title="Today's review session">
+          <p>
+            {reviewQueue.length} topic{reviewQueue.length === 1 ? '' : 's'} due
+            or weak — shuffled interview drill with follow-ups.
+          </p>
+          <button
+            type="button"
+            className="practice-cta weak-spot-review__session-cta"
+            onClick={() => onStartReviewSession(reviewQueue)}
+          >
+            Start review session
+          </button>
+        </ContentSection>
+      )}
 
       {weakTopics.length > 0 ? (
         <ContentSection title="Weak spots">
@@ -57,6 +83,7 @@ export function WeakSpotReview({
             {weakTopics.map((id) => {
               const topic = topics.find((t) => t.id === id);
               const last = getLastPracticed(id);
+              const weakDim = getWeakDimension(id);
               return (
                 <li key={id}>
                   <button
@@ -68,6 +95,8 @@ export function WeakSpotReview({
                     {last && (
                       <span className="weak-spot-list__meta">
                         Last practiced {formatDaysAgo(last)}
+                        {weakDim &&
+                          ` · work on ${DIMENSION_LABELS[weakDim].toLowerCase()}`}
                       </span>
                     )}
                   </button>

@@ -10,11 +10,15 @@ Static interview prep app for paired study sessions. Hosted at an obscure, unlis
 ## What's included
 
 - QA topics (API testing, pytest, SQL triage, flaky tests, CI/CD, behavioral, etc.)
+- **Adaptive coach flow** — active recall with notes, story recommendations before reveal, chained follow-ups, and dimension-based coaching feedback
+- **Hiring Loop** — three-round Judi Health interview simulation (Backend QA, Debugging & Technical Reasoning, Behavioral & Collaboration)
 - Practice drills with mock questions and model answers
 - Scoring rubrics and self-score grading (useful for paired study)
-- Mock Panel, Random Interview, Weak Spots, and Stories modes
+- Random Interview, Weak Spots (with review sessions), and Stories modes
 - **Partner Mode** — simple question + speakable bullet answers for paired study (answers hidden by default; toggle to reveal and check off points covered for a live `X / Y points · Z%` score)
-- Study mode: flashcards, strong-answer bullets, pitfalls, static mentor content
+- Study mode: flashcards, strong-answer bullets, pitfalls, mentor content, **Why?** explanations, concept graph navigation
+- **Lessons from my Judi Health interviews** — sidebar insights from actual loop experience
+- STAR stories with lessons learned, Judi relevance, and likely follow-ups
 
 ## What was removed
 

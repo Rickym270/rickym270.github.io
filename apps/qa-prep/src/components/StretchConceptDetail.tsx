@@ -1,6 +1,7 @@
 import type { StretchConcept } from '../types/stretchConcept';
 import { topics } from '../data/topics';
 import { ContentSection } from './ContentSection';
+import { WhyButton } from './mentor/WhyButton';
 
 type StretchConceptDetailProps = {
   concept: StretchConcept;
@@ -16,6 +17,12 @@ export function StretchConceptDetail({ concept }: StretchConceptDetailProps) {
 
       <ContentSection title="Why it matters">
         <p>{concept.whyItMatters}</p>
+        {concept.relatedTopicIds[0] && (
+          <WhyButton
+            topicId={concept.relatedTopicIds[0]}
+            stretchConceptId={concept.id}
+          />
+        )}
       </ContentSection>
 
       <ContentSection title="How to explain it as an experienced IC">

@@ -185,14 +185,14 @@ export function MockPanelMode({ onExit }: MockPanelModeProps) {
     return (
       <div className="panel-mode">
         <div className="panel-mode__header">
-          <h2 className="panel-mode__title">Mock Panel Mode</h2>
+          <h2 className="panel-mode__title">Hiring Loop</h2>
           <button type="button" className="panel-mode__exit" onClick={onExit}>
             Exit
           </button>
         </div>
         <p className="panel-mode__intro">
-          Practice with the hiring panel. Answer together
-          first — no hints until you reveal the model answer.
+          Three-round Judi Health hiring loop. Answer together first — story
+          recommendations and follow-ups before any model answer.
         </p>
         <InterviewerMindPanel content={PANEL_INTERVIEWER_MIND} />
         <ul className="panel-mode__interviewer-list">
@@ -207,7 +207,7 @@ export function MockPanelMode({ onExit }: MockPanelModeProps) {
           className="practice-cta panel-mode__sim-cta"
           onClick={startSimulation}
         >
-          Run full simulation (3 rounds)
+          Run full hiring loop (3 rounds)
         </button>
         <div className="panel-persona-grid">
           {panelRounds.map((r) => (
@@ -311,11 +311,18 @@ function RoundCard({
     >
       <div className="panel-round-card__header">
         <h3 className="panel-persona-card__title">
-          {round.interviewer.name} — {round.title}
+          {round.roundTheme ?? round.title} — {round.interviewer.name}
         </h3>
         <span className="panel-round-card__duration">{round.duration}</span>
       </div>
-      <p className="panel-interviewer__summary">{round.interviewer.focusSummary}</p>
+      {round.roundIntro && (
+        <p className="panel-interviewer__summary">{round.roundIntro}</p>
+      )}
+      {round.feelsLike && (
+        <p className="panel-round-card__feels-like">
+          <strong>Feels like:</strong> {round.feelsLike}
+        </p>
+      )}
       <ul className="panel-interviewer__watch">
         {round.interviewer.watchFor.map((item) => (
           <li key={item}>{item}</li>
