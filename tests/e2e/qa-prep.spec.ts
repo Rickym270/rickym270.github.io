@@ -169,9 +169,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     expect(overflow).toBe(false);
   });
 
-  test('topic Train drill shows story rec and rubric on compare step', async ({
-    page,
-  }) => {
+  test('topic Train drill shows attempt-first question shell', async ({ page }) => {
     await page.goto(QA_PREP_URL, {
       waitUntil: 'load',
       timeout: 30_000,
@@ -181,26 +179,16 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       timeout: 20_000,
     });
 
+    await expect(page.getByRole('heading', { name: 'Interview Question' })).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Recommended story — lead with this' })
+      page.getByPlaceholder('Type your answer before revealing the model response…')
     ).toBeVisible();
-
-    await page.getByRole('button', { name: "We've answered" }).click();
-
-    const nextFollowUp = page.getByRole('button', { name: 'Next follow-up' });
-    for (let i = 0; i < 5; i++) {
-      if (!(await nextFollowUp.isVisible())) break;
-      await nextFollowUp.click();
-    }
-
-    await page.getByRole('button', { name: 'Continue' }).click();
-    await page.getByRole('button', { name: 'Continue' }).click();
-    await page.getByRole('button', { name: 'Continue' }).click();
-
-    await expect(page.getByText('Self-Score Your Answer')).toBeVisible({
-      timeout: 10_000,
-    });
-    await expect(page.locator('.rubric-legend__score').first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Submit Answer' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Give Me One Hint' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Reveal Model Answer' })).toBeVisible();
+    await expect(
+      page.getByText('Model answer hidden until you reveal or submit.')
+    ).toBeVisible();
   });
 
   test('Hiring Loop picker shows three round themes', async ({ page }) => {
@@ -216,5 +204,134 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(
       page.getByRole('button', { name: /Behavioral & Collaboration — Raghu Tayanna/ })
     ).toBeVisible();
+  });
+
+  test('attempt-first drill submits answer and shows evaluation', async ({
+    page,
+  }) => {
+    await page.route('**/api/qa-prep/attempt-coach', async (route) => {
+      const body = route.request().postDataJSON() as { action: string };
+
+      if (body.action === 'evaluate') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            scores: {
+              technicalAccuracy: 8,
+              qaReasoning: 7,
+              riskAnalysis: 7,
+              completeness: 7,
+              communication: 8,
+              healthcareDomainAwareness: 7,
+            },
+            strengths: ['Named effective-date boundaries'],
+            missed: ['Commercial vs Medicare split'],
+            inaccuracies: [],
+            structureTips: 'Lead with the highest-risk scenario first.',
+            lengthFeedback: 'appropriately detailed',
+            comparison: [
+              {
+                area: 'Plan split',
+                myAnswer: 'Medicare only',
+                modelAnswer: 'Medicare + commercial',
+                gap: 'critical omission',
+              },
+            ],
+            modelAnswer: {
+              concise60to90: 'Test before, on, and after the effective date...',
+              detailedStrategy: 'Layer regression across eligibility flags and SQL checks.',
+              conceptChecklist: [
+                {
+                  concept: 'Effective date',
+                  whyItMatters: 'Wrong cohort can block members from medication.',
+                },
+              ],
+            },
+            reinforcement: {
+              question:
+                'Commercial members became ineligible after a formulary update — how would you investigate?',
+              referenceAnswer: 'Compare plan mapping and staging data.',
+            },
+            technicallyCorrect: true,
+            highRiskCovered: true,
+            masteryEligible: true,
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ hint: 'Think about before and after the effective date.' }),
+      });
+    });
+
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await expect(page.getByRole('heading', { name: 'Interview Question' })).toBeVisible();
+    await page
+      .getByPlaceholder('Type your answer before revealing the model response…')
+      .fill('I would regression test eligibility before and after the effective date for Medicare members.');
+    await page.getByRole('button', { name: 'Submit Answer' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Your evaluation' })).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.getByText('Named effective-date boundaries')).toBeVisible();
+    await expect(page.getByText('Test before, on, and after the effective date')).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Try reinforcement question' })
+    ).toBeVisible();
+  });
+
+  test('study helper opens panel, sends question, and shows reply', async ({
+    page,
+  }) => {
+    await page.route('**/api/qa-prep/study-chat', async (route) => {
+      const request = route.request();
+      const body = request.postDataJSON() as {
+        messages: { role: string; content: string }[];
+        context: { topicTitle: string };
+      };
+
+      expect(body.messages.at(-1)?.content).toContain('eligibility boundary');
+      expect(body.context.topicTitle).toBeTruthy();
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          reply: 'Start with contract checks, then integration paths for edge cases.',
+          model: 'gpt-4o-mini',
+        }),
+      });
+    });
+
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await expect(page.getByRole('button', { name: 'Ask study helper' })).toBeVisible();
+    await page.getByRole('button', { name: 'Ask study helper' }).click();
+    await expect(page.getByRole('heading', { name: 'Study helper' })).toBeVisible();
+
+    await page
+      .getByPlaceholder('Ask about this topic…')
+      .fill('How do I answer the eligibility boundary question?');
+    await page.getByRole('button', { name: 'Send' }).click();
+
+    await expect(
+      page.getByText('Start with contract checks, then integration paths for edge cases.')
+    ).toBeVisible();
+
+    await page.getByRole('button', { name: 'Minimize' }).click();
+    await expect(page.getByRole('heading', { name: 'Study helper' })).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Interview Question' })).toBeVisible();
   });
 });

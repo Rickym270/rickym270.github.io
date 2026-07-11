@@ -76,6 +76,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNAUTHORIZED, "unauthorized", ex.getMessage());
     }
 
+    // 429 — rate limit
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleRateLimit(RateLimitExceededException ex) {
+        return build(HttpStatus.TOO_MANY_REQUESTS, "rate_limit_exceeded", ex.getMessage());
+    }
+
+    // 503 — dependency unavailable
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<Map<String, Object>> handleServiceUnavailable(ServiceUnavailableException ex) {
+        return build(HttpStatus.SERVICE_UNAVAILABLE, "service_unavailable", ex.getMessage());
+    }
+
     // 400 — bad request (e.g., spam detection, rate limiting, CAPTCHA failure)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {

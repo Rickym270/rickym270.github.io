@@ -34,6 +34,11 @@ import { RandomInterviewMode } from './components/RandomInterviewMode';
 import { PartnerMode } from './components/PartnerMode';
 import { JudiLessonsSection } from './components/JudiLessonsSection';
 import { SidebarNavGroup } from './components/SidebarNavGroup';
+import { StudyHelperFab } from './components/study-helper/StudyHelperFab';
+import { StudyHelperHeaderLink } from './components/study-helper/StudyHelperHeaderLink';
+import {
+  StudyHelperProvider,
+} from './context/StudyHelperContext';
 import { useTrainingProgress } from './hooks/useTrainingProgress';
 
 type TrainingMode =
@@ -144,6 +149,7 @@ function App() {
   const browseMode = trainingMode === null;
 
   return (
+    <StudyHelperProvider>
     <div className="app">
       <header className="app-header">
         <div className="app-header__top">
@@ -164,6 +170,7 @@ function App() {
             </div>
           </div>
           <div className="training-mode-toggles">
+            <StudyHelperHeaderLink />
             {trainingModes.map((m) => (
               <button
                 key={m.id}
@@ -437,7 +444,9 @@ function App() {
           <p className="app-placeholder">Select a topic to begin.</p>
         )}
       </main>
+      <StudyHelperFab />
     </div>
+    </StudyHelperProvider>
   );
 }
 

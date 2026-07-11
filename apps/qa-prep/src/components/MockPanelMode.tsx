@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import type { InterviewRound, PanelQuestion } from '../types/panelPersona';
-import type { ScoringRubric as RubricData } from '../types/scoringRubric';
 import { panelRounds } from '../data/panelRounds';
-import { scoringRubrics } from '../data/scoringRubrics';
 import { topics } from '../data/topics';
-import { RetrievalDrill } from './retrieval/RetrievalDrill';
+import { AttemptFirstDrill } from './attempt-first/AttemptFirstDrill';
 import { useTrainingProgress } from '../hooks/useTrainingProgress';
 import { getMemorizeFirstStoryIds, topicStoryLinks } from '../data/contentGraph';
 import { personalStories } from '../data/personalStories';
@@ -51,9 +49,6 @@ export function MockPanelMode({ onExit }: MockPanelModeProps) {
 
   const questions = roundQuestions.length > 0 ? roundQuestions : (round?.questions ?? []);
   const question = questions[questionIndex] ?? null;
-  const rubric: RubricData | undefined = question
-    ? scoringRubrics.find((r) => r.topicId === question.topicId)
-    : undefined;
   const linkedTopic = question
     ? topics.find((t) => t.id === question.topicId)
     : undefined;
@@ -220,7 +215,6 @@ export function MockPanelMode({ onExit }: MockPanelModeProps) {
 
   if (!question) return null;
 
-  const stretch = question.stretchFollowUp;
   const total = questions.length;
   const isLastInRound = questionIndex >= total - 1;
   const isLastOverall =
@@ -268,24 +262,21 @@ export function MockPanelMode({ onExit }: MockPanelModeProps) {
         </div>
       </div>
 
-      <RetrievalDrill
+      <AttemptFirstDrill
         key={drillKey}
         questionKey={`panel:${question.id}`}
         topicId={question.topicId}
+        topicTitle={linkedTopic?.title ?? round.title}
         question={question.question}
-        modelAnswer={question.sampleAnswer}
+        referenceAnswer={question.sampleAnswer}
         compareBullets={question.strongAnswerIncludes}
         pitfalls={linkedTopic?.commonPitfalls ?? []}
-        rubric={rubric}
-        stretchQuestion={stretch?.question ?? question.followUps[0]}
-        stretchAnswer={stretch?.sampleAnswer ?? question.followUpSampleAnswer}
         questionNum={questionIndex + 1}
         totalQuestions={total}
         onNext={handleQuestionComplete}
         onPrev={() => goToQuestion(questionIndex - 1)}
         canPrev={questionIndex > 0}
         isLast={isLastOverall || (!isSimulation && isLastInRound)}
-        questionBadge="core"
         completeMessage={
           isSimulation && !isLastOverall
             ? 'Round complete — moving to next interview.'

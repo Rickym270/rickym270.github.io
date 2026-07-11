@@ -1,6 +1,5 @@
 import type { StrongAnswer } from '../types/strongAnswer';
-import { ContentSection } from './ContentSection';
-import { RevealSampleAnswer } from './RevealSampleAnswer';
+import { AttemptFirstDrill } from './attempt-first/AttemptFirstDrill';
 
 type StrongAnswerDetailProps = {
   answer: StrongAnswer;
@@ -9,11 +8,16 @@ type StrongAnswerDetailProps = {
 export function StrongAnswerDetail({ answer }: StrongAnswerDetailProps) {
   return (
     <article className="topic-detail">
-      <h2 className="topic-detail__title">{answer.question}</h2>
-
-      <ContentSection title="Strong Answer">
-        <RevealSampleAnswer answer={answer.answer} />
-      </ContentSection>
+      <AttemptFirstDrill
+        questionKey={`strong:${answer.id}`}
+        topicId="strong-answers"
+        topicTitle="Interview question"
+        question={answer.question}
+        referenceAnswer={answer.answer}
+        compareBullets={answer.answerBullets}
+        isLast
+        completeMessage="Question complete."
+      />
     </article>
   );
 }
