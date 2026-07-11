@@ -2015,7 +2015,8 @@ button {
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -2030,6 +2031,44 @@ button {
     flex: 0 0 auto;
     min-height: 44px;
     padding: 0.5rem 0.875rem;
+  }
+
+  .study-helper-header-link {
+    min-height: 44px;
+    flex: 1 1 100%;
+    width: 100%;
+    text-align: center;
+  }
+
+  .app-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .app:has(.study-helper-fab) {
+    padding-bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4rem));
+  }
+
+  .practice-drill__meta {
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+  }
+
+  .study-section-nav__links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-width: 100%;
+    padding-bottom: 0.15rem;
+  }
+
+  .study-section-nav__links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .study-section-nav__link {
+    flex-shrink: 0;
+    min-height: 36px;
   }
 
   .retrieval-accordion:not([open]) summary {
@@ -3451,6 +3490,22 @@ button {
 @media (max-width: 639px) {
   .study-helper-panel {
     width: calc(100vw - 2rem);
+    max-height: min(75dvh, calc(100dvh - 7rem));
+  }
+
+  .study-helper-root--open {
+    left: max(1rem, env(safe-area-inset-left));
+    right: max(1rem, env(safe-area-inset-right));
+    align-items: stretch;
+  }
+
+  .study-helper-root--open .study-helper-panel {
+    width: 100%;
+  }
+
+  .study-helper-fab {
+    min-width: 3rem;
+    min-height: 3rem;
   }
 }
 
@@ -3651,14 +3706,115 @@ button {
   width: 100%;
 }
 
+.attempt-first__nav-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+}
+
 @media (max-width: 639px) {
-  .attempt-first__comparison {
-    font-size: 0.75rem;
+  .attempt-first {
+    padding-bottom: 0.5rem;
+  }
+
+  .attempt-first__badge {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .attempt-first__attempt-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .attempt-first__attempt-actions .practice-cta {
+    grid-column: 1 / -1;
+    width: 100%;
+    order: -1;
+  }
+
+  .attempt-first__attempt-actions .practice-drill__secondary {
+    width: 100%;
+    min-height: 44px;
   }
 
   .attempt-first__skip {
     margin-left: 0;
-    width: 100%;
+  }
+
+  .attempt-first__nav-pair {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .attempt-first__nav-pair .practice-drill__secondary:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .attempt-first--compact .attempt-first__attempt-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .attempt-first-card-list {
+    gap: 1rem;
+  }
+
+  .attempt-first__score-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .attempt-first__score-item--avg {
+    grid-column: 1 / -1;
+  }
+
+  .attempt-first__comparison-wrap {
+    overflow-x: visible;
+  }
+
+  .attempt-first__comparison thead {
+    display: none;
+  }
+
+  .attempt-first__comparison tbody,
+  .attempt-first__comparison tr,
+  .attempt-first__comparison td {
+    display: block;
+  }
+
+  .attempt-first__comparison tr {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .attempt-first__comparison td {
+    border: none;
+    padding: 0.35rem 0;
+    font-size: 0.8125rem;
+  }
+
+  .attempt-first__comparison td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.15rem;
+  }
+
+  .attempt-first__comparison td + td {
+    margin-top: 0.35rem;
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--color-border);
   }
 }
 

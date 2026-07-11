@@ -186,9 +186,34 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(page.getByRole('button', { name: 'Submit Answer' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Give Me One Hint' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Reveal Model Answer' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Next question' })).toBeVisible();
     await expect(
       page.getByText('Model answer hidden until you reveal or submit.')
     ).toBeVisible();
+  });
+
+  test('Train mode fits mobile viewport without horizontal overflow', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await expect(page.getByRole('heading', { name: 'Interview Question' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Submit Answer' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Next question' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Ask study helper' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Ask study helper' }).click();
+    await expect(page.getByRole('heading', { name: 'Study helper' })).toBeVisible();
+
+    const overflow = await page.evaluate(() => {
+      const doc = document.documentElement;
+      return doc.scrollWidth > doc.clientWidth + 1;
+    });
+    expect(overflow).toBe(false);
   });
 
   test('Hiring Loop picker shows three round themes', async ({ page }) => {

@@ -24,10 +24,10 @@ export function AttemptComparisonTable({ rows }: AttemptComparisonTableProps) {
         <tbody>
           {rows.map((row) => (
             <tr key={`${row.area}-${row.gap}`}>
-              <td>{row.area}</td>
-              <td>{row.myAnswer}</td>
-              <td>{row.modelAnswer}</td>
-              <td>{row.gap}</td>
+              <td data-label="Area">{row.area}</td>
+              <td data-label="My answer">{row.myAnswer}</td>
+              <td data-label="Model answer">{row.modelAnswer}</td>
+              <td data-label="Gap">{row.gap}</td>
             </tr>
           ))}
         </tbody>

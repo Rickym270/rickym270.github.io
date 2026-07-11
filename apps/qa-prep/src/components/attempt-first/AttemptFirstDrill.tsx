@@ -282,7 +282,7 @@ export function AttemptFirstDrill({
   }
 
   function handleContinueFromFeedback() {
-    if (reinforcement) {
+    if (reinforcement && !isReinforcement) {
       resetForReinforcement(reinforcement);
       return;
     }
@@ -290,6 +290,14 @@ export function AttemptFirstDrill({
       onNext();
     }
   }
+
+  function handleGoToNext() {
+    if (onNext && !isLast) {
+      onNext();
+    }
+  }
+
+  const canGoNext = Boolean(onNext && !isLast);
 
   async function handleReinforcementSubmit() {
     if (busy || !userAnswer.trim()) return;
@@ -474,6 +482,30 @@ export function AttemptFirstDrill({
             >
               {busy === 'skip' ? 'Loading…' : 'Skip and Show Solution'}
             </button>
+            {(canGoNext || (canPrev && onPrev)) && (
+              <div className="attempt-first__nav-pair">
+                {canPrev && onPrev && (
+                  <button
+                    type="button"
+                    className="practice-drill__secondary"
+                    onClick={onPrev}
+                    disabled={busy !== null || phase === 'evaluating'}
+                  >
+                    Previous question
+                  </button>
+                )}
+                {canGoNext && (
+                  <button
+                    type="button"
+                    className="practice-drill__secondary"
+                    onClick={handleGoToNext}
+                    disabled={busy !== null || phase === 'evaluating'}
+                  >
+                    Next question
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {!modelAnswerOpen && (
@@ -518,6 +550,17 @@ export function AttemptFirstDrill({
             >
               {primaryLabel}
             </button>
+            {canGoNext && (
+              <div className="attempt-first__nav-pair">
+                <button
+                  type="button"
+                  className="practice-drill__secondary"
+                  onClick={handleGoToNext}
+                >
+                  Next question
+                </button>
+              </div>
+            )}
           </div>
         </ContentSection>
       )}
@@ -537,6 +580,26 @@ export function AttemptFirstDrill({
             >
               {primaryLabel}
             </button>
+            {canGoNext && reinforcement && !isReinforcement && (
+              <button
+                type="button"
+                className="practice-drill__secondary"
+                onClick={handleGoToNext}
+              >
+                Skip reinforcement
+              </button>
+            )}
+            {canGoNext && (!reinforcement || isReinforcement) && (
+              <div className="attempt-first__nav-pair">
+                <button
+                  type="button"
+                  className="practice-drill__secondary"
+                  onClick={handleGoToNext}
+                >
+                  Next question
+                </button>
+              </div>
+            )}
             {isLast && !onNext && (
               <p className="attempt-first__muted">
                 {completeMessage ??
@@ -548,16 +611,6 @@ export function AttemptFirstDrill({
       )}
 
       {error && <p className="attempt-first__error">{error}</p>}
-
-      {canPrev && phase === 'attempt' && onPrev && (
-        <button
-          type="button"
-          className="practice-drill__secondary"
-          onClick={onPrev}
-        >
-          Previous question
-        </button>
-      )}
     </div>
   );
 }
