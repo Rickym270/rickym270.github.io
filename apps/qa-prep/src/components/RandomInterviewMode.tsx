@@ -1,7 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { shufflePool } from '../data/questionPool';
-import { scoringRubrics } from '../data/scoringRubrics';
-import { RetrievalDrill } from './retrieval/RetrievalDrill';
+import { AttemptFirstDrill } from './attempt-first/AttemptFirstDrill';
 
 type RandomInterviewModeProps = {
   onExit?: () => void;
@@ -18,13 +17,6 @@ export function RandomInterviewMode({
   const [started, setStarted] = useState(false);
 
   const question = pool[index];
-  const rubric = useMemo(
-    () =>
-      question
-        ? scoringRubrics.find((r) => r.topicId === question.topicId)
-        : undefined,
-    [question]
-  );
 
   if (!started) {
     return (
@@ -71,15 +63,15 @@ export function RandomInterviewMode({
           </button>
         )}
       </div>
-      <RetrievalDrill
+      <AttemptFirstDrill
         key={drillKey}
         questionKey={question.id}
         topicId={question.topicId}
+        topicTitle={question.category}
         question={question.question}
-        modelAnswer={question.modelAnswer}
+        referenceAnswer={question.modelAnswer}
         compareBullets={question.compareBullets}
         pitfalls={question.pitfalls}
-        rubric={rubric}
         questionNum={index + 1}
         totalQuestions={pool.length}
         onNext={() => {

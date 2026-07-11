@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { buildPartnerSession } from '../data/questionPool';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useStudyHelper } from '../context/StudyHelperContext';
 import { ContentSection } from './ContentSection';
 import { PartnerPointChecklist } from './PartnerPointChecklist';
 import {
@@ -18,6 +19,7 @@ function emptyChecked(length: number): boolean[] {
 
 export function PartnerMode({ onExit }: PartnerModeProps) {
   const isMobile = useIsMobile();
+  const { setStudyFocus } = useStudyHelper();
   const [sessionPool, setSessionPool] = useState(() => buildPartnerSession());
   const [index, setIndex] = useState(0);
   const [showAnswers, setShowAnswers] = useState(false);
@@ -30,6 +32,16 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
     if (!question) return;
     setChecked(emptyChecked(question.answerBullets.length));
   }, [question?.id, question?.answerBullets.length]);
+
+  useEffect(() => {
+    if (!question) return;
+    setStudyFocus({
+      topicId: question.topicId,
+      topicTitle: question.category,
+      mode: 'partner',
+      currentQuestion: question.question,
+    });
+  }, [question, setStudyFocus]);
 
   if (!question) {
     return (

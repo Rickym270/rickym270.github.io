@@ -1,35 +1,32 @@
 import { useState } from 'react';
 import type { Topic } from '../types/topic';
 import type { ScoringRubric as RubricData } from '../types/scoringRubric';
-import { RetrievalDrill } from './retrieval/RetrievalDrill';
+import { AttemptFirstDrill } from './attempt-first/AttemptFirstDrill';
 
 type TopicPracticeDrillProps = {
   topic: Topic;
   rubric?: RubricData;
 };
 
-export function TopicPracticeDrill({ topic, rubric }: TopicPracticeDrillProps) {
+export function TopicPracticeDrill({ topic, rubric: _rubric }: TopicPracticeDrillProps) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [drillKey, setDrillKey] = useState(0);
 
   const mockQuestion = topic.mockQuestions[questionIndex] ?? '';
   const sampleAnswer = topic.sampleAnswers[questionIndex] ?? '';
-  const followUpIndex = questionIndex % topic.followUpQuestions.length;
-  const stretchQ = topic.followUpQuestions[followUpIndex];
-  const stretchA = topic.followUpSampleAnswers[followUpIndex];
+  const answerBullets =
+    topic.sampleAnswerBullets[questionIndex] ?? topic.strongAnswerBullets;
 
   return (
-    <RetrievalDrill
+    <AttemptFirstDrill
       key={drillKey}
       questionKey={`topic:${topic.id}:q${questionIndex}`}
       topicId={topic.id}
+      topicTitle={topic.title}
       question={mockQuestion}
-      modelAnswer={sampleAnswer}
-      compareBullets={topic.strongAnswerBullets}
+      referenceAnswer={sampleAnswer}
+      compareBullets={answerBullets}
       pitfalls={topic.commonPitfalls}
-      rubric={rubric}
-      stretchQuestion={stretchQ}
-      stretchAnswer={stretchA}
       questionNum={questionIndex + 1}
       totalQuestions={topic.mockQuestions.length}
       onNext={() => {

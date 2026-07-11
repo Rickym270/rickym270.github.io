@@ -1,17 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Topic } from '../types/topic';
 import type { ScoringRubric as RubricData } from '../types/scoringRubric';
 import { getMentorProfile } from '../data/mentor/topicMentorProfiles';
+import { useStudyHelper } from '../context/StudyHelperContext';
 import { Flashcard } from './Flashcard';
 import { ScoringRubric } from './ScoringRubric';
 import { TopicPracticeDrill } from './TopicPracticeDrill';
-import { RevealSampleAnswer } from './RevealSampleAnswer';
 import { TopicMentorStudy } from './mentor/TopicMentorStudy';
 import { InterviewerMindPanel } from './mentor/InterviewerMindPanel';
 import { WhyButton } from './mentor/WhyButton';
 import { MemoryAnchorCard } from './mentor/MemoryAnchorCard';
 import { StudyCollapsibleSection } from './study/StudyCollapsibleSection';
 import { StudySectionNav } from './study/StudySectionNav';
+import { AttemptFirstQuestionCard } from './attempt-first/AttemptFirstQuestionCard';
 
 type TopicDetailProps = {
   topic: Topic;
@@ -24,6 +25,15 @@ type ViewMode = 'practice' | 'study';
 export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) {
   const [mode, setMode] = useState<ViewMode>('practice');
   const profile = getMentorProfile(topic.id);
+  const { setStudyFocus } = useStudyHelper();
+
+  useEffect(() => {
+    setStudyFocus({
+      topicId: topic.id,
+      topicTitle: topic.title,
+      mode: mode === 'study' ? 'study' : 'practice',
+    });
+  }, [topic.id, topic.title, mode, setStudyFocus]);
 
   const studySections = useMemo(() => {
     const sections = [
@@ -81,13 +91,20 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
             title={`Mock interview questions (${topic.mockQuestions.length})`}
             defaultOpen
           >
-            <ol className="topic-list-styled topic-list-styled--with-reveal">
+            <ol className="topic-list-styled attempt-first-card-list">
               {topic.mockQuestions.map((q, i) => (
                 <li key={q}>
-                  {q}
-                  <RevealSampleAnswer
-                    key={`study-mock-${i}`}
-                    answer={topic.sampleAnswers[i] ?? ''}
+                  <AttemptFirstQuestionCard
+                    questionKey={`topic:${topic.id}:q${i}`}
+                    topicId={topic.id}
+                    topicTitle={topic.title}
+                    question={q}
+                    referenceAnswer={topic.sampleAnswers[i] ?? ''}
+                    compareBullets={
+                      topic.sampleAnswerBullets[i] ?? topic.strongAnswerBullets
+                    }
+                    pitfalls={topic.commonPitfalls}
+                    label={`Question ${i + 1}`}
                   />
                 </li>
               ))}
@@ -155,13 +172,18 @@ export function TopicDetail({ topic, rubric, onSelectTopic }: TopicDetailProps) 
             id="study-followups"
             title={`Follow-up questions (${topic.followUpQuestions.length})`}
           >
-            <ol className="topic-list-styled topic-list-styled--with-reveal">
+            <ol className="topic-list-styled attempt-first-card-list">
               {topic.followUpQuestions.map((q, i) => (
                 <li key={q}>
-                  {q}
-                  <RevealSampleAnswer
-                    key={`study-followup-${i}`}
-                    answer={topic.followUpSampleAnswers[i] ?? ''}
+                  <AttemptFirstQuestionCard
+                    questionKey={`topic:${topic.id}:followup${i}`}
+                    topicId={topic.id}
+                    topicTitle={topic.title}
+                    question={q}
+                    referenceAnswer={topic.followUpSampleAnswers[i] ?? ''}
+                    compareBullets={topic.strongAnswerBullets}
+                    pitfalls={topic.commonPitfalls}
+                    label={`Follow-up ${i + 1}`}
                   />
                 </li>
               ))}

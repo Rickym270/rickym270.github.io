@@ -1,3 +1,5 @@
+import type { AttemptScoreBlock } from './attemptCoach';
+
 export type ConfidenceLevel =
   | 'cold'
   | 'with-hints'
@@ -31,6 +33,10 @@ export type AttemptRecord = {
   communication?: CommunicationClarity;
   selectedProject?: string;
   coachDimensions?: Partial<CoachDimensionScores>;
+  userAnswer?: string;
+  attemptScores?: AttemptScoreBlock;
+  solutionViewedBeforeAttempt?: boolean;
+  mastered?: boolean;
   timestamp: number;
 };
 

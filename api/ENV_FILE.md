@@ -4,7 +4,7 @@ The Spring Boot API now supports loading environment variables from a `.env` fil
 
 ## Location
 
-Place your `.env` file in the `api/` directory (same directory as `pom.xml`).
+Place your `.env` file in the `apps/api/` directory (same directory as `pom.xml`).
 
 ## File Format
 
@@ -23,7 +23,7 @@ PROJECTS_GITHUB_TTL_MINUTES=720
 PROJECTS_COMMIT_STATUS_TTL_MINUTES=60
 ```
 
-**OPENAI_API_KEY** (optional): When set, blog search (`GET /api/search`) uses OpenAI embeddings for semantic ranking. When unset, search uses keyword-based ranking and works without external API calls (suitable for CI and local development).
+**OPENAI_API_KEY** (optional): When set, blog search (`GET /api/search`) uses OpenAI embeddings for semantic ranking. The QA Loop Prep study helper (`POST /api/qa-prep/study-chat`) and attempt-first answer coach (`POST /api/qa-prep/attempt-coach`) use this key for chat completions and structured evaluation. When unset, search uses keyword-based ranking and those endpoints return `503` (suitable for CI and local development without a key).
 
 ## How It Works
 
@@ -48,7 +48,7 @@ When you start the API server, you should see:
 ```
 
 If you see warnings instead:
-- Check that `.env` file exists in `api/` directory
+- Check that `.env` file exists in `apps/api/` directory
 - Verify file format (no spaces around `=`, one variable per line)
 - Check that values don't contain `your-` placeholder text (those are skipped)
 
@@ -56,7 +56,7 @@ If you see warnings instead:
 
 1. **Start the API**:
    ```bash
-   cd api
+   cd apps/api
    ./mvnw spring-boot:run
    ```
 
@@ -69,8 +69,8 @@ If you see warnings instead:
 ## Troubleshooting
 
 ### ".env file not found"
-- Ensure `.env` is in the `api/` directory
-- Check file permissions: `ls -la api/.env`
+- Ensure `.env` is in the `apps/api/` directory
+- Check file permissions: `ls -la apps/api/.env`
 - Verify you're running from the correct directory
 
 ### "No SMTP_HOST configured"
