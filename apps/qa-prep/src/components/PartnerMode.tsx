@@ -4,6 +4,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { useStudyHelper } from '../context/StudyHelperContext';
 import { ContentSection } from './ContentSection';
 import { PartnerPointChecklist } from './PartnerPointChecklist';
+import { PartnerRoleToggle, type PartnerRole } from './PartnerRoleToggle';
 import {
   PartnerSessionNav,
   truncateQuestionPreview,
@@ -22,7 +23,8 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
   const { setStudyFocus } = useStudyHelper();
   const [sessionPool, setSessionPool] = useState(() => buildPartnerSession());
   const [index, setIndex] = useState(0);
-  const [showAnswers, setShowAnswers] = useState(false);
+  const [role, setRole] = useState<PartnerRole>('interviewee');
+  const isInterviewer = role === 'interviewer';
   const [checked, setChecked] = useState<boolean[]>([]);
 
   const question = sessionPool[index];
@@ -87,10 +89,6 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
     setIndex(nextIndex);
   }
 
-  function toggleGradingScript() {
-    setShowAnswers((value) => !value);
-  }
-
   return (
     <article className="partner-mode">
       <div className="partner-mode__header">
@@ -104,14 +102,7 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
           </p>
         </div>
         <div className="partner-mode__controls">
-          <label className="partner-mode__toggle">
-            <input
-              type="checkbox"
-              checked={showAnswers}
-              onChange={(e) => setShowAnswers(e.target.checked)}
-            />
-            Show answers
-          </label>
+          <PartnerRoleToggle role={role} onChange={setRole} />
           <button
             type="button"
             className="practice-drill__secondary"
@@ -136,7 +127,7 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
         />
 
         <div className="partner-mode__main">
-          {showAnswers && (
+          {isInterviewer && (
             <div className="partner-mode__question-sticky" aria-live="polite">
               Question {index + 1} of {total} ·{' '}
               {truncateQuestionPreview(question.question)}
@@ -149,24 +140,16 @@ export function PartnerMode({ onExit }: PartnerModeProps) {
                 <p className="partner-mode__question">{question.question}</p>
               </ContentSection>
 
-              <button
-                type="button"
-                className="practice-cta partner-mode__grading-toggle"
-                onClick={toggleGradingScript}
-                aria-pressed={showAnswers}
-              >
-                {showAnswers ? 'Hide grading script' : 'Show grading script'}
-              </button>
-
-              {!showAnswers && (
+              {!isInterviewer && (
                 <p className="partner-mode__hidden-hint">
-                  Tap <strong>Show grading script</strong> to read bullet points
-                  aloud and check off points covered.
+                  You&apos;re practicing as the <strong>interviewee</strong>.
+                  Answer out loud, then have your partner switch to{' '}
+                  <strong>Interviewer</strong> to grade your response.
                 </p>
               )}
             </div>
 
-            {showAnswers && (
+            {isInterviewer && (
               <div className="partner-mode__answers-col">
                 <ContentSection title="Answer — grade points covered">
                   <PartnerPointChecklist

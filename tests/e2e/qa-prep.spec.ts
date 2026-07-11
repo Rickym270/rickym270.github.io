@@ -30,12 +30,16 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
       /Question 1 of (1[0-8]|[1-9])/
     );
     await expect(page.getByRole('heading', { name: 'Question' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Interviewee', pressed: true })).toBeVisible();
     await expect(
-      page.getByRole('button', { name: 'Show grading script' })
+      page.getByText("You're practicing as the interviewee")
     ).toBeVisible();
-    await expect(page.getByText('Tap')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Answer — grade points covered' })
+    ).not.toBeVisible();
 
-    await page.getByRole('button', { name: 'Show grading script' }).click();
+    await page.getByRole('button', { name: 'Interviewer' }).click();
+    await expect(page.getByRole('button', { name: 'Interviewer', pressed: true })).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'Answer — grade points covered' })
     ).toBeVisible();
@@ -89,7 +93,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await sessionItems.nth(2).click();
     await expect(page.locator('.partner-mode__progress')).toHaveText(/Question 3 of 18/);
 
-    await page.getByRole('button', { name: 'Show grading script' }).click();
+    await page.getByRole('button', { name: 'Interviewer' }).click();
     await expect(page.locator('.partner-mode__question-sticky')).toContainText(
       /Question 3 of 18/
     );
@@ -158,7 +162,7 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     await expect(page.getByRole('button', { name: 'Shuffle' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Next' })).toBeVisible();
 
-    await page.getByRole('checkbox', { name: 'Show answers' }).check();
+    await page.getByRole('button', { name: 'Interviewer' }).click();
     await expect(page.locator('.partner-mode__question-sticky')).toBeVisible();
     await expect(page.locator('.partner-point-checklist__item').first()).toBeVisible();
 
