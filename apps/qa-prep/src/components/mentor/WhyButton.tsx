@@ -8,14 +8,25 @@ import { ContentSection } from '../ContentSection';
 type WhyButtonProps = {
   topicId: string;
   stretchConceptId?: string;
+  questionKey?: string;
+  question?: string;
 };
 
-export function WhyButton({ topicId, stretchConceptId }: WhyButtonProps) {
+export function WhyButton({
+  topicId,
+  stretchConceptId,
+  questionKey,
+  question,
+}: WhyButtonProps) {
   const [open, setOpen] = useState(false);
   const profile: TopicMentorProfile | undefined = getMentorProfile(topicId);
   const stretch = stretchConceptId
     ? stretchConcepts.find((c) => c.id === stretchConceptId)
     : undefined;
+
+  useEffect(() => {
+    setOpen(false);
+  }, [questionKey, topicId]);
 
   useEffect(() => {
     if (!open) return;
@@ -63,6 +74,11 @@ export function WhyButton({ topicId, stretchConceptId }: WhyButtonProps) {
                 Close
               </button>
             </div>
+            {question && (
+              <ContentSection title="Current question">
+                <p className="why-modal__question">{question}</p>
+              </ContentSection>
+            )}
             {profile?.learnTheWhy && (
               <LearnTheWhySection content={profile.learnTheWhy} />
             )}

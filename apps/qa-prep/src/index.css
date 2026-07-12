@@ -3233,6 +3233,13 @@ button {
   font-size: 1.125rem;
 }
 
+.why-modal__question {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  font-weight: 500;
+}
+
 .concept-graph-nav {
   margin-bottom: 1.5rem;
 }
@@ -3599,6 +3606,17 @@ button {
 
 .attempt-first__reveal summary {
   cursor: pointer;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.attempt-first__reveal--expanded {
+  margin-top: 1rem;
+}
+
+.attempt-first__reveal-heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-accent);
 }
