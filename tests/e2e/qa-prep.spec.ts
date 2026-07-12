@@ -192,6 +192,38 @@ test.describe('[regression] QA Loop Prep (unlisted)', () => {
     ).toBeVisible();
   });
 
+  test('mobile reveal shows bundled model answer when coach API is unavailable', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route('**/api/qa-prep/attempt-coach', async (route) => {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error: 'service_unavailable',
+          message: 'Attempt coach unavailable',
+        }),
+      });
+    });
+
+    await page.goto(QA_PREP_URL, {
+      waitUntil: 'load',
+      timeout: 30_000,
+    });
+
+    await expect(page.getByRole('heading', { name: 'Interview Question' })).toBeVisible();
+    await page.getByRole('button', { name: 'Reveal Model Answer' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Model answer' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: '60–90 second spoken answer' })
+    ).toBeVisible();
+    await expect(
+      page.getByText('Model answer will appear here after evaluation.')
+    ).not.toBeVisible();
+  });
+
   test('Train mode fits mobile viewport without horizontal overflow', async ({
     page,
   }) => {

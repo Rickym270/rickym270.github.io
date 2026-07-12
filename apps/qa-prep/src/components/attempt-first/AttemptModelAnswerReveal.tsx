@@ -6,20 +6,15 @@ type AttemptModelAnswerRevealProps = {
   badge?: string;
 };
 
-export function AttemptModelAnswerReveal({
+function ModelAnswerBody({
   modelAnswer,
-  defaultOpen = false,
   badge,
-}: AttemptModelAnswerRevealProps) {
-  if (!modelAnswer) {
-    return (
-      <p className="attempt-first__muted">Model answer will appear here after evaluation.</p>
-    );
-  }
-
+}: {
+  modelAnswer: AttemptModelAnswerPackage;
+  badge?: string;
+}) {
   return (
-    <details className="attempt-first__reveal" open={defaultOpen}>
-      <summary>Reveal Model Answer</summary>
+    <>
       {badge && <p className="attempt-first__badge">{badge}</p>}
       <div className="attempt-first__model-answer">
         <section>
@@ -43,6 +38,36 @@ export function AttemptModelAnswerReveal({
           </section>
         )}
       </div>
+    </>
+  );
+}
+
+export function AttemptModelAnswerReveal({
+  modelAnswer,
+  defaultOpen = false,
+  badge,
+}: AttemptModelAnswerRevealProps) {
+  if (!modelAnswer) {
+    return (
+      <p className="attempt-first__muted">
+        Model answer will appear here after evaluation.
+      </p>
+    );
+  }
+
+  if (defaultOpen) {
+    return (
+      <div className="attempt-first__reveal attempt-first__reveal--expanded">
+        <h4 className="attempt-first__reveal-heading">Model answer</h4>
+        <ModelAnswerBody modelAnswer={modelAnswer} badge={badge} />
+      </div>
+    );
+  }
+
+  return (
+    <details className="attempt-first__reveal">
+      <summary>Reveal Model Answer</summary>
+      <ModelAnswerBody modelAnswer={modelAnswer} badge={badge} />
     </details>
   );
 }

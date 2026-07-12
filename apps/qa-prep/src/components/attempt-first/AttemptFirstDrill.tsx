@@ -57,6 +57,21 @@ function buildCoachContext(
   };
 }
 
+function buildLocalModelAnswer(
+  referenceAnswer: string,
+  compareBullets: string[]
+): AttemptModelAnswerPackage {
+  const concise = referenceAnswer.trim();
+  return {
+    concise60to90: concise,
+    detailedStrategy: concise,
+    conceptChecklist: compareBullets.map((bullet) => ({
+      concept: bullet,
+      whyItMatters: 'Key point interviewers listen for in your answer.',
+    })),
+  };
+}
+
 export function AttemptFirstDrill({
   questionKey,
   topicId,
@@ -142,16 +157,46 @@ export function AttemptFirstDrill({
     [questionKey]
   );
 
-  async function fetchModelAnswer() {
-    const response = await callAttemptCoach({
-      action: 'model-answer',
-      question: activeQuestion,
-      context: coachContext,
-    });
-    if (response.modelAnswer) {
-      setModelAnswer(response.modelAnswer);
+  function applyLocalModelAnswer(): AttemptModelAnswerPackage | null {
+    if (!activeReference.trim()) {
+      return null;
     }
-    return response.modelAnswer ?? null;
+    const local = buildLocalModelAnswer(activeReference, compareBullets);
+    setModelAnswer(local);
+    return local;
+  }
+
+  async function fetchModelAnswer() {
+    try {
+      const response = await callAttemptCoach({
+        action: 'model-answer',
+        question: activeQuestion,
+        context: coachContext,
+      });
+      if (response.modelAnswer) {
+        setModelAnswer(response.modelAnswer);
+        return response.modelAnswer;
+      }
+    } catch {
+      // Fall through to bundled answer.
+    }
+
+    return applyLocalModelAnswer();
+  }
+
+  async function upgradeModelAnswerFromApi() {
+    try {
+      const response = await callAttemptCoach({
+        action: 'model-answer',
+        question: activeQuestion,
+        context: coachContext,
+      });
+      if (response.modelAnswer) {
+        setModelAnswer(response.modelAnswer);
+      }
+    } catch {
+      // Bundled answer already visible.
+    }
   }
 
   async function handleHint() {
@@ -184,15 +229,29 @@ export function AttemptFirstDrill({
       });
     }
     setModelAnswerOpen(true);
-    if (modelAnswer) return;
+    setError(null);
+
+    const local = applyLocalModelAnswer();
+
+    if (!local) {
+      setBusy('reveal');
+      try {
+        const result = await fetchModelAnswer();
+        if (!result) {
+          setError('Could not load model answer.');
+        }
+      } catch (err) {
+        const coachError = err as AttemptCoachError;
+        setError(coachError.message || 'Could not load model answer.');
+      } finally {
+        setBusy(null);
+      }
+      return;
+    }
 
     setBusy('reveal');
-    setError(null);
     try {
-      await fetchModelAnswer();
-    } catch (err) {
-      const coachError = err as AttemptCoachError;
-      setError(coachError.message || 'Could not load model answer.');
+      await upgradeModelAnswerFromApi();
     } finally {
       setBusy(null);
     }
@@ -205,13 +264,28 @@ export function AttemptFirstDrill({
     updateMastery(activeQuestionKey, topicId, {
       solutionViewedBeforeAttempt: true,
     });
-    setBusy('skip');
     setError(null);
+
+    const local = applyLocalModelAnswer();
+    if (!local) {
+      setBusy('skip');
+      try {
+        const result = await fetchModelAnswer();
+        if (!result) {
+          setError('Could not load model answer.');
+        }
+      } catch (err) {
+        const coachError = err as AttemptCoachError;
+        setError(coachError.message || 'Could not load model answer.');
+      } finally {
+        setBusy(null);
+      }
+      return;
+    }
+
+    setBusy('skip');
     try {
-      await fetchModelAnswer();
-    } catch (err) {
-      const coachError = err as AttemptCoachError;
-      setError(coachError.message || 'Could not load model answer.');
+      await upgradeModelAnswerFromApi();
     } finally {
       setBusy(null);
     }
@@ -418,7 +492,13 @@ export function AttemptFirstDrill({
       {(phase === 'attempt' || phase === 'evaluating') && (
         <ContentSection title="Interview Question">
           <p className="practice-drill__question">{activeQuestion}</p>
-          {!compact && <WhyButton topicId={topicId} />}
+          {!compact && (
+            <WhyButton
+              topicId={topicId}
+              questionKey={activeQuestionKey}
+              question={activeQuestion}
+            />
+          )}
 
           {solutionViewedBeforeAttempt && (
             <p className="attempt-first__badge attempt-first__badge--warning">
